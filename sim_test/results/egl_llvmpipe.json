@@ -1,0 +1,105 @@
+{
+  "variant": "egl_llvmpipe",
+  "MUJOCO_GL": "egl",
+  "env": {
+    "GALLIUM_DRIVER": "llvmpipe",
+    "MESA_D3D12_DEFAULT_ADAPTER_NAME": null,
+    "PYOPENGL_PLATFORM": null,
+    "DISPLAY": ":0",
+    "LIBGL_ALWAYS_SOFTWARE": null
+  },
+  "context_create_s": 0.538,
+  "gl_vendor": "Mesa",
+  "gl_renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
+  "gl_version": "4.5 (Compatibility Profile) Mesa 25.2.8-0ubuntu0.24.04.4",
+  "fps": {
+    "640x480 rgb": 3.9,
+    "640x480 depth": 47.4,
+    "640x480 rgb+depth": 3.2,
+    "1280x720 rgb": 2.1,
+    "1280x720 depth": 22.7,
+    "1280x720 rgb+depth": 1.5
+  },
+  "depth_near_far_m": [
+    0.011999999731779098,
+    60.0
+  ],
+  "gt_center_pixel": [
+    341.03,
+    226.17
+  ],
+  "gt_center_pixel_on_obj_mask": true,
+  "obj_mask_pixels": 1103,
+  "obj_mask_centroid_px": [
+    341.3,
+    225.96
+  ],
+  "center_pixel": {
+    "depth_m": 0.9738926887512207,
+    "ray_z_m": 0.9738926068438132,
+    "backproj_vs_ray_mm": 8.204808506859191e-05,
+    "backproj_vs_gt_center_mm": 31.775873494382317,
+    "ray_hit_geom": "obj_geom"
+  },
+  "depth_vs_raycast_mm": {
+    "n": 401,
+    "mean": 0.0004098894821950712,
+    "p95": 0.002307040830817897,
+    "max": 0.003603203492019702
+  },
+  "visible_surface_centroid_vs_gt_mm": 20.80243505141204,
+  "obj_size_m": [
+    0.05,
+    0.06,
+    0.08
+  ],
+  "K": [
+    [
+      432.971,
+      0.0,
+      319.5
+    ],
+    [
+      0.0,
+      432.971,
+      239.5
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "T_world_cam_opencv": [
+    [
+      -0.0,
+      0.6306,
+      -0.7761,
+      1.35
+    ],
+    [
+      1.0,
+      0.0,
+      -0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -0.7761,
+      -0.6306,
+      0.95
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "obj_pos_world": [
+    0.55,
+    0.05,
+    0.3399
+  ],
+  "ok": true
+}

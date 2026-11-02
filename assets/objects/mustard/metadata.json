@@ -1,0 +1,19 @@
+{
+  "source_obj": "/home/user/work/robot_percept/downloads/demo_data/mustard0/mesh/textured_simple.obj",
+  "texture": "/home/user/work/robot_percept/downloads/demo_data/mustard0/mesh/texture_map.png",
+  "units": "metres (source bounds checked against YCB mustard physical dimensions)",
+  "bounds_m": [
+    [
+      -0.049815,
+      -0.035766,
+      -0.083861
+    ],
+    [
+      0.047336,
+      0.030853,
+      0.107547
+    ]
+  ],
+  "collision": "trimesh convex hull; original vertex coordinate frame preserved",
+  "mesh_origin_max_world_error_m": 3.521787733787174e-16
+}

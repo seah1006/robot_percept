@@ -1,0 +1,39 @@
+{
+  "iter2_emptycacheTrue": {
+    "fps": 4.2989572158814395,
+    "error_mm": 0.7818222323942743,
+    "error_deg": 1.6180906200296419,
+    "stage_mean_ms": {
+      "erode_depth": 1.5252029544502543,
+      "bilateral_filter_depth": 0.871927045409393,
+      "depth2xyzmap_batch": 3.1333242728495945,
+      "make_crop_data_batch": 55.236356477239084,
+      "forward": 33.15406534089892
+    }
+  },
+  "iter2_emptycacheFalse": {
+    "fps": 5.600549704339878,
+    "error_mm": 0.7818222323942743,
+    "error_deg": 1.6180906200296419,
+    "stage_mean_ms": {
+      "erode_depth": 1.837128409079014,
+      "bilateral_filter_depth": 0.7826599090053192,
+      "depth2xyzmap_batch": 3.12653749998307,
+      "make_crop_data_batch": 46.64386440915471,
+      "forward": 25.11132974998211
+    }
+  },
+  "iter1_emptycacheFalse": {
+    "fps": 8.091523882781896,
+    "error_mm": 0.786657255506741,
+    "error_deg": 1.628133280551292,
+    "stage_mean_ms": {
+      "erode_depth": 1.9726690455751272,
+      "bilateral_filter_depth": 1.2426074544319734,
+      "depth2xyzmap_batch": 3.7247053179602188,
+      "make_crop_data_batch": 58.87867349987243,
+      "forward": 29.423371000120824
+    }
+  },
+  "pickle_rgbd_ms": 1.0998871799984045
+}

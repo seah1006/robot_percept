@@ -1,0 +1,32 @@
+<mujoco model="panda rgbd test scene">
+  <include file="panda_mod.xml"/>
+  <statistic center="0.4 0 0.4" extent="1.2"/>
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0"/>
+    <map znear="0.01" zfar="50"/>
+    <global offwidth="1920" offheight="1080" azimuth="120" elevation="-20"/>
+  </visual>
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="3072"/>
+    <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3"
+      markrgb="0.8 0.8 0.8" width="300" height="300"/>
+    <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5" reflectance="0.2"/>
+    <material name="table" rgba="0.55 0.4 0.25 1"/>
+    <material name="obj" rgba="0.9 0.2 0.15 1"/>
+  </asset>
+  <worldbody>
+    <light pos="0 0 1.5" dir="0 0 -1" directional="true"/>
+    <geom name="floor" size="0 0 0.05" type="plane" material="groundplane"/>
+    <body name="table" pos="0.55 0 0.15">
+      <geom name="table_top" type="box" size="0.25 0.40 0.15" material="table"/>
+    </body>
+    <body name="obj" pos="0.55 0.05 0.34099999999999997">
+      <freejoint name="obj_free"/>
+      <geom name="obj_geom" type="box" size="0.025 0.03 0.04" material="obj" mass="0.15"/>
+    </body>
+    <camera name="rgbd" mode="fixed" pos="1.35 0.0 0.95" xyaxes="0.000000 1.000000 -0.000000 -0.630593 0.000000 0.776114" fovy="58"/>
+  </worldbody>
+  <keyframe>
+    <key name="home" qpos="0 0 0 -1.57079 0 1.57079 -0.7853 0.04 0.04 0.55 0.05 0.34099999999999997 1 0 0 0" ctrl="0 0 0 -1.57079 0 1.57079 -0.7853 255"/>
+  </keyframe>
+</mujoco>

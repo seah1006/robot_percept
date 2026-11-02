@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Robot Percept · Franka Panda 가상 로봇</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<!-- 배경: Magic UI "Animated Grid Pattern" 아이디어를 순수 CSS/JS 로 구현 -->
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-glow" aria-hidden="true"></div>
+
+<header class="topbar reveal">
+  <div class="brand">
+    <div class="logo" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M4 18h16M7 18V9l5-4 5 4v9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="11" r="2" fill="currentColor"/></svg>
+    </div>
+    <div>
+      <h1>Robot Percept</h1>
+      <p class="subtitle">SAM2.1 · FoundationPose · MuJoCo Franka Panda</p>
+    </div>
+  </div>
+  <div class="pill" id="health-pill"><span class="dot"></span><span id="health">연결 중</span></div>
+</header>
+
+<!-- 파이프라인 진행 단계 -->
+<nav class="stepper reveal" id="stepper" aria-label="처리 단계">
+  <div class="step" data-step="select"><span class="num">1</span><span>물체 클릭</span></div>
+  <div class="bar"><i></i></div>
+  <div class="step" data-step="register"><span class="num">2</span><span>SAM2 · 자세 등록</span></div>
+  <div class="bar"><i></i></div>
+  <div class="step" data-step="track"><span class="num">3</span><span>실시간 추적</span></div>
+  <div class="bar"><i></i></div>
+  <div class="step" data-step="pick"><span class="num">4</span><span>집기</span></div>
+  <div class="bar"><i></i></div>
+  <div class="step" data-step="place"><span class="num">5</span><span>놓기</span></div>
+</nav>
+
+<main>
+  <section class="card video-card reveal">
+    <span class="border-beam" aria-hidden="true"></span>
+    <div class="video-wrap" id="video-wrap">
+      <img id="video" src="/video?gt=1" width="{{width}}" height="{{height}}" alt="시뮬레이션 카메라">
+      <div class="hud">
+        <span class="chip" id="hud-phase">idle</span>
+        <span class="chip mono" id="hud-fps">0.0 FPS</span>
+      </div>
+      <div class="place-banner" id="place-banner">테이블 위 놓을 위치를 클릭하세요</div>
+      <div class="busy" id="busy"><span class="spinner"></span><span id="busy-text">처리 중</span></div>
+    </div>
+
+    <div class="dock">
+      <button id="pick" class="btn primary shimmer" title="선택한 물체 집기">
+        <svg viewBox="0 0 24 24"><path d="M7 4v6a5 5 0 0 0 10 0V4M7 4h3M14 4h3M12 15v5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>집기
+      </button>
+      <button id="place" class="btn" title="기본 위치에 놓기">
+        <svg viewBox="0 0 24 24"><path d="M12 4v10m-4-4 4 4 4-4M5 20h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>놓기
+      </button>
+      <button id="place-click" class="btn" title="영상에서 테이블을 클릭해 놓을 위치 지정">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>놓기 위치 클릭</span>
+      </button>
+      <span class="sep"></span>
+      <button id="reset" class="btn ghost" title="초기 상태로">
+        <svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 3-6.2M4 4v4h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>리셋
+      </button>
+      <button id="randomize" class="btn ghost" title="물체 위치 랜덤 배치">
+        <svg viewBox="0 0 24 24"><path d="M4 17h3l10-10h3M4 7h3l3 3M14 14l3 3h3M18 4l2 3-2 3M18 14l2 3-2 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>장면 랜덤
+      </button>
+      <label class="btn ghost upload" title="STP/STEP 파일 업로드">
+        <svg viewBox="0 0 24 24"><path d="M12 16V4m-4 4 4-4 4 4M5 20h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>CAD 업로드
+        <input id="cad" type="file" accept=".stp,.step">
+      </label>
+    </div>
+    <p class="hint">영상의 물체를 클릭하면 SAM2로 분할하고 FoundationPose로 6D 자세를 추정합니다.</p>
+  </section>
+
+  <aside class="side">
+    <section class="card reveal">
+      <div class="card-head"><h2>자세 추정</h2><span class="tag" id="perception">-</span></div>
+      <div class="metric-grid">
+        <div class="metric">
+          <span class="label">위치 오차</span>
+          <span class="value"><b id="err-mm" data-v="0">-</b><small>mm</small></span>
+        </div>
+        <div class="metric">
+          <span class="label">회전 오차</span>
+          <span class="value"><b id="err-deg" data-v="0">-</b><small>°</small></span>
+        </div>
+        <div class="metric ring-metric">
+          <svg class="ring" viewBox="0 0 44 44"><circle cx="22" cy="22" r="18" class="track"/><circle cx="22" cy="22" r="18" class="fill" id="iou-ring"/></svg>
+          <div><span class="label">Mask IoU</span><span class="value"><b id="iou" data-v="0">-</b><small>%</small></span></div>
+        </div>
+        <div class="metric">
+          <span class="label">추적 속도</span>
+          <span class="value"><b id="track-fps" data-v="0">-</b><small>FPS</small></span>
+        </div>
+      </div>
+      <div class="timings">
+        <div class="trow"><span>SAM2</span><div class="tbar"><i id="t-sam"></i></div><em id="t-sam-v">-</em></div>
+        <div class="trow"><span>등록</span><div class="tbar"><i id="t-reg"></i></div><em id="t-reg-v">-</em></div>
+      </div>
+    </section>
+
+    <section class="card reveal">
+      <div class="card-head"><h2>시스템</h2></div>
+      <dl class="kv">
+        <dt>상태</dt><dd id="state">-</dd>
+        <dt>단계</dt><dd id="phase">-</dd>
+        <dt>선택 물체</dt><dd id="selected">-</dd>
+        <dt>추적</dt><dd id="tracking">-</dd>
+        <dt>렌더링</dt><dd id="fps">-</dd>
+      </dl>
+      <div class="gpu">
+        <div class="gpu-head"><span>GPU</span><em id="gpu">-</em></div>
+        <div class="gbar"><i id="gpu-mem"></i></div>
+      </div>
+      <!-- 기존 id 호환용 -->
+      <span id="error" hidden></span><span id="metrics" hidden></span>
+    </section>
+
+    <section class="card reveal logs-card">
+      <div class="card-head"><h2>로그</h2></div>
+      <div id="logs"></div>
+    </section>
+  </aside>
+</main>
+
+<div class="toasts" id="toasts"></div>
+<footer class="foot">UI motion inspired by <a href="https://github.com/magicuidesign/magicui" target="_blank" rel="noopener">Magic UI</a> · <a href="https://github.com/ibelick/motion-primitives" target="_blank" rel="noopener">Motion Primitives</a> · animations by <a href="https://github.com/motiondivision/motion" target="_blank" rel="noopener">Motion</a> (MIT)</footer>
+
+<script src="/static/vendor/motion.js"></script>
+<script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+{
+  "source": "/home/user/work/robot_percept/cad_uploads/web/box_fillet_50x30x20mm_e907f/box_fillet_50x30x20mm_e907f.step",
+  "name": "box_fillet_50x30x20mm_e907f",
+  "units": "m",
+  "header_length_units": [
+    "millimetre"
+  ],
+  "header_unit": "millimetre",
+  "unit_override": null,
+  "override_scale": 1.0,
+  "system_length_unit_mm": 1000.0,
+  "tessellation_tol_m": 6.164414002968977e-05,
+  "center_mode": "bbox",
+  "center_offset_m": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "bounds_m": [
+    [
+      -0.025,
+      -0.015,
+      -0.01
+    ],
+    [
+      0.025,
+      0.015,
+      0.01
+    ]
+  ],
+  "mesh": {
+    "vertices": 576,
+    "triangles": 1148,
+    "watertight": true,
+    "winding_consistent": true,
+    "volume_m3": 2.984544054763546e-05,
+    "extents_m": [
+      0.05,
+      0.03,
+      0.02
+    ]
+  },
+  "files": {
+    "obj": "box_fillet_50x30x20mm_e907f.obj",
+    "stl": "box_fillet_50x30x20mm_e907f.stl",
+    "collision": [
+      {
+        "file": "box_fillet_50x30x20mm_e907f_collision_hull.obj",
+        "vertices": 576,
+        "triangles": 1148,
+        "watertight": true,
+        "winding_consistent": true,
+        "volume_m3": 2.984544054763546e-05,
+        "extents_m": [
+          0.05,
+          0.03,
+          0.02
+        ]
+      }
+    ]
+  }
+}

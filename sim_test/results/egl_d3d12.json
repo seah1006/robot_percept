@@ -1,0 +1,105 @@
+{
+  "variant": "egl_d3d12",
+  "MUJOCO_GL": "egl",
+  "env": {
+    "GALLIUM_DRIVER": "d3d12",
+    "MESA_D3D12_DEFAULT_ADAPTER_NAME": "NVIDIA",
+    "PYOPENGL_PLATFORM": null,
+    "DISPLAY": ":0",
+    "LIBGL_ALWAYS_SOFTWARE": null
+  },
+  "context_create_s": 1.217,
+  "gl_vendor": "Microsoft Corporation",
+  "gl_renderer": "D3D12 (NVIDIA GeForce RTX 2080 SUPER)",
+  "gl_version": "4.6 (Compatibility Profile) Mesa 25.2.8-0ubuntu0.24.04.4",
+  "fps": {
+    "640x480 rgb": 23.1,
+    "640x480 depth": 80.8,
+    "640x480 rgb+depth": 18.3,
+    "1280x720 rgb": 22.6,
+    "1280x720 depth": 51.2,
+    "1280x720 rgb+depth": 16.9
+  },
+  "depth_near_far_m": [
+    0.011999999731779098,
+    60.0
+  ],
+  "gt_center_pixel": [
+    341.03,
+    226.17
+  ],
+  "gt_center_pixel_on_obj_mask": true,
+  "obj_mask_pixels": 1083,
+  "obj_mask_centroid_px": [
+    341.37,
+    225.94
+  ],
+  "center_pixel": {
+    "depth_m": 0.9745602607727051,
+    "ray_z_m": 0.9738926068438132,
+    "backproj_vs_ray_mm": 0.6688006373022929,
+    "backproj_vs_gt_center_mm": 31.107208759958517,
+    "ray_hit_geom": "obj_geom"
+  },
+  "depth_vs_raycast_mm": {
+    "n": 401,
+    "mean": 7.823054075858531,
+    "p95": 9.65883641467924,
+    "max": 2112.8395071090295
+  },
+  "visible_surface_centroid_vs_gt_mm": 20.924698714522606,
+  "obj_size_m": [
+    0.05,
+    0.06,
+    0.08
+  ],
+  "K": [
+    [
+      432.971,
+      0.0,
+      319.5
+    ],
+    [
+      0.0,
+      432.971,
+      239.5
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "T_world_cam_opencv": [
+    [
+      -0.0,
+      0.6306,
+      -0.7761,
+      1.35
+    ],
+    [
+      1.0,
+      0.0,
+      -0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -0.7761,
+      -0.6306,
+      0.95
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "obj_pos_world": [
+    0.55,
+    0.05,
+    0.3399
+  ],
+  "ok": true
+}
