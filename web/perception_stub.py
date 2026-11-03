@@ -13,6 +13,7 @@ def _worker(req,res):
     import os, torch
     from pathlib import Path
     from perception.fp_runner import FPRunner
+    from perception.sam_runner import select_candidate
     from sam2.build_sam import build_sam2
     from sam2.sam2_image_predictor import SAM2ImagePredictor
     runners={}; predictor=None; active=None
@@ -33,7 +34,8 @@ def _worker(req,res):
                 with torch.inference_mode(),torch.autocast('cuda',dtype=torch.float16):
                     predictor.set_image(a['rgb'])
                     masks,scores,_=predictor.predict(point_coords=np.array([a['click']]),point_labels=np.array([1]),multimask_output=True)
-                result={'mask':masks[int(np.argmax(scores))].astype(bool),'sam_score':float(np.max(scores))}
+                selected=select_candidate(masks,scores,a['click'],a.get('depth'))
+                result={'mask':masks[selected].astype(bool),'sam_score':float(scores[selected]),'sam_selected':selected}
                 predictor.reset_predictor(); predictor.model.to('cpu'); torch.cuda.empty_cache()
             elif op=='register':
                 name=a['name']; mesh=a['mesh']

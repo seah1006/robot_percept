@@ -1,0 +1,25 @@
+{
+  "config": {
+    "perception": "gt",
+    "gt_assist": "on",
+    "objects": "mustard,box,cup",
+    "n": 3,
+    "seeds": null,
+    "seed": 0,
+    "frames": 5,
+    "pick": "off",
+    "width": 640,
+    "height": 480,
+    "out": "bench/verify_e/r1a",
+    "save_replay": false
+  },
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "git_hash": "a408c2ddc986c16eeef30ae2b2a502e7398abd61",
+  "dirty": " M sim/control.py\n M sim/grasp.py\n M sim/ik.py\n M web/sim_worker.py\n?? bench/eval/\n?? bench/ip/\n?? bench/verify_c/\n?? bench/verify_e/\n?? bench/verify_p/\n?? eval/harness/\n?? eval/run_benchmark.py\n?? notes/TEAM.md\n?? notes/control_api.md\n?? notes/verify_e.md\n",
+  "python": "3.12.14 | packaged by Anaconda, Inc. | (main, Aug 27 2026, 14:46:43) [GCC 14.3.0]",
+  "gt_disclosure": "GT supplies target identity and nearest-visible-centroid click only for fp; all GT poses score-only except explicitly enabled control assistance. SAM chooses argmax model score."
+}

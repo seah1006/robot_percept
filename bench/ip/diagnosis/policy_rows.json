@@ -1,0 +1,1502 @@
+[
+  {
+    "object": "mustard",
+    "seed": 0,
+    "point_type": "center",
+    "click": [
+      229,
+      200
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      169,
+      143,
+      44
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.33544921875,
+      0.95263671875,
+      0.1087646484375
+    ],
+    "areas": [
+      620,
+      1795,
+      13932
+    ],
+    "ious": [
+      0.3561959654178674,
+      0.9654596100278552,
+      0.12430919399985646
+    ],
+    "selected": 1,
+    "selected_iou": 0.9654596100278552,
+    "oracle_iou": 0.9654596100278552,
+    "gt_area": 1733,
+    "ms": 1400.7938339991597,
+    "artifact": "bench/ip/diagnosis/mustard_0_center.npz",
+    "new_selected": 1,
+    "new_iou": 0.9654596100278552
+  },
+  {
+    "object": "mustard",
+    "seed": 0,
+    "point_type": "offcenter",
+    "click": [
+      246,
+      228
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      70,
+      59,
+      15
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.261474609375,
+      0.96826171875,
+      0.06622314453125
+    ],
+    "areas": [
+      681,
+      1793,
+      14082
+    ],
+    "ious": [
+      0.3778538812785388,
+      0.9665365309537088,
+      0.12282570110046148
+    ],
+    "selected": 1,
+    "selected_iou": 0.9665365309537088,
+    "oracle_iou": 0.9665365309537088,
+    "gt_area": 1733,
+    "ms": 339.9514279999494,
+    "artifact": "bench/ip/diagnosis/mustard_0_offcenter.npz",
+    "new_selected": 1,
+    "new_iou": 0.9665365309537088
+  },
+  {
+    "object": "mustard",
+    "seed": 1,
+    "point_type": "center",
+    "click": [
+      240,
+      239
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      12,
+      42,
+      67
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.1859130859375,
+      0.89892578125,
+      0.1685791015625
+    ],
+    "areas": [
+      385,
+      2569,
+      13899
+    ],
+    "ious": [
+      0.1532033426183844,
+      0.9766627771295215,
+      0.18080437441542557
+    ],
+    "selected": 1,
+    "selected_iou": 0.9766627771295215,
+    "oracle_iou": 0.9766627771295215,
+    "gt_area": 2513,
+    "ms": 214.4781700008025,
+    "artifact": "bench/ip/diagnosis/mustard_1_center.npz",
+    "new_selected": 1,
+    "new_iou": 0.9766627771295215
+  },
+  {
+    "object": "mustard",
+    "seed": 1,
+    "point_type": "offcenter",
+    "click": [
+      260,
+      257
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      83,
+      66,
+      26
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.3515625,
+      0.97705078125,
+      0.03125
+    ],
+    "areas": [
+      792,
+      2562,
+      64865
+    ],
+    "ious": [
+      0.30684064847765913,
+      0.9808743169398907,
+      0.03864592807263646
+    ],
+    "selected": 1,
+    "selected_iou": 0.9808743169398907,
+    "oracle_iou": 0.9808743169398907,
+    "gt_area": 2513,
+    "ms": 203.97623700046097,
+    "artifact": "bench/ip/diagnosis/mustard_1_offcenter.npz",
+    "new_selected": 1,
+    "new_iou": 0.9808743169398907
+  },
+  {
+    "object": "mustard",
+    "seed": 2,
+    "point_type": "center",
+    "click": [
+      381,
+      202
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      132,
+      105,
+      103
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.44482421875,
+      0.6982421875,
+      0.2117919921875
+    ],
+    "areas": [
+      279,
+      670,
+      2548
+    ],
+    "ious": [
+      0.11204819277108434,
+      0.26907630522088355,
+      0.9741379310344828
+    ],
+    "selected": 1,
+    "selected_iou": 0.26907630522088355,
+    "oracle_iou": 0.9741379310344828,
+    "gt_area": 2490,
+    "ms": 256.5454489995318,
+    "artifact": "bench/ip/diagnosis/mustard_2_center.npz",
+    "new_selected": 2,
+    "new_iou": 0.9741379310344828
+  },
+  {
+    "object": "mustard",
+    "seed": 2,
+    "point_type": "offcenter",
+    "click": [
+      403,
+      187
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      144,
+      121,
+      35
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.2496337890625,
+      0.97607421875,
+      0.11126708984375
+    ],
+    "areas": [
+      691,
+      2554,
+      18248
+    ],
+    "ious": [
+      0.26581774771189814,
+      0.9749412685982772,
+      0.13632876712328768
+    ],
+    "selected": 1,
+    "selected_iou": 0.9749412685982772,
+    "oracle_iou": 0.9749412685982772,
+    "gt_area": 2490,
+    "ms": 190.9461380000721,
+    "artifact": "bench/ip/diagnosis/mustard_2_offcenter.npz",
+    "new_selected": 1,
+    "new_iou": 0.9749412685982772
+  },
+  {
+    "object": "mustard",
+    "seed": 3,
+    "point_type": "center",
+    "click": [
+      378,
+      198
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      142,
+      120,
+      38
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.4365234375,
+      0.9404296875,
+      0.1676025390625
+    ],
+    "areas": [
+      805,
+      1813,
+      13245
+    ],
+    "ious": [
+      0.44600674915635546,
+      0.971900826446281,
+      0.13333333333333333
+    ],
+    "selected": 1,
+    "selected_iou": 0.971900826446281,
+    "oracle_iou": 0.971900826446281,
+    "gt_area": 1766,
+    "ms": 195.27240800016443,
+    "artifact": "bench/ip/diagnosis/mustard_3_center.npz",
+    "new_selected": 1,
+    "new_iou": 0.971900826446281
+  },
+  {
+    "object": "mustard",
+    "seed": 3,
+    "point_type": "offcenter",
+    "click": [
+      393,
+      176
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      148,
+      127,
+      30
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.54296875,
+      0.95458984375,
+      0.046295166015625
+    ],
+    "areas": [
+      836,
+      1812,
+      12626
+    ],
+    "ious": [
+      0.45200892857142855,
+      0.9735245449531164,
+      0.022376926902038786
+    ],
+    "selected": 1,
+    "selected_iou": 0.9735245449531164,
+    "oracle_iou": 0.9735245449531164,
+    "gt_area": 1766,
+    "ms": 191.02793100046256,
+    "artifact": "bench/ip/diagnosis/mustard_3_offcenter.npz",
+    "new_selected": 1,
+    "new_iou": 0.9735245449531164
+  },
+  {
+    "object": "mustard",
+    "seed": 4,
+    "point_type": "center",
+    "click": [
+      416,
+      212
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      137,
+      99,
+      24
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.03582763671875,
+      0.86767578125,
+      0.7958984375
+    ],
+    "areas": [
+      108,
+      2233,
+      2292
+    ],
+    "ious": [
+      0.04974666052510364,
+      0.9713518352730528,
+      0.9472076788830716
+    ],
+    "selected": 1,
+    "selected_iou": 0.9713518352730528,
+    "oracle_iou": 0.9713518352730528,
+    "gt_area": 2171,
+    "ms": 214.1340019998097,
+    "artifact": "bench/ip/diagnosis/mustard_4_center.npz",
+    "new_selected": 1,
+    "new_iou": 0.9713518352730528
+  },
+  {
+    "object": "mustard",
+    "seed": 4,
+    "point_type": "offcenter",
+    "click": [
+      436,
+      191
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      104,
+      85,
+      40
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.145751953125,
+      0.96875,
+      0.0869140625
+    ],
+    "areas": [
+      196,
+      2208,
+      14727
+    ],
+    "ious": [
+      0.09028097650852142,
+      0.9805517865219358,
+      0.14648212226066898
+    ],
+    "selected": 1,
+    "selected_iou": 0.9805517865219358,
+    "oracle_iou": 0.9805517865219358,
+    "gt_area": 2171,
+    "ms": 232.2073850000379,
+    "artifact": "bench/ip/diagnosis/mustard_4_offcenter.npz",
+    "new_selected": 1,
+    "new_iou": 0.9805517865219358
+  },
+  {
+    "object": "box_fillet_50x30x20mm",
+    "seed": 0,
+    "point_type": "center",
+    "click": [
+      233,
+      225
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      69,
+      166,
+      235
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.79150390625,
+      0.95556640625,
+      0.014007568359375
+    ],
+    "areas": [
+      247,
+      300,
+      21216
+    ],
+    "ious": [
+      0.8397212543554007,
+      0.9366666666666666,
+      0.0132447209653092
+    ],
+    "selected": 1,
+    "selected_iou": 0.9366666666666666,
+    "oracle_iou": 0.9366666666666666,
+    "gt_area": 281,
+    "ms": 226.77688899966597,
+    "artifact": "bench/ip/diagnosis/box_fillet_50x30x20mm_0_center.npz",
+    "new_selected": 1,
+    "new_iou": 0.9366666666666666
+  },
+  {
+    "object": "box_fillet_50x30x20mm",
+    "seed": 0,
+    "point_type": "offcenter",
+    "click": [
+      244,
+      228
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      65,
+      91,
+      107
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.64599609375,
+      0.966796875,
+      0.003749847412109375
+    ],
+    "areas": [
+      167,
+      296,
+      84055
+    ],
+    "ious": [
+      0.5774647887323944,
+      0.9493243243243243,
+      0.003343049193980132
+    ],
+    "selected": 1,
+    "selected_iou": 0.9493243243243243,
+    "oracle_iou": 0.9493243243243243,
+    "gt_area": 281,
+    "ms": 189.3498270001146,
+    "artifact": "bench/ip/diagnosis/box_fillet_50x30x20mm_0_offcenter.npz",
+    "new_selected": 1,
+    "new_iou": 0.9493243243243243
+  },
+  {
+    "object": "box_fillet_50x30x20mm",
+    "seed": 1,
+    "point_type": "center",
+    "click": [
+      244,
+      264
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      65,
+      154,
+      217
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.896484375,
+      0.96240234375,
+      0.008575439453125
+    ],
+    "areas": [
+      310,
+      341,
+      61974
+    ],
+    "ious": [
+      0.9292307692307692,
+      0.9239766081871345,
+      0.005115048246038661
+    ],
+    "selected": 1,
+    "selected_iou": 0.9239766081871345,
+    "oracle_iou": 0.9292307692307692,
+    "gt_area": 317,
+    "ms": 196.87445699946693,
+    "artifact": "bench/ip/diagnosis/box_fillet_50x30x20mm_1_center.npz",
+    "new_selected": 1,
+    "new_iou": 0.9239766081871345
+  },
+  {
+    "object": "box_fillet_50x30x20mm",
+    "seed": 1,
+    "point_type": "offcenter",
+    "click": [
+      252,
+      259
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      53,
+      65,
+      72
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.9375,
+      0.96630859375,
+      0.005199432373046875
+    ],
+    "areas": [
+      323,
+      342,
+      64959
+    ],
+    "ious": [
+      0.9512195121951219,
+      0.9212827988338192,
+      0.004493413763387911
+    ],
+    "selected": 1,
+    "selected_iou": 0.9212827988338192,
+    "oracle_iou": 0.9512195121951219,
+    "gt_area": 317,
+    "ms": 171.8008509997162,
+    "artifact": "bench/ip/diagnosis/box_fillet_50x30x20mm_1_offcenter.npz",
+    "new_selected": 1,
+    "new_iou": 0.9212827988338192
+  },
+  {
+    "object": "box_fillet_50x30x20mm",
+    "seed": 2,
+    "point_type": "center",
+    "click": [
+      379,
+      226
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      70,
+      168,
+      238
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.76904296875,
+      0.94189453125,
+      0.010528564453125
+    ],
+    "areas": [
+      242,
+      312,
+      21217
+    ],
+    "ious": [
+      0.7818791946308725,
+      0.9262820512820513,
+      0.013621152849130415
+    ],
+    "selected": 1,
+    "selected_iou": 0.9262820512820513,
+    "oracle_iou": 0.9262820512820513,
+    "gt_area": 289,
+    "ms": 199.55679399936344,
+    "artifact": "bench/ip/diagnosis/box_fillet_50x30x20mm_2_center.npz",
+    "new_selected": 1,
+    "new_iou": 0.9262820512820513
+  },
+  {
+    "object": "box_fillet_50x30x20mm",
+    "seed": 2,
+    "point_type": "offcenter",
+    "click": [
+      390,
+      226
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      70,
+      167,
+      236
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.84228515625,
+      0.962890625,
+      0.00579833984375
+    ],
+    "areas": [
+      260,
+      308,
+      64066
+    ],
+    "ious": [
+      0.8422818791946308,
+      0.9383116883116883,
+      0.004510973059032872
+    ],
+    "selected": 1,
+    "selected_iou": 0.9383116883116883,
+    "oracle_iou": 0.9383116883116883,
+    "gt_area": 289,
+    "ms": 219.24425799988967,
+    "artifact": "bench/ip/diagnosis/box_fillet_50x30x20mm_2_offcenter.npz",
+    "new_selected": 1,
+    "new_iou": 0.9383116883116883
+  },
+  {
+    "object": "box_fillet_50x30x20mm",
+    "seed": 3,
+    "point_type": "center",
+    "click": [
+      376,
+      223
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      71,
+      170,
+      240
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.63623046875,
+      0.95654296875,
+      0.0173797607421875
+    ],
+    "areas": [
+      196,
+      297,
+      12419
+    ],
+    "ious": [
+      0.6482758620689655,
+      0.9429530201342282,
+      0.022707142281987277
+    ],
+    "selected": 1,
+    "selected_iou": 0.9429530201342282,
+    "oracle_iou": 0.9429530201342282,
+    "gt_area": 282,
+    "ms": 208.3452809993105,
+    "artifact": "bench/ip/diagnosis/box_fillet_50x30x20mm_3_center.npz",
+    "new_selected": 1,
+    "new_iou": 0.9429530201342282
+  },
+  {
+    "object": "box_fillet_50x30x20mm",
+    "seed": 3,
+    "point_type": "offcenter",
+    "click": [
+      386,
+      223
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      71,
+      169,
+      239
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.5244140625,
+      0.96728515625,
+      0.0054473876953125
+    ],
+    "areas": [
+      164,
+      293,
+      62709
+    ],
+    "ious": [
+      0.5379310344827586,
+      0.95578231292517,
+      0.002738025119788599
+    ],
+    "selected": 1,
+    "selected_iou": 0.95578231292517,
+    "oracle_iou": 0.95578231292517,
+    "gt_area": 282,
+    "ms": 170.4754900001717,
+    "artifact": "bench/ip/diagnosis/box_fillet_50x30x20mm_3_offcenter.npz",
+    "new_selected": 1,
+    "new_iou": 0.95578231292517
+  },
+  {
+    "object": "box_fillet_50x30x20mm",
+    "seed": 4,
+    "point_type": "center",
+    "click": [
+      412,
+      238
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      67,
+      160,
+      227
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.7060546875,
+      0.9267578125,
+      0.007843017578125
+    ],
+    "areas": [
+      189,
+      272,
+      52744
+    ],
+    "ious": [
+      0.6877323420074349,
+      0.967032967032967,
+      0.005024268163203397
+    ],
+    "selected": 1,
+    "selected_iou": 0.967032967032967,
+    "oracle_iou": 0.967032967032967,
+    "gt_area": 265,
+    "ms": 174.735796999812,
+    "artifact": "bench/ip/diagnosis/box_fillet_50x30x20mm_4_center.npz",
+    "new_selected": 1,
+    "new_iou": 0.967032967032967
+  },
+  {
+    "object": "box_fillet_50x30x20mm",
+    "seed": 4,
+    "point_type": "offcenter",
+    "click": [
+      421,
+      231
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      88,
+      149,
+      189
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.6435546875,
+      0.96044921875,
+      0.00579833984375
+    ],
+    "areas": [
+      198,
+      275,
+      51811
+    ],
+    "ious": [
+      0.7340823970037453,
+      0.9636363636363636,
+      0.003429804616748237
+    ],
+    "selected": 1,
+    "selected_iou": 0.9636363636363636,
+    "oracle_iou": 0.9636363636363636,
+    "gt_area": 265,
+    "ms": 177.86754699955054,
+    "artifact": "bench/ip/diagnosis/box_fillet_50x30x20mm_4_offcenter.npz",
+    "new_selected": 1,
+    "new_iou": 0.9636363636363636
+  },
+  {
+    "object": "cup_d70_h60mm",
+    "seed": 0,
+    "point_type": "center",
+    "click": [
+      231,
+      218
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      48,
+      116,
+      164
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.49072265625,
+      0.966796875,
+      0.044769287109375
+    ],
+    "areas": [
+      482,
+      1002,
+      12999
+    ],
+    "ious": [
+      0.49536560247167866,
+      0.9680638722554891,
+      0.07462112470190015
+    ],
+    "selected": 1,
+    "selected_iou": 0.9680638722554891,
+    "oracle_iou": 0.9680638722554891,
+    "gt_area": 970,
+    "ms": 231.00279600021167,
+    "artifact": "bench/ip/diagnosis/cup_d70_h60mm_0_center.npz",
+    "new_selected": 1,
+    "new_iou": 0.9680638722554891
+  },
+  {
+    "object": "cup_d70_h60mm",
+    "seed": 0,
+    "point_type": "offcenter",
+    "click": [
+      247,
+      221
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      55,
+      66,
+      71
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.53759765625,
+      0.97021484375,
+      0.01233673095703125
+    ],
+    "areas": [
+      560,
+      994,
+      76958
+    ],
+    "ious": [
+      0.5580448065173116,
+      0.9738693467336683,
+      0.012012518992766516
+    ],
+    "selected": 1,
+    "selected_iou": 0.9738693467336683,
+    "oracle_iou": 0.9738693467336683,
+    "gt_area": 970,
+    "ms": 174.35564399966097,
+    "artifact": "bench/ip/diagnosis/cup_d70_h60mm_0_offcenter.npz",
+    "new_selected": 1,
+    "new_iou": 0.9738693467336683
+  },
+  {
+    "object": "cup_d70_h60mm",
+    "seed": 1,
+    "point_type": "center",
+    "click": [
+      243,
+      257
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      55,
+      132,
+      186
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.55126953125,
+      0.849609375,
+      0.03155517578125
+    ],
+    "areas": [
+      511,
+      1255,
+      15719
+    ],
+    "ious": [
+      0.4180327868852459,
+      0.9713147410358566,
+      0.07754946243399707
+    ],
+    "selected": 1,
+    "selected_iou": 0.9713147410358566,
+    "oracle_iou": 0.9713147410358566,
+    "gt_area": 1219,
+    "ms": 194.21883300037734,
+    "artifact": "bench/ip/diagnosis/cup_d70_h60mm_1_center.npz",
+    "new_selected": 1,
+    "new_iou": 0.9713147410358566
+  },
+  {
+    "object": "cup_d70_h60mm",
+    "seed": 1,
+    "point_type": "offcenter",
+    "click": [
+      261,
+      267
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      51,
+      63,
+      69
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.396240234375,
+      0.9755859375,
+      0.0083465576171875
+    ],
+    "areas": [
+      668,
+      1248,
+      73879
+    ],
+    "ious": [
+      0.5266990291262136,
+      0.9767628205128205,
+      0.010128455175196718
+    ],
+    "selected": 1,
+    "selected_iou": 0.9767628205128205,
+    "oracle_iou": 0.9767628205128205,
+    "gt_area": 1219,
+    "ms": 180.02820900073857,
+    "artifact": "bench/ip/diagnosis/cup_d70_h60mm_1_offcenter.npz",
+    "new_selected": 1,
+    "new_iou": 0.9767628205128205
+  },
+  {
+    "object": "cup_d70_h60mm",
+    "seed": 2,
+    "point_type": "center",
+    "click": [
+      379,
+      219
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      48,
+      115,
+      163
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.4501953125,
+      0.96240234375,
+      0.0546875
+    ],
+    "areas": [
+      435,
+      1002,
+      12416
+    ],
+    "ious": [
+      0.4291497975708502,
+      0.9750499001996008,
+      0.07868878865979381
+    ],
+    "selected": 1,
+    "selected_iou": 0.9750499001996008,
+    "oracle_iou": 0.9750499001996008,
+    "gt_area": 977,
+    "ms": 205.19075699940004,
+    "artifact": "bench/ip/diagnosis/cup_d70_h60mm_2_center.npz",
+    "new_selected": 1,
+    "new_iou": 0.9750499001996008
+  },
+  {
+    "object": "cup_d70_h60mm",
+    "seed": 2,
+    "point_type": "offcenter",
+    "click": [
+      395,
+      209
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      93,
+      155,
+      195
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.37109375,
+      0.96142578125,
+      0.006412506103515625
+    ],
+    "areas": [
+      418,
+      995,
+      65342
+    ],
+    "ious": [
+      0.40766902119071646,
+      0.9819095477386934,
+      0.0009508572808500362
+    ],
+    "selected": 1,
+    "selected_iou": 0.9819095477386934,
+    "oracle_iou": 0.9819095477386934,
+    "gt_area": 977,
+    "ms": 170.81580299964116,
+    "artifact": "bench/ip/diagnosis/cup_d70_h60mm_2_offcenter.npz",
+    "new_selected": 1,
+    "new_iou": 0.9819095477386934
+  },
+  {
+    "object": "cup_d70_h60mm",
+    "seed": 3,
+    "point_type": "center",
+    "click": [
+      376,
+      216
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      48,
+      116,
+      164
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.410400390625,
+      0.9697265625,
+      0.062103271484375
+    ],
+    "areas": [
+      430,
+      983,
+      12342
+    ],
+    "ious": [
+      0.4387966804979253,
+      0.9735503560528993,
+      0.07754010695187166
+    ],
+    "selected": 1,
+    "selected_iou": 0.9735503560528993,
+    "oracle_iou": 0.9735503560528993,
+    "gt_area": 957,
+    "ms": 267.4638819999018,
+    "artifact": "bench/ip/diagnosis/cup_d70_h60mm_3_center.npz",
+    "new_selected": 1,
+    "new_iou": 0.9735503560528993
+  },
+  {
+    "object": "cup_d70_h60mm",
+    "seed": 3,
+    "point_type": "offcenter",
+    "click": [
+      392,
+      207
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      70,
+      168,
+      238
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.341064453125,
+      0.953125,
+      0.006984710693359375
+    ],
+    "areas": [
+      370,
+      980,
+      57860
+    ],
+    "ious": [
+      0.36945304437564497,
+      0.976530612244898,
+      0.0015154611088407574
+    ],
+    "selected": 1,
+    "selected_iou": 0.976530612244898,
+    "oracle_iou": 0.976530612244898,
+    "gt_area": 957,
+    "ms": 201.3732549994529,
+    "artifact": "bench/ip/diagnosis/cup_d70_h60mm_3_offcenter.npz",
+    "new_selected": 1,
+    "new_iou": 0.976530612244898
+  },
+  {
+    "object": "cup_d70_h60mm",
+    "seed": 4,
+    "point_type": "center",
+    "click": [
+      413,
+      231
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      47,
+      113,
+      161
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.340087890625,
+      0.9736328125,
+      0.0278472900390625
+    ],
+    "areas": [
+      464,
+      1084,
+      13025
+    ],
+    "ious": [
+      0.4381491973559962,
+      0.9769372693726938,
+      0.08130518234165067
+    ],
+    "selected": 1,
+    "selected_iou": 0.9769372693726938,
+    "oracle_iou": 0.9769372693726938,
+    "gt_area": 1059,
+    "ms": 204.0975680001793,
+    "artifact": "bench/ip/diagnosis/cup_d70_h60mm_4_center.npz",
+    "new_selected": 1,
+    "new_iou": 0.9769372693726938
+  },
+  {
+    "object": "cup_d70_h60mm",
+    "seed": 4,
+    "point_type": "offcenter",
+    "click": [
+      431,
+      223
+    ],
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "rgb_dtype": "uint8",
+    "rgb_pixel": [
+      86,
+      145,
+      184
+    ],
+    "mask_shape": [
+      3,
+      480,
+      640
+    ],
+    "model": "sam2.1_hiera_s",
+    "channel_order": "MuJoCo RGB unchanged",
+    "scores": [
+      0.29248046875,
+      0.97119140625,
+      0.0192413330078125
+    ],
+    "areas": [
+      414,
+      1074,
+      60495
+    ],
+    "ious": [
+      0.3870056497175141,
+      0.9841860465116279,
+      0.016833236970347734
+    ],
+    "selected": 1,
+    "selected_iou": 0.9841860465116279,
+    "oracle_iou": 0.9841860465116279,
+    "gt_area": 1059,
+    "ms": 158.73535299942887,
+    "artifact": "bench/ip/diagnosis/cup_d70_h60mm_4_offcenter.npz",
+    "new_selected": 1,
+    "new_iou": 0.9841860465116279
+  }
+]

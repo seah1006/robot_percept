@@ -1,0 +1,35 @@
+[
+  {
+    "object": "mustard",
+    "perception": "gt",
+    "gt_assist": "on",
+    "n": 3,
+    "successes": 3,
+    "wilson95": [
+      0.4385029682449546,
+      1.0
+    ]
+  },
+  {
+    "object": "box",
+    "perception": "gt",
+    "gt_assist": "on",
+    "n": 3,
+    "successes": 3,
+    "wilson95": [
+      0.4385029682449546,
+      1.0
+    ]
+  },
+  {
+    "object": "cup",
+    "perception": "gt",
+    "gt_assist": "on",
+    "n": 3,
+    "successes": 3,
+    "wilson95": [
+      0.4385029682449546,
+      1.0
+    ]
+  }
+]

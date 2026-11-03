@@ -76,6 +76,24 @@
   </section>
 
   <aside class="side">
+    <section class="card focus-card" id="focus-panel" hidden aria-label="선택 물체 상세">
+      <div class="card-head"><h2>선택 물체 뷰</h2><span class="tag" id="focus-name">-</span></div>
+      <div class="focus-tabs" role="tablist" aria-label="물체 보기">
+        <button class="btn active" id="focus-crop-tab" role="tab" aria-selected="true" aria-controls="focus-crop">확대 뷰</button>
+        <button class="btn" id="focus-model-tab" role="tab" aria-selected="false" aria-controls="focus-model">3D 모델</button>
+      </div>
+      <div id="focus-crop" role="tabpanel"><img id="focus-image" alt="선택 물체 실시간 확대 영상"><p class="hint">추정 3D 경계 투영 · 배경 어둡게</p></div>
+      <div id="focus-model" role="tabpanel" hidden><div id="focus-canvas"></div><label class="focus-auto"><input type="checkbox" id="focus-rotate">자동 회전</label><p id="focus-model-note" class="hint">드래그: 회전 · 휠: 확대</p></div>
+      <dl class="kv focus-info">
+        <dt>크기 (mm)</dt><dd id="focus-size">-</dd>
+        <dt>추정 위치 · 월드/로봇 (mm)</dt><dd id="focus-position">-</dd>
+        <dt>회전 R/P/Y (°)</dt><dd id="focus-rotation">-</dd>
+        <dt>시뮬 정답 비교 (mm / °)</dt><dd id="focus-error">-</dd>
+        <dt>마스크 IoU</dt><dd id="focus-iou">-</dd>
+        <dt>추적 상태</dt><dd id="focus-tracking">-</dd>
+        <dt>집기 모드</dt><dd id="focus-grasp">-</dd>
+      </dl>
+    </section>
     <section class="card reveal">
       <div class="card-head"><h2>자세 추정</h2><span class="tag" id="perception">-</span></div>
       <div class="metric-grid">
@@ -131,5 +149,9 @@
 
 <script src="/static/vendor/motion.js"></script>
 <script src="/static/app.js"></script>
+<script type="importmap">{"imports":{"three":"/static/vendor/three/three.module.js"}}</script>
+<script type="module" src="/static/focus.js"></script>
+<script src="/static/teleop.js"></script>
+<script src="/static/humanoid.js"></script>
 </body>
 </html>

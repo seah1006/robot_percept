@@ -1,0 +1,71 @@
+{
+  "config": {
+    "perception": "fp",
+    "gt_assist": "on",
+    "objects": "mustard,box,cup",
+    "n": 30,
+    "seeds": null,
+    "seed": 0,
+    "frames": 5,
+    "pick": "off",
+    "width": 640,
+    "height": 480,
+    "out": "bench/eval/fp_n30_r3",
+    "save_replay": true
+  },
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29
+  ],
+  "git_hash": "a408c2ddc986c16eeef30ae2b2a502e7398abd61",
+  "dirty": " M sim/control.py\n M sim/grasp.py\n M sim/ik.py\n M tests/test_pick_place.py\n M web/app.py\n M web/perception_stub.py\n M web/sim_worker.py\n M web/static/app.js\n M web/static/style.css\n M web/templates/index.html\n?? bench/eval/\n?? bench/ip/\n?? bench/verify_c/\n?? bench/verify_e/\n?? bench/verify_p/\n?? eval/harness/\n?? eval/report/\n?? eval/run_benchmark.py\n?? notes/TEAM.md\n?? notes/control_api.md\n?? notes/control_changes.md\n?? notes/eval_changes.md\n?? notes/focus_view.md\n?? notes/gt_usage.md\n?? notes/perception_changes.md\n?? notes/verify_e.md\n?? perception/sam_runner.py\n?? sim/teleop.py\n?? tools/teleop_tracker_win.py\n?? web/focus.py\n?? web/static/focus.js\n?? web/static/teleop.js\n?? web/static/vendor/three/\n?? web/teleop.py\n",
+  "python": "3.12.14 | packaged by Anaconda, Inc. | (main, Aug 27 2026, 14:46:43) [GCC 14.3.0]",
+  "gt_disclosure": "GT supplies target identity and nearest-visible-centroid click only for fp; all GT poses score-only except explicitly enabled control assistance. SAM chooses argmax model score.",
+  "source_sha256": {
+    "eval/run_benchmark.py": "991f5274a7334abd65b9481306ea928e5eb08718da2966314851d497602537e7",
+    "eval/harness/__init__.py": "41bc680c965c2c96dc4c5b1d60fccb952fc58111dbd9124c7affabefd55ba386",
+    "eval/harness/metrics.py": "f4149e5f7579a17b11cac09eed739516d73098e1dbbdf076122f949e7fd9471a",
+    "eval/harness/report.py": "b9afc2c5ec84dc6d3f22b22cb0e9e408ef339438bb58b8763da008170c594383",
+    "eval/harness/rescore.py": "1f28877472ba5f6cfa37dd27680a3c2afe1a19fde7e55b84339bf30d467038e4",
+    "eval/harness/worker.py": "8f8a2eca3bfe242bcbd837f1fd1387e71a074bf6e174e9fbda562c412653188a"
+  },
+  "dependencies": {
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "mujoco": "3.17.0",
+    "torch": "2.14.0+cu130",
+    "trimesh": "5.2.0"
+  },
+  "upstream_git": {
+    "FoundationPose": "a1b694b83e633c2cb6115b9063d940a687759392",
+    "sam2.1": "2b90b9f5ceec907a1c18123530e92e794ad901a4"
+  }
+}

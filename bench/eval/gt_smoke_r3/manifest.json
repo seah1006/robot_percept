@@ -1,0 +1,28 @@
+{
+  "config": {
+    "perception": "gt",
+    "gt_assist": "on",
+    "objects": "mustard,box,cup",
+    "n": 3,
+    "seeds": null,
+    "seed": 0,
+    "frames": 5,
+    "pick": "off",
+    "width": 640,
+    "height": 480,
+    "out": "bench/eval/gt_smoke_v1",
+    "save_replay": false
+  },
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "git_hash": "a408c2ddc986c16eeef30ae2b2a502e7398abd61",
+  "dirty": " M sim/grasp.py\n M sim/ik.py\n?? bench/ip/\n?? bench/verify_c/\n?? bench/verify_e/\n?? bench/verify_p/\n?? eval/harness/\n?? eval/run_benchmark.py\n?? notes/TEAM.md\n?? notes/verify_e.md\n",
+  "python": "3.12.14 | packaged by Anaconda, Inc. | (main, Aug 27 2026, 14:46:43) [GCC 14.3.0]",
+  "gt_disclosure": "GT supplies target identity and nearest-visible-centroid click only for fp; all GT poses score-only except explicitly enabled control assistance. SAM chooses argmax model score.",
+  "derived_from": "/home/user/work/robot_percept/bench/eval/gt_smoke_v1",
+  "rescore_policy": "mustard ADD; box ADD-S/D2; cup ADD-S + <=20deg yaw-symmetry rotation",
+  "metrics_sha256": "f4149e5f7579a17b11cac09eed739516d73098e1dbbdf076122f949e7fd9471a"
+}

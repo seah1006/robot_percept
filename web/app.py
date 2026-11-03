@@ -36,10 +36,12 @@ class Runtime:
   with self.state_lock:
    self.status["need_depth"]=False; self.generation+=1; self.selected=None; self.estimate=None; self.mask=None; self.metrics={}
  def track_loop(self):
-  last_seq=-1
+  last_seq=-1; tracking_generation=None; tracking_start=None; update_count=0
   while self.running:
    time.sleep(.003)
    with self.state_lock: name=self.selected; generation=self.generation
+   if generation!=tracking_generation:
+    tracking_generation=generation; tracking_start=None; update_count=0
    st=dict(self.status)
    if not name or st.get("frame_seq")==last_seq:continue
    if st.get("phase","idle")!="idle" or st.get("held_object") or st.get("active_command"):
@@ -56,7 +58,13 @@ class Runtime:
     else:est=estimate_pose(rgb,depth,None,{"gt_pose":st["objects"][name]["T_cam_obj"]},name)
     with self.state_lock:
      if generation==self.generation:
-      self.estimate=est; self.metrics["tracking_state"]="tracking"; self.metrics["tracking_fps"]=1/max(time.perf_counter()-t,.0001); self.metrics["estimate_timestamp"]=time.time()
+      self.estimate=est; self.metrics["tracking_state"]="tracking"
+      now=time.perf_counter()
+      if tracking_start is None:tracking_start=t
+      update_count+=1
+      self.metrics["tracking_updates"]=update_count
+      self.metrics["tracking_fps"]=update_count/max(now-tracking_start,.0001)
+      self.metrics["estimate_timestamp"]=time.time()
    except Exception as exc:
     self.perception.warning=str(exc).splitlines()[-1]
     with self.state_lock:self.estimate=None
@@ -102,6 +110,11 @@ class Runtime:
 
 def create_app():
  app=Flask(__name__); app.config["MAX_CONTENT_LENGTH"]=100*1024*1024; rt=Runtime(); app.extensions["sim_runtime"]=rt; atexit.register(rt.close)
+ from .teleop import create_blueprint as teleop_blueprint
+ app.register_blueprint(teleop_blueprint(rt))
+ from .humanoid import create_blueprint as humanoid_blueprint
+ app.register_blueprint(humanoid_blueprint(panda_runtime=rt))  # G1 worker starts only on /humanoid/mode
+ from .focus import focus; app.register_blueprint(focus)
  @app.get("/")
  def index():return render_template("index.html",width=WIDTH,height=HEIGHT)
  def overlay(show_gt=False):
@@ -186,15 +199,15 @@ def create_app():
    body,code=select_at(x,y,rgb,depth,seg,st,objects,K)
    return jsonify(body),code
  def select_at(x,y,rgb,depth,seg,st,objects,K):
-   rt.drop(); generation=rt.generation
+   generation=rt.generation  # 실패한 클릭은 기존 선택을 지우지 않음 (성공 시에만 교체)
    t0=time.perf_counter();metrics={}
    try:
     if rt.perception.mode=="fp":
-     result=rt.perception.call("segment",rgb=rgb,click=(x,y));mask=result["mask"];metrics["sam_ms"]=result["ms"]
+     result=rt.perception.call("segment",rgb=rgb,depth=depth,click=(x,y));mask=result["mask"];metrics["sam_ms"]=result["ms"];metrics["sam_selected"]=result["sam_selected"]
     else:mask=seg==int(seg[y,x]);metrics["sam_ms"]=0
     overlaps={n:int(np.count_nonzero(mask & (seg==int(o["id"])))) for n,o in objects.items()}
     name=max(overlaps,key=overlaps.get) if overlaps else None
-    if name is None or overlaps[name]==0:return dict(ok=False,error="마스크와 겹치는 물체가 없습니다"),404
+    if name is None or overlaps[name]==0:return dict(ok=False,error="물체가 아닌 곳을 클릭했어요. 병이나 물체 위를 클릭해 주세요"),404
     gt=np.asarray(objects[name]["T_cam_obj"])
     if rt.perception.mode=="fp":
      result=rt.perception.call("register",name=name,mesh=objects[name]["mesh"],rgb=rgb,depth=depth,mask=mask,K=K)
@@ -205,6 +218,7 @@ def create_app():
    ms=(time.perf_counter()-t0)*1000
    with rt.state_lock:
     if generation!=rt.generation:return dict(ok=False,error="장면이 변경되었습니다. 다시 선택하세요"),409
+    rt.generation+=1  # 이전 물체 추적 결과가 새 선택을 덮어쓰지 않게
     rt.selected,rt.estimate,rt.estimate_time_ms,rt.mask,rt.metrics=name,est,ms,mask,metrics
     rt.status["need_depth"]=True
    trans=float(np.linalg.norm(est[:3,3]-gt[:3,3])*1000);rot=_rerr(est,gt);rt.log(f"{name} 선택, 추정 오차 {trans:.1f} mm / {rot:.1f} deg")
@@ -228,14 +242,14 @@ def create_app():
   with rt.state_lock:name=data.get("target") or rt.selected;est=None if rt.estimate is None else rt.estimate.tolist()
   if not name or est is None or name!=rt.selected:return jsonify(ok=False,error="먼저 영상에서 물체를 선택하세요"),400
   st=dict(rt.status);rt.obj_center_z=float((np.asarray(st["T_world_cam"])@np.asarray(est))[2,3])
-  cid=rt.send("pick",name=name,T_cam_obj=est);rt.log(f"집기 명령: {name} ({cid})");return jsonify(ok=True,command_id=cid,target=name),202
+  cid=rt.send("pick",name=name,T_cam_obj=est,gt_assist=data.get("gt_assist",True));rt.log(f"집기 명령: {name} ({cid})");return jsonify(ok=True,command_id=cid,target=name),202
  @app.post("/robot/place")
  def place():
   data=request.get_json(silent=True) or {};xyz=data.get("xyz")
   if xyz is None and all(k in data for k in ("x","y","z")):xyz=[data["x"],data["y"],data["z"]]
   if xyz is None:xyz=[.55,.18,.34]
   if len(xyz)!=3:return jsonify(ok=False,error="xyz는 길이 3이어야 합니다"),400
-  cid=rt.send("place",xyz=[float(v) for v in xyz]);rt.log(f"놓기 명령 ({cid})")
+  cid=rt.send("place",xyz=[float(v) for v in xyz],**({"gt_assist":data["gt_assist"]} if "gt_assist" in data else {}));rt.log(f"놓기 명령 ({cid})")
   if rt.selected:threading.Thread(target=reacquire_after,args=(cid,[float(xyz[0]),float(xyz[1]),getattr(rt,"obj_center_z",float(xyz[2])+.08)]),daemon=True).start()
   return jsonify(ok=True,command_id=cid,xyz=xyz),202
  @app.post("/reset")

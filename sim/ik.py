@@ -56,7 +56,7 @@ def _rotation_error(Rgoal, R):
 
 def solve_ik(model, data, target_T_world_ee, q_init=None, tcp="tcp",
              pos_tol=0.001, rot_tol=np.deg2rad(1), max_iters=160,
-             home=HOME, damping=0.025):
+             home=HOME, damping=0.025, restarts=10):
     """Return (q7, success). Does not modify caller data.
 
     Null-space projected posture bias and limit clamping keep solutions away
@@ -76,7 +76,7 @@ def solve_ik(model, data, target_T_world_ee, q_init=None, tcp="tcp",
     home = np.asarray(home)
     best, best_cost = q.copy(), float("inf")
     rng = np.random.default_rng(723)
-    for iteration in range(max_iters * 10):
+    for iteration in range(max_iters * restarts):
         if iteration and iteration % max_iters == 0:
             # Local minima near arm singularities: retry from a new valid posture.
             q = rng.uniform(limits[:, 0] + .02, limits[:, 1] - .02)

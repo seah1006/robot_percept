@@ -50,7 +50,7 @@ def tune_gripper(model, kp=1500.0):
 
 
 class Controller:
-    def __init__(self, model, data=None, env=None, tcp="tcp", step_hook=None):
+    def __init__(self, model, data=None, env=None, tcp="tcp", step_hook=None, gt_assist=True):
         if env is None and data is None and hasattr(model, "model"):
             env, model = model, model.model
         self.env = env
@@ -60,6 +60,9 @@ class Controller:
         self.qadr, self.dofs, self.limits = arm_indices(model)
         self.fadr = np.array([model.jnt_qposadr[model.joint(f"finger_joint{i}").id] for i in (1, 2)])
         self.step_hook = step_hook
+        self.gt_assist = bool(gt_assist)
+        self._estimated_ee_obj = None
+        self._estimated_obj_pose = None
         tune_gripper(model)
 
     def ee_pose(self):
@@ -199,9 +202,11 @@ class Controller:
         from .grasp import choose_grasp
         cb = phase_cb or (lambda p: None)
         plan = choose_grasp(self.model, self.data, T_world_obj, bounds, tcp=self.tcp)
+        self._estimated_ee_obj = np.linalg.inv(plan["grasp"]) @ np.asarray(T_world_obj, float)
+        self._estimated_obj_pose = np.asarray(T_world_obj, float).copy()
         z0 = object_pose_fn()[2, 3] if object_pose_fn else None
         cb(f"pick.open({plan['mode']})"); self.open_gripper()
-        self._pick_z0 = object_pose_fn()[2, 3] if object_pose_fn else None
+        self._pick_z0 = (object_pose_fn()[2, 3] if object_pose_fn else None) if self.gt_assist else float(np.asarray(T_world_obj)[2, 3])
         from .grasp import world_aabb
         top = world_aabb(np.asarray(T_world_obj, float), bounds)[1][2]
         hp = plan["pre"].copy(); hp[2, 3] = max(hp[2, 3] + 0.12, top + 0.12)   # 물체 꼭대기보다 높이 먼저 이동 (팔이 물체를 쓸지 않게)
@@ -220,7 +225,7 @@ class Controller:
         cb("pick.reach"); self.move_cartesian(plan["grasp"], duration=1.2, n_waypoints=20)
         cb("pick.grasp"); width = self.close_gripper()
         held = self._finger_contact_body()
-        if held: self.attach(held)                     # 양쪽 손가락 접촉 확인 시에만 고정
+        if held and self.gt_assist: self.attach(held)                     # 양쪽 손가락 접촉 확인 시에만 고정
         cb("pick.lift"); up = plan["grasp"].copy(); up[2, 3] += lift
         try:
             self.move_cartesian(up, duration=1.5)
@@ -236,8 +241,9 @@ class Controller:
                 except RuntimeError:
                     if fraction == .55: raise
         lifted = None if z0 is None else float(object_pose_fn()[2, 3] - z0)
-        ok = width > 0.004 and (lifted is None or lifted > 0.5 * lift)
-        return dict(ok=bool(ok), width=float(width), lifted=lifted, mode=plan["mode"])
+        gt_lift_ok = lifted is None or lifted > 0.5 * lift
+        ok = width > 0.004 and (gt_lift_ok if self.gt_assist else held is not None)
+        return dict(ok=bool(ok), width=float(width), lifted=lifted, gt_lift_ok=bool(gt_lift_ok), mode=plan["mode"])
 
 
     def _close_enough(self, q, T, pos_tol=0.004, rot_tol_deg=4.0):
@@ -266,8 +272,16 @@ class Controller:
     def place_object(self, target_xy, object_pose_fn, phase_cb=None, release_gap=0.006, base_xy=(0., 0.)):
         """잡고 있는 물체를 테이블 위 target_xy 에 세워서 내려놓기 (물체 yaw 는 팔이 편한 방향으로 자동)."""
         cb = phase_cb or (lambda p: None)
-        E = self.ee_pose(); O = object_pose_fn()
-        rel = np.linalg.inv(E) @ O                                   # T_ee_obj (잡은 상태)
+        E = self.ee_pose()
+        if self.gt_assist:
+            O = object_pose_fn()
+            rel = np.linalg.inv(E) @ O
+        else:
+            if self._estimated_ee_obj is None or self._estimated_obj_pose is None:
+                raise RuntimeError("estimated grasp transform missing; call pick_object first")
+            rel = self._estimated_ee_obj.copy()
+            O = E @ rel
+        #                                   # T_ee_obj (잡은 상태)
         # 손 접근방향(수평)을 로봇->목표 방향으로 맞추도록 z축 회전
         a = E[:3, 2].copy(); a[2] = 0
         if np.linalg.norm(a) > 0.3:
@@ -295,11 +309,11 @@ class Controller:
         desired, G, pre = found
         cb("place.transport"); self.move_to_pose_joint(pre)
         cb("place.lower"); self.move_cartesian(G, duration=1.5, n_waypoints=20)
-        for _ in range(2):                                            # 미끄러짐 보정
+        for _ in range(2 if self.gt_assist else 0):                  # GT slip correction only in assist mode
             err = desired[:2, 3] - object_pose_fn()[:2, 3]
             if np.linalg.norm(err) < 0.003: break
             G[:2, 3] += np.clip(err, -0.02, 0.02); self.move_cartesian(G, duration=.5, n_waypoints=8)
-        lowered = object_pose_fn()[2, 3] - desired[2, 3]
+        lowered = object_pose_fn()[2, 3] - desired[2, 3] if self.gt_assist else 0.0
         if lowered > 0.02:                                            # 목표 높이까지 못 내려감 -> 떨어뜨리지 않고 중단
             self.move_cartesian(pre, duration=1.0)
             raise RuntimeError(f"내려놓는 위치까지 팔이 내려가지 못했습니다 ({lowered*100:.1f}cm 위)")
@@ -310,8 +324,75 @@ class Controller:
         else: back[:3, 3] -= back[:3, 2] * 0.08                       # 옆에서 잡았으면 뒤로 빠짐
         cb("place.retreat"); self.move_cartesian(back, duration=1.0)
         up = self.ee_pose(); up[2, 3] += 0.05; self.move_cartesian(up, duration=.6)
-        fin = object_pose_fn()
+        fin = object_pose_fn()  # GT scoring only; never feeds off-mode motion
         return dict(err_mm=float(np.linalg.norm(fin[:2, 3] - desired[:2, 3]) * 1000), upright=float(fin[2, 2] / max(abs(O[2, 2]), 1e-6) if abs(O[2,2])>0.5 else fin[:3,:3][:,2] @ desired[:3,:3][:,2]))
+
+
+    def _home_contacts(self, d, object_name=None):
+        """Reject arm contact with table/floor or any scene object."""
+        m = self.model
+        arm = {m.body(n).id for n in ("hand", "left_finger", "right_finger")}
+        arm.update(m.body(i).id for i in range(m.nbody) if m.body(i).name.startswith("link") and m.body(i).name != "link0")
+        targets = {m.body("table").id, 0}
+        targets.update(m.body(i).id for i in range(m.nbody)
+                       if mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_EQUALITY, "grasp_" + m.body(i).name) >= 0)
+        for c in d.contact[:d.ncon]:
+            a, b = m.geom_bodyid[c.geom1], m.geom_bodyid[c.geom2]
+            if ((a in arm and b in targets) or (b in arm and a in targets)) and c.dist < -0.001:
+                return True
+        return False
+
+    def return_home(self, object_pose_fn=None, duration=2.0):
+        """After release and retreat, preflight an interpolated joint path, then execute."""
+        if getattr(self, "attached", None):
+            raise RuntimeError("Cannot return home while object is attached")
+        before = object_pose_fn()[:3, 3].copy() if object_pose_fn else None
+        q1 = np.asarray(HOME)
+        scratch = mujoco.MjData(self.model)
+        def clear_path():
+            q_start = self.data.qpos[self.qadr].copy()
+            for t in np.linspace(0, 1, 81):
+                scratch.qpos[:] = self.data.qpos
+                scratch.qpos[self.qadr] = q_start + t * (q1 - q_start)
+                mujoco.mj_forward(self.model, scratch)
+                if self._home_contacts(scratch):
+                    return False
+            return True
+        if not clear_path():
+            # Side grasps can sweep a fingertip through the placed object on
+            # direct interpolation. First rise vertically with contact checks.
+            target = self.ee_pose(); target[2, 3] += .10
+            old_hook = self.step_hook
+            def checked_step(controller):
+                if self._home_contacts(self.data):
+                    raise RuntimeError("Collision during home clearance retreat")
+                if old_hook is not None: old_hook(controller)
+            self.step_hook = checked_step
+            try:
+                self.move_cartesian(target, duration=.8)
+            finally:
+                self.step_hook = old_hook
+            if not clear_path():
+                raise RuntimeError("Home path intersects table or object after clearance retreat")
+        q0 = self.data.qpos[self.qadr].copy()
+        self.data.ctrl[:7] = q0
+        n = max(1, int(np.ceil(duration / self.model.opt.timestep)))
+        for k in range(1, n + 1):
+            t = k / n; u = 10*t**3 - 15*t**4 + 6*t**5
+            self.data.ctrl[:7] = q0 + u * (q1 - q0)
+            self._step()
+            if self._home_contacts(self.data):
+                raise RuntimeError("Collision during home motion")
+        self.data.ctrl[:7] = q1
+        for _ in range(int(.35 / self.model.opt.timestep)):
+            self._step()
+            if self._home_contacts(self.data):
+                raise RuntimeError("Collision while settling at home")
+        error = float(np.max(np.abs(self.data.qpos[self.qadr] - q1)))
+        displacement = float(np.linalg.norm(object_pose_fn()[:3, 3] - before)) if before is not None else None
+        if error >= .02 or (displacement is not None and displacement >= .005):
+            raise RuntimeError(f"Home invariant failed: joint={error:.4f}, object={displacement}")
+        return dict(joint_error=error, object_displacement=displacement)
 
 
     # ---- grasp assist: 물리 접촉으로 잡힌 것이 확인되면 손-물체를 weld 로 고정 (미끄러짐/회전 방지) ----

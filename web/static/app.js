@@ -68,12 +68,15 @@ function ripple (px, py, place) {
   else setTimeout(() => r.remove(), 600);
 }
 
+let clickBusy = false;
 video.addEventListener('click', async e => {
+  if (clickBusy) { toast('이전 클릭을 처리하는 중이에요. 잠시만 기다려 주세요'); return; }
   const rect = video.getBoundingClientRect();
   const x = (e.clientX - rect.left) * video.naturalWidth / rect.width;
   const y = (e.clientY - rect.top) * video.naturalHeight / rect.height;
   ripple(e.clientX - wrap.getBoundingClientRect().left, e.clientY - wrap.getBoundingClientRect().top, placeMode);
   const mode = placeMode ? 'place' : 'select';
+  clickBusy = true;
   busy(true, mode === 'place' ? '놓을 위치로 이동 중' : 'SAM2 분할 · FoundationPose 등록 중');
   try {
     const j = await post('/click', { x, y, mode });
@@ -81,7 +84,7 @@ video.addEventListener('click', async e => {
     else toast(`${j.object} 선택 · 오차 ${j.error_mm.toFixed(1)}mm / ${j.error_deg.toFixed(1)}°`, 'ok');
     setPlaceMode(false);
   } catch (err) { toast(err.message, 'err'); }
-  finally { busy(false); }
+  finally { busy(false); clickBusy = false; }
 });
 
 $('#pick').onclick = () => post('/robot/pick', {}).then(() => toast('집기 시작', 'ok')).catch(e => toast(e.message, 'err'));
@@ -143,6 +146,7 @@ function renderLogs (logs) {
 async function status () {
   try {
     const s = await fetch('/status').then(r => r.json());
+    window.dispatchEvent(new CustomEvent('robot-status', {detail: s}));
     const pill = $('#health-pill'); pill.classList.toggle('ok', !!s.ready); pill.classList.remove('bad');
     $('#health').textContent = s.ready ? (s.state === 'busy' ? '로봇 동작 중' : '연결됨') : '시작 중';
     $('#state').textContent = s.state || '-';
@@ -181,4 +185,18 @@ async function status () {
     $('#health').textContent = '연결 끊김'; $('#health-pill').classList.add('bad');
   }
 }
-setInterval(status, 500); status();
+setInterval(status, 333); status();
+
+// ---- 스트림 자동 재연결: 서버 재시작/일시 끊김 뒤 영상이 깨진 아이콘으로 남지 않게 ----
+function reconnectStream (img) {
+  if (!img || img.dataset.reconnect) return;
+  img.dataset.reconnect = '1';
+  img.addEventListener('error', () => {
+    const base = (img.getAttribute('src') || '').split('&_r=')[0].split('?_r=')[0];
+    if (!base) return;
+    setTimeout(() => { img.src = base + (base.includes('?') ? '&' : '?') + '_r=' + Date.now(); }, 1500);
+  });
+}
+document.querySelectorAll('img').forEach(reconnectStream);
+new MutationObserver(() => document.querySelectorAll('img').forEach(reconnectStream))
+  .observe(document.body, { childList: true, subtree: true });

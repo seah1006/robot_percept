@@ -58,11 +58,17 @@ def run_worker(cfg, shm_names, lock, command_q, status):
             status["phase"]=p; status["state"]="busy" if p not in ("idle","ready") else "ready"
 
         adapter=ControlAdapter(env,set_phase)
+        from sim.teleop import TeleopServo
+        teleop=TeleopServo(env,status)
+        humanoid_render_paused=False  # mode-on only; physics and C commands continue
 
         def publish(force=False):
             nonlocal last_render,frame_count,fps_t0
             now=time.monotonic()
             if not force and now-last_render < 1/30: return
+            if not force and humanoid_render_paused:
+                last_render=now
+                return
             need_depth=force or bool(status.get("need_depth",False))
             # Refresh segmentation whenever an object has moved since its mask,
             # including uncommanded falling/bumping while tracking.
@@ -94,6 +100,7 @@ def run_worker(cfg, shm_names, lock, command_q, status):
             status["arm_qpos"]=env.arm_qpos().round(6).tolist(); status["objects"]=objs
             status["frame_seq"]=int(status.get("frame_seq",0))+1; status["timestamp"]=time.time()
 
+        rtf_wall=time.monotonic(); rtf_sim=float(env.data.time)
         adapter.render_hook=publish
         status.update({"ready":False,"state":"starting","phase":"idle","error":None,"fps":0.0,"frame_seq":0,"camera":current_cam,"last_command":None,"held_object":None})
         publish(True); status["ready"]=True; status["state"]="ready"; next_step=time.monotonic(); running=True
@@ -104,8 +111,13 @@ def run_worker(cfg, shm_names, lock, command_q, status):
                 cid,op=cmd.get("id"),cmd.get("op")
                 try:
                     status["active_command"]=cid
+                    if op not in ("refresh","set_view"): status["teleop_enabled"]=False
                     if op=="shutdown": running=False
                     elif op=="refresh": pass
+                    elif op=="teleop_render_pause":
+                        humanoid_render_paused=bool(cmd.get("enabled",False))
+                        status["humanoid_render_paused"]=humanoid_render_paused
+                        frame_count=0; fps_t0=time.monotonic(); last_render=0.
                     elif op=="reset":
                         set_phase("reset"); env.reset(seed=cmd.get("seed"),randomize=cmd.get("randomize",False)); adapter=ControlAdapter(env,set_phase); adapter.render_hook=publish; status["held_object"]=None
                     elif op=="randomize":
@@ -117,8 +129,9 @@ def run_worker(cfg, shm_names, lock, command_q, status):
                         Tco=np.asarray(raw if raw is not None else env.T_cam_obj(name,current_cam),float)
                         Two=env.T_world_cam(current_cam)@Tco; ext=env.registry[name].bounds[1]-env.registry[name].bounds[0]
                         status["held_object"]=None
+                        adapter.controller.gt_assist=bool(cmd.get("gt_assist", True))
                         res=adapter.controller.pick_object(Two,env.registry[name].bounds,phase_cb=set_phase,object_pose_fn=lambda:env.T_world_obj(name))
-                        status["gripper_width"]=res["width"]; status["grasp_mode"]=res["mode"]
+                        status["gripper_width"]=res["width"]; status["grasp_mode"]=res["mode"]; status["last_pick"]={"ok":bool(res["ok"]),"gt_lift_ok":res.get("gt_lift_ok"),"lifted_m":res.get("lifted")}
                         if not res["ok"]:
                             adapter.controller.open_gripper(); raise RuntimeError(f"집기 실패: 물체가 들리지 않았습니다 (들린 높이 {100*(res['lifted'] or 0):.1f}cm)")
                         status["held_object"]=name
@@ -126,19 +139,38 @@ def run_worker(cfg, shm_names, lock, command_q, status):
                         name=status.get("held_object")
                         if not name: raise RuntimeError("집고 있는 물체가 없습니다")
                         xyz=np.asarray(cmd.get("xyz",[.55,.15,.34]),float)
+                        if "gt_assist" in cmd: adapter.controller.gt_assist=bool(cmd["gt_assist"])
                         res=adapter.controller.place_object((float(xyz[0]),float(xyz[1])),lambda:env.T_world_obj(name),phase_cb=set_phase)
                         status["held_object"]=None; status["last_place"]={"err_mm":round(res["err_mm"],1),"upright":round(res["upright"],3)}
+                        set_phase("home")
+                        try:
+                            status["last_home"]=adapter.controller.return_home(lambda:env.T_world_obj(name)); status["home_warning"]=None
+                        except RuntimeError as exc:
+                            status["last_home"]={"ok":False,"error":str(exc)}; status["home_warning"]=str(exc)
                     elif op=="add_object":
                         set_phase("cad.add"); env.add_object_from_mesh(cmd["name"],cmd["visual_obj"],cmd["collision_objs"],mass=cmd.get("mass",.1),rgba=cmd.get("rgba")); env.reset(randomize=False); adapter=ControlAdapter(env,set_phase); adapter.render_hook=publish
                     else: raise ValueError(f"unknown command: {op}")
                     publish(True); status["last_command"]={"id":cid,"op":op,"ok":True,"time":time.time()}; status["error"]=None
                 except Exception as exc:
                     status["error"]=f"{type(exc).__name__}: {exc}"; status["last_traceback"]=traceback.format_exc(); status["last_command"]={"id":cid,"op":op,"ok":False,"error":status["error"],"time":time.time()}
-                finally: set_phase("idle"); status["active_command"]=None
+                finally:
+                    if status["last_command"]["ok"]: set_phase("idle")
+                    else: status["phase"]="error"; status["state"]="error"
+                    status["active_command"]=None
             now=time.monotonic(); steps=0
             while now>=next_step and steps<100:
+                try: teleop.tick()
+                except Exception as exc:
+                    status["teleop_enabled"]=False
+                    status["teleop_error"]=f"{type(exc).__name__}: {exc}"
+                    # Isolate tracker faults: ordinary simulation/commands keep running.
+                    teleop.was=False
                 env.step(1); next_step += env.model.opt.timestep; steps += 1
             if steps==100 and now>=next_step: next_step=now+env.model.opt.timestep
+            if time.monotonic()-rtf_wall>=1:
+                status["rtf"]=(float(env.data.time)-rtf_sim)/(time.monotonic()-rtf_wall)
+                status["sim_time"]=float(env.data.time)
+                rtf_wall=time.monotonic(); rtf_sim=float(env.data.time)
             publish(); time.sleep(.001)
         env.close()
     except Exception as exc:

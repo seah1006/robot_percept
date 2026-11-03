@@ -125,7 +125,7 @@ def choose_grasp(model, data, T_world_obj, bounds, tcp="tcp"):
         h = home.copy(); h[3] = -2.2; h[5] = j6; seeds.append(h)
     seeds += [rng.uniform(lim[:, 0] * .8, lim[:, 1] * .8) for _ in range(6)]
     def solve_pair(G, P, seed, fast):
-        kw = dict(tcp=tcp, max_iters=16) if fast else dict(tcp=tcp)
+        kw = dict(tcp=tcp, max_iters=16, restarts=1) if fast else dict(tcp=tcp)
         qp, ok = solve_ik(model, data, P, q_init=seed, **kw)
         if not (ok or _close(model, data, qadr, qp, P, tcp)) or hits(qp):
             return None
@@ -133,26 +133,26 @@ def choose_grasp(model, data, T_world_obj, bounds, tcp="tcp"):
         if not (ok or _close(model, data, qadr, qg, G, tcp)) or hits(qg):
             return None
         return qp, qg
-    for mode, G, P, r in (cands if world_aabb(T_world_obj, bounds)[1][2] - world_aabb(T_world_obj, bounds)[0][2] <= TOP_MAX_H else []):
+    # Fast-first pass applies to tall side grasps as well as short top grasps.
+    # The old tall path always searched every candidate with 1600-step IK.
+    for mode, G, P, r in cands:
         found = solve_pair(G, P, q0, True)
         if found is not None:
             qp, qg = found
             return dict(mode=mode, grasp=G, pre=P, retreat=r, q_pre=qp, q_grasp=qg)
-    best = None
-    for seed_set in (seeds[:2], seeds[2:]):
+    # Bounded deterministic fallback: retain alternate postures, but avoid
+    # multiplying ten internal random restarts by eleven external seed poses.
+    for seed in seeds[:5]:
         for mode, G, P, r in cands:
-            for seed in seed_set:
-                found = solve_pair(G, P, seed, False)
-                if found is None: continue
-                qp, qg = found
-                cost = np.linalg.norm(qp - q0) + np.linalg.norm(qg - qp) + (3.0 if mode == "top-cap" else 0.0)
-                if best is None or cost < best[0]:
-                    best = (cost, mode, G, P, r, qp, qg)
-                break
-        if best is not None: break
-    if best is None:
-        raise RuntimeError("잡을 수 있는 자세가 없습니다 (IK 실패 또는 물체가 너무 넓음/주변 물체 충돌)")
-    return dict(mode=best[1], grasp=best[2], pre=best[3], retreat=best[4], q_pre=best[5], q_grasp=best[6])
+            qp, ok = solve_ik(model, data, P, q_init=seed, tcp=tcp,
+                              max_iters=45, restarts=2)
+            if not (ok or _close(model, data, qadr, qp, P, tcp)) or hits(qp):
+                continue
+            qg, ok = solve_ik(model, data, G, q_init=qp, tcp=tcp,
+                              max_iters=45, restarts=2)
+            if (ok or _close(model, data, qadr, qg, G, tcp)) and not hits(qg):
+                return dict(mode=mode, grasp=G, pre=P, retreat=r, q_pre=qp, q_grasp=qg)
+    raise RuntimeError("잡을 수 있는 자세가 없습니다 (IK 실패 또는 물체가 너무 넓음/주변 물체 충돌)")
 
 
 def _close(model, data, qadr, q, T, tcp, pos_tol=0.004, rot_tol_deg=4.0):

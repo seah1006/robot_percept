@@ -15,7 +15,7 @@ from sim.control import Controller
 from sim.grasp import choose_grasp
 
 NAMES = ('mustard', 'box_fillet_50x30x20mm', 'cup_d70_h60mm')
-STRIP = Path('/mnt/c/Users/USER/.aside/u/0/sessions/2026-10-19_5xmUwlu5vry7k9Rb/tmp/c1/multi_strip.png')
+STRIP = Path('/home/user/work/robot_percept/data/c1_check/multi_strip.png')
 
 def run_one(env, ctl, name, xy):
     obj = lambda: env.T_world_obj(name)
@@ -28,6 +28,10 @@ def run_one(env, ctl, name, xy):
             place = ctl.place_object(xy, obj)
             result['place'] = bool(place['err_mm'] < 20 and place['upright'] > .95)
             result.update(place)
+            if result['place']:
+                home = ctl.return_home(obj)
+                result['home'] = bool(home['joint_error'] < .02 and home['object_displacement'] < .005)
+                result.update(home)
         else:
             result['place'] = False
     except Exception as exc:
@@ -38,6 +42,7 @@ def run_one(env, ctl, name, xy):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--trials', type=int, default=20)
+    ap.add_argument('--no-gt-assist', action='store_true', help='disable grasp weld and true-pose motion corrections')
     ap.add_argument('--suite', choices=('all','single','multi','latency'), default='all')
     args = ap.parse_args()
     records = {}
@@ -46,7 +51,7 @@ def main():
             rows=[]
             for seed in range(args.trials):
                 with SimEnv(objects=(name,), seed=seed) as env:
-                    ctl=Controller(env.model, env.data, env=env)
+                    ctl=Controller(env.model, env.data, env=env, gt_assist=not args.no_gt_assist)
                     pos=env.T_world_obj(name)[:2,3]
                     r=run_one(env,ctl,name,(.50,-.12 if pos[1]>0 else .12))
                     rows.append(r)
@@ -57,7 +62,7 @@ def main():
         rows=[]
         for seed in range(args.trials):
             with SimEnv(objects=NAMES, seed=seed, width=480, height=360) as env:
-                ctl=Controller(env.model,env.data,env=env)
+                ctl=Controller(env.model,env.data,env=env, gt_assist=not args.no_gt_assist)
                 frames=[]
                 if seed==0: frames.append(env.render_rgbd()['rgb'])
                 trial=[]
@@ -91,7 +96,7 @@ def main():
     out.mkdir(exist_ok=True)
     result_file = out/'results.json'
     previous = json.loads(result_file.read_text()) if result_file.exists() else {}
-    previous.update(records)
+    previous.update({("off_" if args.no_gt_assist else "on_")+key: value for key,value in records.items()})
     result_file.write_text(json.dumps(previous,indent=2))
 
 if __name__=='__main__': main()
