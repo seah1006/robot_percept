@@ -35,6 +35,11 @@ class FPRunner:
             raise ValueError('Registration requires a nonempty object mask')
         result = self.est.register(rgb=np.asarray(rgb,dtype=np.uint8), depth=np.asarray(depth_m,dtype=np.float32),
             ob_mask=np.asarray(mask,dtype=bool), K=np.asarray(K), iteration=self.est_refine_iter)
+        if os.environ.get('FP_DEPTH_REFINE', '1') == '1':
+            from perception.depth_refine import refine_pose
+            result = refine_pose(self.mesh, result, np.asarray(depth_m), np.asarray(mask), np.asarray(K))
+            import torch
+            self.est.pose_last = torch.as_tensor(result, device='cuda', dtype=torch.float32) @ torch.linalg.inv(self.est.get_tf_to_centered_mesh())
         self.registered = True
         return result
 

@@ -1,0 +1,12 @@
+{
+  "warmup_state": "ready",
+  "warmup_error": null,
+  "warmup_gpu_before": "1456",
+  "warmup_gpu_after": "3917",
+  "warmup_seconds": 60.818035837000025,
+  "first_click_seconds": 3.521126116999767,
+  "terr_mm": 0.884677558118403,
+  "peak_mb": 3203.138671875,
+  "sam_ms": 923.2260080007109,
+  "reg_ms": 2516.532355999516
+}
