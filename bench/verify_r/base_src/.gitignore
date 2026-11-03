@@ -1,0 +1,19 @@
+# 큰 외부 저장소 / 가중치 / 데이터 (재현은 SETUP 문서 참고)
+FoundationPose/
+sam2.1/
+pytorch3d-cxx20/
+assets/mujoco_menagerie/
+downloads/
+data/
+.venvs/
+cad_uploads/converted/
+cad_uploads/jobs/
+**/__pycache__/
+*.pyc
+*.log
+web/server.log
+bench/**/out/
+*.mp4
+*.gif
+*.npy
+nvdiffrast/

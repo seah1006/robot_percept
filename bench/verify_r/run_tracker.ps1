@@ -1,0 +1,2 @@
+foreach($v in 'PYTHONHOME','PYTHONPATH','VIRTUAL_ENV','PIP_PREFIX','PYTHONNOUSERSITE'){Remove-Item "Env:$v" -ErrorAction SilentlyContinue}
+& C:\Users\USER\AppData\Local\Programs\Python\Python312\python.exe C:\Users\USER\Documents\sam_camera\teleop_tracker_win.py --mode humanoid --url http://127.0.0.1:5092 --video C:\Users\USER\Documents\sam_camera\teleop_round2_async.mp4 --seconds 50 2>&1 | Select-Object -Last 3

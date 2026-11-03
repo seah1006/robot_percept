@@ -1,0 +1,1 @@
+source /home/user/anaconda3/etc/profile.d/conda.sh; conda activate robot_percept; cd /home/user/work/robot_percept; python bench/verify_r/hum_measure.py http://127.0.0.1:$1 ${2:-30} $3 > bench/verify_r/last.out 2>&1; python3 bench/verify_r/summ.py

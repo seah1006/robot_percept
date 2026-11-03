@@ -1,0 +1,27 @@
+{
+  "iter2_emptycacheFalse": {
+    "fps": 7.420650692902083,
+    "error_mm": 0.7931179860409409,
+    "error_deg": 1.618445354200703,
+    "stage_mean_ms": {
+      "erode_depth": 1.7665116363952456,
+      "bilateral_filter_depth": 0.8202660454695764,
+      "depth2xyzmap_batch": 2.491145954495137,
+      "make_crop_data_batch": 34.73472084097425,
+      "forward": 19.013969590911405
+    }
+  },
+  "iter1_emptycacheFalse": {
+    "fps": 14.007957402307097,
+    "error_mm": 0.7891823625804781,
+    "error_deg": 1.6187693547068853,
+    "stage_mean_ms": {
+      "erode_depth": 1.6518654999179654,
+      "bilateral_filter_depth": 0.6255559546430463,
+      "depth2xyzmap_batch": 2.099217818257867,
+      "make_crop_data_batch": 33.026501545340246,
+      "forward": 17.29399086372558
+    }
+  },
+  "pickle_rgbd_ms": 0.5906567100009852
+}

@@ -1,0 +1,14 @@
+{
+  "rgb": {
+    "max_abs_diff": 0.0,
+    "unequal": 0
+  },
+  "depth": {
+    "max_abs_diff": 0.0,
+    "unequal": 0
+  },
+  "seg": {
+    "max_abs_diff": 0.0,
+    "unequal": 0
+  }
+}

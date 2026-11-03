@@ -1,0 +1,1 @@
+cd /home/user/work/robot_percept; ls -d downloads models checkpoints 2>/dev/null; git status --short --ignored | grep '^!!' | grep -v pycache | head

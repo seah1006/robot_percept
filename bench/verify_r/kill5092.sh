@@ -1,0 +1,1 @@
+p=$(ss -ltnp | grep ':5092 ' | sed -n 's/.*pid=\([0-9]*\).*/\1/p'); echo kill $p; [ -n "$p" ] && kill $p; sleep 3; ss -ltnp | grep ':5092 ' || echo freed

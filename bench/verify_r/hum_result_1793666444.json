@@ -1,0 +1,167 @@
+{
+ "robot_video": {
+  "frames": 992,
+  "fps": 31.66,
+  "max_gap_ms": 98.7
+ },
+ "preview_relay": {
+  "frames": 941,
+  "fps": 30.0,
+  "max_gap_ms": 72.3
+ },
+ "stream_posts": 971,
+ "status": {
+  "fps": {
+   "p50": 32.0,
+   "p95": 33.0,
+   "max": 33.0
+  },
+  "tick_hz": {
+   "p50": 50.0,
+   "p95": 50.9,
+   "max": 51.0
+  },
+  "tick_ms_p50": {
+   "p50": 3.0,
+   "p95": 7.6,
+   "max": 8.59
+  },
+  "tick_ms_p95": {
+   "p50": 10.49,
+   "p95": 22.48,
+   "max": 22.48
+  },
+  "render_ms": {
+   "p50": 13.1,
+   "p95": 20.63,
+   "max": 36.8
+  },
+  "jpeg_ms": {
+   "p50": 3.75,
+   "p95": 6.2,
+   "max": 7.8
+  },
+  "input_hz": {
+   "p50": 30.0,
+   "p95": 30.1,
+   "max": 31.4
+  },
+  "rtf": {
+   "p50": 1.0,
+   "p95": 1.01,
+   "max": 1.02
+  },
+  "latency_ms": {
+   "p50": 1.7,
+   "p95": 3.27,
+   "max": 13.5
+  }
+ },
+ "ik_time_ms": {
+  "p50": 0.7,
+  "p95": 5.07,
+  "max": 16.6
+ },
+ "ik_pos_err_mm": {
+  "p50": 0.53,
+  "p95": 6.9
+ },
+ "limits": {
+  "violations_gt_0.15deg": 0,
+  "worst_excess_deg": 0.0,
+  "samples": 294
+ },
+ "finger_corr_GT_aux": {
+  "left_hand_index_0_joint": {
+   "r": 0.993,
+   "lag_s": 0.2
+  },
+  "left_hand_index_1_joint": {
+   "r": 0.994,
+   "lag_s": 0.2
+  },
+  "left_hand_middle_0_joint": {
+   "r": 0.996,
+   "lag_s": 0.15000000000000002
+  },
+  "left_hand_middle_1_joint": {
+   "r": 0.997,
+   "lag_s": 0.15000000000000002
+  },
+  "left_hand_thumb_1_joint": {
+   "r": 0.977,
+   "lag_s": 0.2
+  },
+  "left_hand_thumb_2_joint": {
+   "r": 0.978,
+   "lag_s": 0.2
+  },
+  "right_hand_index_0_joint": {
+   "r": 0.993,
+   "lag_s": 0.2
+  },
+  "right_hand_index_1_joint": {
+   "r": 0.994,
+   "lag_s": 0.2
+  },
+  "right_hand_middle_0_joint": {
+   "r": 0.996,
+   "lag_s": 0.15000000000000002
+  },
+  "right_hand_middle_1_joint": {
+   "r": 0.997,
+   "lag_s": 0.15000000000000002
+  },
+  "right_hand_thumb_1_joint": {
+   "r": 0.977,
+   "lag_s": 0.2
+  },
+  "right_hand_thumb_2_joint": {
+   "r": 0.978,
+   "lag_s": 0.2
+  }
+ },
+ "mirror_deg": {
+  "shoulder_pitch": {
+   "left": 9.8,
+   "right": 9.8
+  },
+  "shoulder_roll": {
+   "left": 80.1,
+   "right": -80.1
+  },
+  "shoulder_yaw": {
+   "left": 32.8,
+   "right": -32.8
+  },
+  "elbow": {
+   "left": 74.6,
+   "right": 74.6
+  },
+  "t7_flex_L90_R165_shoulder_pitch": {
+   "left": -72.1,
+   "right": -168.3
+  },
+  "t9-11_right_abd80": {
+   "right_roll": -83.1,
+   "left_roll": 7.0
+  }
+ },
+ "waist_corr_signed": {
+  "yaw": 0.997,
+  "roll": 0.99,
+  "pitch": 0.987,
+  "lag_s": 0.15000000000000002
+ },
+ "load_avg_before": [
+  "2.59",
+  "4.74",
+  "4.52"
+ ],
+ "load_avg_after": [
+  "2.64",
+  "4.46",
+  "4.43"
+ ],
+ "seconds": 30.0
+}

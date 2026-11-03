@@ -1,0 +1,174 @@
+diff --git a/build_all_conda.sh b/build_all_conda.sh
+index b1b59fb..1fbc807 100755
+--- a/build_all_conda.sh
++++ b/build_all_conda.sh
+@@ -18,6 +18,6 @@ cmake .. \
+   -DCMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}" \
+   -DPython3_ROOT_DIR="${CONDA_PREFIX}" \
+   -DPYBIND11_PYTHON_EXECUTABLE="${CONDA_PREFIX}/bin/python"
+-cmake --build . -j"$(nproc)"
++cmake --build . -j4
+ 
+ cd "${PROJ_ROOT}"
+diff --git a/learning/training/predict_pose_refine.py b/learning/training/predict_pose_refine.py
+index fabb888..2e0fc2a 100644
+--- a/learning/training/predict_pose_refine.py
++++ b/learning/training/predict_pose_refine.py
+@@ -35,7 +35,7 @@ def make_crop_data_batch(render_size, ob_in_cams, mesh, rgb, depth, K, crop_rati
+   B = len(ob_in_cams)
+   poseA = torch.as_tensor(ob_in_cams, dtype=torch.float, device='cuda')
+ 
+-  bs = 512
++  bs = 32
+   rgb_rs = []
+   depth_rs = []
+   normal_rs = []
+@@ -135,7 +135,7 @@ class PoseRefinePredictor:
+     self.model = RefineNet(cfg=self.cfg, c_in=self.cfg['c_in']).cuda()
+ 
+     logging.info(f"Using pretrained model from {ckpt_dir}")
+-    ckpt = torch.load(ckpt_dir)
++    ckpt = torch.load(ckpt_dir, map_location='cuda', weights_only=False)
+     if 'model' in ckpt:
+       ckpt = ckpt['model']
+     self.model.load_state_dict(ckpt)
+@@ -164,7 +164,7 @@ class PoseRefinePredictor:
+ 
+     crop_ratio = self.cfg['crop_ratio']
+     logging.info(f"trans_normalizer:{self.cfg['trans_normalizer']}, rot_normalizer:{self.cfg['rot_normalizer']}")
+-    bs = 1024
++    bs = 32
+ 
+     B_in_cams = torch.as_tensor(ob_centered_in_cams, device='cuda', dtype=torch.float)
+ 
+@@ -187,7 +187,7 @@ class PoseRefinePredictor:
+         A = torch.cat([pose_data.rgbAs[b:b+bs].cuda(), pose_data.xyz_mapAs[b:b+bs].cuda()], dim=1).float()
+         B = torch.cat([pose_data.rgbBs[b:b+bs].cuda(), pose_data.xyz_mapBs[b:b+bs].cuda()], dim=1).float()
+         logging.info("forward start")
+-        with torch.cuda.amp.autocast(enabled=self.amp):
++        with torch.autocast('cuda', enabled=self.amp):
+           output = self.model(A,B)
+         for k in output:
+           output[k] = output[k].float()
+diff --git a/learning/training/predict_score.py b/learning/training/predict_score.py
+index 6e15f62..3b2e262 100644
+--- a/learning/training/predict_score.py
++++ b/learning/training/predict_score.py
+@@ -66,7 +66,7 @@ def make_crop_data_batch(render_size, ob_in_cams, mesh, rgb, depth, K, crop_rati
+   B = len(ob_in_cams)
+   poseAs = torch.as_tensor(ob_in_cams, dtype=torch.float, device='cuda')
+ 
+-  bs = 512
++  bs = 32
+   rgb_rs = []
+   depth_rs = []
+   xyz_map_rs = []
+@@ -148,7 +148,7 @@ class ScorePredictor:
+     self.model = ScoreNetMultiPair(cfg=self.cfg, c_in=self.cfg['c_in']).cuda()
+ 
+     logging.info(f"Using pretrained model from {ckpt_dir}")
+-    ckpt = torch.load(ckpt_dir)
++    ckpt = torch.load(ckpt_dir, map_location='cuda', weights_only=False)
+     if 'model' in ckpt:
+       ckpt = ckpt['model']
+     self.model.load_state_dict(ckpt)
+@@ -190,7 +190,7 @@ class ScorePredictor:
+         if pose_data.normalAs is not None:
+           A = torch.cat([A, pose_data.normalAs.cuda().float()], dim=1)
+           B = torch.cat([B, pose_data.normalBs.cuda().float()], dim=1)
+-        with torch.cuda.amp.autocast(enabled=self.amp):
++        with torch.autocast('cuda', enabled=self.amp):
+           output = self.model(A, B, L=len(A))
+         scores_cur = output["score_logit"].float().reshape(-1)
+         ids.append(scores_cur.argmax()+b)
+diff --git a/mycpp/CMakeLists.txt b/mycpp/CMakeLists.txt
+index 7c8a9a5..27f2229 100644
+--- a/mycpp/CMakeLists.txt
++++ b/mycpp/CMakeLists.txt
+@@ -4,7 +4,7 @@ project(mycpp)
+ 
+ set(CMAKE_BUILD_TYPE Release)
+ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fopenmp -g3 -O3")
++set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -fopenmp -g3 -O3")
+ 
+ 
+ find_package(Boost REQUIRED COMPONENTS system program_options)
+@@ -19,7 +19,7 @@ include_directories(
+ 
+ file(GLOB MY_SRC ${PROJECT_SOURCE_DIR}/src/*.cpp)
+ 
+-set(PYBIND11_CPP_STANDARD -std=c++14)
++set(PYBIND11_CPP_STANDARD -std=c++17)
+ 
+ pybind11_add_module(mycpp src/app/pybind_api.cpp ${MY_SRC})
+ target_link_libraries(mycpp PRIVATE ${Boost_LIBRARIES} ${OpenMP_CXX_FLAGS} Eigen3::Eigen)
+\ No newline at end of file
+diff --git a/run_demo.py b/run_demo.py
+index fc542b4..7a9aa6c 100644
+--- a/run_demo.py
++++ b/run_demo.py
+@@ -10,6 +10,7 @@
+ from estimater import *
+ from datareader import *
+ import argparse
++import time, json
+ 
+ 
+ if __name__=='__main__':
+@@ -21,6 +22,7 @@ if __name__=='__main__':
+   parser.add_argument('--track_refine_iter', type=int, default=2)
+   parser.add_argument('--debug', type=int, default=1)
+   parser.add_argument('--debug_dir', type=str, default=f'{code_dir}/debug')
++  parser.add_argument('--max_frames', type=int, default=0)
+   args = parser.parse_args()
+ 
+   set_logging_format()
+@@ -39,14 +41,19 @@ if __name__=='__main__':
+   refiner = PoseRefinePredictor()
+   glctx = dr.RasterizeCudaContext()
+   est = FoundationPose(model_pts=mesh.vertices, model_normals=mesh.vertex_normals, mesh=mesh, scorer=scorer, refiner=refiner, debug_dir=debug_dir, debug=debug, glctx=glctx)
++  est.make_rotation_grid(min_n_views=40, inplane_step=int(os.environ.get("FP_INPLANE_STEP", "120")))
+   logging.info("estimator initialization done")
+ 
+   reader = YcbineoatReader(video_dir=args.test_scene_dir, shorter_side=None, zfar=np.inf)
+ 
+-  for i in range(len(reader.color_files)):
++  timings = []
++  torch.cuda.reset_peak_memory_stats()
++  for i in range(min(len(reader.color_files), args.max_frames or len(reader.color_files))):
+     logging.info(f'i:{i}')
+     color = reader.get_color(i)
+     depth = reader.get_depth(i)
++    torch.cuda.synchronize()
++    started = time.perf_counter()
+     if i==0:
+       mask = reader.get_mask(0).astype(bool)
+       pose = est.register(K=reader.K, rgb=color, depth=depth, ob_mask=mask, iteration=args.est_refine_iter)
+@@ -62,18 +69,23 @@ if __name__=='__main__':
+     else:
+       pose = est.track_one(rgb=color, depth=depth, K=reader.K, iteration=args.track_refine_iter)
+ 
++    torch.cuda.synchronize()
++    timings.append(time.perf_counter()-started)
+     os.makedirs(f'{debug_dir}/ob_in_cam', exist_ok=True)
+     np.savetxt(f'{debug_dir}/ob_in_cam/{reader.id_strs[i]}.txt', pose.reshape(4,4))
+ 
+     if debug>=1:
+       center_pose = pose@np.linalg.inv(to_origin)
+       vis = draw_posed_3d_box(reader.K, img=color, ob_in_cam=center_pose, bbox=bbox)
+-      vis = draw_xyz_axis(color, ob_in_cam=center_pose, scale=0.1, K=reader.K, thickness=3, transparency=0, is_input_rgb=True)
+-      cv2.imshow('1', vis[...,::-1])
+-      cv2.waitKey(1)
++      vis = draw_xyz_axis(vis, ob_in_cam=center_pose, scale=0.1, K=reader.K, thickness=3, transparency=0, is_input_rgb=True)
++      imageio.imwrite(f'{debug_dir}/track_vis/{reader.id_strs[i]}.png', vis)
+ 
+ 
+     if debug>=2:
+       os.makedirs(f'{debug_dir}/track_vis', exist_ok=True)
+       imageio.imwrite(f'{debug_dir}/track_vis/{reader.id_strs[i]}.png', vis)
+ 
++
++  stats = dict(frames=len(timings), register_seconds=timings[0], track_fps=(len(timings)-1)/sum(timings[1:]) if len(timings)>1 else None, peak_allocated_bytes=torch.cuda.max_memory_allocated())
++  with open(f'{debug_dir}/runtime.json','w') as f: json.dump(stats,f,indent=2)
++  print(stats)

@@ -1,0 +1,2 @@
+source /home/user/anaconda3/etc/profile.d/conda.sh; conda activate robot_percept; cd /home/user/work/robot_percept/bench/verify_r/base_src; source sim_test/gl_env.sh; export HOST=0.0.0.0 PORT=5092 PERCEPTION=stub PYTHONPATH=$PWD
+exec python -m web.app > ../server_base.log 2>&1
