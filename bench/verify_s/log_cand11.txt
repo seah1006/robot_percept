@@ -1,0 +1,12 @@
+locked at 14:34:40 load 0.90 0.62 0.28 1/275 5611 gpu 11 %, 1522 MiB
+mode on 200
+=== part static
+collision_avoidance 1 200
+{'max_u1': 65.28, 'max_u2': 41.99, 'max_wrist_mm': 279.07, 'max_wrist_mm_actualS': 284.62, 'max_lr_diff': 0.12, 'mean_dir': 20.04}
+=== part release
+collision_avoidance 1 200
+{'first_within_8deg_s': 0.63, 'final_err_deg': 1.3}
+DONE
+5094 closed
+your 131072x1 screen size is bogus. expect trouble
+unlocked load 1.15 0.75 0.36 1/283 8503 gpu 2 %, 1783 MiB

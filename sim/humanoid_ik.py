@@ -46,12 +46,15 @@ class ArmIK:
         self.rest = np.zeros(7) if rest is None else np.asarray(rest, float)
         self.w_pos, self.w_rot, self.w_elbow = w_pos, w_rot, w_elbow
         self.lam0, self.lam_max, self.m0, self.k_post, self.max_step = lam0, lam_max, m0, k_post, max_step
+        self.fk_calls = 0
+        self._relative_targets = None
         self._Jp = np.zeros((3, model.nv)); self._Jr = np.zeros((3, model.nv))
 
     def _site_jac(self, sid):
         mujoco.mj_jacSite(self.m, self.d, self._Jp, None, sid); return self._Jp[:, self.dadr].copy()
 
     def fk(self, qpos_full, q):
+        self.fk_calls += 1
         d = self.d; d.qpos[:] = qpos_full; d.qpos[self.qadr] = q
         mujoco.mj_kinematics(self.m, d); mujoco.mj_comPos(self.m, d)
         return d
@@ -62,6 +65,11 @@ class ArmIK:
         return self.d.site_xpos[self.site['wrist_site']].copy()
 
     def _errors(self, d, p_target, R_target, elbow_target, mode):
+        if self._relative_targets is not None:
+            shoulder, elbow_offset, wrist_offset = self._relative_targets
+            origin = d.xpos[shoulder]
+            p_target = origin + wrist_offset
+            if elbow_target is not None: elbow_target = origin + elbow_offset
         ep = p_target - self.point(mode)
         er = rotation_error(R_target, d.xmat[self.hand_body].reshape(3, 3)) if R_target is not None else np.zeros(3)
         ee = elbow_target - d.site_xpos[self.site['elbow_site']] if elbow_target is not None else np.zeros(3)
@@ -78,12 +86,17 @@ class ArmIK:
                 Jp = (self._site_jac(self.site['index_tip']) + self._site_jac(self.site['middle_tip'])) / 2
             else:
                 Jp = self._site_jac(self.site['wrist_site'])
+            Jshoulder = 0.
+            if self._relative_targets is not None:
+                mujoco.mj_jacBody(self.m, d, self._Jp, None, self._relative_targets[0])
+                Jshoulder = self._Jp[:, self.dadr].copy()
+                Jp -= Jshoulder
             rows_J = [self.w_pos * Jp]; rows_e = [self.w_pos * ep]; J6 = Jp
             if R_target is not None:
                 mujoco.mj_jacBody(self.m, d, None, self._Jr, self.hand_body); Jr = self._Jr[:, self.dadr].copy()
                 rows_J.append(self.w_rot * Jr); rows_e.append(self.w_rot * er); J6 = np.vstack((Jp, .2 * Jr))
             if elbow_target is not None:
-                rows_J.append(self.w_elbow * self._site_jac(self.site['elbow_site'])); rows_e.append(self.w_elbow * ee)
+                rows_J.append(self.w_elbow * (self._site_jac(self.site['elbow_site']) - Jshoulder)); rows_e.append(self.w_elbow * ee)
             J = np.vstack(rows_J); e = np.concatenate(rows_e)
             manip = float(np.sqrt(max(np.linalg.det(J6 @ J6.T), 0.)))
             m0 = self.m0[0] if J6.shape[0] == 6 else self.m0[1]   # ~10th percentile over random postures
@@ -105,12 +118,33 @@ class ArmIK:
         return q, it, manip, bool(np.linalg.norm(ep) < pos_tol and np.linalg.norm(er) < rot_tol and np.linalg.norm(ee) < .005)
 
     def solve(self, qpos_full, q0, p_target, R_target=None, elbow_target=None, mode='wrist',
-              iters=12, pos_tol=.002, rot_tol=np.deg2rad(2.), restarts=0, seed=0):
-        """Return (q7, diag).  Warm start from q0; optional random restarts (benchmark)."""
+              iters=12, pos_tol=.002, rot_tol=np.deg2rad(2.), restarts=0, seed=0, relative_targets=None, recover=False):
+        """Return (q7, diag). Warm start; optional random restarts (benchmark).
+
+        relative_targets=(shoulder_body_id, elbow_offset_world, wrist_offset_world)
+        makes position targets follow the current FK shoulder. Its point Jacobian
+        is subtracted from both task Jacobians; offsets are fixed during a solve.
+        This avoids treating an offset shoulder-roll joint as a fixed torso point.
+        """
+        self._relative_targets = relative_targets
         t0 = time.perf_counter()
         q, it, manip, ok = self._iterate(qpos_full, np.clip(np.asarray(q0, float), self.lo + 1e-4, self.hi - 1e-4),
                                           p_target, R_target, elbow_target, mode, iters, pos_tol, rot_tol)
-        total = it
+        total = it; recovered = False
+        if recover:
+            d = self.fk(qpos_full, q)
+            ep0, er0, ee0 = self._errors(d,p_target,R_target,elbow_target,mode)
+            if np.linalg.norm(ep0) > .01 or (elbow_target is not None and np.linalg.norm(ee0) > .008):
+                # One deterministic neutral-seed probe (at most 16 iterations). Warm-start joint-limit
+                # weighting cannot escape a saturated disconnected IK branch.
+                qr, itr, mr, _ = self._iterate(qpos_full, np.clip(self.rest,self.lo+1e-4,self.hi-1e-4),
+                    p_target,R_target,elbow_target,mode,16,pos_tol,rot_tol)
+                total += itr
+                d = self.fk(qpos_full, qr)
+                ep1, er1, ee1 = self._errors(d,p_target,R_target,elbow_target,mode)
+                cost = lambda ep,er,ee: self.w_pos**2*(ep@ep)+self.w_rot**2*(er@er)+self.w_elbow**2*(ee@ee)
+                if cost(ep1,er1,ee1) < .8*cost(ep0,er0,ee0) and np.linalg.norm(ep1) <= max(.01,np.linalg.norm(ep0)):
+                    q, manip, recovered = qr, mr, True
         if not ok and restarts:
             rng = np.random.default_rng(seed)
             best = (self._cost(qpos_full, q, p_target, R_target, mode), q, manip)
@@ -131,7 +165,7 @@ class ArmIK:
         if pos_err > .02: warn.append('목표 도달 불가(최근접 자세)')
         if elbow_target is not None and np.linalg.norm(ee) > .01:
             warn.append('팔꿈치 목표 잔차: 손목/팔꿈치/손바닥 다중 목표 절충')
-        return q, {'iters': total, 'pos_err_mm': round(pos_err * 1000, 2),
+        return q, {'iters': total, 'branch_recovered': recovered, 'pos_err_mm': round(pos_err * 1000, 2),
                    'rot_err_deg': None if R_target is None else round(float(np.degrees(rot_err)), 2),
                    'elbow_err_mm': None if elbow_target is None else round(float(np.linalg.norm(ee)) * 1000, 1),
                    'manip': round(manip, 5), 'time_ms': round((time.perf_counter() - t0) * 1000, 3), 'warnings': warn}

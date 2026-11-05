@@ -1,0 +1,10 @@
+locked at 11:12:53 load 3.08 2.84 3.61 1/259 127097 gpu 10 %, 1471 MiB
+mode on 200
+=== part static
+{'max_u1': 1.53, 'max_u2': 2.1, 'max_wrist_mm': 24.42, 'max_wrist_mm_actualS': 1.51, 'max_lr_diff': 0.0, 'mean_dir': 0.92}
+=== part asym
+{'max_dir': 3.08, 'max_wrist_actualS_mm': 1.59, 'max_lr_diff': 1.74}
+DONE
+5094 closed
+your 131072x1 screen size is bogus. expect trouble
+unlocked load 1.19 2.27 3.32 2/271 131118 gpu 19 %, 1752 MiB

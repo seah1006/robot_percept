@@ -1,0 +1,16 @@
+locked at 13:11:43 load 2.31 2.28 1.25 7/334 20473 gpu 7 %, 1585 MiB
+mode on 200
+=== part dynv
+True {'v_ratio': 0.614, 'v_joint': 'left_shoulder_pitch_joint', 'a_ratio_lowerbound': 0.791, 'a_joint': 'waist_yaw_joint', 'n': 306}
+False {'v_ratio': 1.588, 'v_joint': 'right_shoulder_yaw_joint', 'a_ratio_lowerbound': 2.111, 'a_joint': 'right_wrist_roll_joint', 'n': 248}
+=== part toggle
+on_to_off {'max_dq_deg_per_poll': 0.1, 'max_qd_deg_s': 0.6, 'samples': 555, 'v_ratio': 0.003, 'status_brake': False}
+off_to_on {'max_dq_deg_per_poll': 0.1, 'max_qd_deg_s': 0.4, 'samples': 566, 'v_ratio': 0.002, 'status_brake': True}
+on_to_off2 {'max_dq_deg_per_poll': 0.1, 'max_qd_deg_s': 0.2, 'samples': 617, 'v_ratio': 0.001, 'status_brake': False}
+off_to_on2 {'max_dq_deg_per_poll': 0.1, 'max_qd_deg_s': 0.3, 'samples': 614, 'v_ratio': 0.002, 'status_brake': True}
+=== part drop
+{'left': {'max_step_deg': 0.1, 'at_dt_ms': 23.9, 'max_deg_per_frame_equiv': 0.144, 'total_rot_deg': 3.9, 'max_wrist_pos_step_mm': np.float64(0.0)}, 'right': {'max_step_deg': 0.1, 'at_dt_ms': 23.9, 'max_deg_per_frame_equiv': 0.144, 'total_rot_deg': 3.9, 'max_wrist_pos_step_mm': np.float64(0.0)}, 'n_samples': 377}
+DONE
+5094 closed
+your 131072x1 screen size is bogus. expect trouble
+unlocked load 2.54 2.43 1.41 2/337 38588 gpu 4 %, 1816 MiB

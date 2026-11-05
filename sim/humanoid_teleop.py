@@ -14,7 +14,7 @@ from .humanoid_env import ARM, HAND, WAIST, TELEOP_VEL, TELEOP_ACC, LABELS, SHOR
 from .humanoid_ik import ArmIK
 from . import humanoid_retarget as rt
 
-DEFAULT_OPTIONS = {'arm_target': 'wrist', 'hand_orientation': True, 'torso': True, 'fingers': True, 'elbow': True, 'targets3d': False}
+DEFAULT_OPTIONS = {'arm_target': 'wrist', 'hand_orientation': True, 'torso': True, 'fingers': True, 'elbow': True, 'targets3d': False, 'safety_brake': True, 'collision_avoidance': False}
 STALE_S = .35
 
 
@@ -41,14 +41,19 @@ class HumanoidServo:
             tips = (d.site_xpos[self.m.site(f'{s}_index_tip').id] + d.site_xpos[self.m.site(f'{s}_middle_tip').id]) / 2
             self.geom[s] = dict(S=Rt.T @ (sh - pt), L1=float(np.linalg.norm(el - sh)), L2=float(np.linalg.norm(wr - el)), L3=float(np.linalg.norm(tips - wr)))
         self.options = dict(DEFAULT_OPTIONS)
+        self.options["safety_brake"] = bool(env.safety_brake)
         self.reset_state()
 
     def reset_state(self):
         self.cmd = self.env.q(self.controlled).copy(); self.vel = np.zeros(len(self.controlled)); self.des = self.cmd.copy()
         self.q_ik = {s: self.cmd[[self.index[n] for n in self.env.groups[f'{s}_arm']]].copy() for s in ('left', 'right')}
-        self.last_tick = None; self.ticks = 0; self.B0 = rt.B_CAM.copy(); self.calib_seen = getattr(self, 'calib_seen', None); self.sample_seen = None; self.options_seen = None
+        self.last_tick = None; self.ticks = 0; self.B0 = getattr(self, 'B0', rt.B_CAM).copy(); self.calib_seen = getattr(self, 'calib_seen', None); self.sample_seen = None; self.options_seen = None
         self.diag = {'left': {}, 'right': {}}; self.tracking = {'left': False, 'right': False, 'torso': False, 'left_hand': False, 'right_hand': False}
+        self.hand_rotation = {s: None for s in ('left', 'right')}
         self.targets_world = {}; self.tick_ms = 0.; self.state = 'idle'; self.human = None
+        self.profile={'ik_ms':0.,'retarget_ms':0.,'projection_ms':0.,'brake_ms':0.,'integration_ms':0.}
+        self._projection_cache=None
+        self._holding_probe=None;self._last_holding_probe=-1e6
 
     # ---------------------------------------------------------------- tick
     def tick(self, sample, ctrl, now_wall):
@@ -59,10 +64,32 @@ class HumanoidServo:
         dt = self.period if self.last_tick is None else min(.1, t - self.last_tick); self.last_tick = t
         t0 = time.perf_counter()
         self.solved = False
+        self.profile={'ik_ms':0.,'retarget_ms':0.,'projection_ms':0.,'brake_ms':0.,'integration_ms':0.}
+        fk_before=sum(ik.fk_calls for ik in self.iks.values())
         self.options.update({k: v for k, v in (ctrl.get('options') or {}).items() if k in DEFAULT_OPTIONS})
+        self.env.set_safety_brake(self.options['safety_brake'])
+        self.env.set_collision_avoidance(self.options['collision_avoidance'])
         enabled = bool(ctrl.get('enabled'))
         fresh = enabled and sample is not None and sample.get('detected') and 0 <= now_wall - sample.get('received_at', 0) <= STALE_S
-        if not enabled:
+        if self.env.collision_avoidance:
+            if self.env.collision_braking and fresh and t-self._last_holding_probe>=.2 and np.max(np.abs(self.env.data.qvel[self.env.collision_model.dofs]))<.02:
+                feature=np.concatenate([np.asarray(sample['pose'],float)[:,:3].ravel()]+[np.asarray(v,float).ravel() for _,v in sorted((sample.get('hands') or {}).items())])
+                if self._holding_probe is None or feature.shape!=self._holding_probe.shape or np.max(np.abs(feature-self._holding_probe))>.01:
+                    rt0=time.perf_counter();self._retarget(sample)
+                    self.profile['retarget_ms']+=(time.perf_counter()-rt0)*1000
+                    self._holding_probe=feature.copy();self.solved=True
+                self._last_holding_probe=t
+            was_latched=self.env.collision_braking
+            b0=time.perf_counter()
+            self.env.update_collision_brake()
+            self.profile['brake_ms']+=(time.perf_counter()-b0)*1000
+            if was_latched and not self.env.collision_braking:
+                self.cmd=self.env.q(self.controlled).copy();self.vel=np.zeros(len(self.controlled));self.des=self.cmd.copy()
+                self.sample_seen=None;self._projection_cache=None
+        if self.env.collision_avoidance and self.env.collision_braking:
+            self.state='collision_hold';self.des=self.cmd.copy();self._hold_all()
+            self.env.collision_status['collision_state']='holding'
+        elif not enabled:
             self.state = 'off'; self.des = self.cmd.copy(); self._hold_all()
         elif not fresh:
             self.state = 'hold'; self.des = self.cmd.copy(); self._hold_all()
@@ -78,12 +105,18 @@ class HumanoidServo:
             key = (sample.get('received_at'), ctrl.get('calibration'))
             opts = tuple(sorted(self.options.items()))
             if key != self.sample_seen or opts != self.options_seen:
+                rt0=time.perf_counter()
                 self._retarget(sample)
+                self.profile['retarget_ms']=(time.perf_counter()-rt0)*1000
                 self.solved = True
                 self.sample_seen, self.options_seen = key, opts
+        integrate0=time.perf_counter()
         self._integrate(dt)
         self.env.set_targets(dict(zip(self.controlled, self.cmd)))
+        self.profile['integration_ms']=(time.perf_counter()-integrate0)*1000
+        self.profile['ik_fk_calls']=sum(ik.fk_calls for ik in self.iks.values())-fk_before
         self.ticks += 1; self.tick_ms = (time.perf_counter() - t0) * 1000
+        self.profile['total_ms']=self.tick_ms
         return True
 
     def _hold_all(self):
@@ -95,6 +128,17 @@ class HumanoidServo:
     def _retarget(self, sample):
         env, o = self.env, self.options
         pose = np.asarray(sample['pose'], float); P = pose[:, :3]; vis = pose[:, 3] if pose.shape[1] > 3 else np.ones(len(pose))
+        shoulders = P[11]-P[12]
+        up = (P[11]+P[12]-P[23]-P[24])*.5
+        hips_visible = min(vis[23],vis[24]) >= .5
+        degenerate = np.linalg.norm(shoulders)<1e-6 or (hips_visible and
+            (np.linalg.norm(up)<1e-6 or np.linalg.norm(np.cross(shoulders,up))<1e-8))
+        if degenerate:
+            self.des = self.cmd.copy(); self._hold_all()
+            for side in ('left','right'):
+                self.q_ik[side] = self.cmd[[self.index[n] for n in env.groups[f'{side}_arm']]].copy()
+            self.human = {'hips_visible': False, 'invalid_torso': True}
+            return
         Rh, hips = rt.torso_frame(P, vis)
         self.human = {'hips_visible': bool(hips)}
         # --- torso (waist yaw/roll/pitch, ZXY like the G1 waist chain)
@@ -115,33 +159,76 @@ class HumanoidServo:
             c = 'l' if s == 'left' else 'r'
             ok = min(vis[rt.POSE[f'{c}_el']], vis[rt.POSE[f'{c}_wr']], vis[rt.POSE[f'{c}_sh']]) >= .5
             H = hands.get(s); H = np.asarray(H, float) if H is not None else None
-            self.tracking[f'{s}_hand'] = H is not None
-            if H is not None and o['fingers']:
+            quality = ((sample.get('quality') or {}).get('hands') or {}).get(s) or {}
+            Fcam = rt.palm_frame(H, s) if H is not None else None
+            hand_valid = Fcam is not None and quality.get('state', 'tracked') == 'tracked'
+            self.tracking[f'{s}_hand'] = hand_valid
+            if hand_valid and o['fingers']:
                 q = rt.robot_finger_targets(rt.finger_angles(H), s)
                 self._set_des([f'{s}_hand_{j}_joint' for j in HAND], [q[j] for j in HAND])
+            else:
+                names = env.groups[f'{s}_hand']
+                self._set_des(names, [self.cmd[self.index[n]] for n in names])
+            u1, u2 = rt.arm_directions(P, Rh, s)
+            ok = ok and np.isfinite([u1, u2]).all() and min(np.linalg.norm(u1), np.linalg.norm(u2)) > .99
             if not ok:
+                names = env.groups[f'{s}_arm']
+                self._set_des(names, [self.cmd[self.index[n]] for n in names])
+                self.q_ik[s] = self.cmd[[self.index[n] for n in names]].copy()
                 self.tracking[s] = False; self.diag[s] = dict(self.diag.get(s) or {}, warnings=['팔 랜드마크 가려짐 → 정지'])
                 continue
             self.tracking[s] = True
             g = self.geom[s]; u1, u2 = rt.arm_directions(P, Rh, s)
             E_t = g['S'] + g['L1'] * u1; W_t = E_t + g['L2'] * u2
             R_t = None; mode = 'wrist'; p_t = W_t
-            if H is not None:
-                F = Rh.T @ rt.palm_frame(H, s)   # human hand frame in body axes
+            if hand_valid:
+                F = Rh.T @ Fcam   # human hand frame in body axes
                 nloc = np.array([0., -1., 0.]) if s == 'left' else np.array([0., 1., 0.])
                 B = np.column_stack((np.array([1., 0., 0.]), nloc, np.cross([1., 0., 0.], nloc)))
-                if o['hand_orientation']: R_t = Rt @ (F @ B.T)
+                self.hand_rotation[s] = F @ B.T
                 if o['arm_target'] == 'fingertips':
                     tip_dir = rt._unit(Rh.T @ ((H[8] + H[12]) / 2 - H[0]))
                     p_t = W_t + g['L3'] * tip_dir; mode = 'fingertips'
+            if o['hand_orientation'] and self.hand_rotation[s] is not None:
+                R_t = Rt @ self.hand_rotation[s]
             to_w = lambda v: Rt @ v + pt
             p_w, E_w = to_w(p_t), to_w(E_t)
-            q, dg = self.iks[s].solve(qfull, self.q_ik[s], p_w, R_t, E_w if o['elbow'] else None, mode=mode, iters=8)
+            q, dg = self.iks[s].solve(qfull, self.q_ik[s], p_w, R_t, E_w if o['elbow'] else None, mode=mode, iters=8,
+                relative_targets=(self.m.body(f'{s}_shoulder_roll_link').id, Rt @ (E_t-g['S']), Rt @ (p_t-g['S'])), recover=True)
+            self.profile['ik_ms']+=dg.get('time_ms',0.)
             self.q_ik[s] = q; self.diag[s] = dg
             self._set_des(env.groups[f'{s}_arm'], q)
+            shoulder_now = self.iks[s].d.xpos[self.m.body(f'{s}_shoulder_roll_link').id]
+            p_w = shoulder_now + Rt @ (p_t-g['S']); E_w = shoulder_now + Rt @ (E_t-g['S'])
             self.targets_world[s] = {'wrist': p_w, 'elbow': E_w}
             if o['targets3d']:
                 env.set_mocap(f'{s}_wrist_target', p_w); env.set_mocap(f'{s}_elbow_target', E_w)
+        if o['collision_avoidance']:
+            proxy=env.collision_model;candidate=qfull.copy()
+            for name in proxy.names:candidate[env.qadr[name]]=self.des[self.index[name]]
+            p0=time.perf_counter();fk0=proxy.fk_calls
+            cached=self._projection_cache
+            if cached is not None and np.max(np.abs(candidate[proxy.qadr]-cached[0]))<.002:
+                projected=cached[1].copy();diag=dict(cached[2],cache_hit=True)
+            else:
+                projected,diag=proxy.project(candidate,margin=.01,enabled=True)
+                if not diag['accepted']:
+                    start=qfull.copy()
+                    for name in proxy.names:start[env.qadr[name]]=self.cmd[self.index[name]]
+                    projected,diag=proxy.approach_safe(start,candidate,margin=.01)
+                diag['modified']=bool(np.max(np.abs(projected[proxy.qadr]-candidate[proxy.qadr]))>1e-4)
+                self._projection_cache=(candidate[proxy.qadr].copy(),projected.copy(),dict(diag))
+            self.profile['projection_ms']=(time.perf_counter()-p0)*1000
+            self.profile['projection_fk_calls']=proxy.fk_calls-fk0
+            env.collision_status['goal_projection']=diag
+            env.collision_status['collision_state']='avoiding' if diag.get('modified') and diag['accepted'] else 'clear' if diag['accepted'] else 'holding'
+            env.collision_resume_goal=projected.copy() if diag['accepted'] else None
+            if diag['accepted']:
+                self._set_des(proxy.names,projected[proxy.qadr])
+                for side in ('left','right'):self.q_ik[side]=projected[self.iks[side].qadr].copy()
+            else:
+                # Goal hold only. In-flight physical stopping remains experimental.
+                self._set_des(proxy.names,[self.cmd[self.index[name]] for name in proxy.names])
         if not o['targets3d']:
             for n in env.mocap: env.set_mocap(n, None)
 
@@ -154,6 +241,19 @@ class HumanoidServo:
         # Braking: never exceed the speed that can stop within the remaining distance.
         v_stop = np.sqrt(2 * self.amax * np.abs(des - self.cmd))
         v_des = np.clip(v_des, -v_stop, v_stop)
+        if self.env.collision_avoidance and self.env.data.time-getattr(self.env,'collision_released_at',-1e6)<.4:
+            ids=np.array([self.index[name] for name in self.env.collision_model.names]);task_v=v_des[ids].copy()
+            for _ in range(2):
+                for row in self.env.collision_constraints:
+                    if 'gradient' not in row:continue
+                    gradient=row['gradient'];norm=float(gradient@gradient)
+                    if norm<1e-12:continue
+                    current=max(0.,-float(gradient@self.env.data.qvel[self.env.collision_model.dofs]))
+                    limit=min(np.sqrt(2*.04*max(0.,row['distance']-.003)),current+.04*dt)
+                    violation=-limit-float(gradient@task_v)
+                    if violation>0:task_v+=gradient*violation/norm
+            v_des[ids]=np.clip(task_v,-self.vmax[ids],self.vmax[ids])
+            self.env.collision_status['resume_guard']={'seconds':.4,'approach_acceleration':.04,'static_margin':.003,'scope':'command-velocity-only-not-global-physical-certificate'}
         self.vel += np.clip(v_des - self.vel, -self.amax * dt, self.amax * dt)
         self.cmd = np.clip(self.cmd + self.vel * dt, self.lo + 1e-4, self.hi - 1e-4)
 

@@ -21,6 +21,36 @@ def update_routes(mode,sample,humanoid):
  if humanoid is not None and mode!='panda':routes.append(('/humanoid/update',humanoid))
  return routes
 
+
+# JSONL v2 preserves endpoint payloads; v1 features recordings remain readable.
+def recording_row(t, seq, capture_at, mode, sample, humanoid, landmarks=None):
+ return dict(schema='robot_percept.tracker.v2',t=t,seq=seq,capture_at=capture_at,
+             mode=mode,features=sample,humanoid=humanoid,landmarks=landmarks or [])
+
+def replay_routes(row, mode, now):
+ capture=now-max(0.,float(row.get('t',0))-float(row.get('capture_t',row.get('t',0))))
+ sample=row.get('features',row if 'schema' not in row else None)
+ humanoid=row.get('humanoid')
+ routes=[]
+ for route,payload in update_routes(mode,sample,humanoid):
+  payload=dict(payload);payload['sent_at']=now;payload['capture_at']=capture
+  payload['seq']=row.get('seq',0);routes.append((route,payload))
+ return routes
+
+class HandHold:
+ def __init__(self, milliseconds=150):self.limit=milliseconds;self.last={}
+ def apply(self, sample, now):
+  hands=sample.setdefault('hands',{});quality={}
+  for side in ('left','right'):
+   if side in hands:
+    self.last[side]=(now,hands[side]);quality[side]=dict(state='tracked',confidence=1.,age_ms=0.)
+   elif sample.get('detected') and side in self.last and (now-self.last[side][0])*1000<=self.limit:
+    age=(now-self.last[side][0])*1000;hands[side]=self.last[side][1]
+    quality[side]=dict(state='held',confidence=max(0.,1-age/max(1,self.limit)),age_ms=age)
+   else:quality[side]=dict(state='missing',confidence=0.,age_ms=None)
+  sample.setdefault('quality',{})['hands']=quality
+  return sample
+
 class OneEuro:
  def __init__(self):self.v=None; self.t=None; self.d=None
  def __call__(self,v,t):
@@ -30,10 +60,12 @@ class OneEuro:
   a=1/(1+1/(2*math.pi*(1.5+.03*np.abs(self.d))*dt)); self.v+=a*(v-self.v); self.t=t; return self.v.copy()
 
 def main():
- p=argparse.ArgumentParser(); p.add_argument('--prefetch-video',action=argparse.BooleanOptionalAction,default=True); p.add_argument('--pipeline',action=argparse.BooleanOptionalAction,default=None); p.add_argument('--opencv-threads',type=int,default=1); p.add_argument('--infer-width',type=int,choices=[320,480,640],default=640); p.add_argument('--serial',action='store_true'); p.add_argument('--loop-video',action='store_true'); p.add_argument('--mode',choices=['panda','humanoid','both'],default='panda'); p.add_argument('--pose-model',default=str(pathlib.Path.home()/'Documents/sam_camera/models/pose_landmarker_lite.task')); p.add_argument('--url',default='http://localhost:5089'); p.add_argument('--video'); p.add_argument('--replay'); p.add_argument('--record'); p.add_argument('--seconds',type=float,default=0); p.add_argument('--camera',type=int,default=0); p.add_argument('--model',default=str(pathlib.Path.home()/'Documents/sam_camera/models/hand_landmarker.task')); a=p.parse_args()
+ p=argparse.ArgumentParser(); p.add_argument('--http-client',choices=['requests','urllib3'],default=None); p.add_argument('--hand-hold-ms',type=float,default=150); p.add_argument('--metrics-out'); p.add_argument('--prefetch-video',action=argparse.BooleanOptionalAction,default=True); p.add_argument('--pipeline',action=argparse.BooleanOptionalAction,default=None); p.add_argument('--opencv-threads',type=int,default=1); p.add_argument('--infer-width',type=int,choices=[320,480,640],default=640); p.add_argument('--serial',action='store_true'); p.add_argument('--loop-video',action='store_true'); p.add_argument('--mode',choices=['panda','humanoid','both'],default='panda'); p.add_argument('--pose-model',default=str(pathlib.Path.home()/'Documents/sam_camera/models/pose_landmarker_lite.task')); p.add_argument('--url',default='http://localhost:5089'); p.add_argument('--video'); p.add_argument('--replay'); p.add_argument('--record'); p.add_argument('--seconds',type=float,default=0); p.add_argument('--camera',type=int,default=0); p.add_argument('--model',default=str(pathlib.Path.home()/'Documents/sam_camera/models/hand_landmarker.task')); a=p.parse_args()
  a.pipeline=pipeline_enabled(a.mode,a.pipeline)
+ a.http_client=a.http_client or ('requests' if a.mode=='panda' else 'urllib3')
  a.url=a.url.replace('://localhost', '://127.0.0.1')
  if a.mode!='panda':cv2.setNumThreads(a.opencv_threads)
+ details={k:[] for k in ['visibility','hold_quality','timestamp','capture_lock','pose_overlay','panda_features_overlay','hand_overlay','http_headers','http_body','http_response_decode']}
  stages={k:[] for k in ['pacing','preprocess','neural','retarget','overlay','queue']};post_ms=[];json_ms=[];payload_bytes=[];server_ms=[];loop_ms=[];preview_encode_ms=[];preview_post_ms=[]
  # requests uses persistent HTTP connections; standard library is fallback.
  try:
@@ -42,19 +74,34 @@ def main():
   def post(route,data,raw=False):
    if not hasattr(http_local,'session'):http_local.session=requests.Session();http_local.session.trust_env=False
    t0=time.perf_counter();body=data if raw else json.dumps(data,separators=(',',':')).encode();t1=time.perf_counter()
-   response=http_local.session.post(a.url+route,data=body,headers={'Content-Type':'image/jpeg' if raw else 'application/json'},timeout=.6)
+   headers={'Content-Type':'image/jpeg' if raw else 'application/json'}
+   if a.http_client=='urllib3':
+    import urllib3
+    if not hasattr(http_local,'pool'):http_local.pool=urllib3.PoolManager(num_pools=1,maxsize=1)
+    response=http_local.pool.request('POST',a.url+route,body=body,headers=headers,timeout=urllib3.Timeout(total=.6),retries=False,preload_content=False)
+    th=time.perf_counter();raw_response=response.read();tb=time.perf_counter();response.release_conn()
+    if response.status>=400:raise RuntimeError('HTTP '+str(response.status)+': '+raw_response.decode(errors='replace')[:300])
+    elapsed_headers=th-t1;elapsed_body=tb-th
+   else:
+    response=http_local.session.post(a.url+route,data=body,headers=headers,timeout=.6)
+    tb=time.perf_counter();raw_response=response.content;response.raise_for_status()
+    elapsed_headers=response.elapsed.total_seconds();elapsed_body=max(0.,tb-t1-elapsed_headers)
    if route=='/humanoid/update':
-    json_ms.append((t1-t0)*1000);payload_bytes.append(len(body));post_ms.append((time.perf_counter()-t1)*1000)
-    if response.ok:server_ms.append(response.json().get('process_ms',0))
-   response.raise_for_status();return response
+    json_ms.append((t1-t0)*1000);payload_bytes.append(len(body));post_ms.append((tb-t1)*1000)
+    details['http_headers'].append(elapsed_headers*1000);details['http_body'].append(elapsed_body*1000)
+    td=time.perf_counter();server_ms.append(json.loads(raw_response).get('process_ms',0));details['http_response_decode'].append((time.perf_counter()-td)*1000)
+   return response
  except ImportError:
   def post(route,data,raw=False):return urllib.request.urlopen(urllib.request.Request(a.url+route,data=data if raw else json.dumps(data).encode(),headers={'Content-Type':'image/jpeg' if raw else 'application/json'}),timeout=.6)
+ hold=HandHold(a.hand_hold_ms); detection_counts={'hand':0,'pose':0};capture_times={}
  start=time.perf_counter(); count=0; errors=0; filt=OneEuro(); out=None; log=None; cap=None
  if a.record:
   prefix=pathlib.Path(a.record); prefix.parent.mkdir(parents=True,exist_ok=True); log=open(str(prefix)+'.jsonl','w')
  if a.replay:
   for line in open(a.replay):
-   row=json.loads(line); target=start+row.get('t',count/30); time.sleep(max(0,target-time.perf_counter())); sample=row.get('features',row); sample['sent_at']=time.time(); post('/teleop/update',sample); count+=1
+   row=json.loads(line); target=start+row.get('t',count/30); time.sleep(max(0,target-time.perf_counter()))
+   for route,payload in replay_routes(row,a.mode,time.time()):post(route,payload)
+   count+=1
    if a.seconds and time.perf_counter()-start>a.seconds:break
   print(json.dumps({'updates':count,'seconds':time.perf_counter()-start}));return
  import mediapipe as mp
@@ -78,7 +125,7 @@ def main():
   return
  source_fps=(cap.get(cv2.CAP_PROP_FPS) or 30.) if a.video else 30.
  start=time.perf_counter(); preview_at=0; last_stamp=-1
- latest={'frame':None,'seq':0,'stop':False}; camera_lock=threading.Lock(); consumed=0
+ latest={'frame':None,'seq':0,'stop':False,'capture_at':None,'failed':False}; camera_lock=threading.Lock(); consumed=0
  preview_pending={'jpeg':None};preview_lock=threading.Lock()
  update_pending={'sample':None,'humanoid':None};update_lock=threading.Lock();sent_count=0
  def control_sender():
@@ -108,8 +155,9 @@ def main():
  def capture_latest():
   while not latest['stop']:
    ok,image=cap.read()
-   if not ok:break
-   with camera_lock:latest['frame']=image;latest['seq']+=1
+   if not ok:
+    latest['failed']=True;break
+   with camera_lock:latest['frame']=image;latest['seq']+=1;latest['capture_at']=time.time()
  if not a.video:
   capture_thread=threading.Thread(target=capture_latest,daemon=True);capture_thread.start()
  acquire_index=0
@@ -120,20 +168,23 @@ def main():
    ok,frame=cap.read()
    if not ok and a.loop_video:cap.set(cv2.CAP_PROP_POS_FRAMES,0);ok,frame=cap.read()
    if not ok:return None
+   frame_capture_at=time.time()
    pacing_start=time.perf_counter();fps=cap.get(cv2.CAP_PROP_FPS) or 30
    time.sleep(max(0,start+acquire_index/fps-time.perf_counter()));stages['pacing'].append((time.perf_counter()-pacing_start)*1000)
   else:
    while not latest['stop']:
+    lock_start=time.perf_counter()
     with camera_lock:
-     ok=latest['seq']!=consumed;frame=latest['frame'];consumed=latest['seq']
+     ok=latest['seq']!=consumed;frame=latest['frame'];consumed=latest['seq'];frame_capture_at=latest['capture_at']
+    details['capture_lock'].append((time.perf_counter()-lock_start)*1000)
     if ok:break
-    if a.seconds and time.perf_counter()-start>=a.seconds:return None
+    if latest['failed'] or (a.seconds and time.perf_counter()-start>=a.seconds):return None
     time.sleep(.002)
    else:return None
   acquire_index+=1;preprocess_start=time.perf_counter()
   frame=cv2.flip(frame,1)
   if frame.shape[:2]!=(360,640):frame=cv2.resize(frame,(640,360))
-  stamp=max(last_stamp+1,int((time.perf_counter()-start)*1000));last_stamp=stamp
+  stamp=max(last_stamp+1,int((time.perf_counter()-start)*1000));last_stamp=stamp;capture_times[stamp]=frame_capture_at
   infer_t=time.perf_counter();iw=640 if a.mode=='panda' else a.infer_width
   image=mp.Image(image_format=mp.ImageFormat.SRGB,data=cv2.cvtColor(frame if iw==640 else cv2.resize(frame,(iw,iw*9//16)),cv2.COLOR_BGR2RGB))
   stages['preprocess'].append((time.perf_counter()-preprocess_start)*1000)
@@ -186,19 +237,22 @@ def main():
     tick=time.perf_counter()
     if a.video:ok,frame=cap.read()
     else:
+     lock_start=time.perf_counter()
      with camera_lock:
-      ok=latest['seq']!=consumed;frame=latest['frame'];consumed=latest['seq']
+      ok=latest['seq']!=consumed;frame=latest['frame'];consumed=latest['seq'];frame_capture_at=latest['capture_at']
+     details['capture_lock'].append((time.perf_counter()-lock_start)*1000)
      if not ok:
-      if a.seconds and time.perf_counter()-start>=a.seconds:break
+      if latest['failed'] or (a.seconds and time.perf_counter()-start>=a.seconds):break
       time.sleep(.002);continue
     if not ok and a.video and a.loop_video:
      cap.set(cv2.CAP_PROP_POS_FRAMES,0);ok,frame=cap.read()
     if not ok:break
+    if a.video:frame_capture_at=time.time()
     pacing_start=time.perf_counter()
     if a.video:
      fps=cap.get(cv2.CAP_PROP_FPS) or 30; time.sleep(max(0,start+count/fps-time.perf_counter()))
     stages['pacing'].append((time.perf_counter()-pacing_start)*1000);preprocess_start=time.perf_counter()
-    frame=cv2.resize(cv2.flip(frame,1),(640,360)); stamp=max(last_stamp+1,int((time.perf_counter()-start)*1000));last_stamp=stamp
+    frame=cv2.resize(cv2.flip(frame,1),(640,360)); stamp=max(last_stamp+1,int((time.perf_counter()-start)*1000));last_stamp=stamp;capture_times[stamp]=frame_capture_at
     record_frame=frame.copy() if a.record else None
     infer_t=time.perf_counter()
     iw=640 if a.mode=='panda' else a.infer_width
@@ -213,12 +267,18 @@ def main():
      result,hm=infer(detector);hand_times.append(hm)
      if pose_detector is not None:pr,pm=infer(pose_detector);pose_times.append(pm)
     stages['neural'].append((time.perf_counter()-neural_start)*1000);retarget_start=time.perf_counter()
-   hsample={'detected':False,'sent_at':time.time()}
+   detail_start=time.perf_counter();capture_at=capture_times.pop(stamp,time.time());details['timestamp'].append((time.perf_counter()-detail_start)*1000); detection_counts['hand']+=bool(result.hand_landmarks)
+   hsample={'detected':False,'sent_at':time.time(),'capture_at':capture_at,'seq':count}
    if pose_detector is not None:
     if pr.pose_world_landmarks:
      pw=np.array([[v.x,v.y,v.z,v.visibility] for v in pr.pose_world_landmarks[0]]);p2=np.array([[v.x,v.y] for v in pr.pose_landmarks[0]])
-     pf=pose_filters.setdefault('pose',OneEuro());pw[:,:3]=pf(pw[:,:3],time.perf_counter())
-     hsample.update(detected=True,pose=pw.tolist(),pose2d=preview_coords(p2),hands={},hands2d={})
+     pf=pose_filters.get('pose')
+     if pf is None:pf=pose_filters['pose']=OneEuro()
+     pw[:,:3]=pf(pw[:,:3],time.perf_counter())
+     detail_start=time.perf_counter();upper=all(v.visibility>=.3 for v in pr.pose_world_landmarks[0][11:17]);hips=all(pr.pose_world_landmarks[0][i].visibility>=.3 for i in (23,24));details['visibility'].append((time.perf_counter()-detail_start)*1000)
+     hsample['quality']={'upper_body_visible':upper,'hips_visible':hips}
+     detection_counts['pose']+=1
+     hsample.update(detected=upper,pose=pw.tolist(),pose2d=preview_coords(p2),hands={},hands2d={})
      # Global minimum-distance assignment, not handedness labels (mirrored frame).
      candidates=[]
      for hi,h in enumerate(result.hand_landmarks):
@@ -232,25 +292,33 @@ def main():
       if hi in used_h or side in used_s or distance>.3:continue
       used_h.add(hi);used_s.add(side)
       hw=np.array([[v.x,v.y,v.z] for v in result.hand_world_landmarks[hi]])
-      hf=pose_filters.setdefault(side,OneEuro());hsample['hands'][side]=hf(hw,time.perf_counter()).tolist();hsample['hands2d'][side]=preview_coords([[v.x,v.y] for v in result.hand_landmarks[hi]])
-     for u,v in [(11,12),(11,13),(13,15),(12,14),(14,16),(11,23),(12,24),(23,24)]:cv2.line(frame,tuple((p2[u]*[640,360]).astype(int)),tuple((p2[v]*[640,360]).astype(int)),(90,230,90),2)
+      hf=pose_filters.get(side)
+      if hf is None:hf=pose_filters[side]=OneEuro()
+      hsample['hands'][side]=hf(hw,time.perf_counter()).tolist();hsample['hands2d'][side]=preview_coords([[v.x,v.y] for v in result.hand_landmarks[hi]])
+     detail_start=time.perf_counter();pose_uv=(p2*[640,360]).astype(int)
+     for u,v in [(11,12),(11,13),(13,15),(12,14),(14,16),(11,23),(12,24),(23,24)]:cv2.line(frame,tuple(pose_uv[u]),tuple(pose_uv[v]),(90,230,90),2)
+     details['pose_overlay'].append((time.perf_counter()-detail_start)*1000)
+   if pose_detector is not None:
+    detail_start=time.perf_counter();hold.apply(hsample,detail_start);details['hold_quality'].append((time.perf_counter()-detail_start)*1000)
    infer_times.append((time.perf_counter()-infer_t)*1000)
    stages['retarget'].append((time.perf_counter()-retarget_start)*1000);overlay_start=time.perf_counter()
-   sample={'detected':False}; points=[]
-   if result.hand_landmarks:
+   sample={'detected':False}; points=[];detail_start=time.perf_counter()
+   if result.hand_landmarks and (a.mode!='humanoid' or log is not None):
     points=[[q.x,q.y,q.z] for q in result.hand_landmarks[0]]; pts=np.array(points); scale=max(.001,float(np.linalg.norm(pts[0,:2]-pts[9,:2]))); center=pts[[0,5,9,13,17],:2].mean(axis=0); pinch=float(np.linalg.norm(pts[4,:2]-pts[8,:2])/scale)
     values=filt([*center,scale,pinch],time.perf_counter()); sample=dict(detected=True,x=float(np.clip(values[0],0,1)),y=float(np.clip(values[1],0,1)),scale=float(values[2]),pinch=float(max(0,values[3])))
     h,w=frame.shape[:2]; uv=(pts[:,:2]*[w,h]).astype(int)
     for chain in ([0,1,2,3,4],[0,5,6,7,8],[0,9,10,11,12],[0,13,14,15,16],[0,17,18,19,20],[5,9,13,17]):
      for u,v in zip(chain,chain[1:]):cv2.line(frame,tuple(uv[u]),tuple(uv[v]),(0,230,90),2)
     for x,y in uv:cv2.circle(frame,(x,y),3,(240,130,0),-1)
+   details['panda_features_overlay'].append((time.perf_counter()-detail_start)*1000);detail_start=time.perf_counter()
    for hand in result.hand_landmarks:
     uvh=(np.array([[v.x,v.y] for v in hand])*[640,360]).astype(int)
     for chain in ([0,1,2,3,4],[0,5,6,7,8],[0,9,10,11,12],[0,13,14,15,16],[0,17,18,19,20],[5,9,13,17]):
      for u,v in zip(chain,chain[1:]):cv2.line(frame,tuple(uvh[u]),tuple(uvh[v]),(0,230,90),1)
     for tip,color in zip([4,8,12,16,20],[(107,107,255),(64,204,255),(115,217,77),(250,165,96),(252,132,192)]):cv2.circle(frame,tuple(uvh[tip]),6,color,-1)
     cv2.circle(frame,tuple(uvh[[0,5,9,13,17]].mean(axis=0).astype(int)),2,(255,255,255),-1)
-   sample['sent_at']=time.time()
+   details['hand_overlay'].append((time.perf_counter()-detail_start)*1000)
+   sample['sent_at']=time.time();sample['capture_at']=capture_at;sample['seq']=count
    stages['overlay'].append((time.perf_counter()-overlay_start)*1000);queue_start=time.perf_counter()
    try:
     with update_lock:update_pending['sample']=sample;update_pending['humanoid']=hsample if a.mode!='panda' else None
@@ -262,7 +330,7 @@ def main():
      preview_at=time.perf_counter()
    except Exception:errors+=1
    stages['queue'].append((time.perf_counter()-queue_start)*1000)
-   if log:log.write(json.dumps({'t':time.perf_counter()-start,'features':sample,'landmarks':points})+'\n');log.flush()
+   if log:log.write(json.dumps(dict(recording_row(time.perf_counter()-start,count,capture_at,a.mode,sample,hsample if a.mode!='panda' else None,points),capture_t=capture_at-(time.time()-time.perf_counter()+start)))+'\n');log.flush()
    if a.record:
     if out is None:out=cv2.VideoWriter(str(prefix)+'.mp4',cv2.VideoWriter_fourcc(*'mp4v'),30,(frame.shape[1],frame.shape[0]))
     out.write(record_frame)
@@ -282,5 +350,7 @@ def main():
   if pose_detector is not None:pose_detector.close()
   if out:out.release()
   if log:log.close()
- print(json.dumps({'stages_ms':{k:{'p50':float(np.median(v)),'p95':float(np.percentile(v,95))} for k,v in stages.items() if v},'source_fps':source_fps,'source_frames_due':source_frames_due,'processed_input_ratio':count/max(1,source_frames_due),'unprocessed_source_slots':max(0,source_frames_due-count),'dropped_frames':0 if a.video else max(0,source_frames_due-count),'updates':count,'seconds':round(processing_seconds,3),'hz':round(count/processing_seconds,3),'network_errors':errors,'sent_updates':sent_count,'preview_sent':len(preview_post_ms),'preview_encode_ms_p50':float(np.median(preview_encode_ms)) if preview_encode_ms else None,'preview_post_ms_p50':float(np.median(preview_post_ms)) if preview_post_ms else None,'post_ms_p50':float(np.median(post_ms)) if post_ms else None,'post_ms_p95':float(np.percentile(post_ms,95)) if post_ms else None,'json_ms_p50':float(np.median(json_ms)) if json_ms else None,'payload_bytes_p50':float(np.median(payload_bytes)) if payload_bytes else None,'server_ms_p50':float(np.median(server_ms)) if server_ms else None,'loop_ms_p50':float(np.median(loop_ms)) if loop_ms else None,'inference_ms_p50':float(np.median(infer_times)) if infer_times else None,'inference_ms_p95':float(np.percentile(infer_times,95)) if infer_times else None,'hand_ms_p50':float(np.median(hand_times)) if hand_times else None,'pose_ms_p50':float(np.median(pose_times)) if pose_times else None}))
+ metrics={'detail_ms':{k:{'p50':float(np.median(v)),'p95':float(np.percentile(v,95)),'n':len(v)} for k,v in details.items() if v},'http_client':a.http_client,'hand_detection_rate':detection_counts['hand']/max(1,count),'pose_detection_rate':detection_counts['pose']/max(1,count),'camera_read_failed':latest['failed'],'capture_clock':'unix wall clock at decode completion/video or read completion/camera','stages_ms':{k:{'p50':float(np.median(v)),'p95':float(np.percentile(v,95))} for k,v in stages.items() if v},'source_fps':source_fps,'source_frames_due':source_frames_due,'processed_input_ratio':count/max(1,source_frames_due),'unprocessed_source_slots':max(0,source_frames_due-count),'dropped_frames':0 if a.video else max(0,source_frames_due-count),'updates':count,'seconds':round(processing_seconds,3),'hz':round(count/processing_seconds,3),'network_errors':errors,'sent_updates':sent_count,'preview_sent':len(preview_post_ms),'preview_encode_ms_p50':float(np.median(preview_encode_ms)) if preview_encode_ms else None,'preview_post_ms_p50':float(np.median(preview_post_ms)) if preview_post_ms else None,'post_ms_p50':float(np.median(post_ms)) if post_ms else None,'post_ms_p95':float(np.percentile(post_ms,95)) if post_ms else None,'json_ms_p50':float(np.median(json_ms)) if json_ms else None,'payload_bytes_p50':float(np.median(payload_bytes)) if payload_bytes else None,'server_ms_p50':float(np.median(server_ms)) if server_ms else None,'loop_ms_p50':float(np.median(loop_ms)) if loop_ms else None,'inference_ms_p50':float(np.median(infer_times)) if infer_times else None,'inference_ms_p95':float(np.percentile(infer_times,95)) if infer_times else None,'hand_ms_p50':float(np.median(hand_times)) if hand_times else None,'pose_ms_p50':float(np.median(pose_times)) if pose_times else None}
+ print(json.dumps(metrics))
+ if a.metrics_out:pathlib.Path(a.metrics_out).write_text(json.dumps(metrics,indent=2),encoding='utf8')
 if __name__=='__main__':main()

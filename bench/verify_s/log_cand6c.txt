@@ -1,0 +1,12 @@
+locked at 13:45:21 load 1.97 2.59 2.32 4/403 97117 gpu 5 %, 2682 MiB
+mode on 200
+=== part static
+{'max_u1': 1.53, 'max_u2': 2.1, 'max_wrist_mm': 24.42, 'max_wrist_mm_actualS': 1.51, 'max_lr_diff': 0.0, 'mean_dir': 0.92}
+=== part asym
+{'max_dir': 3.08, 'max_wrist_actualS_mm': 1.59, 'max_lr_diff': 1.74}
+=== part drop
+{'left': {'max_step_deg': 0.1, 'at_dt_ms': 25.3, 'max_deg_per_frame_equiv': 0.144, 'total_rot_deg': 4.1, 'max_wrist_pos_step_mm': np.float64(0.0)}, 'right': {'max_step_deg': 0.1, 'at_dt_ms': 25.3, 'max_deg_per_frame_equiv': 0.144, 'total_rot_deg': 4.1, 'max_wrist_pos_step_mm': np.float64(0.0)}, 'n_samples': 366}
+DONE
+5094 closed
+your 131072x1 screen size is bogus. expect trouble
+unlocked load 3.72 3.02 2.51 2/421 101871 gpu 22 %, 3112 MiB

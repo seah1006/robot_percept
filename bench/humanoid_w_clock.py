@@ -1,0 +1,2 @@
+import sys,sysconfig,time,json
+print(json.dumps({'version':sys.version,'config':{k:sysconfig.get_config_var(k) for k in ['HAVE_SEM_CLOCKWAIT','HAVE_SEM_TIMEDWAIT','HAVE_CLOCK_NANOSLEEP']},'monotonic':str(time.get_clock_info('monotonic')),'realtime':str(time.get_clock_info('time'))}))

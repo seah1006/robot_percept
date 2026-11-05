@@ -1,0 +1,51 @@
+{
+ "tag": "cand5d",
+ "load0": [
+  "2.69",
+  "2.23",
+  "1.70"
+ ],
+ "togmov": {
+  "control_no_toggle": {
+   "v_ratio": 0.614,
+   "v_joint": "right_shoulder_pitch_joint",
+   "a_ratio_lowerbound": 0,
+   "a_joint": "",
+   "n": 842,
+   "max_dq_deg_per_poll": 7.8,
+   "toggle_at_s": 0.61
+  },
+  "control_off_no_toggle": {
+   "v_ratio": 0.988,
+   "v_joint": "right_shoulder_pitch_joint",
+   "a_ratio_lowerbound": 0,
+   "a_joint": "",
+   "n": 909,
+   "max_dq_deg_per_poll": 12.1,
+   "toggle_at_s": 0.6
+  },
+  "on_to_off_moving": {
+   "v_ratio": 2.101,
+   "v_joint": "right_shoulder_pitch_joint",
+   "a_ratio_lowerbound": 1.732,
+   "a_joint": "left_elbow_joint",
+   "n": 630,
+   "max_dq_deg_per_poll": 22.0,
+   "toggle_at_s": 0.61
+  },
+  "off_to_on_moving": {
+   "v_ratio": 0.834,
+   "v_joint": "right_shoulder_pitch_joint",
+   "a_ratio_lowerbound": 0.061,
+   "a_joint": "right_shoulder_pitch_joint",
+   "n": 514,
+   "max_dq_deg_per_poll": 11.1,
+   "toggle_at_s": 0.61
+  }
+ },
+ "load1": [
+  "2.94",
+  "2.36",
+  "1.79"
+ ]
+}

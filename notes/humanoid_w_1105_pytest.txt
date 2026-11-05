@@ -1,0 +1,213 @@
+
+==================================== ERRORS ====================================
+____________ ERROR collecting assets/mujoco_menagerie/python/tests _____________
+../../anaconda3/envs/robot_percept/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+../../anaconda3/envs/robot_percept/lib/python3.12/site-packages/_pytest/assertion/rewrite.py:185: in exec_module
+    exec(co, module.__dict__)
+assets/mujoco_menagerie/python/tests/conftest.py:23: in <module>
+    from mujoco_menagerie import _archive
+E   ModuleNotFoundError: No module named 'mujoco_menagerie'
+__ ERROR collecting bench/verify_c/base/assets/mujoco_menagerie/python/tests ___
+../../anaconda3/envs/robot_percept/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+../../anaconda3/envs/robot_percept/lib/python3.12/site-packages/_pytest/assertion/rewrite.py:185: in exec_module
+    exec(co, module.__dict__)
+bench/verify_c/base/assets/mujoco_menagerie/python/tests/conftest.py:23: in <module>
+    from mujoco_menagerie import _archive
+E   ModuleNotFoundError: No module named 'mujoco_menagerie'
+__ ERROR collecting bench/verify_c/base/data/backup_fps/web/test_pipeline.py ___
+import file mismatch:
+imported module 'web.test_pipeline' has this __file__ attribute:
+  /home/user/work/robot_percept/web/test_pipeline.py
+which is not the same as the test file we want to collect:
+  /home/user/work/robot_percept/bench/verify_c/base/data/backup_fps/web/test_pipeline.py
+HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
+------------------------------- Captured stderr --------------------------------
+Traceback (most recent call last):
+  File "/home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/urllib3/connection.py", line 239, in _new_conn
+    sock = connection.create_connection(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/urllib3/util/connection.py", line 85, in create_connection
+    raise err
+  File "/home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/urllib3/util/connection.py", line 73, in create_connection
+    sock.connect(sa)
+ConnectionRefusedError: [Errno 111] Connection refused
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/urllib3/connectionpool.py", line 793, in urlopen
+    response = self._make_request(
+               ^^^^^^^^^^^^^^^^^^^
+  File "/home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/urllib3/connectionpool.py", line 499, in _make_request
+    conn.request(
+  File "/home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/urllib3/connection.py", line 567, in request
+    self.endheaders()
+  File "/home/user/anaconda3/envs/robot_percept/lib/python3.12/http/client.py", line 1381, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "/home/user/anaconda3/envs/robot_percept/lib/python3.12/http/client.py", line 1141, in _send_output
+    self.send(msg)
+  File "/home/user/anaconda3/envs/robot_percept/lib/python3.12/http/client.py", line 1085, in send
+    self.connect()
+  File "/home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/urllib3/connection.py", line 398, in connect
+    self.sock = self._new_conn()
+                ^^^^^^^^^^^^^^^^
+  File "/home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/urllib3/connection.py", line 254, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: HTTPConnection(host='127.0.0.1', port=5081): Failed to establish a new connection: [Errno 111] Connection refused
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/requests/adapters.py", line 696, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/urllib3/connectionpool.py", line 847, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "/home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/urllib3/util/retry.py", line 555, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='127.0.0.1', port=5081): Max retries exceeded with url: /reset (Caused by NewConnectionError("HTTPConnection(host='127.0.0.1', port=5081): Failed to establish a new connection: [Errno 111] Connection refused"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/user/work/robot_percept/web/test_pipeline.py", line 23, in <module>
+    wait(post('/reset' if i==0 else '/scene/randomize'))
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/work/robot_percept/web/test_pipeline.py", line 7, in post
+    r=requests.post(base+p,json=d or {},timeout=180);j=r.json();print(p,r.status_code,json.dumps(j)[:1600],flush=True);return j
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/requests/api.py", line 134, in post
+    return request("post", url, data=data, json=json, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/requests/api.py", line 71, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/requests/sessions.py", line 651, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/requests/sessions.py", line 784, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/requests/adapters.py", line 729, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=5081): Max retries exceeded with url: /reset (Caused by NewConnectionError("HTTPConnection(host='127.0.0.1', port=5081): Failed to establish a new connection: [Errno 111] Connection refused"))
+___ ERROR collecting bench/verify_c/cur/assets/mujoco_menagerie/python/tests ___
+../../anaconda3/envs/robot_percept/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+../../anaconda3/envs/robot_percept/lib/python3.12/site-packages/_pytest/assertion/rewrite.py:185: in exec_module
+    exec(co, module.__dict__)
+bench/verify_c/cur/assets/mujoco_menagerie/python/tests/conftest.py:23: in <module>
+    from mujoco_menagerie import _archive
+E   ModuleNotFoundError: No module named 'mujoco_menagerie'
+___ ERROR collecting bench/verify_c/cur/data/backup_fps/web/test_pipeline.py ___
+import file mismatch:
+imported module 'web.test_pipeline' has this __file__ attribute:
+  /home/user/work/robot_percept/web/test_pipeline.py
+which is not the same as the test file we want to collect:
+  /home/user/work/robot_percept/bench/verify_c/cur/data/backup_fps/web/test_pipeline.py
+HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
+_ ERROR collecting bench/verify_r/base_src/assets/mujoco_menagerie/python/tests _
+../../anaconda3/envs/robot_percept/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+../../anaconda3/envs/robot_percept/lib/python3.12/site-packages/_pytest/assertion/rewrite.py:185: in exec_module
+    exec(co, module.__dict__)
+bench/verify_r/base_src/assets/mujoco_menagerie/python/tests/conftest.py:23: in <module>
+    from mujoco_menagerie import _archive
+E   ModuleNotFoundError: No module named 'mujoco_menagerie'
+________ ERROR collecting bench/verify_r/base_src/web/test_pipeline.py _________
+import file mismatch:
+imported module 'web.test_pipeline' has this __file__ attribute:
+  /home/user/work/robot_percept/web/test_pipeline.py
+which is not the same as the test file we want to collect:
+  /home/user/work/robot_percept/bench/verify_r/base_src/web/test_pipeline.py
+HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
+____________ ERROR collecting data/backup_fps/web/test_pipeline.py _____________
+import file mismatch:
+imported module 'web.test_pipeline' has this __file__ attribute:
+  /home/user/work/robot_percept/web/test_pipeline.py
+which is not the same as the test file we want to collect:
+  /home/user/work/robot_percept/data/backup_fps/web/test_pipeline.py
+HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
+_______________ ERROR collecting eval/tests/test_pose_metrics.py _______________
+import file mismatch:
+imported module 'test_pose_metrics' has this __file__ attribute:
+  /home/user/work/robot_percept/bench/verify_r/base_src/eval/tests/test_pose_metrics.py
+which is not the same as the test file we want to collect:
+  /home/user/work/robot_percept/eval/tests/test_pose_metrics.py
+HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
+_ ERROR collecting pytorch3d-cxx20/projects/implicitron_trainer/tests/test_experiment.py _
+ImportError while importing test module '/home/user/work/robot_percept/pytorch3d-cxx20/projects/implicitron_trainer/tests/test_experiment.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+../../anaconda3/envs/robot_percept/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pytorch3d-cxx20/projects/implicitron_trainer/tests/test_experiment.py:17: in <module>
+    from projects.implicitron_trainer.impl.optimizer_factory import (
+pytorch3d-cxx20/projects/implicitron_trainer/impl/optimizer_factory.py:17: in <module>
+    from accelerate import Accelerator
+E   ModuleNotFoundError: No module named 'accelerate'
+=============================== warnings summary ===============================
+../../anaconda3/envs/robot_percept/lib/python3.12/site-packages/dash/testing/plugin.py:104
+  /home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/dash/testing/plugin.py:104: PytestRemovedIn10Warning: The hookimpl pytest_addhooks uses old-style configuration options (marks or attributes).
+  Please use the pytest.hookimpl(tryfirst=True) decorator instead
+   to configure the hooks.
+   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
+    @pytest.mark.tryfirst
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+ERROR assets/mujoco_menagerie/python/tests - ModuleNotFoundError: No module n...
+ERROR bench/verify_c/base/assets/mujoco_menagerie/python/tests - ModuleNotFou...
+ERROR bench/verify_c/base/data/backup_fps/web/test_pipeline.py
+ERROR bench/verify_c/cur/assets/mujoco_menagerie/python/tests - ModuleNotFoun...
+ERROR bench/verify_c/cur/data/backup_fps/web/test_pipeline.py
+ERROR bench/verify_r/base_src/assets/mujoco_menagerie/python/tests - ModuleNo...
+ERROR bench/verify_r/base_src/web/test_pipeline.py
+ERROR data/backup_fps/web/test_pipeline.py
+ERROR eval/tests/test_pose_metrics.py
+ERROR pytorch3d-cxx20/projects/implicitron_trainer/tests/test_experiment.py
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! KeyboardInterrupt !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/_pytest/assertion/rewrite.py:421: KeyboardInterrupt
+(to show a full traceback on KeyboardInterrupt use --full-trace)
+1 warning, 10 errors in 129.39s (0:02:09)

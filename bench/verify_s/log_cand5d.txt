@@ -1,0 +1,16 @@
+locked at 13:24:10 load 2.58 2.20 1.69 4/312 55511 gpu 24 %, 2124 MiB
+mode on 200
+=== part togmov
+control_no_toggle {'v_ratio': 0.617, 'v_joint': 'right_shoulder_pitch_joint', 'a_ratio_lowerbound': 0, 'a_joint': '', 'n': 714, 'max_dq_deg_per_poll': 8.0, 'toggle_at_s': 0.61}
+control_off_no_toggle {'v_ratio': 1.011, 'v_joint': 'right_shoulder_pitch_joint', 'a_ratio_lowerbound': 0, 'a_joint': '', 'n': 705, 'max_dq_deg_per_poll': 11.4, 'toggle_at_s': 0.61}
+on_to_off_moving {'v_ratio': 2.183, 'v_joint': 'right_shoulder_pitch_joint', 'a_ratio_lowerbound': 3.556, 'a_joint': 'right_shoulder_pitch_joint', 'n': 826, 'max_dq_deg_per_poll': 18.8, 'toggle_at_s': 0.6}
+off_to_on_moving {'v_ratio': 0.858, 'v_joint': 'left_elbow_joint', 'a_ratio_lowerbound': 0, 'a_joint': '', 'n': 842, 'max_dq_deg_per_poll': 9.4, 'toggle_at_s': 0.6}
+=== part togmov
+control_no_toggle {'v_ratio': 0.614, 'v_joint': 'right_shoulder_pitch_joint', 'a_ratio_lowerbound': 0, 'a_joint': '', 'n': 842, 'max_dq_deg_per_poll': 7.8, 'toggle_at_s': 0.61}
+control_off_no_toggle {'v_ratio': 0.988, 'v_joint': 'right_shoulder_pitch_joint', 'a_ratio_lowerbound': 0, 'a_joint': '', 'n': 909, 'max_dq_deg_per_poll': 12.1, 'toggle_at_s': 0.6}
+on_to_off_moving {'v_ratio': 2.101, 'v_joint': 'right_shoulder_pitch_joint', 'a_ratio_lowerbound': 1.732, 'a_joint': 'left_elbow_joint', 'n': 630, 'max_dq_deg_per_poll': 22.0, 'toggle_at_s': 0.61}
+off_to_on_moving {'v_ratio': 0.834, 'v_joint': 'right_shoulder_pitch_joint', 'a_ratio_lowerbound': 0.061, 'a_joint': 'right_shoulder_pitch_joint', 'n': 514, 'max_dq_deg_per_poll': 11.1, 'toggle_at_s': 0.61}
+DONE
+5094 closed
+your 131072x1 screen size is bogus. expect trouble
+unlocked load 2.94 2.36 1.79 4/340 63794 gpu 29 %, 2458 MiB

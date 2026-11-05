@@ -36,6 +36,6 @@
     0.05,
     0.3399
   ],
-  "steps_per_s": 31498,
-  "realtime_factor": 63.0
+  "steps_per_s": 24230,
+  "realtime_factor": 48.5
 }

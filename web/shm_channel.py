@@ -55,3 +55,17 @@ class Blob:
         if unlink:
             try: self.shm.unlink()
             except FileNotFoundError: pass
+
+
+def wait_monotonic(event, timeout, quantum=.005):
+    """Interruptible relative wait immune to CLOCK_REALTIME steps.
+
+    Some Conda builds use sem_timedwait (not sem_clockwait) for Event.wait.
+    time.sleep uses clock_nanosleep/CLOCK_MONOTONIC on our Linux runtime.
+    """
+    deadline = time.monotonic() + max(0., timeout)
+    while not event.is_set():
+        remaining = deadline - time.monotonic()
+        if remaining <= 0: return False
+        time.sleep(min(remaining, quantum))
+    return True

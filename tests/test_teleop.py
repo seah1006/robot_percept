@@ -53,3 +53,15 @@ def test_mjpeg_preview_stream():
  assert frame.startswith(b'--frame\r\n') and jpeg in frame
  r.close()
  assert 'preview_hz' in c.get('/teleop/status').json
+
+
+def test_cumulative_counts_do_not_wrap_at_deque_capacity():
+ c,s=client()
+ for _ in range(95):
+  assert c.post('/teleop/update',json={'detected':False}).status_code==200
+  assert c.post('/teleop/preview',data=b'\xff\xd8x\xff\xd9').status_code==200
+ assert c.post('/teleop/update',json=[]).status_code==400
+ assert c.post('/teleop/preview',data=b'invalid').status_code==400
+ counts=c.get('/teleop/status').json
+ assert counts['input_count']==95 and counts['preview_count']==95
+ assert 'hz' in counts and 'preview_hz' in counts

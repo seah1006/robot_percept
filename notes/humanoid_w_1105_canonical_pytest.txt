@@ -1,0 +1,114 @@
+....F........................F....................                       [100%]
+=================================== FAILURES ===================================
+___________________________________ test_env ___________________________________
+
+    def test_env():
+>       validate()
+
+tests/test_env.py:77: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_env.py:34: in validate
+    _,dist,_=trimesh.proximity.closest_point(mesh,po)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/envs/robot_percept/lib/python3.12/site-packages/trimesh/proximity.py:156: in closest_point
+    candidates = nearby_faces(mesh, points)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/envs/robot_percept/lib/python3.12/site-packages/trimesh/proximity.py:59: in nearby_faces
+    rtree = mesh.triangles_tree
+            ^^^^^^^^^^^^^^^^^^^
+../../anaconda3/envs/robot_percept/lib/python3.12/site-packages/trimesh/caching.py:133: in get_cached
+    value = function(*args, **kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/envs/robot_percept/lib/python3.12/site-packages/trimesh/base.py:907: in triangles_tree
+    return triangles.bounds_tree(self.triangles)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/envs/robot_percept/lib/python3.12/site-packages/trimesh/triangles.py:392: in bounds_tree
+    tree = util.bounds_tree(triangle_bounds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+bounds = array([[ 0.004984, -0.032404, -0.082703,  0.008027, -0.031364, -0.08164 ],
+       [ 0.006149, -0.032487, -0.082703,  0...017895,  0.077778],
+       [ 0.006222,  0.016156,  0.074822,  0.008608,  0.017419,  0.077778]],
+      shape=(15728, 6))
+
+    def bounds_tree(bounds: ArrayLike) -> Any:
+        """
+        Given a set of axis aligned bounds create an r-tree for
+        broad-phase collision detection.
+    
+        Parameters
+        ------------
+        bounds : (n, 2D) or (n, 2, D) float
+          Non-interleaved bounds where D=dimension
+          E.G a 2D bounds tree:
+          [(minx, miny, maxx, maxy), ...]
+    
+        Returns
+        ---------
+        tree : Rtree
+          Tree containing bounds by index
+        """
+>       import rtree
+E       ModuleNotFoundError: No module named 'rtree'
+
+../../anaconda3/envs/robot_percept/lib/python3.12/site-packages/trimesh/util.py:1896: ModuleNotFoundError
+___________ test_fp_warmup_hook_uses_rgbd_and_skips_active_selection ___________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x74dafc1d77d0>
+
+    def test_fp_warmup_hook_uses_rgbd_and_skips_active_selection(monkeypatch):
+        import threading, fcntl
+        from types import SimpleNamespace
+        from web.app import Runtime
+        monkeypatch.setattr(fcntl, 'flock', lambda *args: None)
+        calls=[]
+        backend=SimpleNamespace(mode='fp',warmup_async=lambda *args: (calls.append(args) or SimpleNamespace(join=lambda: calls.append('joined'))))
+        runtime=Runtime.__new__(Runtime)
+        runtime.perception=backend;runtime.running=True;runtime.selected=None
+        runtime.status={'ready':True,'camera_K':np.eye(3).tolist(),'objects':{'mustard':{'mesh':'real.obj'}}}
+        runtime.perception_lock=threading.RLock();runtime.state_lock=threading.RLock()
+        runtime.frame=lambda: (np.ones((2,2,3),np.uint8),np.ones((2,2),np.float32),None)
+        runtime.warmup_loop()
+>       assert len(calls)==2 and calls[-1]=='joined'
+E       assert (0 == 2)
+E        +  where 0 = len([])
+
+tests/test_humanoid.py:318: AssertionError
+=============================== warnings summary ===============================
+../../anaconda3/envs/robot_percept/lib/python3.12/site-packages/dash/testing/plugin.py:104
+  /home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/dash/testing/plugin.py:104: PytestRemovedIn10Warning: The hookimpl pytest_addhooks uses old-style configuration options (marks or attributes).
+  Please use the pytest.hookimpl(tryfirst=True) decorator instead
+   to configure the hooks.
+   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
+    @pytest.mark.tryfirst
+
+tests/test_control.py::test_ik
+  /home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/_pytest/python.py:191: PytestReturnNotNoneWarning: Test functions should return None, but tests/test_control.py::test_ik returned <class 'dict'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+tests/test_control.py::test_cartesian
+  /home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/_pytest/python.py:191: PytestReturnNotNoneWarning: Test functions should return None, but tests/test_control.py::test_cartesian returned <class 'dict'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+tests/test_control.py::test_pick_place
+  /home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/_pytest/python.py:191: PytestReturnNotNoneWarning: Test functions should return None, but tests/test_control.py::test_pick_place returned <class 'dict'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+tests/test_control.py::test_simenv
+  /home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/_pytest/python.py:191: PytestReturnNotNoneWarning: Test functions should return None, but tests/test_control.py::test_simenv returned <class 'dict'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_env.py::test_env - ModuleNotFoundError: No module named 'rt...
+FAILED tests/test_humanoid.py::test_fp_warmup_hook_uses_rgbd_and_skips_active_selection
+2 failed, 48 passed, 5 warnings in 37.79s
