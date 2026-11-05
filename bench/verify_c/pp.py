@@ -1,7 +1,7 @@
 import sys, json, time, argparse, collections
 from pathlib import Path
 ap=argparse.ArgumentParser(); ap.add_argument('--root',default='/home/user/work/robot_percept'); ap.add_argument('--n',type=int,default=20)
-ap.add_argument('--gt',default='on'); ap.add_argument('--home',type=int,default=1); ap.add_argument('--suite',default='single,multi'); ap.add_argument('--out'); ap.add_argument('--objs',default='mustard,box,cup')
+ap.add_argument('--gt',default='on'); ap.add_argument('--home',type=int,default=1); ap.add_argument('--suite',default='single,multi'); ap.add_argument('--out'); ap.add_argument('--objs',default='mustard,box,cup'); ap.add_argument('--s0',type=int,default=0)
 a=ap.parse_args()
 sys.path.insert(0,a.root)
 import numpy as np, mujoco
@@ -57,7 +57,7 @@ for suite in a.suite.split(','):
     if suite=='single':
         for k in a.objs.split(','):
             rows=[]
-            for s in range(a.n):
+            for s in range(a.s0,a.s0+a.n):
                 env=make_env([k],s); ctl=Controller(env.model,env.data,env=env)
                 if hasattr(ctl,'gt_assist'): ctl.gt_assist=(a.gt=='on')
                 pos=env.T_world_obj(NAMES[k])[:2,3]
@@ -67,7 +67,7 @@ for suite in a.suite.split(','):
             print('SUMMARY',k,'gt',a.gt,sum(r['pick'] for r in rows),'pick',sum(r['place'] for r in rows),'place',sum(r.get('home_ok',False) for r in rows),'home /',len(rows),flush=True)
     if suite=='multi':
         rows=[]
-        for s in range(a.n):
+        for s in range(a.s0,a.s0+a.n):
             env=make_env(['mustard','box','cup'],s); ctl=Controller(env.model,env.data,env=env)
             if hasattr(ctl,'gt_assist'): ctl.gt_assist=(a.gt=='on')
             tr=[run_one(env,ctl,k,xy) for k,xy in zip(('mustard','box','cup'),((.48,-.29),(.56,-.29),(.50,.29)))]

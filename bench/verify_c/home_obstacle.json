@@ -1,0 +1,174 @@
+{
+ "rows": [
+  {
+   "seed": 0,
+   "case": "held_gt_on",
+   "pick": true,
+   "raised": true,
+   "err": "Cannot return home while object is attached",
+   "verdict": "REJECT_EARLY",
+   "db": 1.0,
+   "dt": 1.0,
+   "disp": 0.0,
+   "elapsed": 0.0,
+   "q_err": 1.7647697283091817
+  },
+  {
+   "seed": 0,
+   "case": "held_gt_off",
+   "pick": true,
+   "raised": true,
+   "err": "Home path intersects table or object after clearance retreat",
+   "obj_dz_mm": 112.19237389060616,
+   "table_pen_mm": -1000.0,
+   "verdict": "REJECT_EARLY",
+   "db": 1.0,
+   "dt": 1.0,
+   "disp": 0.0,
+   "elapsed": 1.05,
+   "q_err": 1.7614233832678732
+  },
+  {
+   "seed": 0,
+   "blocker": "cup_d70_h60mm",
+   "f": "0.35",
+   "skipped": "blocker overlaps arm at start (-33.0 mm)"
+  },
+  {
+   "seed": 0,
+   "blocker": "cup_d70_h60mm",
+   "f": "0.6",
+   "skipped": "blocker overlaps arm at start (-8.0 mm)"
+  },
+  {
+   "seed": 0,
+   "blocker": "cup_d70_h60mm",
+   "f": "0.85",
+   "raised": false,
+   "err": null,
+   "verdict": "COLLIDED",
+   "pen_mm": 0.0,
+   "blocker_disp_mm": 295.799245412912,
+   "table_pen_mm": 0.0,
+   "q_err": 0.00019486985469074902,
+   "elapsed": 1.87
+  },
+  {
+   "seed": 0,
+   "blocker": "cup_d70_h60mm",
+   "f": "above",
+   "skipped": "blocker overlaps arm at start (-35.6 mm)"
+  },
+  {
+   "seed": 0,
+   "blocker": "mustard",
+   "f": "0.35",
+   "skipped": "blocker overlaps arm at start (-46.2 mm)"
+  },
+  {
+   "seed": 0,
+   "blocker": "mustard",
+   "f": "0.6",
+   "skipped": "blocker overlaps arm at start (-25.1 mm)"
+  },
+  {
+   "seed": 0,
+   "blocker": "mustard",
+   "f": "0.85",
+   "skipped": "blocker overlaps arm at start (-2.6 mm)"
+  },
+  {
+   "seed": 0,
+   "blocker": "mustard",
+   "f": "above",
+   "skipped": "blocker overlaps arm at start (-76.0 mm)"
+  },
+  {
+   "seed": 1,
+   "case": "held_gt_on",
+   "pick": true,
+   "raised": true,
+   "err": "Cannot return home while object is attached",
+   "verdict": "REJECT_EARLY",
+   "db": 1.0,
+   "dt": 1.0,
+   "disp": 0.0,
+   "elapsed": 0.0,
+   "q_err": 1.8205584906171075
+  },
+  {
+   "seed": 1,
+   "case": "held_gt_off",
+   "pick": true,
+   "raised": true,
+   "err": "Home path intersects table or object after clearance retreat",
+   "obj_dz_mm": 104.52958444135047,
+   "table_pen_mm": -1000.0,
+   "verdict": "REJECT_EARLY",
+   "db": 1.0,
+   "dt": 1.0,
+   "disp": 0.0,
+   "elapsed": 2.23,
+   "q_err": 1.8218787225111006
+  },
+  {
+   "seed": 1,
+   "blocker": "cup_d70_h60mm",
+   "f": "0.35",
+   "skipped": "blocker overlaps arm at start (-39.7 mm)"
+  },
+  {
+   "seed": 1,
+   "blocker": "cup_d70_h60mm",
+   "f": "0.6",
+   "skipped": "blocker overlaps arm at start (-13.3 mm)"
+  },
+  {
+   "seed": 1,
+   "blocker": "cup_d70_h60mm",
+   "f": "0.85",
+   "raised": false,
+   "err": null,
+   "verdict": "COLLIDED",
+   "pen_mm": 0.0,
+   "blocker_disp_mm": 295.84647279864043,
+   "table_pen_mm": 0.0,
+   "q_err": 0.000332279174251493,
+   "elapsed": 2.82
+  },
+  {
+   "seed": 1,
+   "blocker": "cup_d70_h60mm",
+   "f": "above",
+   "skipped": "blocker overlaps arm at start (-39.6 mm)"
+  },
+  {
+   "seed": 1,
+   "blocker": "mustard",
+   "f": "0.35",
+   "skipped": "blocker overlaps arm at start (-52.5 mm)"
+  },
+  {
+   "seed": 1,
+   "blocker": "mustard",
+   "f": "0.6",
+   "skipped": "blocker overlaps arm at start (-26.2 mm)"
+  },
+  {
+   "seed": 1,
+   "blocker": "mustard",
+   "f": "0.85",
+   "skipped": "blocker overlaps arm at start (-1.7 mm)"
+  },
+  {
+   "seed": 1,
+   "blocker": "mustard",
+   "f": "above",
+   "skipped": "blocker overlaps arm at start (-83.0 mm)"
+  }
+ ],
+ "summary": {
+  "REJECT_EARLY": 4,
+  "COLLIDED": 2
+ }
+}

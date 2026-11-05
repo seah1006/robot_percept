@@ -1,0 +1,250 @@
+{
+ "mustard": [
+  {
+   "pick": true,
+   "lifted": 0.13435434659644196,
+   "place": false,
+   "err_mm": 114.06335402408216,
+   "home_ok": true,
+   "home": {
+    "joint_error": 0.0003341027767587273,
+    "object_displacement": 7.280644825790129e-05
+   },
+   "home_joint_err": 0.0003341027767587273,
+   "obj_move_mm": 0.0728064482579013,
+   "obj_maxmove_mm": 0.0728064482579013,
+   "arm_obj_contacts": 0,
+   "elapsed": 2.2
+  },
+  {
+   "pick": true,
+   "lifted": 0.11754297874854491,
+   "place": false,
+   "err_mm": 203.27238202222205,
+   "home_ok": true,
+   "home": {
+    "joint_error": 0.00033329407292606014,
+    "object_displacement": 6.044905103549739e-05
+   },
+   "home_joint_err": 0.00033329407292606014,
+   "obj_move_mm": 0.06044905103549739,
+   "obj_maxmove_mm": 0.06044905103549739,
+   "arm_obj_contacts": 0,
+   "elapsed": 2.1
+  },
+  {
+   "pick": true,
+   "lifted": -0.03641618049648859,
+   "place": false,
+   "err_mm": 389.4744692900494,
+   "home_ok": true,
+   "home": {
+    "joint_error": 0.0003329051275178486,
+    "object_displacement": 6.044902446190841e-05
+   },
+   "home_joint_err": 0.0003329051275178486,
+   "obj_move_mm": 0.060449024461908404,
+   "obj_maxmove_mm": 0.060449024461908404,
+   "arm_obj_contacts": 0,
+   "elapsed": 2.5
+  },
+  {
+   "pick": true,
+   "lifted": 0.12185490462902393,
+   "place": false,
+   "err_mm": 367.3695973224307,
+   "home_ok": true,
+   "home": {
+    "joint_error": 0.00033422718258600516,
+    "object_displacement": 0.0001516213493478176
+   },
+   "home_joint_err": 0.00033422718258600516,
+   "obj_move_mm": 0.1516213493478176,
+   "obj_maxmove_mm": 0.1516213493478176,
+   "arm_obj_contacts": 0,
+   "elapsed": 2.2
+  },
+  {
+   "pick": true,
+   "lifted": 0.13028485128156114,
+   "place": false,
+   "err_mm": 65.66041207477932,
+   "home_ok": true,
+   "home": {
+    "joint_error": 0.0003333453535433751,
+    "object_displacement": 7.280645299948014e-05
+   },
+   "home_joint_err": 0.0003333453535433751,
+   "obj_move_mm": 0.07280645299948015,
+   "obj_maxmove_mm": 0.07280645299948015,
+   "arm_obj_contacts": 0,
+   "elapsed": 2.5
+  }
+ ],
+ "box": [
+  {
+   "pick": true,
+   "lifted": 0.1489637496201145,
+   "place": true,
+   "err_mm": 4.812156329935473,
+   "home_ok": true,
+   "home": {
+    "joint_error": 0.0004043614413319352,
+    "object_displacement": 1.774457111305366e-05
+   },
+   "home_joint_err": 0.0004043614413319352,
+   "obj_move_mm": 0.01774457111305366,
+   "obj_maxmove_mm": 0.01774457111305366,
+   "arm_obj_contacts": 0,
+   "elapsed": 2.5
+  },
+  {
+   "pick": true,
+   "lifted": 0.1480643352658344,
+   "place": true,
+   "err_mm": 3.9100866371426912,
+   "home_ok": true,
+   "home": {
+    "joint_error": 0.0002486413246651775,
+    "object_displacement": 1.7744571409867354e-05
+   },
+   "home_joint_err": 0.0002486413246651775,
+   "obj_move_mm": 0.017744571409867356,
+   "obj_maxmove_mm": 0.017744571409867356,
+   "arm_obj_contacts": 0,
+   "elapsed": 2.7
+  },
+  {
+   "pick": true,
+   "lifted": 0.14944571609996027,
+   "place": true,
+   "err_mm": 2.668958587198467,
+   "home_ok": true,
+   "home": {
+    "joint_error": 0.0005553425297575298,
+    "object_displacement": 1.7744571183835762e-05
+   },
+   "home_joint_err": 0.0005553425297575298,
+   "obj_move_mm": 0.017744571183835763,
+   "obj_maxmove_mm": 0.017744571183835763,
+   "arm_obj_contacts": 0,
+   "elapsed": 3.6
+  },
+  {
+   "pick": true,
+   "lifted": 0.14982801203863572,
+   "place": true,
+   "err_mm": 1.7168108832664912,
+   "home_ok": true,
+   "home": {
+    "joint_error": 4.8077957167880214e-05,
+    "object_displacement": 1.77445709031114e-05
+   },
+   "home_joint_err": 4.8077957167880214e-05,
+   "obj_move_mm": 0.017744570903111403,
+   "obj_maxmove_mm": 0.017744570903111403,
+   "arm_obj_contacts": 0,
+   "elapsed": 2.9
+  },
+  {
+   "pick": true,
+   "lifted": 0.14794402475080265,
+   "place": true,
+   "err_mm": 4.757684834017195,
+   "home_ok": true,
+   "home": {
+    "joint_error": 0.0003384482252088983,
+    "object_displacement": 1.7744571193696872e-05
+   },
+   "home_joint_err": 0.0003384482252088983,
+   "obj_move_mm": 0.01774457119369687,
+   "obj_maxmove_mm": 0.01774457119369687,
+   "arm_obj_contacts": 0,
+   "elapsed": 2.4
+  }
+ ],
+ "cup": [
+  {
+   "pick": true,
+   "lifted": 0.14926412144329082,
+   "place": false,
+   "err_mm": 42.001441107360186,
+   "home_ok": true,
+   "home": {
+    "joint_error": 0.0003312939480414334,
+    "object_displacement": 4.7511767969339904e-07
+   },
+   "home_joint_err": 0.0003312939480414334,
+   "obj_move_mm": 0.00047511767969339906,
+   "obj_maxmove_mm": 0.00047511767969339906,
+   "arm_obj_contacts": 0,
+   "elapsed": 2.9
+  },
+  {
+   "pick": true,
+   "lifted": 0.1485392664266037,
+   "place": true,
+   "err_mm": 6.163643445682571,
+   "home_ok": true,
+   "home": {
+    "joint_error": 4.302170566528041e-05,
+    "object_displacement": 4.74943774129316e-07
+   },
+   "home_joint_err": 4.302170566528041e-05,
+   "obj_move_mm": 0.000474943774129316,
+   "obj_maxmove_mm": 0.000474943774129316,
+   "arm_obj_contacts": 0,
+   "elapsed": 2.4
+  },
+  {
+   "pick": true,
+   "lifted": 0.14964358375015657,
+   "place": true,
+   "err_mm": 6.735504477925129,
+   "home_ok": true,
+   "home": {
+    "joint_error": 0.00015843918369484733,
+    "object_displacement": 4.7494421437201145e-07
+   },
+   "home_joint_err": 0.00015843918369484733,
+   "obj_move_mm": 0.00047494421437201145,
+   "obj_maxmove_mm": 0.00047494421437201145,
+   "arm_obj_contacts": 0,
+   "elapsed": 2.5
+  },
+  {
+   "pick": true,
+   "lifted": 0.1496660657767797,
+   "place": true,
+   "err_mm": 2.724845600426582,
+   "home_ok": true,
+   "home": {
+    "joint_error": 0.00020590218395177828,
+    "object_displacement": 4.7494425557576786e-07
+   },
+   "home_joint_err": 0.00020590218395177828,
+   "obj_move_mm": 0.00047494425557576784,
+   "obj_maxmove_mm": 0.00047494425557576784,
+   "arm_obj_contacts": 0,
+   "elapsed": 2.4
+  },
+  {
+   "pick": true,
+   "lifted": 0.14836108415672195,
+   "place": false,
+   "err_mm": 104.52885029703403,
+   "home_ok": false,
+   "home_err": "Home invariant failed: joint=0.0001, object=0.028843142576767303",
+   "home_joint_err": 9.277010375086103e-05,
+   "obj_move_mm": 28.843142576767303,
+   "obj_maxmove_mm": 34.499572542102285,
+   "arm_obj_contacts": 0,
+   "elapsed": 2.7
+  }
+ ],
+ "gtcalls": {
+  "pick:pick_object": 30,
+  "place:place_object": 15,
+  "home:return_home": 30
+ }
+}

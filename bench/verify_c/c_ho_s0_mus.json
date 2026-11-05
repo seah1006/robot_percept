@@ -1,0 +1,57 @@
+{
+ "rows": [
+  {
+   "seed": 0,
+   "blocker": "mustard",
+   "f": "0.7",
+   "skipped": "blocker overlaps arm at start (-17.0 mm)"
+  },
+  {
+   "seed": 0,
+   "blocker": "mustard",
+   "f": "0.8",
+   "skipped": "blocker overlaps arm at start (-8.3 mm)"
+  },
+  {
+   "seed": 0,
+   "blocker": "mustard",
+   "f": "0.9",
+   "raised": true,
+   "err": "Collision during home clearance retreat",
+   "verdict": "REJECT_LATE",
+   "pen_mm": 0.8849082639759515,
+   "blocker_disp_mm": 183.35847800222055,
+   "table_pen_mm": 0.0,
+   "q_err": 1.2450329796157806,
+   "elapsed": 0.14
+  },
+  {
+   "seed": 0,
+   "blocker": "mustard",
+   "f": "0.95",
+   "raised": true,
+   "err": "Collision during home clearance retreat",
+   "verdict": "REJECT_LATE",
+   "pen_mm": 0.7666481880638414,
+   "blocker_disp_mm": 186.33506052325916,
+   "table_pen_mm": 0.0,
+   "q_err": 1.245027252892199,
+   "elapsed": 0.18
+  },
+  {
+   "seed": 0,
+   "blocker": "mustard",
+   "f": "above10",
+   "skipped": "blocker overlaps arm at start (-76.0 mm)"
+  },
+  {
+   "seed": 0,
+   "blocker": "mustard",
+   "f": "above20",
+   "skipped": "blocker overlaps arm at start (-74.3 mm)"
+  }
+ ],
+ "summary": {
+  "REJECT_LATE": 2
+ }
+}

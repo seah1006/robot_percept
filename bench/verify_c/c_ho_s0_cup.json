@@ -1,0 +1,100 @@
+{
+ "rows": [
+  {
+   "seed": 0,
+   "case": "held_gt_on",
+   "pick": true,
+   "raised": true,
+   "err": "Cannot return home while object is attached",
+   "verdict": "REJECT_EARLY",
+   "db": 1.0,
+   "dt": 1.0,
+   "disp": 0.0,
+   "elapsed": 0.0,
+   "q_err": 1.7647697283091817
+  },
+  {
+   "seed": 0,
+   "case": "held_gt_off",
+   "pick": true,
+   "raised": true,
+   "err": "Home path intersects table or object after clearance retreat",
+   "obj_dz_mm": 112.19237389060616,
+   "table_pen_mm": -1000.0,
+   "verdict": "REJECT_EARLY",
+   "db": 1.0,
+   "dt": 1.0,
+   "disp": 0.0,
+   "elapsed": 0.56,
+   "q_err": 1.7614233832678732
+  },
+  {
+   "seed": 0,
+   "blocker": "cup_d70_h60mm",
+   "f": "0.7",
+   "raised": false,
+   "err": null,
+   "verdict": "COLLIDED",
+   "pen_mm": 0.408199314546555,
+   "blocker_disp_mm": 288.3175108838343,
+   "table_pen_mm": 0.0,
+   "q_err": 0.00019486985306149673,
+   "elapsed": 2.1
+  },
+  {
+   "seed": 0,
+   "blocker": "cup_d70_h60mm",
+   "f": "0.8",
+   "raised": false,
+   "err": null,
+   "verdict": "COLLIDED",
+   "pen_mm": 0.0,
+   "blocker_disp_mm": 291.5442389650484,
+   "table_pen_mm": 0.0,
+   "q_err": 0.00019486985469074902,
+   "elapsed": 2.21
+  },
+  {
+   "seed": 0,
+   "blocker": "cup_d70_h60mm",
+   "f": "0.9",
+   "raised": false,
+   "err": null,
+   "verdict": "COLLIDED",
+   "pen_mm": 0.0,
+   "blocker_disp_mm": 296.50893309355325,
+   "table_pen_mm": 0.0,
+   "q_err": 0.00019486985469074902,
+   "elapsed": 1.54
+  },
+  {
+   "seed": 0,
+   "blocker": "cup_d70_h60mm",
+   "f": "0.95",
+   "raised": false,
+   "err": null,
+   "verdict": "COLLIDED",
+   "pen_mm": 0.0,
+   "blocker_disp_mm": 300.73006029485276,
+   "table_pen_mm": 0.0,
+   "q_err": 0.00019486985469074902,
+   "elapsed": 1.88
+  },
+  {
+   "seed": 0,
+   "blocker": "cup_d70_h60mm",
+   "f": "above10",
+   "skipped": "blocker overlaps arm at start (-35.6 mm)"
+  },
+  {
+   "seed": 0,
+   "blocker": "cup_d70_h60mm",
+   "f": "above20",
+   "skipped": "blocker overlaps arm at start (-52.4 mm)"
+  }
+ ],
+ "summary": {
+  "COLLIDED": 4,
+  "REJECT_EARLY": 2
+ }
+}
