@@ -5,6 +5,7 @@ copying; readers retry until they observe the same even seq before and after.
 """
 from __future__ import annotations
 import struct, time, uuid
+from .monowait import wait_event
 from multiprocessing import shared_memory
 
 HDR = 16
@@ -58,14 +59,5 @@ class Blob:
 
 
 def wait_monotonic(event, timeout, quantum=.005):
-    """Interruptible relative wait immune to CLOCK_REALTIME steps.
-
-    Some Conda builds use sem_timedwait (not sem_clockwait) for Event.wait.
-    time.sleep uses clock_nanosleep/CLOCK_MONOTONIC on our Linux runtime.
-    """
-    deadline = time.monotonic() + max(0., timeout)
-    while not event.is_set():
-        remaining = deadline - time.monotonic()
-        if remaining <= 0: return False
-        time.sleep(min(remaining, quantum))
-    return True
+    """Backward-compatible alias; new code imports web.monowait directly."""
+    return wait_event(event, timeout, quantum)

@@ -1,6 +1,7 @@
 import math,time,threading
 from collections import deque
 from flask import Blueprint,request,jsonify,Response
+from .monowait import wait_for
 
 def create_blueprint(runtime):
  bp=Blueprint('teleop',__name__); st=runtime.status; preview={'jpeg':None,'seq':0}; mutex=threading.Condition(); times=deque(maxlen=90); preview_times=deque(maxlen=90); counts={'input':0}
@@ -60,8 +61,8 @@ def create_blueprint(runtime):
   def frames():
    seq=-1
    while True:
+    wait_for(lambda: preview['seq'] != seq, 2, slice_s=.01)
     with mutex:
-     mutex.wait_for(lambda:preview['seq']!=seq,timeout=2)
      raw=preview['jpeg'];next_seq=preview['seq']
     if raw is None or next_seq==seq:continue
     seq=next_seq

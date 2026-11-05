@@ -7,6 +7,7 @@ import cv2
 from flask import Flask,Response,jsonify,render_template,request
 import numpy as np
 from werkzeug.utils import secure_filename
+from .monowait import sleep_until, wait_for, join_thread
 from .perception_stub import PerceptionBackend, estimate_pose
 from .sim_worker import run_worker
 ROOT=Path(__file__).resolve().parents[1]; CAD_PYTHON=ROOT/".venvs/cad/bin/python"
@@ -81,7 +82,7 @@ class Runtime:
    except Exception as exc:self.perception.warmup_priority_error='cancel: '+str(exc)
   if cancelled:
    thread=getattr(self.perception,'warmup_thread',None)
-   if thread is not None:thread.join(timeout=3)
+   if thread is not None:join_thread(thread,3)
    self.perception.warmup_g1_cancel_pending=bool((thread is not None and thread.is_alive()) or getattr(self.perception,'proc',None) is not None)
    manager=getattr(self,'_warmup_manager_thread',None)
    if manager is None or not manager.is_alive():
@@ -152,11 +153,11 @@ class Runtime:
  def send(self,op,**kwargs):
   cid=uuid.uuid4().hex[:10]; self.command_q.put({"id":cid,"op":op,**kwargs}); return cid
  def wait(self,cid,timeout=30):
-  end=time.time()+timeout
-  while time.time()<end:
+  end=time.monotonic()+timeout
+  while time.monotonic()<end:
    last=dict(self.status).get("last_command")
    if last and last.get("id")==cid: return last
-   time.sleep(.05)
+   sleep_until(min(end,time.monotonic()+.05))
   return {"id":cid,"ok":False,"error":"command timeout"}
  def log(self,text):
   with self.state_lock: self.logs=([{"time":time.strftime("%H:%M:%S"),"message":text}]+self.logs)[:40]
@@ -236,7 +237,8 @@ def create_app():
    video_access[show_gt]=time.monotonic()
    if show_gt not in video_threads:
     video_threads.add(show_gt);threading.Thread(target=produce_video,args=(show_gt,),daemon=True).start()
-   video_condition.wait_for(lambda:show_gt in video_cache and video_cache[show_gt][0]!=last_seq,timeout=2)
+  wait_for(lambda: show_gt in video_cache and video_cache[show_gt][0] != last_seq, 2, slice_s=.01)
+  with video_condition:
    return video_cache.get(show_gt)
  @app.get("/video")
  def video():

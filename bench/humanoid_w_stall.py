@@ -1,7 +1,7 @@
 """Own port 5091 only. Run under measure -> gpu locks, maximum 290 seconds."""
 import json,os,time,threading,subprocess,re,urllib.request,urllib.error,signal,gc
 from tools.humanoid_synth import payload
-from web.shm_channel import wait_monotonic
+from web.monowait import wait_event
 URL='http://127.0.0.1:5091'
 def interrupted(sig,frame):raise KeyboardInterrupt()
 signal.signal(signal.SIGTERM,interrupted)
@@ -41,9 +41,9 @@ def main():
     p,_=payload((i/30)%20);p['sent_at']=time.time()
     try:req('/humanoid/update',p)
     except Exception as x:errors.append(str(x))
-    i+=1;wait_monotonic(stop,max(0,t0+i/30-time.monotonic()))
+    i+=1;wait_event(stop,max(0,t0+i/30-time.monotonic()))
   def poll():
-   while not wait_monotonic(stop,.1):
+   while not wait_event(stop,.1):
     try:
      request_start=time.monotonic();status=req('/humanoid/status');received=time.monotonic()
      stats.append(status);status_records.append(dict(received_mono=received,http_ms=(received-request_start)*1000,status=status))

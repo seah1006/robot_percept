@@ -1,6 +1,6 @@
 """Frozen-source A/B/A/B on 5091; run under rp_measure.lock."""
 import pathlib,tempfile,shutil,os,subprocess,sys,time,json,requests,psutil,signal,re,hashlib
-ROOT=pathlib.Path(__file__).resolve().parents[1];BASE='http://127.0.0.1:5091'
+ROOT_ENV=os.getenv('ROOT');ROOT=pathlib.Path(ROOT_ENV).expanduser() if ROOT_ENV else pathlib.Path(__file__).resolve().parents[1];BASE='http://127.0.0.1:5091'
 web=ROOT/'web';app=(web/'app.py').read_text();worker=(web/'sim_worker.py').read_text()
 oldapp=app.replace("   if not name:continue  # P-area idle IPC guard, approved by integration owner\n   st=dict(self.status)\n   if st.get(\"frame_seq\")==last_seq:continue",'   st=dict(self.status)\n   if not name or st.get("frame_seq")==last_seq:continue')
 oldapp=oldapp.replace("   if not name:continue  # P-area idle IPC guard, approved by integration owner\n   st=self.status.copy()  # one atomic Manager RPC, not one RPC per status key\n   if st.get(\"frame_seq\")==last_seq:continue",'   st=dict(self.status)\n   if not name or st.get("frame_seq")==last_seq:continue')

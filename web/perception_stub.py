@@ -107,11 +107,16 @@ class PerceptionBackend:
                 while True:
                     if is_warmup and self.warmup_cancel.is_set():
                         raise RuntimeError('Warmup deferred for G1')
+                    remaining = deadline - time.monotonic()
+                    if remaining <= 0:
+                        raise TimeoutError('Perception RPC timed out')
+                    # Queue's timed semaphore lock is CLOCK_REALTIME-sensitive in this build;
+                    # the reader Connection.poll path uses selectors + a monotonic deadline.
+                    if not self.res_q._reader.poll(min(.1, remaining)):
+                        continue
                     try:
-                        rid,ok,payload=self.res_q.get(timeout=min(.1, max(.001, deadline-time.monotonic())))
+                        rid,ok,payload=self.res_q.get_nowait()
                     except queue.Empty:
-                        if time.monotonic() >= deadline:
-                            raise TimeoutError('Perception RPC timed out')
                         continue
                     if rid=='ready':continue
                     if rid!=ident:continue

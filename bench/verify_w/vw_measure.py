@@ -5,6 +5,7 @@ import sys, os, time, json, threading, http.client, urllib.parse
 sys.path.insert(0, os.getcwd())
 import numpy as np
 from tools import humanoid_synth as hs
+from web.monowait import sleep_until, join_thread
 url = urllib.parse.urlparse(sys.argv[1]); LABEL = sys.argv[2]; SEC = float(sys.argv[3]) if len(sys.argv) > 3 else 20
 def conn(): return http.client.HTTPConnection(url.hostname, url.port, timeout=70)
 def req(m, p, b=None, c=None):
@@ -16,11 +17,11 @@ def req(m, p, b=None, c=None):
     return r.status, j
 out = {'label': LABEL, 'load0': open('/proc/loadavg').read().split()[:3]}
 def wait_ready(t=70):
-    t0 = time.time()
-    while time.time() - t0 < t:
+    deadline = time.monotonic() + t
+    while time.monotonic() < deadline:
         s = req('GET', '/humanoid/status')[1]
         if s.get('state') == 'ready': return True
-        time.sleep(.05)
+        sleep_until(min(deadline, time.monotonic() + .05))
     return False
 out['off_status'] = req('GET', '/humanoid/status')[1]
 class Vid:
@@ -96,7 +97,7 @@ def hit(en):
     try: res.append(req('POST', '/humanoid/mode', {'enabled': en})[0])
     except Exception as e: res.append(str(e)[:40])
 ths = [threading.Thread(target=hit, args=(i % 2 == 0,)) for i in range(8)]
-[t.start() for t in ths]; [t.join(100) for t in ths]
+[t.start() for t in ths]; [join_thread(t,100) for t in ths]
 time.sleep(2); fs = req('GET', '/humanoid/status')[1]
 out['concurrent'] = {'codes': res, 'final_state': fs.get('state'), 'enabled': fs.get('enabled')}
 req('POST', '/humanoid/mode', {'enabled': False}); time.sleep(1)

@@ -34,7 +34,8 @@ def runtime_diagnostics(env, servo):
             'servo_profile': {k: int(v) if k.endswith('_calls') else v for k, v in values.items() if k.endswith(('_ms', '_calls'))}}
 
 def run_humanoid_worker(names, cfg):
-    from web.shm_channel import Blob, wait_monotonic
+    from web.shm_channel import Blob
+    from web.monowait import wait_event, join_thread
     parent_pid = os.getppid()
     orphaned = False
     blobs = {k: Blob(name=v) for k, v in names.items()}
@@ -123,7 +124,7 @@ def run_humanoid_worker(names, cfg):
                     render_ready.set(); deadline+=1./fps_target
                     if deadline<time.monotonic()-1./fps_target: deadline=time.monotonic()
                     render_debug.update(stage='pacing',since=time.monotonic())
-                    wait_monotonic(render_stop,max(0.,deadline-time.monotonic()))
+                    wait_event(render_stop,max(0.,deadline-time.monotonic()))
             except Exception:
                 render_stats['error']=traceback.format_exc(); render_ready.set()
             finally:
@@ -131,7 +132,7 @@ def run_humanoid_worker(names, cfg):
                 if gc_trace in gc.callbacks:gc.callbacks.remove(gc_trace)
                 render_env.close()
         render_thread=threading.Thread(target=render_loop,name='g1-render',daemon=True); render_thread.start()
-        if not wait_monotonic(render_ready,60): raise RuntimeError('render startup timeout')
+        if not wait_event(render_ready,60): raise RuntimeError('render startup timeout')
         if render_stats['error']: raise RuntimeError(render_stats['error'])
         dt = env.model.opt.timestep
         next_step = time.monotonic(); next_render = next_step; last_render = 0.; last_status = 0.; in_seq = None
@@ -204,7 +205,7 @@ def run_humanoid_worker(names, cfg):
                 put_status()
             main_debug.update(stage='pacing',at=time.monotonic())
             time.sleep(max(0., min(next_step - time.monotonic(), .002)))
-        render_stop.set(); render_thread.join(timeout=5)
+        render_stop.set(); join_thread(render_thread,5)
         env.close(); put_status({'state': 'stopped'})
     except Exception as exc:
         try:
@@ -213,5 +214,5 @@ def run_humanoid_worker(names, cfg):
             pass
     finally:
         render_stop.set()
-        if render_thread: render_thread.join(timeout=5)
+        if render_thread: join_thread(render_thread,5)
         for b in blobs.values(): b.close(unlink=orphaned)

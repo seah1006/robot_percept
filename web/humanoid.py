@@ -152,6 +152,7 @@ class HumanoidRuntime:
         with self.lock:
             self.ctrl.update(enabled=False, stop=True); self.push(); proc = self.proc
             if proc is not None:
+                # multiprocessing Process.join(timeout) uses connection.wait(selector + monotonic).
                 proc.join(timeout=3)
                 if proc.is_alive(): proc.terminate(); proc.join(timeout=2)
             self.proc = None
