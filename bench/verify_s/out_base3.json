@@ -1,0 +1,120 @@
+{
+ "tag": "base3",
+ "load0": [
+  "5.33",
+  "7.31",
+  "5.55"
+ ],
+ "degen": {
+  "control_good": {
+   "codes": [
+    "200"
+   ],
+   "state_after": "ready",
+   "nan": false,
+   "recovered_state": "ready",
+   "recovered_u1_err_deg": 3.11
+  },
+  "zeros": {
+   "codes": [
+    "200"
+   ],
+   "state_after": "ready",
+   "nan": false,
+   "recovered_state": "ready",
+   "recovered_u1_err_deg": 68.43
+  },
+  "collinear": {
+   "codes": [
+    "200"
+   ],
+   "state_after": "ready",
+   "nan": false,
+   "recovered_state": "ready",
+   "recovered_u1_err_deg": 88.9
+  },
+  "upper_body_only": {
+   "codes": [
+    "200"
+   ],
+   "state_after": "ready",
+   "nan": false,
+   "recovered_state": "ready",
+   "recovered_u1_err_deg": 3.11
+  },
+  "hip_vis0_only": {
+   "codes": [
+    "200"
+   ],
+   "state_after": "ready",
+   "nan": false,
+   "recovered_state": "ready",
+   "recovered_u1_err_deg": 3.11
+  },
+  "mixed_row_len": {
+   "codes": [
+    "200"
+   ],
+   "state_after": "crashed",
+   "nan": false,
+   "recovered_state": "crashed",
+   "recovered_u1_err_deg": 37.3
+  },
+  "same_shoulders": {
+   "codes": [
+    "200"
+   ],
+   "state_after": "ready",
+   "nan": false,
+   "recovered_state": "ready",
+   "recovered_u1_err_deg": 3.11
+  },
+  "zero_arm_len": {
+   "codes": [
+    "200"
+   ],
+   "state_after": "ready",
+   "nan": false,
+   "recovered_state": "ready",
+   "recovered_u1_err_deg": 68.92
+  },
+  "hand_degenerate": {
+   "codes": [
+    "200"
+   ],
+   "state_after": "ready",
+   "nan": false,
+   "recovered_state": "ready",
+   "recovered_u1_err_deg": 68.71
+  },
+  "vis_out_of_range": {
+   "codes": [
+    "200"
+   ],
+   "state_after": "ready",
+   "nan": false,
+   "recovered_state": "ready",
+   "recovered_u1_err_deg": 3.11
+  },
+  "survived_all": false
+ },
+ "coll": {
+  "n": 378,
+  "min_mm": -33.5,
+  "p5_mm": -32.3,
+  "frames_below_0mm": 90,
+  "frames_below_10mm": 102,
+  "worst_pair": "left_upper|right_upper",
+  "radii": {
+   "arm": 0.045,
+   "hand": 0.05,
+   "torso": 0.09,
+   "note": "approximate capsules, torso axis pelvis->shoulder mid"
+  }
+ },
+ "load1": [
+  "7.10",
+  "7.15",
+  "5.70"
+ ]
+}

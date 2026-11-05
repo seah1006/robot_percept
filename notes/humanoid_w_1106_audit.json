@@ -1,0 +1,114 @@
+{
+  "date": "2026-11-06",
+  "python": "3.12.16 conda-forge",
+  "HAVE_SEM_CLOCKWAIT": 0,
+  "operating_waits": [
+    {
+      "file": "web/humanoid_worker.py",
+      "line": 127,
+      "period": "1/32s render pacing",
+      "impact": "G1 render/publication gap",
+      "action": "wait_event monotonic; HEAD already had equivalent wait_monotonic"
+    },
+    {
+      "file": "web/humanoid_worker.py",
+      "line": 135,
+      "period": "startup max 60s",
+      "impact": "worker ready response",
+      "action": "wait_event monotonic"
+    },
+    {
+      "file": "web/humanoid_worker.py",
+      "line": "208,217",
+      "period": "shutdown max 5s",
+      "impact": "render thread stop",
+      "action": "join_thread monotonic polling"
+    },
+    {
+      "file": "web/humanoid.py",
+      "line": 113,
+      "period": "100ms watchdog",
+      "impact": "worker death detection",
+      "action": "existing wait_monotonic alias now shared helper"
+    },
+    {
+      "file": "web/app.py",
+      "line": 85,
+      "period": "warmup cancel max 3s",
+      "impact": "G1 reservation response",
+      "action": "thread join timeout replaced by join_thread"
+    },
+    {
+      "file": "web/app.py",
+      "line": "155-161",
+      "period": "command poll 50ms, timeout 30/60/180s",
+      "impact": "Panda command HTTP/background completion",
+      "action": "monotonic deadline + sliced sleep"
+    },
+    {
+      "file": "web/app.py",
+      "line": "237-251",
+      "period": "Panda MJPEG per new frame; frame.jpg max 2s",
+      "impact": "Panda stream/frame response",
+      "action": "10ms monotonic seq polling; preserves 2s wake/disconnect behavior"
+    },
+    {
+      "file": "web/teleop.py",
+      "line": "61-69",
+      "period": "preview per new JPEG",
+      "impact": "teleop preview MJPEG",
+      "action": "10ms monotonic seq polling; preserves 2s wake/disconnect behavior"
+    },
+    {
+      "file": "web/perception_stub.py",
+      "line": "106-122",
+      "period": "RPC readiness poll max 100ms, total 180s",
+      "impact": "segment/register/track/warmup response",
+      "action": "Queue timed get replaced by Connection.poll selector + get_nowait"
+    },
+    {
+      "file": "web/humanoid.py; web/app.py; web/perception_stub.py",
+      "line": "process join timeouts",
+      "period": "2-3s shutdown",
+      "impact": "process cleanup",
+      "action": "unchanged; multiprocessing Process.join -> connection.wait(selector + monotonic)"
+    }
+  ],
+  "bench_waits": [
+    {
+      "file": "bench/verify_w/vw_measure.py",
+      "action": "ready deadline and thread joins monotonic"
+    },
+    {
+      "file": "bench/verify_w/crash_test.sh",
+      "action": "ROOT/CONDA_SH/PORT environment defaults"
+    },
+    {
+      "file": "bench/humanoid_w_stall.py",
+      "action": "stream/poll Event waits use shared helper"
+    },
+    {
+      "file": "bench/humanoid_s_render.py",
+      "action": "confirmed prior local helper, replaced by shared helper"
+    },
+    {
+      "file": "bench/humanoid_w_ab.py",
+      "action": "ROOT environment override"
+    },
+    {
+      "file": "bench/humanoid_runtime_bench.py",
+      "action": "poll Event and thread join use shared helper"
+    }
+  ],
+  "multiprocessing_basis": {
+    "Queue.get_timeout": "potentially affected under semaphore/rlock contention; _multiprocessing.so links sem_timedwait",
+    "Connection.poll": "not affected; multiprocessing.connection.wait uses selector.select and time.monotonic deadline",
+    "Process.join_timeout": "not affected; Popen.wait delegates to multiprocessing.connection.wait",
+    "subprocess_wait_timeout": "not changed; CPython subprocess timeout loop is monotonic"
+  },
+  "limits": [
+    "time.time monkeypatch unit tests do not emulate a kernel CLOCK_REALTIME step",
+    "actual clock steps were recorded only in integration windows",
+    "HEAD already protected the G1 render pacing path, so A/B does not isolate a new render-loop fix"
+  ]
+}

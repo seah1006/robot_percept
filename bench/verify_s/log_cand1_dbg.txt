@@ -1,0 +1,7 @@
+load before: 3.02 3.56 4.51 4/335 69046
+69 %, 5171 MiB
+=== part asym
+{'max_dir': 9.1, 'max_wrist_actualS_mm': 1.99, 'max_lr_diff': 7.06}
+DONE
+load after: 2.95 4.96 5.00 2/337 87903
+2 %, 1885 MiB

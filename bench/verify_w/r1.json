@@ -1,0 +1,213 @@
+{
+ "label": "r1",
+ "load0": [
+  "5.87",
+  "7.16",
+  "6.17"
+ ],
+ "off_status": {
+  "capture_latency_ms": null,
+  "enabled": false,
+  "human2d": null,
+  "human_detected": false,
+  "input_count": 0,
+  "input_hz": 0.0,
+  "latency_ms": 0.0,
+  "mode": false,
+  "state": "off"
+ },
+ "first_gap": [
+  {
+   "mode_on_http_s": 9.21,
+   "mode_status": 200,
+   "frames6s": 188,
+   "first_frame_after_connect_ms": 3.3,
+   "first_gap_ms": 15.4,
+   "max_gap_ms": 73.4,
+   "gap_p95_ms": 46.0
+  },
+  {
+   "mode_on_http_s": 7.26,
+   "mode_status": 200,
+   "frames6s": 178,
+   "first_frame_after_connect_ms": 3.0,
+   "first_gap_ms": 16.6,
+   "max_gap_ms": 74.5,
+   "gap_p95_ms": 48.9
+  },
+  {
+   "mode_on_http_s": 6.25,
+   "mode_status": 200,
+   "frames6s": 185,
+   "first_frame_after_connect_ms": 2.6,
+   "first_gap_ms": 4.5,
+   "max_gap_ms": 73.5,
+   "gap_p95_ms": 50.2
+  }
+ ],
+ "bad": {
+  "mixed_pose_rows": {
+   "http": 400,
+   "state": "ready",
+   "enabled": true,
+   "err": "pose must be 33 x [x,y,z,(vis)] finite (|v|<=5)"
+  },
+  "mixed_hand_rows": {
+   "http": 400,
+   "state": "ready",
+   "enabled": true,
+   "err": "hands.left must be 21 x [x,y,z] (|v|<=1)"
+  },
+  "pose_32": {
+   "http": 400,
+   "state": "ready",
+   "enabled": true,
+   "err": "pose must be 33 x [x,y,z,(vis)] finite (|v|<=5)"
+  },
+  "pose_str": {
+   "http": 400,
+   "state": "ready",
+   "enabled": true,
+   "err": "pose must be 33 x [x,y,z,(vis)] finite (|v|<=5)"
+  },
+  "hands_list": {
+   "http": 400,
+   "state": "ready",
+   "enabled": true,
+   "err": "hands must be an object"
+  },
+  "vis_2": {
+   "http": 400,
+   "state": "ready",
+   "enabled": true,
+   "err": "visibility must be in [0,1]"
+  },
+  "nan_str": {
+   "http": 400,
+   "state": "ready",
+   "enabled": true,
+   "err": "pose must be 33 x [x,y,z,(vis)] finite (|v|<=5)"
+  },
+  "detected_str": {
+   "http": 400,
+   "state": "ready",
+   "enabled": true,
+   "err": "detected must be boolean"
+  },
+  "big_1e9": {
+   "http": 400,
+   "state": "ready",
+   "enabled": true,
+   "err": "pose must be 33 x [x,y,z,(vis)] finite (|v|<=5)"
+  },
+  "degenerate_same_point": {
+   "http": 200,
+   "state": "ready",
+   "enabled": true,
+   "err": null
+  },
+  "degenerate_zero": {
+   "http": 200,
+   "state": "ready",
+   "enabled": true,
+   "err": null
+  },
+  "sent_at_str": {
+   "http": 200,
+   "state": "ready",
+   "enabled": true,
+   "err": null
+  },
+  "hands_none_values": {
+   "http": 200,
+   "state": "ready",
+   "enabled": true,
+   "err": null
+  }
+ },
+ "bad_after": "ready",
+ "bad_json": 400,
+ "bad_after2": "ready",
+ "restart_after_bad": [
+  200,
+  200
+ ],
+ "ready2": true,
+ "raw_frames_total": 975,
+ "latency": {
+  "posts": 900,
+  "post_rate_hz": 30.0,
+  "frames": 943,
+  "fps": 31.43,
+  "max_gap_ms": 80.8,
+  "post_to_next_frame_ms": {
+   "p50": 14.5,
+   "p95": 33.4,
+   "max": 69.8
+  },
+  "process_ms_p50_p95": [
+   0.89,
+   1.4
+  ],
+  "note": "upper-bound proxy: POST return -> next JPEG arrival (frame cadence included)"
+ },
+ "status_keys": [
+  "age_ms",
+  "applied_seq",
+  "capture_latency_ms",
+  "detected",
+  "enabled",
+  "error",
+  "fps",
+  "frames_total",
+  "groups",
+  "head",
+  "human",
+  "human2d",
+  "human_detected",
+  "ik",
+  "ik_ms_p50",
+  "ik_ms_p95",
+  "input_count",
+  "input_hz",
+  "jpeg_ms",
+  "latency_ms",
+  "mode",
+  "options",
+  "overlay",
+  "published_seq",
+  "render_ms",
+  "rtf",
+  "server_latency_ms",
+  "servo_state",
+  "sim_time",
+  "snapshot_ms",
+  "state",
+  "tick_hz",
+  "tick_ms_p50",
+  "tick_ms_p95",
+  "tracking",
+  "wall"
+ ],
+ "latency_ms_status": 1.9,
+ "concurrent": {
+  "codes": [
+   200,
+   200,
+   409,
+   200,
+   409,
+   409,
+   200,
+   200
+  ],
+  "final_state": "off",
+  "enabled": false
+ },
+ "final_off": "off",
+ "load1": [
+  "3.97",
+  "6.27",
+  "5.95"
+ ]
+}

@@ -5,6 +5,7 @@ copying; readers retry until they observe the same even seq before and after.
 """
 from __future__ import annotations
 import struct, time, uuid
+from .monowait import wait_event
 from multiprocessing import shared_memory
 
 HDR = 16
@@ -55,3 +56,8 @@ class Blob:
         if unlink:
             try: self.shm.unlink()
             except FileNotFoundError: pass
+
+
+def wait_monotonic(event, timeout, quantum=.005):
+    """Backward-compatible alias; new code imports web.monowait directly."""
+    return wait_event(event, timeout, quantum)

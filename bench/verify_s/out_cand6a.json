@@ -1,0 +1,125 @@
+{
+ "tag": "cand6a",
+ "load0": [
+  "1.75",
+  "2.08",
+  "1.99"
+ ],
+ "togmov": {
+  "control_no_toggle": {
+   "v_ratio": 0.617,
+   "v_joint": "right_shoulder_pitch_joint",
+   "a_ratio_lowerbound": 2.224,
+   "a_joint": "right_elbow_joint",
+   "n": 269,
+   "max_dq_deg_per_poll_post": 9.1,
+   "toggle_at_s": 0.31,
+   "peak_env": 0.617,
+   "monotone_after_peak_tol05": true
+  },
+  "control_off_no_toggle": {
+   "v_ratio": 1.105,
+   "v_joint": "right_shoulder_pitch_joint",
+   "a_ratio_lowerbound": 3.055,
+   "a_joint": "right_elbow_joint",
+   "n": 381,
+   "max_dq_deg_per_poll_post": 12.4,
+   "toggle_at_s": 0.31,
+   "peak_env": 1.105,
+   "monotone_after_peak_tol05": true
+  },
+  "on_to_off_t0.3": {
+   "v_ratio": 0.763,
+   "v_joint": "right_shoulder_pitch_joint",
+   "a_ratio_lowerbound": 1.788,
+   "a_joint": "left_elbow_joint",
+   "n": 559,
+   "max_dq_deg_per_poll_post": 9.9,
+   "toggle_at_s": 0.31,
+   "peak_env": 0.763,
+   "monotone_after_peak_tol05": true
+  },
+  "off_to_on_t0.3": {
+   "v_ratio": 0.614,
+   "v_joint": "right_shoulder_pitch_joint",
+   "a_ratio_lowerbound": 0.659,
+   "a_joint": "right_wrist_yaw_joint",
+   "n": 469,
+   "max_dq_deg_per_poll_post": 7.9,
+   "toggle_at_s": 0.31,
+   "peak_env": 0.614,
+   "monotone_after_peak_tol05": true
+  },
+  "on_to_off_t0.6": {
+   "v_ratio": 0.762,
+   "v_joint": "right_shoulder_pitch_joint",
+   "a_ratio_lowerbound": 1.387,
+   "a_joint": "right_shoulder_pitch_joint",
+   "n": 526,
+   "max_dq_deg_per_poll_post": 9.7,
+   "toggle_at_s": 0.61,
+   "peak_env": 0.762,
+   "monotone_after_peak_tol05": true
+  },
+  "off_to_on_t0.6": {
+   "v_ratio": 0.792,
+   "v_joint": "right_shoulder_pitch_joint",
+   "a_ratio_lowerbound": 1.132,
+   "a_joint": "right_shoulder_pitch_joint",
+   "n": 525,
+   "max_dq_deg_per_poll_post": 8.8,
+   "toggle_at_s": 0.61,
+   "peak_env": 0.792,
+   "monotone_after_peak_tol05": true
+  },
+  "on_to_off_t0.9": {
+   "v_ratio": 0.767,
+   "v_joint": "right_shoulder_pitch_joint",
+   "a_ratio_lowerbound": 0,
+   "a_joint": "",
+   "n": 490,
+   "max_dq_deg_per_poll_post": 9.7,
+   "toggle_at_s": 0.91,
+   "peak_env": 0.767,
+   "monotone_after_peak_tol05": true
+  },
+  "off_to_on_t0.9": {
+   "v_ratio": 1.011,
+   "v_joint": "right_shoulder_pitch_joint",
+   "a_ratio_lowerbound": 1.36,
+   "a_joint": "left_shoulder_pitch_joint",
+   "n": 313,
+   "max_dq_deg_per_poll_post": 11.1,
+   "toggle_at_s": 0.91,
+   "peak_env": 1.011,
+   "monotone_after_peak_tol05": true
+  },
+  "on_to_off_t1.2": {
+   "v_ratio": 0.762,
+   "v_joint": "right_shoulder_pitch_joint",
+   "a_ratio_lowerbound": 0,
+   "a_joint": "",
+   "n": 431,
+   "max_dq_deg_per_poll_post": 9.5,
+   "toggle_at_s": 1.21,
+   "peak_env": 0.762,
+   "monotone_after_peak_tol05": true
+  },
+  "off_to_on_t1.2": {
+   "v_ratio": 0.777,
+   "v_joint": "right_shoulder_pitch_joint",
+   "a_ratio_lowerbound": 0.551,
+   "a_joint": "waist_pitch_joint",
+   "n": 255,
+   "max_dq_deg_per_poll_post": 9.0,
+   "toggle_at_s": 1.21,
+   "peak_env": 0.777,
+   "monotone_after_peak_tol05": true
+  }
+ },
+ "load1": [
+  "2.88",
+  "2.40",
+  "2.12"
+ ]
+}

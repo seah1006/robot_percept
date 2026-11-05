@@ -38,6 +38,15 @@ class ControlAdapter:
 def _jm(x): return np.asarray(x,dtype=float).round(8).tolist()
 
 
+def render_period(status, now):
+    """Only throttle idle rendering; never physics, tracking or robot tasks."""
+    active = (status.get('video_viewers', 0) > 0 or now < status.get('video_until', 0)
+              or status.get('need_depth') or status.get('teleop_enabled')
+              or status.get('active_command') or status.get('held_object')
+              or status.get('phase', 'idle') not in ('idle', 'ready'))
+    return 1 / 30 if active else .5
+
+
 def run_worker(cfg, shm_names, lock, command_q, status):
     shms=[]
     try:
@@ -61,11 +70,15 @@ def run_worker(cfg, shm_names, lock, command_q, status):
         from sim.teleop import TeleopServo
         teleop=TeleopServo(env,status)
         humanoid_render_paused=False  # mode-on only; physics and C commands continue
+        demand_check=0.; render_interval=.5
 
         def publish(force=False):
-            nonlocal last_render,frame_count,fps_t0
+            nonlocal last_render,frame_count,fps_t0,demand_check,render_interval
             now=time.monotonic()
-            if not force and now-last_render < 1/30: return
+            if now-demand_check >= .025:
+                render_interval=render_period(status,now); demand_check=now
+            if not force and now-last_render < render_interval: return
+            status["render_idle"]=render_interval > 1/30
             if not force and humanoid_render_paused:
                 last_render=now
                 return

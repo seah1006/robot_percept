@@ -17,3 +17,6 @@ bench/**/out/
 *.gif
 *.npy
 nvdiffrast/
+
+# Generated web CAD uploads
+cad_uploads/web/

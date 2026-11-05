@@ -1,0 +1,1 @@
+{"dur_s": 32.0, "n_waits": 58, "wait_ms_p50": 50.15, "wait_ms_p99": 4809.61, "wait_ms_max": 4809.61, "realtime_backward_jumps_ms": [], "n_back": 0, "realtime_forward_jumps_ms": [91965.7], "n_fwd": 1}

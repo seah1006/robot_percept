@@ -1,11 +1,13 @@
 from __future__ import annotations
 import atexit,json,multiprocessing as mp,os,re,subprocess,threading,time,uuid
 from multiprocessing import shared_memory
+from collections import deque
 from pathlib import Path
 import cv2
 from flask import Flask,Response,jsonify,render_template,request
 import numpy as np
 from werkzeug.utils import secure_filename
+from .monowait import sleep_until, wait_for, join_thread
 from .perception_stub import PerceptionBackend, estimate_pose
 from .sim_worker import run_worker
 ROOT=Path(__file__).resolve().parents[1]; CAD_PYTHON=ROOT/".venvs/cad/bin/python"
@@ -31,7 +33,70 @@ class Runtime:
   self.rgb.fill(0); self.depth.fill(0); self.seg.fill(-1)
   cfg={"width":WIDTH,"height":HEIGHT,"objects":["mustard"],"cam":"front","seed":7}; names={k:v.name for k,v in self.shms.items()}
   self.proc=ctx.Process(target=run_worker,args=(cfg,names,self.lock,self.command_q,self.status),daemon=True); self.proc.start()
-  self.perception=PerceptionBackend(os.getenv("PERCEPTION","fp").lower()); self.selected=None; self.estimate=None; self.estimate_time_ms=None; self.logs=[]; self.state_lock=threading.RLock(); self.gpu_cache={"at":0,"value":None}; self.mask=None; self.metrics={}; self.generation=0; self.running=True; self.perception_lock=threading.RLock(); threading.Thread(target=self.track_loop,daemon=True).start()
+  self.perception=PerceptionBackend(os.getenv("PERCEPTION","fp").lower()); self.selected=None; self.estimate=None; self.estimate_time_ms=None; self.logs=[]; self.state_lock=threading.RLock(); self.gpu_cache={"at":0,"value":None}; self.mask=None; self.metrics={}; self.tracking_hist={k:deque(maxlen=300) for k in ('status_copy','frame_copy','perception','commit')}; self.generation=0; self.running=True; self.perception_lock=threading.RLock(); threading.Thread(target=self.track_loop,daemon=True).start(); self._warmup_manager_thread=threading.Thread(target=self.warmup_loop,daemon=True); self._warmup_manager_thread.start()
+ def _g1_requested(self):
+  humanoid=getattr(self,'humanoid_runtime',None)
+  return bool(getattr(self,'_humanoid_starting',False) or (humanoid is not None and (humanoid.ctrl.get('enabled',False) or (hasattr(humanoid,'running') and humanoid.running()))))
+ def warmup_loop(self):
+  if self.perception.mode!='fp' or os.getenv('RP_PERCEPTION_WARMUP','1').lower() in ('0','false','off'):
+   self.perception.warmup_state='disabled';return
+  try:
+   deadline=time.monotonic()+60
+   while self.running and time.monotonic()<deadline:
+    st=self.status.copy()
+    if st.get('ready') and st.get('camera_K') and st.get('objects'):break
+    time.sleep(.05)
+   else:return
+   while self.running:
+    if self._g1_requested():
+     self.perception.warmup_state='deferred_g1';time.sleep(.25);continue
+    with self.perception_lock:
+     if not self.running:return
+     if self._g1_requested():continue
+     with self.state_lock:
+      if self.selected is not None:return
+     if getattr(self.perception,'warmup_g1_cancel_pending',False):
+      old_thread=getattr(self.perception,'warmup_thread',None)
+      if (old_thread is None or not old_thread.is_alive()) and getattr(self.perception,'proc',None) is not None:
+       cleanup=getattr(self.perception,'suspend_worker',None)
+       if cleanup is not None:cleanup()
+      if (old_thread is not None and old_thread.is_alive()) or getattr(self.perception,'proc',None) is not None:
+       time.sleep(.05);continue
+      self.perception.warmup_g1_cancel_pending=False
+     rgb,depth,_=self.frame();st=self.status.copy()
+     thread=self.perception.warmup_async(rgb,depth,np.asarray(st['camera_K']),st['objects'])
+     if thread is None:return
+     thread.join()
+     if getattr(self.perception,'warmup_state',None) not in ('deferred','deferred_g1'):return
+  except Exception as exc:self.perception.warning='warmup: '+str(exc)
+ def prioritize_humanoid(self):
+  # Reserve G1 before cancellation, so an unwinding manager cannot respawn FP.
+  self._humanoid_starting=True
+  if getattr(self.perception,'warmup_state',None)!='running':return
+  cancel=getattr(self.perception,'defer_warmup_for_g1',None)
+  cancelled=False
+  if cancel is not None:
+   try:
+    with self.state_lock:
+     if self.selected is None:cancelled=bool(cancel())
+   except Exception as exc:self.perception.warmup_priority_error='cancel: '+str(exc)
+  if cancelled:
+   thread=getattr(self.perception,'warmup_thread',None)
+   if thread is not None:join_thread(thread,3)
+   self.perception.warmup_g1_cancel_pending=bool((thread is not None and thread.is_alive()) or getattr(self.perception,'proc',None) is not None)
+   manager=getattr(self,'_warmup_manager_thread',None)
+   if manager is None or not manager.is_alive():
+    self._warmup_manager_thread=threading.Thread(target=self.warmup_loop,daemon=True);self._warmup_manager_thread.start()
+   return
+  proc=getattr(self.perception,'proc',None)
+  if proc is None or not proc.is_alive():return
+  try:
+   priority=max(19,os.getpriority(os.PRIO_PROCESS,proc.pid))
+   os.setpriority(os.PRIO_PROCESS,proc.pid,priority)
+   self.perception.warmup_g1_nice_applied=priority
+  except (AttributeError,OSError) as exc:self.perception.warmup_priority_error=str(exc)
+ def release_humanoid_start(self):
+  self._humanoid_starting=False
  def drop(self):
   with self.state_lock:
    self.status["need_depth"]=False; self.generation+=1; self.selected=None; self.estimate=None; self.mask=None; self.metrics={}
@@ -42,8 +107,11 @@ class Runtime:
    with self.state_lock: name=self.selected; generation=self.generation
    if generation!=tracking_generation:
     tracking_generation=generation; tracking_start=None; update_count=0
-   st=dict(self.status)
-   if not name or st.get("frame_seq")==last_seq:continue
+   if not name:continue  # P-area idle IPC guard, approved by integration owner
+   status_t0=time.perf_counter()
+   st=self.status.copy()  # one atomic Manager RPC, not one RPC per status key
+   status_copy_ms=(time.perf_counter()-status_t0)*1000
+   if st.get("frame_seq")==last_seq:continue
    if st.get("phase","idle")!="idle" or st.get("held_object") or st.get("active_command"):
     with self.state_lock:self.metrics["tracking_state"]="paused"
     continue
@@ -51,11 +119,12 @@ class Runtime:
    try:
     with self.state_lock:
      if generation!=self.generation or name!=self.selected:continue
-    rgb,depth,_=self.frame();last_seq=st.get("frame_seq"); t=time.perf_counter()
+    frame_t0=time.perf_counter();rgb,depth,_=self.frame();frame_copy_ms=(time.perf_counter()-frame_t0)*1000;last_seq=st.get("frame_seq"); t=time.perf_counter()
     if self.perception.mode=="fp":
      result=self.perception.call("track",name=name,rgb=rgb,depth=depth,K=np.asarray(st["camera_K"]))
      est=np.asarray(result["pose"])
     else:est=estimate_pose(rgb,depth,None,{"gt_pose":st["objects"][name]["T_cam_obj"]},name)
+    perception_ms=(time.perf_counter()-t)*1000;commit_t0=time.perf_counter()
     with self.state_lock:
      if generation==self.generation:
       self.estimate=est; self.metrics["tracking_state"]="tracking"
@@ -65,6 +134,10 @@ class Runtime:
       self.metrics["tracking_updates"]=update_count
       self.metrics["tracking_fps"]=update_count/max(now-tracking_start,.0001)
       self.metrics["estimate_timestamp"]=time.time()
+      for key,value in [('status_copy',status_copy_ms),('frame_copy',frame_copy_ms),('perception',perception_ms),('commit',(time.perf_counter()-commit_t0)*1000)]:self.tracking_hist[key].append(value)
+      if now-getattr(self,'_tracking_profile_at',0)>=1:
+       self._tracking_profile_at=now
+       self.metrics['tracking_pipeline_ms']={key:{'p50':round(float(np.percentile(values,50)),3),'p95':round(float(np.percentile(values,95)),3),'n':len(values)} for key,values in self.tracking_hist.items() if values}
    except Exception as exc:
     self.perception.warning=str(exc).splitlines()[-1]
     with self.state_lock:self.estimate=None
@@ -80,11 +153,11 @@ class Runtime:
  def send(self,op,**kwargs):
   cid=uuid.uuid4().hex[:10]; self.command_q.put({"id":cid,"op":op,**kwargs}); return cid
  def wait(self,cid,timeout=30):
-  end=time.time()+timeout
-  while time.time()<end:
+  end=time.monotonic()+timeout
+  while time.monotonic()<end:
    last=dict(self.status).get("last_command")
    if last and last.get("id")==cid: return last
-   time.sleep(.05)
+   sleep_until(min(end,time.monotonic()+.05))
   return {"id":cid,"ok":False,"error":"command timeout"}
  def log(self,text):
   with self.state_lock: self.logs=([{"time":time.strftime("%H:%M:%S"),"message":text}]+self.logs)[:40]
@@ -113,7 +186,9 @@ def create_app():
  from .teleop import create_blueprint as teleop_blueprint
  app.register_blueprint(teleop_blueprint(rt))
  from .humanoid import create_blueprint as humanoid_blueprint
- app.register_blueprint(humanoid_blueprint(panda_runtime=rt))  # G1 worker starts only on /humanoid/mode
+ humanoid_bp=humanoid_blueprint(panda_runtime=rt)
+ rt.humanoid_runtime=humanoid_bp.humanoid_runtime
+ app.register_blueprint(humanoid_bp)  # G1 worker starts only on /humanoid/mode
  from .focus import focus; app.register_blueprint(focus)
  @app.get("/")
  def index():return render_template("index.html",width=WIDTH,height=HEIGHT)
@@ -162,14 +237,19 @@ def create_app():
    video_access[show_gt]=time.monotonic()
    if show_gt not in video_threads:
     video_threads.add(show_gt);threading.Thread(target=produce_video,args=(show_gt,),daemon=True).start()
-   video_condition.wait_for(lambda:show_gt in video_cache and video_cache[show_gt][0]!=last_seq,timeout=2)
+  wait_for(lambda: show_gt in video_cache and video_cache[show_gt][0] != last_seq, 2, slice_s=.01)
+  with video_condition:
    return video_cache.get(show_gt)
  @app.get("/video")
  def video():
   show_gt=request.args.get("gt","0") in ("1","true","on")
   def gen():
    last_seq=None
-   with video_condition:video_consumers[show_gt]=video_consumers.get(show_gt,0)+1
+   with video_condition:
+    video_consumers[show_gt]=video_consumers.get(show_gt,0)+1
+    rt.status['video_viewers']=sum(video_consumers.values())
+    # Wait for a new worker frame rather than serving an old idle cache.
+    last_seq=rt.status.get('frame_seq',0)
    try:
     while rt.running:
      item=cached_video(show_gt,last_seq)
@@ -177,10 +257,13 @@ def create_app():
      last_seq,jpg=item
      yield b"--frame\r\nContent-Type: image/jpeg\r\n\r\n"+jpg+b"\r\n"
    finally:
-    with video_condition:video_consumers[show_gt]-=1
+    with video_condition:
+     video_consumers[show_gt]-=1
+     rt.status['video_viewers']=sum(video_consumers.values())
   return Response(gen(),mimetype="multipart/x-mixed-replace; boundary=frame")
  @app.get("/frame.jpg")
  def frame_jpg():
+  rt.status['video_until']=time.monotonic()+.25
   item=cached_video(request.args.get("gt")=="1")
   return Response(item[1] if item else b"",mimetype="image/jpeg")
  @app.post("/click")
@@ -284,6 +367,7 @@ def create_app():
   paused=st.get("phase","idle")!="idle" or bool(st.get("held_object"))
   if selected and est is not None and not paused and selected in st.get("objects",{}):
    gt=np.asarray(st["objects"][selected]["T_cam_obj"]);pose={"estimate":est.tolist(),"error_mm":float(np.linalg.norm(est[:3,3]-gt[:3,3])*1000),"error_deg":_rerr(est,gt),"timing_ms":ms,**rt.metrics}
+  st["perception_warmup"]={"state":getattr(rt.perception,"warmup_state","idle"),"error":getattr(rt.perception,"warmup_error",None),"seconds":getattr(rt.perception,"warmup_seconds",None),"g1_cpu_nice":getattr(rt.perception,"warmup_g1_nice_applied",None),"priority_error":getattr(rt.perception,"warmup_priority_error",None)}
   st.update({"tracking_state":"paused" if (selected and paused) else rt.metrics.get("tracking_state","idle" if not selected else "tracking"),"selected_object":selected,"pose":pose,"perception":rt.perception.mode,"perception_warning":rt.perception.warning,"gpu":rt.gpu(),"logs":logs});return jsonify(st)
  return app
 

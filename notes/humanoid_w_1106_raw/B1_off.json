@@ -1,0 +1,148 @@
+{
+  "label": "B1_off",
+  "collision_avoidance": false,
+  "frames": 924,
+  "window_s": 29.969033822999336,
+  "fps_count_30s": 30.8,
+  "fps_span": 30.79845701570986,
+  "max_gap_ms": 62.25027500113356,
+  "gaps_over_200ms": 0,
+  "server_receive_publish_p95_ms": 79.336,
+  "clock_probe_event": {
+    "dur_s": 32.0,
+    "n_waits": 60,
+    "wait_ms_p50": 50.13,
+    "wait_ms_p99": 4802.04,
+    "wait_ms_max": 4802.04,
+    "realtime_backward_jumps_ms": [],
+    "n_back": 0,
+    "realtime_forward_jumps_ms": [
+      91979.6
+    ],
+    "n_fwd": 1
+  },
+  "clock_probe_sleep_jumps": [
+    {
+      "mono": 23433.933774222,
+      "skew_ms": 91979.6
+    },
+    {
+      "mono": 23434.17791385,
+      "skew_ms": -91964.4
+    },
+    {
+      "mono": 23438.932128255,
+      "skew_ms": 91964.1
+    },
+    {
+      "mono": 23439.177097749,
+      "skew_ms": -91969.8
+    },
+    {
+      "mono": 23443.94289527,
+      "skew_ms": 91969.5
+    },
+    {
+      "mono": 23444.210012384,
+      "skew_ms": -91969.9
+    },
+    {
+      "mono": 23448.947294357,
+      "skew_ms": 91969.6
+    },
+    {
+      "mono": 23449.189388215,
+      "skew_ms": -91962.8
+    },
+    {
+      "mono": 23453.960250723,
+      "skew_ms": 91962.5
+    },
+    {
+      "mono": 23454.204665997,
+      "skew_ms": -91968.1
+    },
+    {
+      "mono": 23455.782687461,
+      "skew_ms": 91967.3
+    },
+    {
+      "mono": 23456.028725495,
+      "skew_ms": -91965.8
+    },
+    {
+      "mono": 23458.963126794,
+      "skew_ms": 91966.4
+    },
+    {
+      "mono": 23459.207584474,
+      "skew_ms": -91968.3
+    },
+    {
+      "mono": 23463.971145592,
+      "skew_ms": 91968.0
+    },
+    {
+      "mono": 23464.212983661,
+      "skew_ms": -91962.4
+    }
+  ],
+  "clock_jump_in_window": true,
+  "cpu": {
+    "cpu_pct": 321.7081068155983,
+    "elapsed_s": 30.005460836997372,
+    "processes_start": 5,
+    "processes_end": 5
+  },
+  "load_start": "5.45 4.92 3.14 9/895 19480",
+  "load_end": "5.23 4.93 3.22 4/883 20509",
+  "gpu": "GL_RENDERER=D3D12 (AMD Radeon RX 7600)",
+  "status_options": {
+    "arm_target": "wrist",
+    "collision_avoidance": false,
+    "elbow": true,
+    "fingers": true,
+    "hand_orientation": true,
+    "safety_brake": true,
+    "targets3d": false,
+    "torso": true
+  },
+  "render_debug": {
+    "last_publish": 23468.890827609,
+    "long_events": [
+      {
+        "applied_seq": null,
+        "at_mono": 23430.950258913,
+        "blob_seq": 4,
+        "collision_avoidance": false,
+        "frame": 1,
+        "frame_wall_ms": 350.333,
+        "idle_before_ms": 0.0,
+        "jpeg_ms": 2.316,
+        "kind": "frame",
+        "main_heartbeat_age_ms": 350.616,
+        "main_stage": "startup",
+        "pid": 19279,
+        "process_cpu_s": 3.477667349,
+        "publish_gap_ms": 0.0,
+        "render_cpu_s": 0.311797363,
+        "render_ms": 347.69,
+        "render_thread_cpu_ms": 311.639,
+        "shm_ms": 0.076,
+        "snapshot_ms": 0.252,
+        "wall": 1793903221.984096,
+        "worker_process_cpu_ms": 427.426
+      }
+    ],
+    "main_heartbeat_age_ms": 3.828,
+    "main_stage": "status",
+    "max_frame_wall_ms": 350.3330069979711,
+    "max_jpeg_ms": 15.461604998563416,
+    "max_publish_gap_ms": 94.75968300102977,
+    "max_render_ms": 347.6900759997079,
+    "since": 23468.903363426,
+    "stage": "render",
+    "stage_age_ms": 8.378
+  },
+  "errors": null
+}

@@ -1,0 +1,125 @@
+{
+  "load": "0.82 1.50 1.99 1/243 2157",
+  "n": 378,
+  "legacy_reference": {
+    "min_mm": -33.65301675111255,
+    "below0": 90,
+    "note": "same analytic sweep, 378 UNIFORM simulated-clock observations from t1..25; NOT original HTTP poll timestamps"
+  },
+  "mesh_audit": {
+    "torso": {
+      "radius_mm": 90.0,
+      "mesh_radial_p95_mm": 106.16512115018062,
+      "mesh_radial_max_mm": 113.4322617422363,
+      "uncovered_vertices": 2763,
+      "vertices": 7171,
+      "union_uncovered_vertices": 2714,
+      "union_max_outside_mm": 21.254662753551923
+    },
+    "left_upper": {
+      "radius_mm": 45.0,
+      "mesh_radial_p95_mm": 46.578472235232745,
+      "mesh_radial_max_mm": 50.14011441576329,
+      "uncovered_vertices": 263,
+      "vertices": 2898,
+      "union_uncovered_vertices": 242,
+      "union_max_outside_mm": 5.140114415763293
+    },
+    "left_fore": {
+      "radius_mm": 45.0,
+      "mesh_radial_p95_mm": 68.19956471116228,
+      "mesh_radial_max_mm": 76.81106844548312,
+      "uncovered_vertices": 350,
+      "vertices": 3273,
+      "union_uncovered_vertices": 0,
+      "union_max_outside_mm": 0.0
+    },
+    "left_hand": {
+      "radius_mm": 50.0,
+      "mesh_radial_p95_mm": 46.167551881279,
+      "mesh_radial_max_mm": 54.14106350634711,
+      "uncovered_vertices": 35,
+      "vertices": 5962,
+      "union_uncovered_vertices": 35,
+      "union_max_outside_mm": 4.141063506347104
+    },
+    "right_upper": {
+      "radius_mm": 45.0,
+      "mesh_radial_p95_mm": 46.54749514042341,
+      "mesh_radial_max_mm": 50.0220718466959,
+      "uncovered_vertices": 257,
+      "vertices": 2908,
+      "union_uncovered_vertices": 235,
+      "union_max_outside_mm": 5.022071846695904
+    },
+    "right_fore": {
+      "radius_mm": 45.0,
+      "mesh_radial_p95_mm": 67.81332626167875,
+      "mesh_radial_max_mm": 76.81106902183612,
+      "uncovered_vertices": 324,
+      "vertices": 3161,
+      "union_uncovered_vertices": 0,
+      "union_max_outside_mm": 0.0
+    },
+    "right_hand": {
+      "radius_mm": 50.0,
+      "mesh_radial_p95_mm": 46.293506580296956,
+      "mesh_radial_max_mm": 54.14106345746092,
+      "uncovered_vertices": 39,
+      "vertices": 5991,
+      "union_uncovered_vertices": 39,
+      "union_max_outside_mm": 4.141063457460923
+    }
+  },
+  "mesh_envelope_proposal": {
+    "radii": {
+      "torso": 0.11843226174223631,
+      "upper": 0.05514011441576329,
+      "fore": 0.08181106902183612,
+      "hand": 0.059141063506347104
+    },
+    "rest_clearance_mm": -20.131516046613797,
+    "note": "rest-pose enclosure only; if rest overlaps, refine multi-capsules, do not shrink radii"
+  },
+  "avoidance": {
+    "min_mm": 5.1135382880831415,
+    "below0": 0,
+    "accepted": 378,
+    "held": 0,
+    "held_fraction": 0.0,
+    "project_p95_ms": 1.925897549904218,
+    "path_check_p95_ms": 3.276261450037053,
+    "compute_p50_ms": 3.009153499988315,
+    "compute_p95_ms": 5.284657900256207,
+    "position_lag_proxy_ms": 0.0,
+    "palm_x_rms_error_mm": 6.534144822883313,
+    "sampled_path_note": "4-subdivision finite candidate-path check only; rejected paths hold last accepted q; NO actual physics/path-continuity certification"
+  },
+  "gradient_check": {
+    "analytic": 0.08378932695293657,
+    "numeric": 0.0837893269212131,
+    "absolute_error": 3.17234710722758e-11
+  },
+  "braking_example": {
+    "required": 0.025625000000000002,
+    "available": 0.03,
+    "brake": false,
+    "stop_s": 0.125
+  },
+  "perpair_safe_min_mm": {
+    "torso|left_fore": 22.76359422352027,
+    "torso|left_hand": 126.19203642361192,
+    "torso|right_fore": 22.762978614476584,
+    "torso|right_hand": 126.18744822116574,
+    "left_upper|right_upper": 5.113538288083156,
+    "left_upper|right_fore": 5.113538288083156,
+    "left_upper|right_hand": 116.6429844108469,
+    "left_fore|right_upper": 5.113538288083156,
+    "left_fore|right_fore": 5.1135382880831415,
+    "left_fore|right_hand": 116.6429844108469,
+    "left_hand|right_upper": 116.64314462730806,
+    "left_hand|right_fore": 116.64314462730806,
+    "left_hand|right_hand": 139.53393103157964
+  },
+  "production_enabled": false
+}

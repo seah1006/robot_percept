@@ -120,8 +120,59 @@ def build_g1_xml(width=640, height=480, shadows=False, lowpoly=True):
     return src
 
 
+class JointSetpoint:
+    """Online acceleration-continuous joint reference (bounded jerk, SI units).
+
+    Goals may jump at 50 Hz; reference position/velocity/acceleration persist
+    across updates and are integrated at the physics timestep. Limits apply to
+    the reference, not a guarantee on the position actuator's actual response.
+    """
+    def __init__(self, position, vmax, amax, scale=.8, lower=None, upper=None):
+        self.position = np.asarray(position, float).copy()
+        self.goal = self.position.copy()
+        self.velocity = np.zeros_like(self.position)
+        self.acceleration = np.zeros_like(self.position)
+        self.vmax = np.asarray(vmax, float) * scale
+        self.amax = np.asarray(amax, float) * scale
+        self.jmax = self.amax * 10.
+        self.lower = np.full_like(self.position,-np.inf) if lower is None else np.asarray(lower,float)
+        self.upper = np.full_like(self.position,np.inf) if upper is None else np.asarray(upper,float)
+
+    def _stop_distance(self, velocity, acceleration):
+        # Maximum braking: ramp acceleration to -amax, then hold until stopped.
+        v=np.maximum(velocity,0.); a=acceleration; J=self.jmax; A=self.amax
+        ramp=np.maximum((a+A)/J,0.)
+        zero=(a+np.sqrt(np.maximum(a*a+2*J*v,0.)))/J
+        t=np.minimum(ramp,zero)
+        distance=v*t+.5*a*t*t-J*t*t*t/6
+        remaining=np.maximum(v+a*t-.5*J*t*t,0.)
+        return np.maximum(distance+remaining*remaining/(2*A),0.)
+
+    def advance(self, dt):
+        error = self.goal - self.position
+        # Conservative stopping speed, then jerk-limited acceleration tracking.
+        speed = np.minimum(self.vmax, np.sqrt(self.amax * np.abs(error)))
+        desired_v = np.sign(error) * speed
+        desired_a = np.clip((desired_v - self.velocity) / .08, -self.amax, self.amax)
+        jerk = np.clip((desired_a-self.acceleration)/dt, -self.jmax, self.jmax)
+        upper_distance=self.upper-self.position
+        lower_distance=self.position-self.lower
+        upper_stop=self._stop_distance(self.velocity,self.acceleration)
+        lower_stop=self._stop_distance(-self.velocity,-self.acceleration)
+        # Anticipate one physics step and avoid MuJoCo's hidden ctrl-range clamp.
+        margin=np.abs(self.velocity)*dt + .5*self.amax*dt*dt + 1e-4
+        near_upper=(self.velocity>0)&(upper_distance<=upper_stop+margin)
+        near_lower=(self.velocity<0)&(lower_distance<=lower_stop+margin)
+        jerk=np.where(near_upper,np.maximum(-self.jmax,(-self.amax-self.acceleration)/dt),jerk)
+        jerk=np.where(near_lower,np.minimum(self.jmax,(self.amax-self.acceleration)/dt),jerk)
+        self.position += self.velocity*dt + .5*self.acceleration*dt**2 + jerk*dt**3/6
+        self.velocity += self.acceleration*dt + .5*jerk*dt**2
+        self.acceleration += jerk*dt
+        return self.position
+
+
 class HumanoidEnv:
-    def __init__(self, width=640, height=480, shadows=False, cam='front', lowpoly=True):
+    def __init__(self, width=640, height=480, shadows=False, cam='front', lowpoly=True, setpoint_scale=.6):
         self.width, self.height, self.cam = int(width), int(height), cam
         self.model = mujoco.MjModel.from_xml_string(build_g1_xml(width, height, shadows, lowpoly))
         m = self.model
@@ -146,6 +197,13 @@ class HumanoidEnv:
         self.mocap = {n: int(m.body_mocapid[m.body(n).id]) for n in ('left_wrist_target', 'right_wrist_target', 'left_elbow_target', 'right_elbow_target')}
         self._renderer = None
         self._scene_opt = mujoco.MjvOption()
+        self.setpoint_scale = None if setpoint_scale is None else .6
+        self.setpoint = None
+        self.collision_avoidance = False
+        self.collision_model = None
+        self.collision_monitor = None
+        self.collision_reference_monitor = None
+        self.collision_status = {}
         self.reset()
 
     def rest_q(self):
@@ -164,18 +222,148 @@ class HumanoidEnv:
             if n in self.act:
                 self.data.ctrl[self.act[n]] = self.data.qpos[self.qadr[n]]
         mujoco.mj_forward(self.model, self.data)
+        vmax = np.zeros(self.model.nu); amax = vmax.copy()
+        for name, aid in self.act.items():
+            kind = 'hand' if '_hand_' in name else 'waist' if name.startswith('waist') else 'wrist' if 'wrist' in name else 'arm'
+            vmax[aid] = TELEOP_VEL[kind]; amax[aid] = TELEOP_ACC[kind]
+        self._reference_vmax, self._reference_amax = vmax, amax
+        self._fast_goal = self.data.ctrl.copy()
+        self.safety_brake = self.setpoint_scale is not None
+        self._brake_transition = None
+        self._reference_offset = np.zeros(self.model.nu)
+        self.brake_catchup_s = None
+        self.setpoint = None if not self.safety_brake else JointSetpoint(self.data.ctrl, vmax, amax, .6, self.model.actuator_ctrlrange[:,0], self.model.actuator_ctrlrange[:,1])
+        if getattr(self,'collision_avoidance',False):
+            self.collision_avoidance=False
+            self.set_collision_avoidance(True)
+
+    def set_collision_avoidance(self,enabled):
+        enabled=bool(enabled)
+        if enabled==self.collision_avoidance:return
+        self.collision_avoidance=enabled
+        if enabled:
+            from .humanoid_collision import CapsuleModel,CollisionPathMonitor,MESH_RADII
+            self.collision_model=CapsuleModel(self.model,MESH_RADII)
+            self.collision_monitor=CollisionPathMonitor(self.model,radii=MESH_RADII)
+            self.collision_reference_monitor=CollisionPathMonitor(self.model,radii=MESH_RADII)
+        self.collision_braking=False
+        self._collision_stop_goal=None
+        self.collision_resume_goal=None;self.collision_released_at=-1e6;self.collision_constraints=[]
+        self.collision_status={'enabled':enabled,'experimental':True,'physical_stop_certified':False,'collision_state':'clear'}
+
+    def request_collision_brake(self,reason):
+        """Latch a jerk-limited stop goal without resetting reference p/v/a."""
+        if not self.collision_avoidance or self.collision_braking:return
+        if self.setpoint is None:self.set_safety_brake(True)
+        self.collision_braking=True
+        self.collision_status['collision_state']='holding'
+        self._collision_stop_goal=self.setpoint.position.copy()
+        self.setpoint.goal[:]=self._collision_stop_goal
+        self.collision_status['brake']={'reason':reason,'sim_time':float(self.data.time),'measured_certified':False}
+
+    def update_collision_brake(self):
+        """Directional closing-speed margin; stationary/tangential motion is free.
+
+        Effective Cartesian deceleration is deliberately conservative (0.04 m/s2),
+        with 180ms jerk/PD/servo latency. These are empirical prototype settings,
+        NOT globally certified bounds. Previous 0.5m/s2+20ms allowed penetration.
+        """
+        if not self.collision_avoidance:return
+        g=self.collision_model;g.forward(self.data.qpos)
+        aids=np.array([self.act[name] for name in g.names])
+        actual_v=self.data.qvel[g.dofs]
+        reference_v=actual_v if self.setpoint is None else self.setpoint.velocity[aids]
+        reference_q=self.data.ctrl[aids] if self.setpoint is None else self.setpoint.position[aids]+self._reference_offset[aids]
+        can_release=True;risk=None;nearest=1.;improving=False
+        rows=g.distances(True,.12);self.collision_constraints=rows
+        critical_gap=min(row['distance'] for row in rows)
+        resume_goal=getattr(self,'collision_resume_goal',None)
+        if resume_goal is None:can_release=False
+        for row in rows:
+            if 'gradient' not in row:continue
+            normal_velocity=-float(row['gradient']@actual_v)
+            closing=max(0.,normal_velocity)
+            tracking=max(0.,-float(row['gradient']@(reference_q-self.data.qpos[g.qadr])))
+            pending=max(0.,-float(row['gradient']@reference_v)-closing)
+            effective_closing=max(closing,-float(row['gradient']@reference_v),0.)
+            required=.003+effective_closing**2/(2*.04)+effective_closing*.18+tracking
+            nearest=min(nearest,row['distance'])
+            if resume_goal is not None and row['distance']<=critical_gap+.002:
+                directional=float(row['gradient']@(resume_goal[g.qadr]-self.data.qpos[g.qadr]))
+                if directional < -1e-5:can_release=False
+                if directional > 1e-4:improving=True
+            if normal_velocity>1e-4 or row['distance']<=.005:can_release=False
+            if closing>1e-5 and row['distance']<required:
+                risk={'pair':row['pair'],'distance':row['distance'],'closing_speed':closing,'reference_closing_speed':effective_closing,'required_margin':required,'tracking_normal':tracking,'margin_method':'directional-current-speed-with-jerk-tracking-latency','effective_deceleration':.04,'latency_s':.18}
+                break
+        if self.collision_braking:
+            # Do not cancel an in-flight stop. Re-arm only after settling and
+            # separating/stationary clearance > static(3mm)+hysteresis(2mm).
+            settled=float(np.max(np.abs(actual_v)))<.02
+            if can_release and settled and improving:
+                self.collision_braking=False;self._collision_stop_goal=None
+                self.collision_released_at=float(self.data.time)
+                self.collision_status['collision_state']='clear'
+                self.collision_status['release']={'sim_time':float(self.data.time),'clearance':nearest,'hysteresis':.002,'goal_direction':'increasing-clearance'}
+            return
+        if risk is not None:self.request_collision_brake(risk)
+
+    def set_safety_brake(self, enabled):
+        """Keep physical q/qd and ctrl continuous. OFF catch-up is rate bounded.
+
+        ON seeds measured q/qd with a constant reference-coordinate offset.
+        Physical q/qd are never reset or clipped. Acceleration validation pending.
+        """
+        enabled=bool(enabled)
+        if enabled==self.safety_brake:return
+        old_control=self.data.ctrl.copy();self.safety_brake=enabled
+        self.setpoint_scale=.6 if enabled else None
+        if enabled:
+            position=old_control.copy();velocity=np.zeros_like(position)
+            for name,aid in self.act.items():
+                position[aid]=self.data.qpos[self.qadr[name]]
+                velocity[aid]=self.data.qvel[self.dadr[name]]
+            offset=old_control-position;self._reference_offset=offset
+            self.setpoint=JointSetpoint(position,self._reference_vmax,self._reference_amax,.6,
+                self.model.actuator_ctrlrange[:,0]-offset,self.model.actuator_ctrlrange[:,1]-offset)
+            self.setpoint.velocity[:]=velocity;self.setpoint.goal[:]=self._fast_goal-offset
+            self._brake_transition=None
+        else:
+            if self.setpoint is not None:
+                self.setpoint.vmax[:]=self._reference_vmax*.75
+                self.setpoint.amax[:]=self._reference_amax*.6
+                self.setpoint.jmax[:]=self.setpoint.amax*10.
+            self._brake_transition=(self.data.time,False,self._reference_offset.copy())
+        self.brake_catchup_s=None
 
     def set_targets(self, qdict):
         lim = self.model.actuator_ctrlrange
         for n, v in qdict.items():
             a = self.act[n]
-            self.data.ctrl[a] = float(np.clip(v, lim[a, 0], lim[a, 1]))
+            target = float(np.clip(v, lim[a, 0], lim[a, 1]))
+            self._fast_goal[a] = target
+            if self.setpoint is None: self.data.ctrl[a] = target
+            elif not getattr(self,'collision_braking',False): self.setpoint.goal[a] = target-self._reference_offset[a]
 
     def step(self, n=1):
         d = self.data
         for _ in range(n):
+            if self.setpoint is not None:
+                reference=self.setpoint.advance(self.model.opt.timestep)+self._reference_offset
+                d.ctrl[:]=reference
+                if self._brake_transition is not None:
+                    t0,_,_=self._brake_transition
+                    if np.max(np.abs(reference-self._fast_goal))<5e-5 and np.max(np.abs(self.setpoint.velocity))<.01:
+                        self.brake_catchup_s=float(d.time+self.model.opt.timestep-t0)
+                        self._brake_transition=None;self.setpoint=None
+                        self._reference_offset[:]=0.
+            if self.collision_avoidance:
+                qref=d.qpos.copy()
+                for name in self.collision_model.names:qref[self.qadr[name]]=d.ctrl[self.act[name]]
+                self.collision_status['reference']=self.collision_reference_monitor.inspect(qref)
             d.qfrc_applied[:] = d.qfrc_bias
             mujoco.mj_step(self.model, d)
+            if self.collision_avoidance:self.collision_status['actual']=self.collision_monitor.inspect(d.qpos)
 
     def q(self, names):
         return np.array([self.data.qpos[self.qadr[n]] for n in names])

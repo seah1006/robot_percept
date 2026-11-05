@@ -1,0 +1,1 @@
+{"dur_s": 32.0, "n_waits": 60, "wait_ms_p50": 50.13, "wait_ms_p99": 4802.04, "wait_ms_max": 4802.04, "realtime_backward_jumps_ms": [], "n_back": 0, "realtime_forward_jumps_ms": [91979.6], "n_fwd": 1}

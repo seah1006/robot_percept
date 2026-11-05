@@ -1,0 +1,76 @@
+{
+ "tag": "cand5b",
+ "load0": [
+  "2.65",
+  "2.35",
+  "1.28"
+ ],
+ "dynv": {
+  "brake_on": {
+   "v_ratio": 0.614,
+   "v_joint": "left_shoulder_pitch_joint",
+   "a_ratio_lowerbound": 0.791,
+   "a_joint": "waist_yaw_joint",
+   "n": 306
+  },
+  "brake_off": {
+   "v_ratio": 1.588,
+   "v_joint": "right_shoulder_yaw_joint",
+   "a_ratio_lowerbound": 2.111,
+   "a_joint": "right_wrist_roll_joint",
+   "n": 248
+  }
+ },
+ "toggle": {
+  "on_to_off": {
+   "max_dq_deg_per_poll": 0.1,
+   "max_qd_deg_s": 0.6,
+   "samples": 555,
+   "v_ratio": 0.003,
+   "status_brake": false
+  },
+  "off_to_on": {
+   "max_dq_deg_per_poll": 0.1,
+   "max_qd_deg_s": 0.4,
+   "samples": 566,
+   "v_ratio": 0.002,
+   "status_brake": true
+  },
+  "on_to_off2": {
+   "max_dq_deg_per_poll": 0.1,
+   "max_qd_deg_s": 0.2,
+   "samples": 617,
+   "v_ratio": 0.001,
+   "status_brake": false
+  },
+  "off_to_on2": {
+   "max_dq_deg_per_poll": 0.1,
+   "max_qd_deg_s": 0.3,
+   "samples": 614,
+   "v_ratio": 0.002,
+   "status_brake": true
+  }
+ },
+ "drop": {
+  "left": {
+   "max_step_deg": 0.1,
+   "at_dt_ms": 23.9,
+   "max_deg_per_frame_equiv": 0.144,
+   "total_rot_deg": 3.9,
+   "max_wrist_pos_step_mm": 0.0
+  },
+  "right": {
+   "max_step_deg": 0.1,
+   "at_dt_ms": 23.9,
+   "max_deg_per_frame_equiv": 0.144,
+   "total_rot_deg": 3.9,
+   "max_wrist_pos_step_mm": 0.0
+  },
+  "n_samples": 377
+ },
+ "load1": [
+  "2.77",
+  "2.47",
+  "1.42"
+ ]
+}

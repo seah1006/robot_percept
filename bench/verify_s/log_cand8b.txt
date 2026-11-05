@@ -1,0 +1,6 @@
+locked at 14:13:55 load 2.29 2.17 1.90 5/356 32655 gpu 24 %, 2566 MiB
+DONE
+DONE
+5094 closed
+your 131072x1 screen size is bogus. expect trouble
+unlocked load 2.92 2.69 2.14 2/374 38763 gpu 34 %, 2953 MiB

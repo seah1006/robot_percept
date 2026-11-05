@@ -1,5 +1,6 @@
 """GT-assisted input + exact MJPEG arrival intervals. Run inside WSL conda env."""
 import argparse,json,time,urllib.request,threading,subprocess,sys,os,numpy as np
+from web.monowait import wait_event, join_thread
 p=argparse.ArgumentParser();p.add_argument('--url',default='http://127.0.0.1:5091');p.add_argument('--seconds',type=float,default=33.5);a=p.parse_args()
 def get():return json.load(urllib.request.urlopen(a.url+'/humanoid/status',timeout=5))
 def mode(enabled):return urllib.request.urlopen(urllib.request.Request(a.url+'/humanoid/mode',data=json.dumps({'enabled':enabled}).encode(),headers={'Content-Type':'application/json'}),timeout=15).read()
@@ -11,7 +12,7 @@ for _ in range(120):
  time.sleep(.5)
 rows=[];stop=threading.Event()
 def poll():
- while not stop.wait(1):
+ while not wait_event(stop,1):
   try:rows.append(get())
   except Exception:pass
 sender=subprocess.Popen([sys.executable,'tools/humanoid_synth.py','--url',a.url,'--seconds',str(a.seconds+2)])
@@ -24,7 +25,7 @@ with urllib.request.urlopen(a.url+'/humanoid/video',timeout=5) as response:
    if end<0:break
    now=time.monotonic();buf=buf[end+2:]
    if now-start<=a.seconds:arrivals.append(now)
-stop.set();t.join(6);sender.wait()
+stop.set();join_thread(t,6);sender.wait()
 def metrics(key):
  v=[s[key] for s in rows if isinstance(s.get(key),(float,int))]
  return {k:round(float(np.percentile(v,n)),3) for k,n in [('p50',50),('p95',95)]} if v else None

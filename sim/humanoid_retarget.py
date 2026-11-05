@@ -29,10 +29,16 @@ def _unit(v):
 def torso_frame(P, vis=None, min_vis=.5):
     """Rotation (columns = body x,y,z in camera axes) and whether hips were used."""
     ls, rs, lh, rh = P[POSE['l_sh']], P[POSE['r_sh']], P[POSE['l_hip']], P[POSE['r_hip']]
+    if not np.isfinite(P).all() or np.linalg.norm(ls - rs) < 1e-6:
+        return B_CAM.copy(), False
     y = _unit(ls - rs)
     hips_ok = vis is None or min(vis[POSE['l_hip']], vis[POSE['r_hip']]) >= min_vis
     z = _unit((ls + rs) / 2 - (lh + rh) / 2) if hips_ok else np.array([0., -1., 0.])
-    z = _unit(z - y * (y @ z)); x = np.cross(y, z)
+    z = z - y * (y @ z)
+    if np.linalg.norm(z) < 1e-6:
+        z = np.eye(3)[np.argmin(np.abs(y))]; z = z - y * (y @ z)
+        hips_ok = False
+    z = _unit(z); x = np.cross(y, z)
     return np.column_stack((x, y, z)), hips_ok
 
 
@@ -52,7 +58,10 @@ def arm_directions(P, Rh, side):
 
 def palm_frame(H, side):
     """Hand frame in the input axes: columns (finger dir f, palm normal n, f x n)."""
+    if H.shape != (21, 3) or not np.isfinite(H).all(): return None
     w, i5, m9, p17 = H[0], H[5], H[9], H[17]
+    if np.linalg.norm(m9 - w) < 1e-6 or np.linalg.norm(np.cross(i5 - w, p17 - w)) < 1e-8:
+        return None
     f = _unit(m9 - w)
     c = np.cross(i5 - w, p17 - w)
     # cross(index-wrist, pinky-wrist) points out of the palm for a right hand and out

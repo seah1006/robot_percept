@@ -1,0 +1,91 @@
+....F........................................................            [100%]
+=================================== FAILURES ===================================
+___________________________________ test_env ___________________________________
+
+    def test_env():
+>       validate()
+
+tests/test_env.py:77: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_env.py:34: in validate
+    _,dist,_=trimesh.proximity.closest_point(mesh,po)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/envs/robot_percept/lib/python3.12/site-packages/trimesh/proximity.py:156: in closest_point
+    candidates = nearby_faces(mesh, points)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/envs/robot_percept/lib/python3.12/site-packages/trimesh/proximity.py:59: in nearby_faces
+    rtree = mesh.triangles_tree
+            ^^^^^^^^^^^^^^^^^^^
+../../anaconda3/envs/robot_percept/lib/python3.12/site-packages/trimesh/caching.py:133: in get_cached
+    value = function(*args, **kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/envs/robot_percept/lib/python3.12/site-packages/trimesh/base.py:907: in triangles_tree
+    return triangles.bounds_tree(self.triangles)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/envs/robot_percept/lib/python3.12/site-packages/trimesh/triangles.py:392: in bounds_tree
+    tree = util.bounds_tree(triangle_bounds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+bounds = array([[ 0.004984, -0.032404, -0.082703,  0.008027, -0.031364, -0.08164 ],
+       [ 0.006149, -0.032487, -0.082703,  0...017895,  0.077778],
+       [ 0.006222,  0.016156,  0.074822,  0.008608,  0.017419,  0.077778]],
+      shape=(15728, 6))
+
+    def bounds_tree(bounds: ArrayLike) -> Any:
+        """
+        Given a set of axis aligned bounds create an r-tree for
+        broad-phase collision detection.
+    
+        Parameters
+        ------------
+        bounds : (n, 2D) or (n, 2, D) float
+          Non-interleaved bounds where D=dimension
+          E.G a 2D bounds tree:
+          [(minx, miny, maxx, maxy), ...]
+    
+        Returns
+        ---------
+        tree : Rtree
+          Tree containing bounds by index
+        """
+>       import rtree
+E       ModuleNotFoundError: No module named 'rtree'
+
+../../anaconda3/envs/robot_percept/lib/python3.12/site-packages/trimesh/util.py:1896: ModuleNotFoundError
+=============================== warnings summary ===============================
+../../anaconda3/envs/robot_percept/lib/python3.12/site-packages/dash/testing/plugin.py:104
+  /home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/dash/testing/plugin.py:104: PytestRemovedIn10Warning: The hookimpl pytest_addhooks uses old-style configuration options (marks or attributes).
+  Please use the pytest.hookimpl(tryfirst=True) decorator instead
+   to configure the hooks.
+   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
+    @pytest.mark.tryfirst
+
+tests/test_control.py::test_ik
+  /home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/_pytest/python.py:191: PytestReturnNotNoneWarning: Test functions should return None, but tests/test_control.py::test_ik returned <class 'dict'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+tests/test_control.py::test_cartesian
+  /home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/_pytest/python.py:191: PytestReturnNotNoneWarning: Test functions should return None, but tests/test_control.py::test_cartesian returned <class 'dict'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+tests/test_control.py::test_pick_place
+  /home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/_pytest/python.py:191: PytestReturnNotNoneWarning: Test functions should return None, but tests/test_control.py::test_pick_place returned <class 'dict'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+tests/test_control.py::test_simenv
+  /home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/_pytest/python.py:191: PytestReturnNotNoneWarning: Test functions should return None, but tests/test_control.py::test_simenv returned <class 'dict'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_env.py::test_env - ModuleNotFoundError: No module named 'rt...
+1 failed, 60 passed, 5 warnings in 44.04s

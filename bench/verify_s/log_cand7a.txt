@@ -1,0 +1,15 @@
+locked at 14:01:53 load 1.29 1.10 1.55 1/244 3599 gpu 19 %, 1424 MiB
+mode on 200
+=== part coll0
+collision_avoidance 0 200
+{'n': 428, 'min_mm': -25.1, 'p5_mm': -21.5, 'frames_below_0mm': 90, 'frames_below_10mm': 105, 'frames_below_5mm': 99, 'collision_opt': '0', 'worst_pair': 'left_fore|right_fore', 'radii': {'arm': 0.045, 'hand': 0.05, 'torso': 0.09, 'note': 'approximate capsules, torso axis pelvis->shoulder mid'}}
+=== part coll1
+collision_avoidance 1 200
+{'n': 427, 'min_mm': 5.6, 'p5_mm': 12.4, 'frames_below_0mm': 0, 'frames_below_10mm': 4, 'frames_below_5mm': 0, 'collision_opt': '1', 'worst_pair': 'left_upper|right_upper', 'radii': {'arm': 0.045, 'hand': 0.05, 'torso': 0.09, 'note': 'approximate capsules, torso axis pelvis->shoulder mid'}}
+=== part dyn
+dyn collision_avoidance 1 200
+{'robot_video': {'frames': 1033, 'win_s': 32.47, 'fps': 31.78, 'max_gap_ms': np.float64(84.0), 'p99_gap_ms': np.float64(51.2)}, 'status': {'fps': {'p50': 31.9, 'p95': 32.7, 'max': 33.0}, 'tick_ms_p95': {'p50': 8.97, 'p95': 15.87, 'max': 17.13}, 'render_ms': {'p50': 14.6, 'p95': 22.1, 'max': 35.6}, 'input_hz': {'p50': 30.0, 'p95': 30.1, 'max': 30.2}, 'rtf': {'p50': 1.0, 'p95': 1.01, 'max': 1.03}}, 'ik_time_ms': {'p50': 0.47, 'p95': 1.22, 'max': 7.64, 'n': 620}, 'post_codes': {200: 1023}, 'post_errs': 0, 'load1': ['1.52', '1.23', '1.55']}
+DONE
+5094 closed
+your 131072x1 screen size is bogus. expect trouble
+unlocked load 1.52 1.23 1.55 2/259 8246 gpu 18 %, 1662 MiB

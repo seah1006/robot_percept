@@ -2,23 +2,29 @@
   "variant": "egl",
   "MUJOCO_GL": "egl",
   "env": {
-    "GALLIUM_DRIVER": null,
-    "MESA_D3D12_DEFAULT_ADAPTER_NAME": null,
-    "PYOPENGL_PLATFORM": null,
+    "GALLIUM_DRIVER": "d3d12",
+    "MESA_D3D12_DEFAULT_ADAPTER_NAME": "NVIDIA",
+    "PYOPENGL_PLATFORM": "egl",
     "DISPLAY": ":0",
     "LIBGL_ALWAYS_SOFTWARE": null
   },
-  "context_create_s": 1.721,
-  "gl_vendor": "Mesa",
-  "gl_renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
-  "gl_version": "4.5 (Compatibility Profile) Mesa 25.2.8-0ubuntu0.24.04.4",
+  "znear_zfar_rel": [
+    0.009999999776482582,
+    50.0
+  ],
+  "noshadow": false,
+  "noreflect": false,
+  "context_create_s": 1.18,
+  "gl_vendor": "Microsoft Corporation",
+  "gl_renderer": "D3D12 (NVIDIA GeForce RTX 2080 SUPER)",
+  "gl_version": "4.6 (Compatibility Profile) Mesa 25.2.8-0ubuntu0.24.04.4",
   "fps": {
-    "640x480 rgb": 3.7,
-    "640x480 depth": 49.4,
-    "640x480 rgb+depth": 2.5,
-    "1280x720 rgb": 2.3,
-    "1280x720 depth": 13.7,
-    "1280x720 rgb+depth": 2.6
+    "640x480 rgb": 21.4,
+    "640x480 depth": 68.2,
+    "640x480 rgb+depth": 7.4,
+    "1280x720 rgb": 12.2,
+    "1280x720 depth": 44.8,
+    "1280x720 rgb+depth": 13.0
   },
   "depth_near_far_m": [
     0.011999999731779098,
@@ -29,25 +35,25 @@
     226.17
   ],
   "gt_center_pixel_on_obj_mask": true,
-  "obj_mask_pixels": 1103,
+  "obj_mask_pixels": 1083,
   "obj_mask_centroid_px": [
-    341.3,
-    225.96
+    341.37,
+    225.94
   ],
   "center_pixel": {
-    "depth_m": 0.9738926887512207,
+    "depth_m": 0.9745602607727051,
     "ray_z_m": 0.9738926068438132,
-    "backproj_vs_ray_mm": 8.204808506859191e-05,
-    "backproj_vs_gt_center_mm": 31.775873494382317,
+    "backproj_vs_ray_mm": 0.6688006373022929,
+    "backproj_vs_gt_center_mm": 31.107208759958517,
     "ray_hit_geom": "obj_geom"
   },
   "depth_vs_raycast_mm": {
     "n": 401,
-    "mean": 0.0004098894821950712,
-    "p95": 0.002307040830817897,
-    "max": 0.003603203492019702
+    "mean": 7.823054075858511,
+    "p95": 9.65883641467924,
+    "max": 2112.8395071090295
   },
-  "visible_surface_centroid_vs_gt_mm": 20.80243505141204,
+  "visible_surface_centroid_vs_gt_mm": 20.924698714522485,
   "obj_size_m": [
     0.05,
     0.06,

@@ -1,0 +1,70 @@
+{
+  "load": "0.70 0.15 0.05 3/239 988",
+  "radii_mm": {
+    "torso": 118.0,
+    "upper": 53.0,
+    "fore": 45.0,
+    "hand": 57.0
+  },
+  "audit_poses": 49,
+  "mesh_coverage": {
+    "torso": {
+      "max_uncovered_mm": 0.0,
+      "max_uncovered_vertices": 0
+    },
+    "left_upper": {
+      "max_uncovered_mm": 0.0,
+      "max_uncovered_vertices": 0
+    },
+    "left_fore": {
+      "max_uncovered_mm": 0.0,
+      "max_uncovered_vertices": 0
+    },
+    "left_hand": {
+      "max_uncovered_mm": 0.0,
+      "max_uncovered_vertices": 0
+    },
+    "right_upper": {
+      "max_uncovered_mm": 0.0,
+      "max_uncovered_vertices": 0
+    },
+    "right_fore": {
+      "max_uncovered_mm": 0.0,
+      "max_uncovered_vertices": 0
+    },
+    "right_hand": {
+      "max_uncovered_mm": 0.0,
+      "max_uncovered_vertices": 0
+    }
+  },
+  "all_mesh_uncovered_le2mm": true,
+  "rest_clearance_mm": 17.111814717458635,
+  "unsafe_target_clearance_mm": -40.61959633421335,
+  "no_brake_control_min_mm": -54.53393803099962,
+  "brake_trigger_s": 0.06,
+  "stop_after_trigger_s": 0.984,
+  "state_jump_at_brake": 0.0,
+  "actual_min_mm": 5.9718578762098655,
+  "post_brake_v_ratio": 0.22346959426419796,
+  "post_brake_a_ratio": 0.6564292725174617,
+  "worst_a": "right_elbow_joint",
+  "brake_reason": {
+    "reason": {
+      "pair": [
+        "torso",
+        "left_fore"
+      ],
+      "distance": 0.016960559407493095,
+      "closing_speed": 0.012923246820786667,
+      "reference_closing_speed": 0.04696095088213372,
+      "required_margin": 0.03980135548033602,
+      "tracking_normal": 0.0007817479746247549,
+      "margin_method": "directional-current-speed-with-jerk-tracking-latency",
+      "effective_deceleration": 0.04,
+      "latency_s": 0.18
+    },
+    "sim_time": 0.06000000000000004,
+    "measured_certified": false
+  },
+  "note": "49 sampled poses, selected torso/arm/palm mesh vertices; excludes head/fingers; finite measured scenario, not universal certification"
+}
