@@ -143,9 +143,9 @@ function renderLogs (logs) {
 }
 
 // ---------- 상태 폴링 ----------
-async function status () {
+async function status (pushed) {
   try {
-    const s = await fetch('/status').then(r => r.json());
+    const s = pushed || await fetch('/status').then(r => r.json());
     window.dispatchEvent(new CustomEvent('robot-status', {detail: s}));
     const pill = $('#health-pill'); pill.classList.toggle('ok', !!s.ready); pill.classList.remove('bad');
     $('#health').textContent = s.ready ? (s.state === 'busy' ? '로봇 동작 중' : '연결됨') : '시작 중';
@@ -185,7 +185,8 @@ async function status () {
     $('#health').textContent = '연결 끊김'; $('#health-pill').classList.add('bad');
   }
 }
-setInterval(status, 333); status();
+setInterval(() => { if (!window.rpStatusPushHealthy?.()) status(); }, 333);
+window.addEventListener('robot-push', e => status(e.detail)); status();
 
 // ---- 스트림 자동 재연결: 서버 재시작/일시 끊김 뒤 영상이 깨진 아이콘으로 남지 않게 ----
 function reconnectStream (img) {

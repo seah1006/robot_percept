@@ -20,3 +20,6 @@ nvdiffrast/
 
 # Generated web CAD uploads
 cad_uploads/web/
+
+# 재생성 가능한 합성 payload
+bench/*/out/pl/

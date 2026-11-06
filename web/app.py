@@ -184,7 +184,7 @@ class Runtime:
 def create_app():
  app=Flask(__name__); app.config["MAX_CONTENT_LENGTH"]=100*1024*1024; rt=Runtime(); app.extensions["sim_runtime"]=rt; atexit.register(rt.close)
  from .teleop import create_blueprint as teleop_blueprint
- app.register_blueprint(teleop_blueprint(rt))
+ teleop_bp=teleop_blueprint(rt);app.register_blueprint(teleop_bp)
  from .humanoid import create_blueprint as humanoid_blueprint
  humanoid_bp=humanoid_blueprint(panda_runtime=rt)
  rt.humanoid_runtime=humanoid_bp.humanoid_runtime
@@ -359,8 +359,7 @@ def create_app():
   rt.log(f"CAD 추가: {name}");return jsonify(ok=True,name=name,command_id=cid,extents_m=meta["mesh"]["extents_m"],triangles=meta["mesh"]["triangles"],files=meta["files"])
  @app.get("/objects")
  def objects():return jsonify(ok=True,objects=dict(rt.status).get("objects",{}))
- @app.get("/status")
- def status():
+ def status_payload():
   st=dict(rt.status)
   with rt.state_lock:selected,est,ms,logs=rt.selected,rt.estimate,rt.estimate_time_ms,list(rt.logs)
   pose=None
@@ -368,7 +367,11 @@ def create_app():
   if selected and est is not None and not paused and selected in st.get("objects",{}):
    gt=np.asarray(st["objects"][selected]["T_cam_obj"]);pose={"estimate":est.tolist(),"error_mm":float(np.linalg.norm(est[:3,3]-gt[:3,3])*1000),"error_deg":_rerr(est,gt),"timing_ms":ms,**rt.metrics}
   st["perception_warmup"]={"state":getattr(rt.perception,"warmup_state","idle"),"error":getattr(rt.perception,"warmup_error",None),"seconds":getattr(rt.perception,"warmup_seconds",None),"g1_cpu_nice":getattr(rt.perception,"warmup_g1_nice_applied",None),"priority_error":getattr(rt.perception,"warmup_priority_error",None)}
-  st.update({"tracking_state":"paused" if (selected and paused) else rt.metrics.get("tracking_state","idle" if not selected else "tracking"),"selected_object":selected,"pose":pose,"perception":rt.perception.mode,"perception_warning":rt.perception.warning,"gpu":rt.gpu(),"logs":logs});return jsonify(st)
+  st.update({"tracking_state":"paused" if (selected and paused) else rt.metrics.get("tracking_state","idle" if not selected else "tracking"),"selected_object":selected,"pose":pose,"perception":rt.perception.mode,"perception_warning":rt.perception.warning,"gpu":rt.gpu(),"logs":logs});return st
+ @app.get("/status")
+ def status():return jsonify(status_payload())
+ from .realtime import register_realtime
+ app.extensions["realtime_sock"]=register_realtime(app,status_payload,teleop_bp,humanoid_bp)
  return app
 
 if __name__=="__main__":
