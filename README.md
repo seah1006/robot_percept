@@ -93,7 +93,7 @@ G1의 **안전 감속(실제 로봇 한계 준수)**은 기본 ON입니다. `/hu
 | 벽시계 점프 대응(monotonic 대기) | PASS. 단 G1 렌더 루프는 이전에도 monotonic이라 실측 개선 입증은 아님 |
 | 트래커 update WebSocket(/tracker/ws) + 브라우저 상태 push(/status/ws) | PASS (update p95 15~17ms→2.3ms, 서버 main CPU -11%p 수준, 조용한 창 G1 32fps). 트래커 기본 --transport는 http |
 | preview(JPEG) 전송 지연 | 알려진 한계: Windows→WSL HTTP p95 +3~9ms(처리량 동일). WS preview는 회귀로 폐기 |
-| 서버 SIGTERM 종료 시 worker 잔존 | 알려진 문제, 수정 예정 |
+| 서버 종료 시 worker 잔존 | PASS (TERM/INT/KILL x G1 ON/OFF 60/60 잔존 0, 종료 p95 1.3초 이하). 기동 중 신호는 미검증 |
 | 자기충돌 회피(P1c) | **FAIL, 기본 OFF 실험 기능**. 켜면 팔이 거의 움직이지 않거나 목표를 따라가지 못할 수 있음 |
 | Windows 트래커 처리율·수신 Hz 절대 판정 | 미검증 (상대 회귀 없음만 확인) |
 | FP 워밍업 defer/취소 경로 | 회사 환경 보고 수치만, 집 PC 재측정 미실시 |

@@ -33,10 +33,10 @@ def runtime_diagnostics(env, servo):
             'profile_counts': {k: int(v) for k, v in values.items() if k.endswith('_calls')},
             'servo_profile': {k: int(v) if k.endswith('_calls') else v for k, v in values.items() if k.endswith(('_ms', '_calls'))}}
 
-def run_humanoid_worker(names, cfg):
+def run_humanoid_worker(names, cfg, parent_pid=None):
     from web.shm_channel import Blob
     from web.monowait import wait_event, join_thread
-    parent_pid = os.getppid()
+    parent_pid = parent_pid or os.getppid()
     orphaned = False
     blobs = {k: Blob(name=v) for k, v in names.items()}
     status = {'state': 'starting', 'error': None}

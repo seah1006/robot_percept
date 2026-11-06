@@ -1,0 +1,251 @@
+{
+ "label": "P0_p0vw",
+ "load0": [
+  "2.18",
+  "1.10",
+  "1.46"
+ ],
+ "off_status": {
+  "background": {
+   "fp_warmup": "disabled",
+   "panda_render_paused": null
+  },
+  "capture_latency_ms": null,
+  "collision_avoidance": false,
+  "collision_state": "clear",
+  "collision_status": {
+   "collision_state": "clear",
+   "enabled": false,
+   "experimental": true,
+   "runtime_off": true
+  },
+  "enabled": false,
+  "human2d": null,
+  "human_detected": false,
+  "input_count": 0,
+  "input_hz": 0.0,
+  "latency_ms": 0.0,
+  "mode": false,
+  "profile_counts": {},
+  "profile_ms": {},
+  "safety_brake": true,
+  "servo_profile": {},
+  "state": "off",
+  "stream_debug": {
+   "clients": 0,
+   "long_events": [],
+   "max_consumer_resume_ms": 0.0,
+   "max_yield_gap_ms": 0.0,
+   "stream_seq": 0,
+   "yielded_frames": 0
+  },
+  "worker_status_age_ms": null
+ },
+ "first_gap": [
+  {
+   "mode_on_http_s": 2.44,
+   "mode_status": 200,
+   "frames6s": 192,
+   "first_frame_after_connect_ms": 2.3,
+   "first_gap_ms": 32.4,
+   "max_gap_ms": 53.5,
+   "gap_p95_ms": 33.3
+  },
+  {
+   "mode_on_http_s": 2.14,
+   "mode_status": 200,
+   "frames6s": 193,
+   "first_frame_after_connect_ms": 1.4,
+   "first_gap_ms": 4.2,
+   "max_gap_ms": 41.3,
+   "gap_p95_ms": 37.0
+  },
+  {
+   "mode_on_http_s": 2.0,
+   "mode_status": 200,
+   "frames6s": 192,
+   "first_frame_after_connect_ms": 1.3,
+   "first_gap_ms": 28.9,
+   "max_gap_ms": 41.2,
+   "gap_p95_ms": 33.1
+  }
+ ],
+ "bad": {
+  "mixed_pose_rows": {
+   "http": 400,
+   "state": "ready",
+   "enabled": true,
+   "err": "pose must be 33 x [x,y,z,(vis)] finite (|v|<=5)"
+  },
+  "mixed_hand_rows": {
+   "http": 400,
+   "state": "ready",
+   "enabled": true,
+   "err": "hands.left must be 21 x [x,y,z] (|v|<=1)"
+  },
+  "pose_32": {
+   "http": 400,
+   "state": "ready",
+   "enabled": true,
+   "err": "pose must be 33 x [x,y,z,(vis)] finite (|v|<=5)"
+  },
+  "pose_str": {
+   "http": 400,
+   "state": "ready",
+   "enabled": true,
+   "err": "pose must be 33 x [x,y,z,(vis)] finite (|v|<=5)"
+  },
+  "hands_list": {
+   "http": 400,
+   "state": "ready",
+   "enabled": true,
+   "err": "hands must be an object"
+  },
+  "vis_2": {
+   "http": 400,
+   "state": "ready",
+   "enabled": true,
+   "err": "visibility must be in [0,1]"
+  },
+  "nan_str": {
+   "http": 400,
+   "state": "ready",
+   "enabled": true,
+   "err": "pose must be 33 x [x,y,z,(vis)] finite (|v|<=5)"
+  },
+  "detected_str": {
+   "http": 400,
+   "state": "ready",
+   "enabled": true,
+   "err": "detected must be boolean"
+  },
+  "big_1e9": {
+   "http": 400,
+   "state": "ready",
+   "enabled": true,
+   "err": "pose must be 33 x [x,y,z,(vis)] finite (|v|<=5)"
+  },
+  "degenerate_same_point": {
+   "http": 200,
+   "state": "ready",
+   "enabled": true,
+   "err": null
+  },
+  "degenerate_zero": {
+   "http": 200,
+   "state": "ready",
+   "enabled": true,
+   "err": null
+  },
+  "sent_at_str": {
+   "http": 200,
+   "state": "ready",
+   "enabled": true,
+   "err": null
+  },
+  "hands_none_values": {
+   "http": 200,
+   "state": "ready",
+   "enabled": true,
+   "err": null
+  }
+ },
+ "bad_after": "ready",
+ "bad_json": 400,
+ "bad_after2": "ready",
+ "restart_after_bad": [
+  200,
+  200
+ ],
+ "ready2": true,
+ "raw_frames_total": 513,
+ "latency": {
+  "posts": 450,
+  "post_rate_hz": 30.0,
+  "frames": 480,
+  "fps": 31.99,
+  "max_gap_ms": 41.3,
+  "post_to_next_frame_ms": {
+   "p50": 16.2,
+   "p95": 31.1,
+   "max": 34.2
+  },
+  "process_ms_p50_p95": [
+   0.31,
+   0.43
+  ],
+  "note": "upper-bound proxy: POST return -> next JPEG arrival (frame cadence included)"
+ },
+ "status_keys": [
+  "age_ms",
+  "applied_seq",
+  "background",
+  "capture_latency_ms",
+  "collision_avoidance",
+  "collision_state",
+  "collision_status",
+  "detected",
+  "enabled",
+  "error",
+  "fps",
+  "frames_total",
+  "groups",
+  "head",
+  "human",
+  "human2d",
+  "human_detected",
+  "ik",
+  "ik_ms_p50",
+  "ik_ms_p95",
+  "input_count",
+  "input_hz",
+  "jpeg_ms",
+  "latency_ms",
+  "mode",
+  "options",
+  "overlay",
+  "pipeline_ms",
+  "profile_counts",
+  "profile_ms",
+  "published_seq",
+  "render_debug",
+  "render_ms",
+  "rtf",
+  "safety_brake",
+  "server_latency_ms",
+  "servo_profile",
+  "servo_state",
+  "sim_time",
+  "snapshot_ms",
+  "state",
+  "status_mono",
+  "stream_debug",
+  "tick_hz",
+  "tick_ms_p50",
+  "tick_ms_p95",
+  "tracking",
+  "wall",
+  "worker_status_age_ms"
+ ],
+ "latency_ms_status": 1.2,
+ "concurrent": {
+  "codes": [
+   200,
+   200,
+   409,
+   200,
+   409,
+   200,
+   409,
+   200
+  ],
+  "final_state": "off",
+  "enabled": false
+ },
+ "final_off": "off",
+ "load1": [
+  "1.77",
+  "1.18",
+  "1.47"
+ ]
+}
