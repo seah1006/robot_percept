@@ -1,0 +1,50 @@
+{
+  "sweep": {
+    "pattern": "sweep",
+    "ticks": 150,
+    "max_qpos_abs": 0.0,
+    "max_cmd_abs": 0.0,
+    "max_waypoint_abs": 0.0,
+    "max_path_diag_abs": 0.0,
+    "mismatches": [],
+    "mismatch_count": 0,
+    "qpos_array_equal": true,
+    "cmd_array_equal": true
+  },
+  "chest": {
+    "pattern": "chest",
+    "ticks": 150,
+    "max_qpos_abs": 0.0,
+    "max_cmd_abs": 0.0,
+    "max_waypoint_abs": 0.0,
+    "max_path_diag_abs": 0.0,
+    "mismatches": [],
+    "mismatch_count": 0,
+    "qpos_array_equal": true,
+    "cmd_array_equal": true
+  },
+  "jump": {
+    "pattern": "jump",
+    "ticks": 150,
+    "max_qpos_abs": 0.0,
+    "max_cmd_abs": 0.0,
+    "max_waypoint_abs": 0.0,
+    "max_path_diag_abs": 0.0,
+    "mismatches": [],
+    "mismatch_count": 0,
+    "qpos_array_equal": true,
+    "cmd_array_equal": true
+  },
+  "twist": {
+    "pattern": "twist",
+    "ticks": 150,
+    "max_qpos_abs": 0.0,
+    "max_cmd_abs": 0.0,
+    "max_waypoint_abs": 0.0,
+    "max_path_diag_abs": 0.0,
+    "mismatches": [],
+    "mismatch_count": 0,
+    "qpos_array_equal": true,
+    "cmd_array_equal": true
+  }
+}

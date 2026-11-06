@@ -1,0 +1,43 @@
+         3106081 function calls (3077300 primitive calls) in 4.164 seconds
+
+   Ordered by: cumulative time
+   List reduced from 192 to 35 due to restriction <35>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+16611/342    0.046    0.000    2.902    0.008 humanoid_s3_profile.py:36(f)
+       13    0.003    0.000    2.614    0.201 humanoid_collision.py:145(plan_safe_waypoint)
+     4848    0.012    0.000    2.248    0.000 humanoid_collision.py:111(minimum)
+     5927    0.569    0.000    1.892    0.000 humanoid_collision.py:91(distances)
+       71    0.015    0.000    1.660    0.023 humanoid_collision.py:155(segment)
+     5927    0.186    0.000    0.930    0.000 humanoid_collision.py:66(forward)
+     5927    0.321    0.000    0.643    0.000 humanoid_collision.py:34(closest_segments_batch)
+    82978    0.037    0.000    0.592    0.000 humanoid_collision.py:80(point)
+    83576    0.136    0.000    0.557    0.000 {built-in method builtins.sum}
+   171883    0.381    0.000    0.420    0.000 humanoid_collision.py:81(<genexpr>)
+       47    0.016    0.000    0.343    0.007 humanoid_collision.py:113(project)
+      180    0.034    0.000    0.332    0.002 humanoid_synth.py:101(payload)
+    83780    0.163    0.000    0.326    0.000 _linalg.py:2598(norm)
+     3000    0.150    0.000    0.315    0.000 humanoid_env.py:151(advance)
+11217/10678    0.017    0.000    0.278    0.000 {built-in method builtins.min}
+       11    0.000    0.000    0.257    0.023 humanoid_collision.py:175(sampled_path)
+      550    0.002    0.000    0.256    0.000 humanoid_collision.py:177(<genexpr>)
+      299    0.021    0.000    0.243    0.001 humanoid_env.py:266(update_collision_brake)
+    53925    0.049    0.000    0.225    0.000 fromnumeric.py:2245(clip)
+    53996    0.027    0.000    0.177    0.000 fromnumeric.py:48(_wrapfunc)
+     6000    0.139    0.000    0.139    0.000 humanoid_env.py:141(_stop_distance)
+    29635    0.045    0.000    0.137    0.000 humanoid_collision.py:37(<lambda>)
+     3000    0.136    0.000    0.136    0.000 {built-in method mujoco._functions.mj_step}
+     9200    0.089    0.000    0.128    0.000 humanoid_collision.py:82(jacobian)
+    97786    0.126    0.000    0.126    0.000 {built-in method numpy.array}
+    44131    0.019    0.000    0.119    0.000 {method 'clip' of 'numpy.ndarray' objects}
+    53925    0.115    0.000    0.115    0.000 _methods.py:96(_clip)
+      360    0.033    0.000    0.109    0.000 humanoid_synth.py:42(hand_landmarks)
+    27150    0.097    0.000    0.097    0.000 {built-in method builtins.round}
+    29635    0.011    0.000    0.077    0.000 einsumfunc.py:1242(einsum)
+    29635    0.075    0.000    0.075    0.000 humanoid_collision.py:100(<genexpr>)
+       11    0.001    0.000    0.071    0.006 humanoid_collision.py:129(approach_safe)
+     1380    0.024    0.000    0.069    0.000 numeric.py:1563(cross)
+    77853    0.067    0.000    0.067    0.000 {method 'dot' of 'numpy.ndarray' objects}
+    29635    0.066    0.000    0.066    0.000 {built-in method numpy._core._multiarray_umath.c_einsum}
+
+

@@ -1,0 +1,800 @@
+{
+  "generated_at": "2026-11-07T00:03:26+0900",
+  "patterns": {
+    "sweep": {
+      "pattern": "sweep",
+      "seconds": 5.0,
+      "warmup": 1.0,
+      "profiled": true,
+      "ticks": 250,
+      "timing_ms": {
+        "brake_ms": {
+          "n": 250,
+          "p50": 0.8107070025289431,
+          "p95": 1.4086268522078171,
+          "max": 1.5022790030343458,
+          "mean": 0.9254443845711648
+        },
+        "collision_distances_ms": {
+          "n": 250,
+          "p50": 0.7794124976499006,
+          "p95": 3.2831748976604915,
+          "max": 5.7587690098444,
+          "mean": 1.0687009603716433
+        },
+        "collision_fk_ms": {
+          "n": 250,
+          "p50": 6.924817003891803,
+          "p95": 11.924313304916723,
+          "max": 13.132795997080393,
+          "mean": 5.247933735488914
+        },
+        "collision_minimum_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.384549013688229,
+          "mean": 0.002981772064231336
+        },
+        "collision_project_ms": {
+          "n": 250,
+          "p50": 0.36250250559533015,
+          "p95": 4.274592101864969,
+          "max": 7.437103995471261,
+          "mean": 0.75034526392119
+        },
+        "ik_ms": {
+          "n": 250,
+          "p50": 0.763,
+          "p95": 1.5951499999999998,
+          "max": 2.339,
+          "mean": 0.6457359999999999
+        },
+        "ik_solve_left_ms": {
+          "n": 250,
+          "p50": 0.3953895065933466,
+          "p95": 0.8814998953312166,
+          "max": 1.0614130005706102,
+          "mean": 0.33894324774155393
+        },
+        "ik_solve_right_ms": {
+          "n": 250,
+          "p50": 0.3620670031523332,
+          "p95": 0.7712322978477456,
+          "max": 1.4343899965751916,
+          "mean": 0.3160043117823079
+        },
+        "integration_ms": {
+          "n": 250,
+          "p50": 0.3088510056841187,
+          "p95": 0.5365840494050644,
+          "max": 0.8626959897810593,
+          "mean": 0.3555802568444051
+        },
+        "projection_ms": {
+          "n": 250,
+          "p50": 13.914679002482444,
+          "p95": 24.05078909941949,
+          "max": 28.114207001635805,
+          "mean": 10.439614683506079
+        },
+        "release_check_ms": {
+          "n": 250,
+          "p50": 0.807641503342893,
+          "p95": 1.404835354333045,
+          "max": 1.49789999704808,
+          "mean": 0.9222675044438802
+        },
+        "retarget_ms": {
+          "n": 250,
+          "p50": 17.31359899713425,
+          "p95": 28.96083689993247,
+          "max": 35.24018199823331,
+          "mean": 12.772021995624527
+        },
+        "total_ms": {
+          "n": 250,
+          "p50": 18.40649949008366,
+          "p95": 30.69846714570303,
+          "max": 37.01301300316118,
+          "mean": 14.082543559954502
+        },
+        "waypoint_plan_ms": {
+          "n": 250,
+          "p50": 13.879151505534537,
+          "p95": 23.995097153965617,
+          "max": 28.057679999619722,
+          "mean": 10.409270976437256
+        }
+      },
+      "counts": {
+        "collision_distances_calls": {
+          "total": 576,
+          "per_tick_mean": 2.304,
+          "per_tick_p95": 8.0,
+          "max": 14
+        },
+        "collision_fk_calls": {
+          "total": 7818,
+          "per_tick_mean": 31.272,
+          "per_tick_p95": 59.0,
+          "max": 65
+        },
+        "collision_minimum_calls": {
+          "total": 2,
+          "per_tick_mean": 0.008,
+          "per_tick_p95": 0.0,
+          "max": 1
+        },
+        "collision_project_calls": {
+          "total": 142,
+          "per_tick_mean": 0.568,
+          "per_tick_p95": 1.0,
+          "max": 1
+        },
+        "ik_fk_calls": {
+          "total": 1407,
+          "per_tick_mean": 5.628,
+          "per_tick_p95": 11.0,
+          "max": 11
+        },
+        "ik_solve_left_calls": {
+          "total": 149,
+          "per_tick_mean": 0.596,
+          "per_tick_p95": 1.0,
+          "max": 1
+        },
+        "ik_solve_right_calls": {
+          "total": 149,
+          "per_tick_mean": 0.596,
+          "per_tick_p95": 1.0,
+          "max": 1
+        },
+        "projection_fk_calls": {
+          "total": 7568,
+          "per_tick_mean": 30.272,
+          "per_tick_p95": 58.0,
+          "max": 64
+        },
+        "release_check_calls": {
+          "total": 250,
+          "per_tick_mean": 1.0,
+          "per_tick_p95": 1.0,
+          "max": 1
+        },
+        "waypoint_plan_calls": {
+          "total": 142,
+          "per_tick_mean": 0.568,
+          "per_tick_p95": 1.0,
+          "max": 1
+        }
+      },
+      "final_route": "direct",
+      "collision_state": "avoiding",
+      "load": [
+        "1.63",
+        "1.25",
+        "0.84"
+      ]
+    },
+    "chest": {
+      "pattern": "chest",
+      "seconds": 5.0,
+      "warmup": 1.0,
+      "profiled": true,
+      "ticks": 250,
+      "timing_ms": {
+        "approach_safe_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 6.623441993724555,
+          "mean": 0.02649376797489822
+        },
+        "brake_ms": {
+          "n": 250,
+          "p50": 0.7244939988595434,
+          "p95": 1.2183125014416873,
+          "max": 1.7591960058780387,
+          "mean": 0.8408972357283346
+        },
+        "brake_request_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.008525996236130595,
+          "mean": 3.410398494452238e-05
+        },
+        "collision_distances_ms": {
+          "n": 250,
+          "p50": 0.471535007818602,
+          "p95": 0.8053431971347891,
+          "max": 73.28779602539726,
+          "mean": 0.8396279840962961
+        },
+        "collision_fk_ms": {
+          "n": 250,
+          "p50": 0.1663905059103854,
+          "p95": 0.295725201431196,
+          "max": 124.94130204140674,
+          "mean": 0.6948744600522332
+        },
+        "collision_minimum_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 49.94151210121345,
+          "mean": 0.1997660484048538
+        },
+        "collision_project_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 65.35000698931981,
+          "mean": 0.26140002795727924
+        },
+        "ik_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 4.614000000000001,
+          "mean": 0.021868000000000002
+        },
+        "ik_solve_left_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 2.11618299363181,
+          "mean": 0.010603307979181409
+        },
+        "ik_solve_right_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 2.534957995521836,
+          "mean": 0.011530991992913187
+        },
+        "integration_ms": {
+          "n": 250,
+          "p50": 0.2579440042609349,
+          "p95": 0.46544590222765686,
+          "max": 0.628391993814148,
+          "mean": 0.3076401361031458
+        },
+        "projection_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 143.82797200232744,
+          "mean": 0.5755047320271842
+        },
+        "release_check_ms": {
+          "n": 250,
+          "p50": 0.7221745036076754,
+          "p95": 1.2134770055126864,
+          "max": 1.7547369934618473,
+          "mean": 0.8380802158499137
+        },
+        "retarget_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 150.34075500443578,
+          "mean": 0.6236956919892691
+        },
+        "sampled_path_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 42.40464900794905,
+          "mean": 0.1696185960317962
+        },
+        "total_ms": {
+          "n": 250,
+          "p50": 0.9923774996423163,
+          "p95": 1.7256378479942212,
+          "max": 304.5120530005079,
+          "mean": 2.4144148956402205
+        },
+        "waypoint_plan_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 292.01527299301233,
+          "mean": 1.1680610919720493
+        }
+      },
+      "counts": {
+        "approach_safe_calls": {
+          "total": 2,
+          "per_tick_mean": 0.008,
+          "per_tick_p95": 0.0,
+          "max": 2
+        },
+        "brake_request_calls": {
+          "total": 1,
+          "per_tick_mean": 0.004,
+          "per_tick_p95": 0.0,
+          "max": 1
+        },
+        "collision_distances_calls": {
+          "total": 465,
+          "per_tick_mean": 1.86,
+          "per_tick_p95": 1.0,
+          "max": 216
+        },
+        "collision_fk_calls": {
+          "total": 1057,
+          "per_tick_mean": 4.228,
+          "per_tick_p95": 1.0,
+          "max": 808
+        },
+        "collision_minimum_calls": {
+          "total": 119,
+          "per_tick_mean": 0.476,
+          "per_tick_p95": 0.0,
+          "max": 119
+        },
+        "collision_project_calls": {
+          "total": 8,
+          "per_tick_mean": 0.032,
+          "per_tick_p95": 0.0,
+          "max": 8
+        },
+        "ik_fk_calls": {
+          "total": 40,
+          "per_tick_mean": 0.16,
+          "per_tick_p95": 0.0,
+          "max": 26
+        },
+        "ik_solve_left_calls": {
+          "total": 4,
+          "per_tick_mean": 0.016,
+          "per_tick_p95": 0.0,
+          "max": 2
+        },
+        "ik_solve_right_calls": {
+          "total": 4,
+          "per_tick_mean": 0.016,
+          "per_tick_p95": 0.0,
+          "max": 2
+        },
+        "projection_fk_calls": {
+          "total": 444,
+          "per_tick_mean": 1.776,
+          "per_tick_p95": 0.0,
+          "max": 444
+        },
+        "release_check_calls": {
+          "total": 250,
+          "per_tick_mean": 1.0,
+          "per_tick_p95": 1.0,
+          "max": 1
+        },
+        "sampled_path_calls": {
+          "total": 2,
+          "per_tick_mean": 0.008,
+          "per_tick_p95": 0.0,
+          "max": 2
+        },
+        "waypoint_plan_calls": {
+          "total": 2,
+          "per_tick_mean": 0.008,
+          "per_tick_p95": 0.0,
+          "max": 2
+        }
+      },
+      "final_route": "partial_fallback",
+      "collision_state": "holding",
+      "load": [
+        "1.63",
+        "1.25",
+        "0.84"
+      ]
+    },
+    "jump": {
+      "pattern": "jump",
+      "seconds": 5.0,
+      "warmup": 1.0,
+      "profiled": true,
+      "ticks": 250,
+      "timing_ms": {
+        "approach_safe_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 1.3866799999959767,
+          "mean": 0.030724467942491174
+        },
+        "brake_ms": {
+          "n": 250,
+          "p50": 0.784445001045242,
+          "p95": 1.2813719033147208,
+          "max": 1.6551339940633625,
+          "mean": 0.8936314397142269
+        },
+        "brake_request_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0,
+          "mean": 0.0
+        },
+        "collision_distances_ms": {
+          "n": 250,
+          "p50": 0.5368274942156859,
+          "p95": 0.8860267014824781,
+          "max": 44.91404093278106,
+          "mean": 1.7949912080657668
+        },
+        "collision_fk_ms": {
+          "n": 250,
+          "p50": 0.17472650506533682,
+          "p95": 0.3785113032790832,
+          "max": 92.76403993135318,
+          "mean": 2.737768485734705
+        },
+        "collision_minimum_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 33.11632896657102,
+          "mean": 0.8158585399505682
+        },
+        "collision_project_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 42.75295097613707,
+          "mean": 1.1012067999108694
+        },
+        "ik_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 12.469,
+          "mean": 0.250044
+        },
+        "ik_solve_left_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 6.415466996259056,
+          "mean": 0.13009328389307484
+        },
+        "ik_solve_right_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 6.315127000561915,
+          "mean": 0.12069519591750577
+        },
+        "integration_ms": {
+          "n": 250,
+          "p50": 0.283582994597964,
+          "p95": 0.47958610084606335,
+          "max": 1.1175399995408952,
+          "mean": 0.336141767911613
+        },
+        "projection_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 210.18142999673728,
+          "mean": 5.810861555975862
+        },
+        "release_check_ms": {
+          "n": 250,
+          "p50": 0.7818059966666624,
+          "p95": 1.2775791961757932,
+          "max": 1.6510559944435954,
+          "mean": 0.890615712152794
+        },
+        "retarget_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 219.12042199983262,
+          "mean": 6.15917621582048
+        },
+        "sampled_path_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 32.7506000030553,
+          "mean": 0.7841320320148952
+        },
+        "total_ms": {
+          "n": 250,
+          "p50": 1.1495490034576505,
+          "p95": 1.828936653328128,
+          "max": 220.16068499942776,
+          "mean": 7.422420687624253
+        },
+        "waypoint_plan_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 210.12418100144714,
+          "mean": 5.808972500031814
+        }
+      },
+      "counts": {
+        "approach_safe_calls": {
+          "total": 8,
+          "per_tick_mean": 0.032,
+          "per_tick_p95": 0.0,
+          "max": 1
+        },
+        "brake_request_calls": {
+          "total": 0,
+          "per_tick_mean": 0.0,
+          "per_tick_p95": 0.0,
+          "max": 0
+        },
+        "collision_distances_calls": {
+          "total": 1066,
+          "per_tick_mean": 4.264,
+          "per_tick_p95": 1.0,
+          "max": 109
+        },
+        "collision_fk_calls": {
+          "total": 3826,
+          "per_tick_mean": 15.304,
+          "per_tick_p95": 1.0,
+          "max": 454
+        },
+        "collision_minimum_calls": {
+          "total": 414,
+          "per_tick_mean": 1.656,
+          "per_tick_p95": 0.0,
+          "max": 53
+        },
+        "collision_project_calls": {
+          "total": 32,
+          "per_tick_mean": 0.128,
+          "per_tick_p95": 0.0,
+          "max": 4
+        },
+        "ik_fk_calls": {
+          "total": 320,
+          "per_tick_mean": 1.28,
+          "per_tick_p95": 0.0,
+          "max": 49
+        },
+        "ik_solve_left_calls": {
+          "total": 8,
+          "per_tick_mean": 0.032,
+          "per_tick_p95": 0.0,
+          "max": 1
+        },
+        "ik_solve_right_calls": {
+          "total": 8,
+          "per_tick_mean": 0.032,
+          "per_tick_p95": 0.0,
+          "max": 1
+        },
+        "projection_fk_calls": {
+          "total": 3576,
+          "per_tick_mean": 14.304,
+          "per_tick_p95": 0.0,
+          "max": 453
+        },
+        "release_check_calls": {
+          "total": 250,
+          "per_tick_mean": 1.0,
+          "per_tick_p95": 1.0,
+          "max": 1
+        },
+        "sampled_path_calls": {
+          "total": 8,
+          "per_tick_mean": 0.032,
+          "per_tick_p95": 0.0,
+          "max": 1
+        },
+        "waypoint_plan_calls": {
+          "total": 8,
+          "per_tick_mean": 0.032,
+          "per_tick_p95": 0.0,
+          "max": 1
+        }
+      },
+      "final_route": "partial_fallback",
+      "collision_state": "holding",
+      "load": [
+        "1.58",
+        "1.24",
+        "0.84"
+      ]
+    },
+    "twist": {
+      "pattern": "twist",
+      "seconds": 5.0,
+      "warmup": 1.0,
+      "profiled": true,
+      "ticks": 250,
+      "timing_ms": {
+        "brake_ms": {
+          "n": 250,
+          "p50": 0.7897030009189621,
+          "p95": 1.2432774550688919,
+          "max": 1.7310730036115274,
+          "mean": 0.8913865481736138
+        },
+        "brake_request_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0,
+          "mean": 0.0
+        },
+        "collision_distances_ms": {
+          "n": 250,
+          "p50": 0.5789729984826408,
+          "p95": 5.413603208580741,
+          "max": 13.435692992061377,
+          "mean": 1.1040075283381157
+        },
+        "collision_fk_ms": {
+          "n": 250,
+          "p50": 0.20001450320705771,
+          "p95": 9.897401409398281,
+          "max": 34.62998502072878,
+          "mean": 1.544169356697239
+        },
+        "collision_minimum_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 1.1091619962826371,
+          "mean": 0.017734588007442653
+        },
+        "collision_project_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 7.1715755468176,
+          "max": 19.685081992065534,
+          "mean": 0.8003530998830684
+        },
+        "ik_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 1.542049999999998,
+          "max": 2.058,
+          "mean": 0.137092
+        },
+        "ik_solve_left_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.8548542537027941,
+          "max": 1.1444470001151785,
+          "mean": 0.07291799219092354
+        },
+        "ik_solve_right_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 0.786155247624262,
+          "max": 1.0337109997635707,
+          "mean": 0.06574708787957206
+        },
+        "integration_ms": {
+          "n": 250,
+          "p50": 0.27574300474952906,
+          "p95": 0.46990304763312446,
+          "max": 0.6091229879530147,
+          "mean": 0.3222894000937231
+        },
+        "projection_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 22.80031859481822,
+          "max": 77.21166500414256,
+          "mean": 3.050120859988965
+        },
+        "release_check_ms": {
+          "n": 250,
+          "p50": 0.7857355012674816,
+          "p95": 1.2396263948176056,
+          "max": 1.7273550038225949,
+          "mean": 0.8880793439457193
+        },
+        "retarget_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 27.968816798238517,
+          "max": 81.17609100008849,
+          "mean": 3.4568851839285344
+        },
+        "total_ms": {
+          "n": 250,
+          "p50": 1.1847804998978972,
+          "p95": 29.38066685310328,
+          "max": 82.18993399350438,
+          "mean": 4.7052187959779985
+        },
+        "waypoint_plan_ms": {
+          "n": 250,
+          "p50": 0.0,
+          "p95": 22.733828399213948,
+          "max": 77.16210999933537,
+          "mean": 3.045597923803143
+        }
+      },
+      "counts": {
+        "brake_request_calls": {
+          "total": 0,
+          "per_tick_mean": 0.0,
+          "per_tick_p95": 0.0,
+          "max": 0
+        },
+        "collision_distances_calls": {
+          "total": 567,
+          "per_tick_mean": 2.268,
+          "per_tick_p95": 11.0,
+          "max": 42
+        },
+        "collision_fk_calls": {
+          "total": 2226,
+          "per_tick_mean": 8.904,
+          "per_tick_p95": 62.0,
+          "max": 191
+        },
+        "collision_minimum_calls": {
+          "total": 10,
+          "per_tick_mean": 0.04,
+          "per_tick_p95": 0.0,
+          "max": 2
+        },
+        "collision_project_calls": {
+          "total": 29,
+          "per_tick_mean": 0.116,
+          "per_tick_p95": 1.0,
+          "max": 3
+        },
+        "ik_fk_calls": {
+          "total": 231,
+          "per_tick_mean": 0.924,
+          "per_tick_p95": 11.0,
+          "max": 11
+        },
+        "ik_solve_left_calls": {
+          "total": 21,
+          "per_tick_mean": 0.084,
+          "per_tick_p95": 1.0,
+          "max": 1
+        },
+        "ik_solve_right_calls": {
+          "total": 21,
+          "per_tick_mean": 0.084,
+          "per_tick_p95": 1.0,
+          "max": 1
+        },
+        "projection_fk_calls": {
+          "total": 1976,
+          "per_tick_mean": 7.904,
+          "per_tick_p95": 61.0,
+          "max": 190
+        },
+        "release_check_calls": {
+          "total": 250,
+          "per_tick_mean": 1.0,
+          "per_tick_p95": 1.0,
+          "max": 1
+        },
+        "waypoint_plan_calls": {
+          "total": 21,
+          "per_tick_mean": 0.084,
+          "per_tick_p95": 1.0,
+          "max": 1
+        }
+      },
+      "final_route": "direct",
+      "collision_state": "holding",
+      "load": [
+        "1.53",
+        "1.24",
+        "0.85"
+      ]
+    }
+  }
+}

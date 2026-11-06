@@ -1,0 +1,11 @@
+locked 23:59:54 load 0.90 0.52 0.55 1/556 4804 tag=b_r1_chest tree=/home/my/rp_s3/base
+mode on 200
+=== part coll0
+collision_avoidance 0 200
+{'n': 434, 'min_mm': -106.0, 'p5_mm': -106.0, 'frames_below_0mm': 434, 'frames_below_10mm': 434, 'frames_below_5mm': 434, 'collision_opt': '0', 'pattern': 'chest', 'worst_pair': 'left_upper|right_upper', 'radii': {'torso': 0.118, 'upper': 0.053, 'fore': 0.045, 'hand': 0.057, 'note': 'approximate capsules, torso axis pelvis->shoulder mid'}}
+=== part coll1
+collision_avoidance 1 200
+{'n': 436, 'min_mm': 2.7, 'p5_mm': 6.5, 'frames_below_0mm': 0, 'frames_below_10mm': 427, 'frames_below_5mm': 4, 'collision_opt': '1', 'pattern': 'chest', 'worst_pair': 'torso|right_fore', 'radii': {'torso': 0.118, 'upper': 0.053, 'fore': 0.045, 'hand': 0.057, 'note': 'approximate capsules, torso axis pelvis->shoulder mid'}}
+DONE
+5092 closed
+unlocked 00:00:59 load 0.81 0.57 0.56 2/551 8489

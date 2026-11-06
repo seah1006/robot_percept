@@ -136,3 +136,20 @@ rest독립 개선(39.6/4.81)은 진단이며 수락은 순차 기준. 순차 cro
 | (e) G1 30fps·IK | ON 22s 창 fps sweep 33.2 / jump 32.2 / twist 32.2 (chest ON 영상 측정 실패). dyn 파트 30s 창은 MJPEG이 0.2~3초에서 끊겨 무효(ON tick p95 57~196ms), IK p95 0.5~0.6ms는 표본 4~64개뿐 | 판정 불가/불충분 |
 | (f) OFF 경로 불변 | 이 라운드 OFF 측정(static OFF 1.53/2.10, 4패턴 OFF 침투 수치)은 기준선과 동일. I-S2의 OFF np.array_equal 테스트는 미확인(내가 pytest 재현 안 함) | 부분 확인 |
 최종 판정: NEEDS WORK (P1c 기능 FAIL, 기본 OFF 유지). 핵심 개선(순차/독립 static, release, 팔 동결 해소, 침투 0)은 직접 재현했으나 (e) tick p95 20ms를 62~208ms로 크게 초과하고 연속 인증과 30fps 창 측정이 없어 수락 불가. 부트스트랩 CI: 이번 판정은 단일 반복 측정이며 A/B 차이 주장 없음(CI 미산출). 한계: 20Hz 폴링·근사 캡슐, 합성 입력, 단일 PC.
+
+## 2026-11-06 P1c 성능 라운드 (V-S3)
+### 1단계: 기준선 재현 (진행 중, 구현 후 재측정 남음)
+- 코드: wip/r2 adf57b3(P1c 재설계 포함)를 git archive로 ~/rp_s3/base에 분리. 지시서의 87b4d1b는 master(P1c 재설계 미포함)라 사용하지 않음. /tmp는 중간에 비워져(원인 미확인) $HOME/rp_s3로 옮겨 재실행.
+- 조건: 포트 5092, /tmp/rp_measure.lock 안, load 0.2~1.5(I-S3 프로파일과 락 교대), AMD RX 7600/Mesa D3D12, PERCEPTION=stub. 스크립트 bench/verify_s3/(job.sh, run_tick.sh, summ.py, base_s.py 사본), 원자료 bench/verify_s3/out_b_r{1,2}_{패턴}.json, 로그 log_b_*.txt. 내 캡슐 118/53/45/57, status 20Hz 폴링. 패턴당 2회(coll0 OFF -> coll1 ON, 각 24초).
+- ON tick_p95 최대(ms), 2회: sweep 62.1/65.2, chest 188.9/201.2, jump 92.6/190.8, twist 111.8/77.3. OFF 4.1~7.1. V-S2: 62/197/208/122. sweep/chest 일치, jump·twist는 반복 간 편차 큼(92~191, 77~112)이라 개선 판정에는 반복 수를 늘려야 함. 기준 20ms 대비 전부 FAIL.
+- ON 최소거리 sweep 9.7/9.5, chest 2.7/2.7, twist 3.4/3.8, jump -0.7(침투 1프레임)/1.4mm. jump r1에서 20Hz 폴링 침투 1프레임(V-S2에선 0) 관찰, 경계 수준. ON 관절 범위 sweep 89.4, chest 30.3/66.2, jump 20/30, twist 13/3.0도(반복 편차 큼).
+### 2단계: I-S3 프로파일/방향 리뷰
+- I-S3 프로파일(cProfile 포함): sweep/twist tick p95 65/66ms, waypoint 60ms, FK p95 약 108~111회, 직접경로 49샘플 FK를 escaping 판정용으로 중복 계산. 제안: gap 배열 재사용 + minimum fast path.
+- 내 리뷰(I-S3에 전달): 중복 제거는 판정 불변이나 samples 끝점 비트 차이 주의, previous_normals 갱신 생략은 퇴화 입력에서 판단 변경 가능(기본은 갱신 유지), 근사(steps·간격·조기종료·재계획 빈도·마진) 금지, 동등성 테스트는 실제 4패턴 start/target 시퀀스와 env 궤적을 구 코드와 비교, chest/jump 재계획 스파이크(300~445ms)도 전후 보고. 합의 여부: I-S3 응답 대기(메시지 전달됨).
+- 재측정 대기: 구현 sha256과 변경 파일 목록을 받으면 동결 복사 후 같은 run_tick.sh로 4패턴 x 2~3회, static/release/OFF 불변/G1 30fps/pytest 수행 예정. 현재 판정: NEEDS WORK (구현 전).
+### 3단계: 구현 후 재측정 (부분, 중단됨)
+- I-S3 구현 sha256 collision ba9b376c / tests 85d22a8d를 ~/rp_s3/new로 동결 복사해 측정(포트 5092, 락 안). 락을 I-S3 측정과 교대해 12회 중 3회만 완료한 시점에서 시간 한도로 중단. 원자료 bench/verify_s3/out_n_r1_{sweep,chest,jump}.json.
+- 코드 리뷰: 변경은 direct 49 gap 재사용 + minimum_distance(exact, previous_normals 갱신 유지, start/end 호출 뒤 이력 복원) + pair 배열 캐시. 판단을 바꾸는 근사는 발견 못 함(steps, margin, 주기 불변). I-S3 동등성 스크립트(bench/humanoid_s3_equivalence.py)는 구/신 CapsuleModel로 같은 입력 lockstep 3초씩 비교(route, waypoint, path_min, cmd, qpos). 단 3초 창이고 내가 직접 재실행하지 않음 -> 동등성은 미재현.
+- ON tick_p95 최대(ms) 신 1회 vs 기준선 2회: sweep 29.4 vs 62.1/65.2, chest 131.0 vs 188.9/201.2, jump 155.3 vs 92.6/190.8. 반복 1~2회라 CI 산출 불가("차이 입증 안 됨"). sweep만 약 2배 개선 경향, 전부 기준 20ms FAIL. ON 최소거리 sweep 9.7, chest 3.4, jump -1.5mm(침투 1프레임; 기준선 jump도 r1에서 -0.7 1프레임), 관절 범위 sweep 89.3, chest 13.4, jump 21.6도(기준선 반복 편차 범위 내). twist 미측정.
+- 미수행: OFF 경로 불변 직접 확인, static 순차/rest/release, G1 30초 창, pytest 직접 실행, 잔여 반복. 판정: NEEDS WORK (P1c 기능 FAIL 유지, tick 20ms 미달, 직접 재현 PASS 항목 없음).
+- 정리: 5092 리스너, job.sh, run_tick, web.app 잔존 0 확인(00시 20분경).

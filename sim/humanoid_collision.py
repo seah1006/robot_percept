@@ -63,6 +63,9 @@ class CapsuleModel:
         joints=[model.joint(n).id for n in self.names];self.qadr=model.jnt_qposadr[joints];self.dofs=model.jnt_dofadr[joints]
         self.lo=model.jnt_range[joints,0];self.hi=model.jnt_range[joints,1];self.previous_normals={}
         self._jp=np.zeros((3,model.nv));self.fk_calls=0
+        self._cap_names=['torso']+[f'{s}_{p}' for s in ('left','right') for p in ('upper','fore','hand')]
+        cap_index={name:i for i,name in enumerate(self._cap_names)}
+        self._pair_left=np.array([cap_index[a] for a,_ in PAIRS]);self._pair_right=np.array([cap_index[b] for _,b in PAIRS])
     def forward(self,qpos):
         self.fk_calls+=1
         qpos=np.asarray(qpos,float)
@@ -76,6 +79,8 @@ class CapsuleModel:
             self.anchors[s+'_upper']=(S,E);self.anchors[s+'_fore']=(E,W);self.anchors[s+'_hand']=(W,H)
         self.caps={}
         for n,(a,b) in self.anchors.items():self.caps[n]=Capsule(self.point(a),self.point(b),self.radii[n.split('_')[-1]])
+        ordered=[self.caps[n] for n in self._cap_names]
+        self._cap_a=np.array([c.a for c in ordered]);self._cap_b=np.array([c.b for c in ordered]);self._cap_r=np.array([c.radius for c in ordered])
         return self.caps
     def point(self,anchor):
         return sum(w*(self.d.xpos[b]+self.d.xmat[b].reshape(3,3)@p) for b,p,w in anchor)
@@ -90,8 +95,8 @@ class CapsuleModel:
         return J
     def distances(self,with_grad=False,active_distance=float("inf")):
         out=[]
-        arrays=[np.array([getattr(self.caps[a if side==0 else b],end) for a,b in PAIRS]) for side,end in ((0,'a'),(0,'b'),(1,'a'),(1,'b'))]
-        total_radius=np.array([self.caps[a].radius+self.caps[b].radius for a,b in PAIRS])
+        arrays=[self._cap_a[self._pair_left],self._cap_b[self._pair_left],self._cap_a[self._pair_right],self._cap_b[self._pair_right]]
+        total_radius=self._cap_r[self._pair_left]+self._cap_r[self._pair_right]
         low_a=np.minimum(arrays[0],arrays[1]);hi_a=np.maximum(arrays[0],arrays[1]);low_b=np.minimum(arrays[2],arrays[3]);hi_b=np.maximum(arrays[2],arrays[3])
         separation=np.maximum(np.maximum(low_a-hi_b,low_b-hi_a),0.)
         lower=np.linalg.norm(separation,axis=1)-total_radius
@@ -108,6 +113,14 @@ class CapsuleModel:
                 row['gradient']=normal@((1-s)*self.jacobian(la)+s*self.jacobian(lb)-(1-t)*self.jacobian(ra)-t*self.jacobian(rb))
             out.append(row)
         return out
+    def minimum_distance(self,qpos):
+        """Exact proxy minimum for planner samples, retaining normal history."""
+        self.forward(qpos)
+        p,q,_,_=closest_segments_batch(self._cap_a[self._pair_left],self._cap_b[self._pair_left],self._cap_a[self._pair_right],self._cap_b[self._pair_right])
+        delta=p-q;length=np.linalg.norm(delta,axis=1)
+        for i,key in enumerate(PAIRS):
+            if length[i]>1e-9:self.previous_normals[key]=delta[i]/length[i]
+        return float(np.min(length-self._cap_r[self._pair_left]-self._cap_r[self._pair_right]))
     def minimum(self,qpos):
         self.forward(qpos);return min(self.distances(),key=lambda r:r['distance'])
     def project(self,qpos,margin=.005,iterations=5,max_step=.12,enabled=DEFAULT_ENABLED):
@@ -153,11 +166,12 @@ class CapsuleModel:
         endpoint,_=self.project(target,margin=margin,iterations=12,max_step=.16,enabled=True)
         endpoint_modified=bool(np.max(np.abs(endpoint[self.qadr]-target[self.qadr]))>1e-5)
         def segment(a,b,n=steps):
-            gaps=[self.minimum(a+(b-a)*(k/n))['distance'] for k in range(n+1)]
-            return float(min(gaps)),int(np.argmin(gaps))
-        direct_min,worst=segment(start,endpoint)
-        start_gap=self.minimum(start)['distance'];endpoint_gap=self.minimum(endpoint)['distance']
-        samples=[self.minimum(start+(endpoint-start)*(k/steps))['distance'] for k in range(steps+1)]
+            gaps=[self.minimum_distance(a+(b-a)*(k/n)) for k in range(n+1)]
+            return gaps,float(min(gaps)),int(np.argmin(gaps))
+        samples,direct_min,worst=segment(start,endpoint)
+        final_normals=dict(self.previous_normals)
+        start_gap=self.minimum_distance(start);endpoint_gap=self.minimum_distance(endpoint)
+        self.previous_normals=final_normals
         escaping=start_gap<margin and endpoint_gap>start_gap+.002 and min(np.diff(samples))>=-2e-4
         if direct_min>=margin or escaping:
             return endpoint,dict(accepted=True,route='escape_direct' if escaping else 'direct',path_min=direct_min,distance=endpoint_gap,start_gap=start_gap,samples=steps,endpoint_modified=endpoint_modified)
@@ -165,7 +179,7 @@ class CapsuleModel:
         for clearance in (waypoint_margin,.02,.03):
             waypoint,diag=self.project(bad,margin=clearance,iterations=20,max_step=.2,enabled=True)
             if not diag.get('accepted'):continue
-            first_min,_=segment(start,waypoint);second_min,_=segment(waypoint,endpoint)
+            _,first_min,_=segment(start,waypoint);_,second_min,_=segment(waypoint,endpoint)
             if min(first_min,second_min)>=margin:
                 return waypoint,dict(accepted=True,route='projected_waypoint',path_min=min(first_min,second_min),first_min=first_min,second_min=second_min,distance=self.minimum(waypoint)['distance'],waypoint_margin=clearance,endpoint_modified=endpoint_modified)
         partial,diag=self.approach_safe(start,endpoint,margin=margin)

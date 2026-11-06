@@ -779,3 +779,26 @@ def test_collision_option_false_is_byte_identical_to_default_off_path():
         assert np.array_equal(servos[0].cmd,servos[1].cmd)
     finally:
         for e in envs:e.close()
+
+
+def test_collision_planner_minimum_fast_path_matches_full_distance():
+    from sim.humanoid_env import HumanoidEnv
+    env=HumanoidEnv()
+    try:
+        env.set_collision_avoidance(True);g=env.collision_model;q=env.data.qpos.copy()
+        rng=np.random.default_rng(7)
+        for _ in range(24):
+            q[g.qadr]=np.clip(q[g.qadr]+rng.normal(0,.08,len(g.qadr)),g.lo+1e-4,g.hi-1e-4)
+            expected=g.minimum(q)['distance'];actual=g.minimum_distance(q)
+            assert abs(actual-expected)<=1e-12
+    finally:env.close()
+
+
+def test_collision_planner_minimum_fast_path_keeps_degenerate_normal():
+    from sim.humanoid_collision import CapsuleModel,PAIRS
+    g=CapsuleModel.__new__(CapsuleModel);g.forward=lambda q:None
+    g._cap_a=np.zeros((7,3));g._cap_b=np.zeros((7,3));g._cap_r=np.zeros(7)
+    g._pair_left=np.zeros(len(PAIRS),dtype=int);g._pair_right=np.ones(len(PAIRS),dtype=int)
+    remembered={pair:np.array([.2,.3,.4]) for pair in PAIRS};g.previous_normals={k:v.copy() for k,v in remembered.items()}
+    assert g.minimum_distance(np.zeros(1))==0.
+    for pair in PAIRS:assert np.array_equal(g.previous_normals[pair],remembered[pair])

@@ -1,0 +1,11 @@
+locked 00:14:33 load 0.55 0.84 0.84 1/542 43885 tag=n_r1_twist tree=/home/my/rp_s3/new
+mode on 200
+=== part coll0
+collision_avoidance 0 200
+{'n': 434, 'min_mm': -41.3, 'p5_mm': -35.7, 'frames_below_0mm': 434, 'frames_below_10mm': 434, 'frames_below_5mm': 434, 'collision_opt': '0', 'pattern': 'twist', 'worst_pair': 'left_upper|right_upper', 'radii': {'torso': 0.118, 'upper': 0.053, 'fore': 0.045, 'hand': 0.057, 'note': 'approximate capsules, torso axis pelvis->shoulder mid'}}
+=== part coll1
+collision_avoidance 1 200
+{'n': 433, 'min_mm': 3.6, 'p5_mm': 7.8, 'frames_below_0mm': 0, 'frames_below_10mm': 433, 'frames_below_5mm': 1, 'collision_opt': '1', 'pattern': 'twist', 'worst_pair': 'torso|left_fore', 'radii': {'torso': 0.118, 'upper': 0.053, 'fore': 0.045, 'hand': 0.057, 'note': 'approximate capsules, torso axis pelvis->shoulder mid'}}
+DONE
+5092 closed
+unlocked 00:15:38 load 0.72 0.85 0.85 1/530 47563
