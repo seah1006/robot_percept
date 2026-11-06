@@ -6,6 +6,12 @@ import threading
 import time
 
 
+def exit_if_parent_changed(expected_parent_pid):
+    """Exit immediately when a spawned child starts after its parent died."""
+    if expected_parent_pid is not None and os.getppid() != int(expected_parent_pid):
+        os._exit(0)
+
+
 def start_parent_pid_watch(expected_parent_pid, interval=.25):
     """Exit a child after its process parent disappears.
 
@@ -16,6 +22,7 @@ def start_parent_pid_watch(expected_parent_pid, interval=.25):
     if expected_parent_pid is None:
         return None
     expected_parent_pid = int(expected_parent_pid)
+    exit_if_parent_changed(expected_parent_pid)
 
     def watch():
         deadline = time.monotonic()
