@@ -1,5 +1,5 @@
 from __future__ import annotations
-import atexit,json,multiprocessing as mp,os,re,subprocess,threading,time,uuid
+import atexit,json,multiprocessing as mp,os,re,signal,subprocess,threading,time,uuid
 from multiprocessing import shared_memory
 from collections import deque
 from pathlib import Path
@@ -10,6 +10,7 @@ from werkzeug.utils import secure_filename
 from .monowait import sleep_until, wait_for, join_thread
 from .perception_stub import PerceptionBackend, estimate_pose
 from .sim_worker import run_worker
+from .process_lifecycle import run_manager_watchdog, stop_process
 ROOT=Path(__file__).resolve().parents[1]; CAD_PYTHON=ROOT/".venvs/cad/bin/python"
 WIDTH,HEIGHT=int(os.getenv("SIM_WIDTH","640")),int(os.getenv("SIM_HEIGHT","480"))
 
@@ -27,13 +28,14 @@ def _axes(img,K,T,scale=1.,length=.06,label=None):
 
 class Runtime:
  def __init__(self):
-  ctx=mp.get_context("spawn"); self.manager=ctx.Manager(); self.status=self.manager.dict(); self.command_q=ctx.Queue(); self.lock=ctx.Lock()
+  ctx=mp.get_context("spawn"); self.manager=ctx.Manager(); self._manager_watchdog=ctx.Process(target=run_manager_watchdog,args=(os.getpid(),self.manager._process.pid),daemon=True); self._manager_watchdog.start(); self.status=self.manager.dict(); self.command_q=ctx.Queue(); self.lock=ctx.Lock(); self.stop_event=ctx.Event()
   self.shms={"rgb":shared_memory.SharedMemory(create=True,size=HEIGHT*WIDTH*3),"depth":shared_memory.SharedMemory(create=True,size=HEIGHT*WIDTH*4),"seg":shared_memory.SharedMemory(create=True,size=HEIGHT*WIDTH*4)}
   self.rgb=np.ndarray((HEIGHT,WIDTH,3),np.uint8,buffer=self.shms["rgb"].buf); self.depth=np.ndarray((HEIGHT,WIDTH),np.float32,buffer=self.shms["depth"].buf); self.seg=np.ndarray((HEIGHT,WIDTH),np.int32,buffer=self.shms["seg"].buf)
   self.rgb.fill(0); self.depth.fill(0); self.seg.fill(-1)
   cfg={"width":WIDTH,"height":HEIGHT,"objects":["mustard"],"cam":"front","seed":7}; names={k:v.name for k,v in self.shms.items()}
-  self.proc=ctx.Process(target=run_worker,args=(cfg,names,self.lock,self.command_q,self.status),daemon=True); self.proc.start()
+  self.proc=ctx.Process(target=run_worker,args=(cfg,names,self.lock,self.command_q,self.status,os.getpid(),self.stop_event),daemon=True); self.proc.start()
   self.perception=PerceptionBackend(os.getenv("PERCEPTION","fp").lower()); self.selected=None; self.estimate=None; self.estimate_time_ms=None; self.logs=[]; self.state_lock=threading.RLock(); self.gpu_cache={"at":0,"value":None}; self.mask=None; self.metrics={}; self.tracking_hist={k:deque(maxlen=300) for k in ('status_copy','frame_copy','perception','commit')}; self.generation=0; self.running=True; self.perception_lock=threading.RLock(); threading.Thread(target=self.track_loop,daemon=True).start(); self._warmup_manager_thread=threading.Thread(target=self.warmup_loop,daemon=True); self._warmup_manager_thread.start()
+  self._close_lock=threading.Lock(); self._closed=False
  def _g1_requested(self):
   humanoid=getattr(self,'humanoid_runtime',None)
   return bool(getattr(self,'_humanoid_starting',False) or (humanoid is not None and (humanoid.ctrl.get('enabled',False) or (hasattr(humanoid,'running') and humanoid.running()))))
@@ -169,17 +171,23 @@ class Runtime:
    val={"util":int(out[0]),"memory_used_mb":int(out[1]),"memory_total_mb":int(out[2])}
   except Exception: val=None
   self.gpu_cache={"at":now,"value":val}; return val
- def close(self):
-  self.running=False
-  try:self.command_q.put({"id":"shutdown","op":"shutdown"})
-  except Exception:pass
-  if self.proc.is_alive():self.proc.join(timeout=3)
-  if self.proc.is_alive():self.proc.terminate()
-  self.perception.close()
-  for shm in self.shms.values():
-   try:shm.close();shm.unlink()
-   except FileNotFoundError:pass
-  self.manager.shutdown()
+ def close(self,deadline=None):
+  with self._close_lock:
+   if self._closed:return
+   self._closed=True
+   deadline=time.monotonic()+5.0 if deadline is None else deadline
+   self.running=False
+   self.stop_event.set()
+   try:self.command_q.put({"id":"shutdown","op":"shutdown"})
+   except Exception:pass
+   stop_process(self.proc,deadline)
+   self.perception.close(deadline=deadline)
+   for shm in self.shms.values():
+    try:shm.close();shm.unlink()
+    except FileNotFoundError:pass
+   try:self.manager.shutdown()
+   except (BrokenPipeError,EOFError,OSError):pass
+   stop_process(self._manager_watchdog,deadline,cooperative_seconds=.5)
 
 def create_app():
  app=Flask(__name__); app.config["MAX_CONTENT_LENGTH"]=100*1024*1024; rt=Runtime(); app.extensions["sim_runtime"]=rt; atexit.register(rt.close)
@@ -374,5 +382,31 @@ def create_app():
  app.extensions["realtime_sock"]=register_realtime(app,status_payload,teleop_bp,humanoid_bp)
  return app
 
+def close_app(app, deadline=None):
+ deadline=time.monotonic()+5.0 if deadline is None else deadline
+ rt=app.extensions.get("sim_runtime")
+ humanoid=getattr(rt,"humanoid_runtime",None) if rt is not None else None
+ if humanoid is not None:humanoid.close(deadline=deadline)
+ if rt is not None:rt.close(deadline=deadline)
+
+def run_server():
+ from werkzeug.serving import make_server
+ stop_requested=threading.Event()
+ def request_stop(signum,_frame):
+  if stop_requested.is_set():os._exit(128+signum)
+  stop_requested.set()
+ signal.signal(signal.SIGTERM,request_stop);signal.signal(signal.SIGINT,request_stop)
+ app=create_app()
+ server=make_server(os.getenv("HOST","127.0.0.1"),int(os.getenv("PORT","5080")),app,threaded=True)
+ server_thread=threading.Thread(target=lambda:server.serve_forever(poll_interval=.1),name="werkzeug-server")
+ server_thread.start()
+ try:
+  while server_thread.is_alive() and not stop_requested.wait(.1):pass
+ finally:
+  deadline=time.monotonic()+5.0
+  server.shutdown();server.server_close()
+  close_app(app,deadline=deadline)
+  server_thread.join(timeout=max(0.,deadline-time.monotonic()))
+
 if __name__=="__main__":
- mp.set_start_method("spawn",force=True);app=create_app();app.run(host=os.getenv("HOST","127.0.0.1"),port=int(os.getenv("PORT","5080")),threaded=True,use_reloader=False)
+ mp.set_start_method("spawn",force=True);run_server()

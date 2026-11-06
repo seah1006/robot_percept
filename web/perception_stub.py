@@ -3,13 +3,15 @@ from __future__ import annotations
 import multiprocessing as mp
 import threading, time, uuid, traceback
 import numpy as np
+from .process_lifecycle import start_parent_pid_watch, stop_process
 
 def estimate_pose(rgb, depth, K, info, object_name):
     T=np.asarray(info['gt_pose'],float).copy()
     T[:3,3]+=np.random.default_rng(7).normal(0,.0015,3)
     return T
 
-def _worker(req,res):
+def _worker(req,res,parent_pid=None):
+    start_parent_pid_watch(parent_pid)
     import os
     target_nice = max(0, min(19, int(os.environ.get('RP_PERCEPTION_NICE', '10'))))
     try: os.nice(max(0, target_nice - os.nice(0)))
@@ -97,7 +99,7 @@ class PerceptionBackend:
                     if op == 'drop':
                         return {'ms': 0., 'peak_mb': 0.}
                     ctx=mp.get_context('spawn');self.req_q=ctx.Queue();self.res_q=ctx.Queue()
-                    self.proc=ctx.Process(target=_worker,args=(self.req_q,self.res_q),daemon=True);self.proc.start()
+                    self.proc=ctx.Process(target=_worker,args=(self.req_q,self.res_q,__import__("os").getpid()),daemon=True);self.proc.start()
                 ident=uuid.uuid4().hex
                 self.rpc_inflight = (ident, threading.get_ident(), is_warmup)
                 self.req_q.put((ident,op,args))
@@ -255,14 +257,14 @@ class PerceptionBackend:
         finally:
             self.lock.release()
 
-    def close(self):
+    def close(self, deadline=None):
         self.warmup_cancel.set()
         self.closed = True
+        deadline = time.monotonic() + 5.0 if deadline is None else deadline
         proc = self.proc
         if proc is not None:
-            request_queue = getattr(self, 'req_q', None)
+            request_queue = getattr(self, "req_q", None)
             if request_queue is not None:
                 try: request_queue.put(None)
                 except (ValueError, OSError): pass
-            proc.join(timeout=2)
-            if proc.is_alive():proc.terminate();proc.join(2)
+            stop_process(proc, deadline, cooperative_seconds=2.0)

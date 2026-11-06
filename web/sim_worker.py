@@ -1,6 +1,6 @@
 """Spawned process that exclusively owns MuJoCo and robot control."""
 from __future__ import annotations
-import queue, time, traceback
+import os, queue, time, traceback
 from multiprocessing import shared_memory
 import numpy as np
 
@@ -47,7 +47,7 @@ def render_period(status, now):
     return 1 / 30 if active else .5
 
 
-def run_worker(cfg, shm_names, lock, command_q, status):
+def run_worker(cfg, shm_names, lock, command_q, status, parent_pid=None, stop_event=None):
     shms=[]
     try:
         from sim.env import SimEnv
@@ -116,8 +116,12 @@ def run_worker(cfg, shm_names, lock, command_q, status):
         rtf_wall=time.monotonic(); rtf_sim=float(env.data.time)
         adapter.render_hook=publish
         status.update({"ready":False,"state":"starting","phase":"idle","error":None,"fps":0.0,"frame_seq":0,"camera":current_cam,"last_command":None,"held_object":None})
-        publish(True); status["ready"]=True; status["state"]="ready"; next_step=time.monotonic(); running=True
+        publish(True); status["ready"]=True; status["state"]="ready"; next_step=time.monotonic(); parent_check=next_step; running=True
         while running:
+            if stop_event is not None and stop_event.is_set(): break
+            if parent_pid is not None and time.monotonic() >= parent_check:
+                if os.getppid() != parent_pid: break
+                parent_check = time.monotonic() + .25
             try: cmd=command_q.get_nowait()
             except queue.Empty: cmd=None
             if cmd:

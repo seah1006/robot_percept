@@ -15,6 +15,7 @@ from collections import deque
 from flask import Blueprint, Response, jsonify, request
 
 from .shm_channel import Blob, wait_monotonic
+from .process_lifecycle import stop_process
 
 OPTION_TYPES = {'arm_target': ('wrist', 'fingertips'), 'hand_orientation': bool, 'torso': bool, 'fingers': bool, 'elbow': bool, 'targets3d': bool, 'safety_brake': bool, 'collision_avoidance': bool}
 
@@ -137,7 +138,7 @@ class HumanoidRuntime:
             self.ctrl.update(enabled=True, stop=False); self.push()
             from .humanoid_worker import run_humanoid_worker
             ctx = mp.get_context('spawn')
-            self.proc = ctx.Process(target=run_humanoid_worker, args=({k: b.name for k, b in self.blobs.items()}, self.cfg), daemon=True)
+            self.proc = ctx.Process(target=run_humanoid_worker, args=({k: b.name for k, b in self.blobs.items()}, self.cfg, os.getpid()), daemon=True)
             self.proc.start(); started = time.monotonic()
             while time.monotonic() - started < 65:
                 st = self.status()
@@ -148,13 +149,13 @@ class HumanoidRuntime:
                 time.sleep(.01)
             self.stop(); raise RuntimeError('worker ready timeout')
 
-    def stop(self):
+    def stop(self, deadline=None):
         with self.lock:
+            deadline = time.monotonic() + 5.0 if deadline is None else deadline
             self.ctrl.update(enabled=False, stop=True); self.push(); proc = self.proc
             if proc is not None:
-                # multiprocessing Process.join(timeout) uses connection.wait(selector + monotonic).
-                proc.join(timeout=3)
-                if proc.is_alive(): proc.terminate(); proc.join(timeout=2)
+                # Process.join(timeout) uses selectors and a monotonic deadline.
+                stop_process(proc, deadline)
             self.proc = None
 
     def status(self):
@@ -170,9 +171,9 @@ class HumanoidRuntime:
                 st['enabled'] = False
             return st
 
-    def close(self):
+    def close(self, deadline=None):
         self.watch_stop.set()
-        try: self.stop()
+        try: self.stop(deadline=deadline)
         finally:
             if self.blobs:
                 for b in self.blobs.values(): b.close(unlink=True)
