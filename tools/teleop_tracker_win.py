@@ -41,6 +41,15 @@ def replay_routes(row, mode, now):
 def websocket_route_enabled(transport,raw=False):
  return transport=='ws' and not raw
 
+
+def build_parser():
+ p=argparse.ArgumentParser(); p.add_argument('--transport',choices=['http','ws'],default='ws'); p.add_argument('--http-client',choices=['requests','urllib3'],default=None); p.add_argument('--hand-hold-ms',type=float,default=150); p.add_argument('--metrics-out'); p.add_argument('--prefetch-video',action=argparse.BooleanOptionalAction,default=True); p.add_argument('--pipeline',action=argparse.BooleanOptionalAction,default=None); p.add_argument('--opencv-threads',type=int,default=1); p.add_argument('--infer-width',type=int,choices=[320,480,640],default=640); p.add_argument('--serial',action='store_true'); p.add_argument('--loop-video',action='store_true'); p.add_argument('--mode',choices=['panda','humanoid','both'],default='panda'); p.add_argument('--pose-model',default=str(pathlib.Path.home()/'Documents/sam_camera/models/pose_landmarker_lite.task')); p.add_argument('--url',default='http://localhost:5089'); p.add_argument('--video'); p.add_argument('--replay'); p.add_argument('--record'); p.add_argument('--seconds',type=float,default=0); p.add_argument('--camera',type=int,default=0); p.add_argument('--model',default=str(pathlib.Path.home()/'Documents/sam_camera/models/hand_landmarker.task')); return p
+
+
+def parse_args(argv=None):
+ return build_parser().parse_args(argv)
+
+
 class WebSocketTransport:
  def __init__(self,url,connector=None,timeout=.6):
   self.url=url.replace('http://','ws://').replace('https://','wss://').rstrip('/')+'/tracker/ws';self.connector=connector;self.timeout=timeout;self.ws=None
@@ -70,6 +79,64 @@ class WebSocketTransport:
     if attempt==0:time.sleep(.05)
   raise last
 
+
+def exception_chain(exc):
+ while exc is not None:
+  yield exc
+  exc=exc.__cause__ or exc.__context__
+
+
+def missing_websocket_client(exc):
+ return any(isinstance(item,ModuleNotFoundError) and item.name=='websocket' for item in exception_chain(exc))
+
+
+def websocket_status(exc):
+ for item in exception_chain(exc):
+  status=getattr(item,'status_code',None)
+  if status is not None:return status
+ return None
+
+
+def websocket_error_summary(exc,limit=200):
+ lines=[line.strip() for line in str(exc).splitlines() if line.strip()]
+ summary=lines[0] if lines else type(exc).__name__
+ status=websocket_status(exc)
+ if status is not None and str(status) not in summary:summary=f'HTTP {status}: {summary}'
+ return summary[:limit]
+
+
+def permanent_ws_failure(exc):
+ return missing_websocket_client(exc) or websocket_status(exc)==404
+
+
+class FallbackTransport:
+ """Fall back to HTTP; retry transient startup failures, but pin unsupported WS sessions."""
+ def __init__(self,http_post,ws_factory,warn=print,clock=time.monotonic,retry_interval=30.):
+  self.http_post=http_post;self.ws_factory=ws_factory;self.warn=warn;self.clock=clock;self.retry_interval=retry_interval;self.ws=None
+  self.effective='ws';self.fallback=False;self.ws_succeeded=False;self.warned=False;self.retry_at=None
+ def _warn_once(self,exc,permanent):
+  if self.warned:return
+  if permanent:message='WebSocket is unsupported; falling back to HTTP for this session. Restart the tracker to retry WS.'
+  else:message=f'WebSocket connection failed; using HTTP temporarily and retrying WS every {self.retry_interval:g} seconds.'
+  if missing_websocket_client(exc):message+=' Run: python -m pip install websocket-client==1.8.0'
+  self.warn(json.dumps({'warning':message,'ws_error':websocket_error_summary(exc),'transport':'http'},ensure_ascii=False),flush=True)
+  self.warned=True
+ def _fallback(self,exc):
+  permanent=permanent_ws_failure(exc);self.effective='http';self.fallback=True
+  self.retry_at=None if permanent else self.clock()+self.retry_interval
+  self._warn_once(exc,permanent)
+ def request(self,route,data,raw=False):
+  if raw:return self.http_post(route,data,raw)
+  if self.effective=='http':
+   if self.retry_at is None or self.clock()<self.retry_at:return self.http_post(route,data,raw)
+   self.effective='ws';self.ws=None;self.retry_at=None
+  try:
+   if self.ws is None:self.ws=self.ws_factory()
+   reply=self.ws.request(route,data,False);self.ws_succeeded=True;return reply
+  except Exception as exc:
+   if self.ws_succeeded:raise
+   self._fallback(exc);return self.http_post(route,data,raw)
+
 class HandHold:
  def __init__(self, milliseconds=150):self.limit=milliseconds;self.last={}
  def apply(self, sample, now):
@@ -93,7 +160,7 @@ class OneEuro:
   a=1/(1+1/(2*math.pi*(1.5+.03*np.abs(self.d))*dt)); self.v+=a*(v-self.v); self.t=t; return self.v.copy()
 
 def main():
- p=argparse.ArgumentParser(); p.add_argument('--transport',choices=['http','ws'],default='http'); p.add_argument('--http-client',choices=['requests','urllib3'],default=None); p.add_argument('--hand-hold-ms',type=float,default=150); p.add_argument('--metrics-out'); p.add_argument('--prefetch-video',action=argparse.BooleanOptionalAction,default=True); p.add_argument('--pipeline',action=argparse.BooleanOptionalAction,default=None); p.add_argument('--opencv-threads',type=int,default=1); p.add_argument('--infer-width',type=int,choices=[320,480,640],default=640); p.add_argument('--serial',action='store_true'); p.add_argument('--loop-video',action='store_true'); p.add_argument('--mode',choices=['panda','humanoid','both'],default='panda'); p.add_argument('--pose-model',default=str(pathlib.Path.home()/'Documents/sam_camera/models/pose_landmarker_lite.task')); p.add_argument('--url',default='http://localhost:5089'); p.add_argument('--video'); p.add_argument('--replay'); p.add_argument('--record'); p.add_argument('--seconds',type=float,default=0); p.add_argument('--camera',type=int,default=0); p.add_argument('--model',default=str(pathlib.Path.home()/'Documents/sam_camera/models/hand_landmarker.task')); a=p.parse_args()
+ a=parse_args()
  a.pipeline=pipeline_enabled(a.mode,a.pipeline)
  a.http_client=a.http_client or ('requests' if a.mode=='panda' else 'urllib3')
  a.url=a.url.replace('://localhost', '://127.0.0.1')
@@ -126,16 +193,15 @@ def main():
    return response
  except ImportError:
   def post(route,data,raw=False):return urllib.request.urlopen(urllib.request.Request(a.url+route,data=data if raw else json.dumps(data).encode(),headers={'Content-Type':'image/jpeg' if raw else 'application/json'}),timeout=.6)
- http_post=post
+ http_post=post;transport_state=None
  if a.transport=='ws':
-  ws_local=threading.local()
+  transport_state=FallbackTransport(http_post,lambda:WebSocketTransport(a.url))
   def post(route,data,raw=False):
    # Windows localhost→WSL에서 binary WS는 약 40ms 지연 ACK 회귀가 있어 preview는 HTTP 유지.
    if not websocket_route_enabled(a.transport,raw):return http_post(route,data,raw)
-   if not hasattr(ws_local,'transport'):ws_local.transport=WebSocketTransport(a.url)
    t0=time.perf_counter();body=json.dumps(data,separators=(',',':')).encode();t1=time.perf_counter()
-   reply=ws_local.transport.request(route,data,False);t2=time.perf_counter()
-   if route=='/humanoid/update':
+   reply=transport_state.request(route,data,False);t2=time.perf_counter()
+   if route=='/humanoid/update' and transport_state.effective=='ws':
     json_ms.append((t1-t0)*1000);payload_bytes.append(len(body));post_ms.append((t2-t1)*1000);server_ms.append(reply.get('process_ms',0));details['ws_roundtrip'].append((t2-t1)*1000)
    return reply
  hold=HandHold(a.hand_hold_ms); detection_counts={'hand':0,'pose':0};capture_times={}
@@ -395,7 +461,7 @@ def main():
   if pose_detector is not None:pose_detector.close()
   if out:out.release()
   if log:log.close()
- metrics={'detail_ms':{k:{'p50':float(np.median(v)),'p95':float(np.percentile(v,95)),'n':len(v)} for k,v in details.items() if v},'transport':a.transport,'preview_transport':'http','http_client':a.http_client,'hand_detection_rate':detection_counts['hand']/max(1,count),'pose_detection_rate':detection_counts['pose']/max(1,count),'camera_read_failed':latest['failed'],'capture_clock':'unix wall clock at decode completion/video or read completion/camera','stages_ms':{k:{'p50':float(np.median(v)),'p95':float(np.percentile(v,95))} for k,v in stages.items() if v},'source_fps':source_fps,'source_frames_due':source_frames_due,'processed_input_ratio':count/max(1,source_frames_due),'unprocessed_source_slots':max(0,source_frames_due-count),'dropped_frames':0 if a.video else max(0,source_frames_due-count),'updates':count,'seconds':round(processing_seconds,3),'hz':round(count/processing_seconds,3),'network_errors':errors,'sent_updates':sent_count,'preview_sent':len(preview_post_ms),'preview_encode_ms_p50':float(np.median(preview_encode_ms)) if preview_encode_ms else None,'preview_post_ms_p50':float(np.median(preview_post_ms)) if preview_post_ms else None,'post_ms_p50':float(np.median(post_ms)) if post_ms else None,'post_ms_p95':float(np.percentile(post_ms,95)) if post_ms else None,'json_ms_p50':float(np.median(json_ms)) if json_ms else None,'payload_bytes_p50':float(np.median(payload_bytes)) if payload_bytes else None,'server_ms_p50':float(np.median(server_ms)) if server_ms else None,'loop_ms_p50':float(np.median(loop_ms)) if loop_ms else None,'inference_ms_p50':float(np.median(infer_times)) if infer_times else None,'inference_ms_p95':float(np.percentile(infer_times,95)) if infer_times else None,'hand_ms_p50':float(np.median(hand_times)) if hand_times else None,'pose_ms_p50':float(np.median(pose_times)) if pose_times else None}
+ metrics={'detail_ms':{k:{'p50':float(np.median(v)),'p95':float(np.percentile(v,95)),'n':len(v)} for k,v in details.items() if v},'transport':transport_state.effective if transport_state else 'http','transport_requested':a.transport,'transport_fallback':bool(transport_state and transport_state.fallback),'preview_transport':'http','http_client':a.http_client,'hand_detection_rate':detection_counts['hand']/max(1,count),'pose_detection_rate':detection_counts['pose']/max(1,count),'camera_read_failed':latest['failed'],'capture_clock':'unix wall clock at decode completion/video or read completion/camera','stages_ms':{k:{'p50':float(np.median(v)),'p95':float(np.percentile(v,95))} for k,v in stages.items() if v},'source_fps':source_fps,'source_frames_due':source_frames_due,'processed_input_ratio':count/max(1,source_frames_due),'unprocessed_source_slots':max(0,source_frames_due-count),'dropped_frames':0 if a.video else max(0,source_frames_due-count),'updates':count,'seconds':round(processing_seconds,3),'hz':round(count/processing_seconds,3),'network_errors':errors,'sent_updates':sent_count,'preview_sent':len(preview_post_ms),'preview_encode_ms_p50':float(np.median(preview_encode_ms)) if preview_encode_ms else None,'preview_post_ms_p50':float(np.median(preview_post_ms)) if preview_post_ms else None,'post_ms_p50':float(np.median(post_ms)) if post_ms else None,'post_ms_p95':float(np.percentile(post_ms,95)) if post_ms else None,'json_ms_p50':float(np.median(json_ms)) if json_ms else None,'payload_bytes_p50':float(np.median(payload_bytes)) if payload_bytes else None,'server_ms_p50':float(np.median(server_ms)) if server_ms else None,'loop_ms_p50':float(np.median(loop_ms)) if loop_ms else None,'inference_ms_p50':float(np.median(infer_times)) if infer_times else None,'inference_ms_p95':float(np.percentile(infer_times,95)) if infer_times else None,'hand_ms_p50':float(np.median(hand_times)) if hand_times else None,'pose_ms_p50':float(np.median(pose_times)) if pose_times else None}
  print(json.dumps(metrics))
  if a.metrics_out:pathlib.Path(a.metrics_out).write_text(json.dumps(metrics,indent=2),encoding='utf8')
 if __name__=='__main__':main()
