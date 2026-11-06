@@ -1,5 +1,6 @@
 from __future__ import annotations
 import atexit,json,multiprocessing as mp,os,re,signal,subprocess,threading,time,uuid
+from multiprocessing.managers import SyncManager
 from multiprocessing import shared_memory
 from collections import deque
 from pathlib import Path
@@ -10,7 +11,7 @@ from werkzeug.utils import secure_filename
 from .monowait import sleep_until, wait_for, join_thread
 from .perception_stub import PerceptionBackend, estimate_pose
 from .sim_worker import run_worker
-from .process_lifecycle import run_manager_watchdog, stop_process
+from .process_lifecycle import manager_parent_watch_initializer, run_manager_watchdog, stop_process
 ROOT=Path(__file__).resolve().parents[1]; CAD_PYTHON=ROOT/".venvs/cad/bin/python"
 WIDTH,HEIGHT=int(os.getenv("SIM_WIDTH","640")),int(os.getenv("SIM_HEIGHT","480"))
 
@@ -28,7 +29,7 @@ def _axes(img,K,T,scale=1.,length=.06,label=None):
 
 class Runtime:
  def __init__(self):
-  ctx=mp.get_context("spawn"); self.manager=ctx.Manager(); self._manager_watchdog=ctx.Process(target=run_manager_watchdog,args=(os.getpid(),self.manager._process.pid),daemon=True); self._manager_watchdog.start(); self.status=self.manager.dict(); self.command_q=ctx.Queue(); self.lock=ctx.Lock(); self.stop_event=ctx.Event()
+  ctx=mp.get_context("spawn"); parent_pid=os.getpid(); self.manager=SyncManager(ctx=ctx); self.manager.start(initializer=manager_parent_watch_initializer,initargs=(parent_pid,)); self._manager_watchdog=ctx.Process(target=run_manager_watchdog,args=(parent_pid,self.manager._process.pid),daemon=True); self._manager_watchdog.start(); self.status=self.manager.dict(); self.command_q=ctx.Queue(); self.lock=ctx.Lock(); self.stop_event=ctx.Event()
   self.shms={"rgb":shared_memory.SharedMemory(create=True,size=HEIGHT*WIDTH*3),"depth":shared_memory.SharedMemory(create=True,size=HEIGHT*WIDTH*4),"seg":shared_memory.SharedMemory(create=True,size=HEIGHT*WIDTH*4)}
   self.rgb=np.ndarray((HEIGHT,WIDTH,3),np.uint8,buffer=self.shms["rgb"].buf); self.depth=np.ndarray((HEIGHT,WIDTH),np.float32,buffer=self.shms["depth"].buf); self.seg=np.ndarray((HEIGHT,WIDTH),np.int32,buffer=self.shms["seg"].buf)
   self.rgb.fill(0); self.depth.fill(0); self.seg.fill(-1)

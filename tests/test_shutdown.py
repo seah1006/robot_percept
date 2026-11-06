@@ -88,6 +88,38 @@ def test_server_signal_reaps_spawn_children(sig, tmp_path):
                         pass
 
 
+
+@pytest.mark.parametrize("delay", [.4, .6, .8])
+def test_server_sigkill_during_startup_reaps_spawn_children(delay, tmp_path):
+    port = _free_port()
+    env = os.environ.copy()
+    env.update(PORT=str(port), HOST="127.0.0.1", PERCEPTION="stub", RP_PERCEPTION_WARMUP="0")
+    log_path = tmp_path / f"startup-kill-{delay}.log"
+    with log_path.open("wb") as log:
+        proc = subprocess.Popen(
+            [sys.executable, "-m", "web.app"], cwd=Path(__file__).parents[1], env=env,
+            stdout=log, stderr=subprocess.STDOUT, start_new_session=True,
+        )
+        captured = []
+        try:
+            time.sleep(delay)
+            captured = _descendants(proc.pid)
+            assert captured, "expected Manager/resource-tracker children during startup"
+            os.kill(proc.pid, signal.SIGKILL)
+            proc.wait(timeout=3)
+            deadline = time.monotonic() + 5
+            while time.monotonic() < deadline and any(_proc_info(row["pid"]) for row in captured):
+                time.sleep(.05)
+            alive = [_proc_info(row["pid"]) for row in captured]
+            assert not [row for row in alive if row is not None], log_path.read_text(errors="replace")
+        finally:
+            if proc.poll() is None:
+                proc.kill(); proc.wait(timeout=3)
+            for row in reversed(captured):
+                if _proc_info(row["pid"]):
+                    try: os.kill(row["pid"], signal.SIGKILL)
+                    except ProcessLookupError: pass
+
 def _pid_watched_child(expected_parent_pid, ready):
     from web.process_lifecycle import start_parent_pid_watch
     start_parent_pid_watch(expected_parent_pid)

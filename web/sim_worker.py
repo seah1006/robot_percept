@@ -3,6 +3,7 @@ from __future__ import annotations
 import os, queue, time, traceback
 from multiprocessing import shared_memory
 import numpy as np
+from .process_lifecycle import exit_if_parent_changed
 
 
 class ControlAdapter:
@@ -48,6 +49,7 @@ def render_period(status, now):
 
 
 def run_worker(cfg, shm_names, lock, command_q, status, parent_pid=None, stop_event=None):
+    exit_if_parent_changed(parent_pid)
     shms=[]
     try:
         from sim.env import SimEnv

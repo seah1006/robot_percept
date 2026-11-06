@@ -9,6 +9,7 @@ the Flask process goes through web.shm_channel.Blob (no multiprocessing.Manager)
 from __future__ import annotations
 import json, os, time, traceback, threading, copy, math, numbers, gc
 from collections import deque
+from .process_lifecycle import exit_if_parent_changed
 
 
 def runtime_diagnostics(env, servo):
@@ -34,6 +35,7 @@ def runtime_diagnostics(env, servo):
             'servo_profile': {k: int(v) if k.endswith('_calls') else v for k, v in values.items() if k.endswith(('_ms', '_calls'))}}
 
 def run_humanoid_worker(names, cfg, parent_pid=None):
+    exit_if_parent_changed(parent_pid)
     from web.shm_channel import Blob
     from web.monowait import wait_event, join_thread
     parent_pid = parent_pid or os.getppid()

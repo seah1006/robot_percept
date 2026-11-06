@@ -7,7 +7,8 @@ import json
 import time
 from pathlib import Path
 import sys
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 import cv2
 import numpy as np
 from sim.env import SimEnv
@@ -15,7 +16,8 @@ from sim.control import Controller
 from sim.grasp import choose_grasp
 
 NAMES = ('mustard', 'box_fillet_50x30x20mm', 'cup_d70_h60mm')
-STRIP = Path('/home/user/work/robot_percept/data/c1_check/multi_strip.png')
+OUTPUT_DIR = ROOT / 'data' / 'c1_check'
+STRIP = OUTPUT_DIR / 'multi_strip.png'
 
 def run_one(env, ctl, name, xy):
     obj = lambda: env.T_world_obj(name)
@@ -92,8 +94,8 @@ def main():
                     ts.append(time.perf_counter()-t)
             times[name]={'median_s':round(float(np.median(ts)),3),'p95_s':round(float(np.quantile(ts,.95)),3),'max_s':round(float(max(ts)),3)}
         print('LATENCY',json.dumps(times),flush=True)
-    out=Path('/home/user/work/robot_percept/data/c1_check')
-    out.mkdir(exist_ok=True)
+    out=OUTPUT_DIR
+    out.mkdir(parents=True, exist_ok=True)
     result_file = out/'results.json'
     previous = json.loads(result_file.read_text()) if result_file.exists() else {}
     previous.update({("off_" if args.no_gt_assist else "on_")+key: value for key,value in records.items()})
