@@ -15,12 +15,21 @@
 - 11-05 남은 일 1~4번은 위로 처리됨. 5번(FastAPI)은 사용자 결정으로 하지 않음(Flask 유지).
 - G1 4.9초 정지: 집 PC에서 HEAD의 G1 렌더 루프는 이미 monotonic이라 재현 안 됨. Panda/teleop/perception/하네스의 timed wait를 monotonic으로 바꿈(개선 근거는 코드 리뷰와 모의 테스트).
 
+### 추가 완료 (같은 날 후반)
+| 커밋 | 내용 |
+|-|-|
+| master 7f96fec (wip/r2 1c5bd90) | H 라운드: 기동 직후 kill -9 잔존 경쟁 수정(기준선 3/100 → 0/150), test_pick_place 경로 이식성. notes/small_fixes_h.md, notes/verify_h.md |
+| master ba8ccb6 (wip/r2 b3ef3d2) | 트래커 절대 판정 스톡 영상 한정 PASS(처리율 100%, 30.0Hz, ws post p95 2.3ms). notes/verify_t.md |
+| wip/r2 c1656d7 (master 미반영) | P1c 재설계 스냅샷 NEEDS WORK: 추종·복귀·팔 이동 회복, 그러나 서보 tick p95 62~208ms(기준 20ms), 미인증 구간 잔존. 기본 OFF. notes/humanoid_s2_changes.md, notes/verify_s.md |
+| 검증만 | 유휴 렌더 2fps PASS, Panda 집기 N=20 PASS(GT 보조). notes/verify_b.md |
+- 주의: wip/r2에는 P1c WIP가 있어 master로 통째 병합 금지. 검증 PASS 커밋만 cherry-pick.
+
 ### 남은 일
-1. P1c 재설계(자세별 rest 시드 분리, release 방향 기반). 집 PC에서 진행 예정.
-2. 짧은 검증: 유휴 렌더 2fps 독립 재측정, 서버 기동 중(ready 전) 신호, Panda 집기 회귀(GT 보조).
-3. 트래커 MediaPipe 실처리 절대 판정(처리율 ≥99%, ≥29.7Hz): Windows Python 3.12 + mediapipe + 30fps 사람 영상 필요. 통과 후 트래커 기본 ws 전환 검토.
-4. 알려진 한계: Windows→WSL preview HTTP p95 +3~9ms(처리량 동일, WSL 내부 3.6ms). 원인 미규명.
-5. 회사 PC 필요(CUDA): SAM2/FoundationPose, FP 워밍업 defer 재측정, E 평가(FP N30, 추정 자세 집기), 실카메라 수락.
+1. P1c: 서보 tick 비용(충돌 계산) 줄이기, chest 우회/진동, twist 이동 부족, 500Hz 미인증 구간. 통과 전 기본 OFF.
+2. 트래커 기본 --transport ws 전환 검토: 근거는 전송 지연·서버 부하 감소(처리율 차이는 입증 안 됨). 전환 전 ws 장시간 안정성 측정.
+3. 알려진 한계: Windows→WSL preview HTTP p95 +3~9ms, 원인 미규명.
+4. 회사 PC 필요(CUDA): SAM2/FoundationPose, FP 워밍업 defer 재측정, E 평가, 실카메라 수락, 회사 녹화본으로 트래커 재판정.
+5. 집 PC 트래커 재현: Windows venv C:\Users\my\rp_tracker\venv(Python 3.12.10, mediapipe 1.2.2), 영상 Documents\sam_camera\stock\stock_person_720p30.mp4(Pexels 무료, make30.py로 생성), 실행 전 PYTHONHOME 등 제거.
 
 ### 집 PC 환경 (회사와 다른 점, 3장 설치 외 추가로 필요했던 것)
 - GPU AMD Radeon RX 7600: `sim_test/gl_env.sh`의 `MESA_D3D12_DEFAULT_ADAPTER_NAME=AMD`(로컬 전용, skip-worktree). nvidia-smi 없음 → GPU 기록은 GL_RENDERER로.
