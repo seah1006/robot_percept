@@ -748,3 +748,34 @@ def test_solver_directional_brake_rest_clearance_does_not_latch():
         assert env.collision_braking  # settled alone is not permission to resume
         assert env.collision_status['collision_state']=='holding'
     finally:env.close()
+def test_collision_planner_uses_safe_waypoint_for_cross_chest_path():
+    from sim.humanoid_env import HumanoidEnv
+    from sim.humanoid_teleop import HumanoidServo
+    from tools import humanoid_synth as hs
+    env=HumanoidEnv();servo=HumanoidServo(env);original=hs.frame
+    try:
+        _,_,f,t=hs.frame(0);hs.frame=lambda _:(True,{z:(1.,-.35,1.2,0,0) for z in ("left","right")},f,t)
+        p,_=hs.payload(0);servo._retarget(p);env.set_collision_avoidance(True);g=env.collision_model
+        target=env.data.qpos.copy()
+        for n in g.names:target[env.qadr[n]]=servo.des[servo.index[n]]
+        waypoint,diag=g.plan_safe_waypoint(env.data.qpos.copy(),target,margin=.003)
+        assert diag["accepted"] and diag["route"]=="projected_waypoint"
+        assert diag["path_min"]>=.003 and g.sampled_path(env.data.qpos,waypoint,24)>=.003
+    finally:env.close();hs.frame=original
+
+def test_collision_option_false_is_byte_identical_to_default_off_path():
+    from sim.humanoid_env import HumanoidEnv
+    from sim.humanoid_teleop import HumanoidServo
+    from tools.humanoid_synth import payload
+    envs=[HumanoidEnv(),HumanoidEnv()];servos=[HumanoidServo(e) for e in envs]
+    try:
+        for i in range(1200):
+            t=i*.002;p,_=payload(t%21);p["received_at"]=100+t
+            servos[0].tick(p,{"enabled":True,"options":{}},100+t)
+            servos[1].tick(p,{"enabled":True,"options":{"collision_avoidance":False}},100+t)
+            envs[0].step();envs[1].step()
+        for attr in ("qpos","qvel","ctrl"):
+            assert np.array_equal(getattr(envs[0].data,attr),getattr(envs[1].data,attr))
+        assert np.array_equal(servos[0].cmd,servos[1].cmd)
+    finally:
+        for e in envs:e.close()

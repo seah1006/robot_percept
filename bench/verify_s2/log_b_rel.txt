@@ -1,0 +1,8 @@
+locked 20:18:14 load 1.13 1.08 0.74 1/544 8046 tag=b_rel tree=/tmp/rp_s2base
+mode on 200
+=== part release
+collision_avoidance 1 200
+{'first_within_8deg_s': 0.64, 'final_err_deg': 1.3}
+DONE
+5092 closed
+unlocked 20:20:07 load 0.98 1.06 0.74 1/540 8826

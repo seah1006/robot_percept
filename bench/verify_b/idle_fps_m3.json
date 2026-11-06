@@ -1,0 +1,1 @@
+{"ready_s": 4.55, "idle_fps_frame_seq": [2.0, 2.0], "idle_render_idle_flag": true, "mjpeg_first_frame_s": 0.064, "reach_30fps_s": 0.064, "viewer_fps_3to8s": 29.52, "viewer_frame_seq_fps": 29.6, "viewer_flag": [false, 1], "after_disconnect_idle_flag_s": 0.54, "post_idle_fps": 2.0}

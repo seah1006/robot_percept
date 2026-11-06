@@ -1,0 +1,8 @@
+locked 20:45:38 load 1.00 1.29 1.32 2/545 44042 tag=n_rel tree=/tmp/rp_s2new
+mode on 200
+=== part release
+collision_avoidance 1 200
+{'first_within_8deg_s': 0.96, 'final_err_deg': 1.0}
+DONE
+5092 closed
+unlocked 20:46:00 load 1.06 1.28 1.32 2/545 44840

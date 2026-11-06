@@ -1,0 +1,8 @@
+locked 20:42:30 load 1.19 1.36 1.34 2/542 39842 tag=n_stat_on_seq tree=/tmp/rp_s2new
+mode on 200
+=== part static
+collision_avoidance 1 200
+{'max_u1': 1.93, 'max_u2': 2.25, 'max_wrist_mm': 24.42, 'max_wrist_mm_actualS': 9.71, 'max_lr_diff': 0.02, 'mean_dir': 1.0}
+DONE
+5092 closed
+unlocked 20:43:30 load 1.15 1.34 1.33 2/542 41841

@@ -1,0 +1,18 @@
+single box: pick 20/20 (Wilson 83.9-100.0%) | place 20/20 (Wilson 83.9-100.0%) | home 20/20 (Wilson 83.9-100.0%) | home max obj move 0.018 mm | elapsed/trial median 1.6s
+single cup: pick 20/20 (Wilson 83.9-100.0%) | place 20/20 (Wilson 83.9-100.0%) | home 20/20 (Wilson 83.9-100.0%) | home max obj move 0.000 mm | elapsed/trial median 1.8s
+single mustard: pick 20/20 (Wilson 83.9-100.0%) | place 20/20 (Wilson 83.9-100.0%) | home 20/20 (Wilson 83.9-100.0%) | home max obj move 2.149 mm | elapsed/trial median 1.6s
+multi mustard: pick 20/20 (Wilson 83.9-100.0%) | place 20/20 (Wilson 83.9-100.0%) | home 20/20 (Wilson 83.9-100.0%) | home max obj move 0.016 mm | elapsed/trial median 2.5s
+multi box: pick 20/20 (Wilson 83.9-100.0%) | place 20/20 (Wilson 83.9-100.0%) | home 20/20 (Wilson 83.9-100.0%) | home max obj move 0.018 mm | elapsed/trial median 2.2s
+multi cup: pick 20/20 (Wilson 83.9-100.0%) | place 20/20 (Wilson 83.9-100.0%) | home 20/20 (Wilson 83.9-100.0%) | home max obj move 0.000 mm | elapsed/trial median 2.3s
+multi all-three 20/20 (Wilson 83.9-100.0%) with home 20/20 (Wilson 83.9-100.0%)
+== home obstacle
+0 held_gt_on REJECT_EARLY Cannot return home while object is attached pen_mm None
+0 held_gt_off REJECT_EARLY Home path intersects table or object after clearance retreat pen_mm None
+0 ('cup_', '0.7') REJECT_EARLY Collision during home clearance retreat pen_mm 0.9940494006663758
+0 ('cup_', '0.85') REJECT_EARLY Home path intersects table or object after clearance retreat pen_mm 0.0
+0 ('cup_', '0.95') REJECT_EARLY Home path intersects table or object after clearance retreat pen_mm 0.0
+0 ('must', '0.95') REJECT_EARLY Home path intersects table or object after clearance retreat pen_mm 0.0
+1 ('cup_', '0.85') REJECT_EARLY Home path intersects table or object after clearance retreat pen_mm 0.0
+1 ('cup_', '0.95') REJECT_EARLY Home path intersects table or object after clearance retreat pen_mm 0.0
+1 ('must', '0.95') REJECT_EARLY Home path intersects table or object after clearance retreat pen_mm 0.0
+{'REJECT_EARLY': 9} skipped 17

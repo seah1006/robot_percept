@@ -1,0 +1,11 @@
+locked 20:21:28 load 1.39 1.16 0.80 1/545 11286 tag=b_coll_sweep tree=/tmp/rp_s2base
+mode on 200
+=== part coll0
+collision_avoidance 0 200
+{'n': 434, 'min_mm': -41.6, 'p5_mm': -39.0, 'frames_below_0mm': 116, 'frames_below_10mm': 180, 'frames_below_5mm': 129, 'collision_opt': '0', 'pattern': 'sweep', 'worst_pair': 'left_upper|right_upper', 'radii': {'torso': 0.118, 'upper': 0.053, 'fore': 0.045, 'hand': 0.057, 'note': 'approximate capsules, torso axis pelvis->shoulder mid'}}
+=== part coll1
+collision_avoidance 1 200
+{'n': 433, 'min_mm': 16.2, 'p5_mm': 16.2, 'frames_below_0mm': 0, 'frames_below_10mm': 0, 'frames_below_5mm': 0, 'collision_opt': '1', 'pattern': 'sweep', 'worst_pair': 'torso|right_fore', 'radii': {'torso': 0.118, 'upper': 0.053, 'fore': 0.045, 'hand': 0.057, 'note': 'approximate capsules, torso axis pelvis->shoulder mid'}}
+DONE
+5092 closed
+unlocked 20:22:04 load 0.79 0.99 0.79 1/543 15389

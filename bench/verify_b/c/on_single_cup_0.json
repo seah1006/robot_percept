@@ -1,0 +1,89 @@
+{
+ "cup": [
+  {
+   "pick": true,
+   "lifted": 0.14777625385958704,
+   "place": true,
+   "err_mm": 0.15422541036908255,
+   "home_ok": true,
+   "home": {
+    "joint_error": 0.00010011914761487439,
+    "object_displacement": 4.7494375005657655e-07
+   },
+   "home_joint_err": 0.00010011914761487439,
+   "obj_move_mm": 0.00047494375005657655,
+   "obj_maxmove_mm": 0.00047494375005657655,
+   "arm_obj_contacts": 0,
+   "elapsed": 1.7
+  },
+  {
+   "pick": true,
+   "lifted": 0.14755748259028428,
+   "place": true,
+   "err_mm": 0.09135213131203788,
+   "home_ok": true,
+   "home": {
+    "joint_error": 4.279920211902599e-05,
+    "object_displacement": 4.749437510201161e-07
+   },
+   "home_joint_err": 4.279920211902599e-05,
+   "obj_move_mm": 0.00047494375102011613,
+   "obj_maxmove_mm": 0.00047494375102011613,
+   "arm_obj_contacts": 0,
+   "elapsed": 1.8
+  },
+  {
+   "pick": true,
+   "lifted": 0.14777726275444197,
+   "place": true,
+   "err_mm": 0.1508940404295288,
+   "home_ok": true,
+   "home": {
+    "joint_error": 0.00019973437317044596,
+    "object_displacement": 4.7494410878590487e-07
+   },
+   "home_joint_err": 0.00019973437317044596,
+   "obj_move_mm": 0.00047494410878590486,
+   "obj_maxmove_mm": 0.00047494410878590486,
+   "arm_obj_contacts": 0,
+   "elapsed": 1.8
+  },
+  {
+   "pick": true,
+   "lifted": 0.14778147093294186,
+   "place": true,
+   "err_mm": 0.09474797223997977,
+   "home_ok": true,
+   "home": {
+    "joint_error": 0.0003724867744647753,
+    "object_displacement": 4.74943897050236e-07
+   },
+   "home_joint_err": 0.0003724867744647753,
+   "obj_move_mm": 0.000474943897050236,
+   "obj_maxmove_mm": 0.000474943897050236,
+   "arm_obj_contacts": 0,
+   "elapsed": 1.8
+  },
+  {
+   "pick": true,
+   "lifted": 0.14773930498554616,
+   "place": true,
+   "err_mm": 0.11547877623856284,
+   "home_ok": true,
+   "home": {
+    "joint_error": 4.282401777810918e-05,
+    "object_displacement": 4.749436804366814e-07
+   },
+   "home_joint_err": 4.282401777810918e-05,
+   "obj_move_mm": 0.00047494368043668136,
+   "obj_maxmove_mm": 0.00047494368043668136,
+   "arm_obj_contacts": 0,
+   "elapsed": 1.7
+  }
+ ],
+ "gtcalls": {
+  "pick:pick_object": 15,
+  "place:place_object": 20,
+  "home:return_home": 10
+ }
+}

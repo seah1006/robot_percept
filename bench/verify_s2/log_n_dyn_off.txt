@@ -1,0 +1,8 @@
+locked 20:58:21 load 0.92 0.97 1.12 3/539 62671 tag=n_dyn_off tree=/tmp/rp_s2new
+mode on 200
+=== part dyn
+dyn collision_avoidance 0 200
+{'robot_video': {'frames': 15, 'win_s': 0.42, 'fps': 33.24, 'max_gap_ms': np.float64(33.8), 'p99_gap_ms': np.float64(33.8)}, 'status': {'fps': {'p50': 32.0, 'p95': 32.0, 'max': 32.0}, 'tick_ms_p95': {'p50': 3.73, 'p95': 3.84, 'max': 3.84}, 'render_ms': {'p50': 5.9, 'p95': 6.1, 'max': 6.1}, 'input_hz': {'p50': 30.0, 'p95': 30.0, 'max': 30.0}, 'rtf': {'p50': 1.0, 'p95': 1.0, 'max': 1.0}}, 'ik_time_ms': {'p50': 0.21, 'p95': 0.52, 'max': 0.69, 'n': 10}, 'post_codes': {200: 61}, 'post_errs': 0, 'load1': ['2.29', '1.27', '1.22']}
+DONE
+5092 closed
+unlocked 20:58:33 load 2.11 1.25 1.21 1/536 63052

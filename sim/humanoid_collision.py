@@ -142,6 +142,36 @@ class CapsuleModel:
         q=start+(target-start)*lo;gap=self.minimum(q)['distance']
         return q,dict(distance=gap,active=0,accepted=bool(lo>1e-5 and gap>=margin),progress_fraction=lo,partial=True)
 
+    def plan_safe_waypoint(self,start,target,margin=.003,waypoint_margin=.012,steps=48):
+        """Return the next waypoint on a finite-sample collision-free route.
+
+        This is a capsule-proxy planner, not continuous or physical safety
+        certification. Unlike ``approach_safe``, it may go around a colliding
+        straight segment by projecting its worst sample away from the obstacle.
+        """
+        start=np.asarray(start,float);target=np.asarray(target,float)
+        endpoint,_=self.project(target,margin=margin,iterations=12,max_step=.16,enabled=True)
+        endpoint_modified=bool(np.max(np.abs(endpoint[self.qadr]-target[self.qadr]))>1e-5)
+        def segment(a,b,n=steps):
+            gaps=[self.minimum(a+(b-a)*(k/n))['distance'] for k in range(n+1)]
+            return float(min(gaps)),int(np.argmin(gaps))
+        direct_min,worst=segment(start,endpoint)
+        start_gap=self.minimum(start)['distance'];endpoint_gap=self.minimum(endpoint)['distance']
+        samples=[self.minimum(start+(endpoint-start)*(k/steps))['distance'] for k in range(steps+1)]
+        escaping=start_gap<margin and endpoint_gap>start_gap+.002 and min(np.diff(samples))>=-2e-4
+        if direct_min>=margin or escaping:
+            return endpoint,dict(accepted=True,route='escape_direct' if escaping else 'direct',path_min=direct_min,distance=endpoint_gap,start_gap=start_gap,samples=steps,endpoint_modified=endpoint_modified)
+        bad=start+(endpoint-start)*(worst/steps)
+        for clearance in (waypoint_margin,.02,.03):
+            waypoint,diag=self.project(bad,margin=clearance,iterations=20,max_step=.2,enabled=True)
+            if not diag.get('accepted'):continue
+            first_min,_=segment(start,waypoint);second_min,_=segment(waypoint,endpoint)
+            if min(first_min,second_min)>=margin:
+                return waypoint,dict(accepted=True,route='projected_waypoint',path_min=min(first_min,second_min),first_min=first_min,second_min=second_min,distance=self.minimum(waypoint)['distance'],waypoint_margin=clearance,endpoint_modified=endpoint_modified)
+        partial,diag=self.approach_safe(start,endpoint,margin=margin)
+        diag.update(route='partial_fallback',path_min=self.sampled_path(start,partial,steps),endpoint_modified=endpoint_modified)
+        return partial,diag
+
     def sampled_path(self,start,end,steps=4):
         """Finite samples ONLY. Integration must add a continuous-motion bound."""
         return min(self.minimum(start+(end-start)*(k/steps))['distance'] for k in range(steps+1))

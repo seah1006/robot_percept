@@ -1,0 +1,50 @@
+{
+ "rows": [
+  {
+   "seed": 0,
+   "blocker": "mustard",
+   "f": "0.5",
+   "skipped": "blocker overlaps arm at start (-33.5 mm)"
+  },
+  {
+   "seed": 0,
+   "blocker": "mustard",
+   "f": "0.7",
+   "skipped": "blocker overlaps arm at start (-17.0 mm)"
+  },
+  {
+   "seed": 0,
+   "blocker": "mustard",
+   "f": "0.85",
+   "skipped": "blocker overlaps arm at start (-2.6 mm)"
+  },
+  {
+   "seed": 0,
+   "blocker": "mustard",
+   "f": "0.95",
+   "raised": true,
+   "err": "Home path intersects table or object after clearance retreat",
+   "verdict": "REJECT_EARLY",
+   "pen_mm": 0.0,
+   "blocker_disp_mm": 0.039239999999995945,
+   "table_pen_mm": 0.0,
+   "q_err": 1.239019912141163,
+   "elapsed": 0.35
+  },
+  {
+   "seed": 0,
+   "blocker": "mustard",
+   "f": "above15",
+   "skipped": "blocker overlaps arm at start (-75.8 mm)"
+  },
+  {
+   "seed": 0,
+   "blocker": "mustard",
+   "f": "above25",
+   "skipped": "blocker overlaps arm at start (-74.8 mm)"
+  }
+ ],
+ "summary": {
+  "REJECT_EARLY": 1
+ }
+}

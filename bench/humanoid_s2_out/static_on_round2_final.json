@@ -1,0 +1,706 @@
+{
+  "cases": [
+    {
+      "enabled": true,
+      "reset_each": false,
+      "rows": [
+        {
+          "pose": "rest",
+          "clearance_mm": 7.598148080664349,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.007598133546517075,
+            "distance": 0.007598133546517075,
+            "start_gap": 0.009106584140879989,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 0.3920617667383638,
+            "u2_deg": 0.5779509791209887
+          },
+          "right": {
+            "u1_deg": 0.3920616303597028,
+            "u2_deg": 0.5779511384580789
+          }
+        },
+        {
+          "pose": "abd45",
+          "clearance_mm": 110.25293848658711,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.1102529328023175,
+            "distance": 0.1102529328023175,
+            "start_gap": 0.11139076480353415,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 0.6861628949547607,
+            "u2_deg": 0.985655760183672
+          },
+          "right": {
+            "u1_deg": 0.6861628987510773,
+            "u2_deg": 0.9856557245158653
+          }
+        },
+        {
+          "pose": "abd85",
+          "clearance_mm": 161.30036013315663,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.16130035999235298,
+            "distance": 0.16130035999235298,
+            "start_gap": 0.16130553946866383,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 1.3752143441679652,
+            "u2_deg": 1.8799724020680235
+          },
+          "right": {
+            "u1_deg": 1.3752143437399102,
+            "u2_deg": 1.8799724237922053
+          }
+        },
+        {
+          "pose": "fwd45",
+          "clearance_mm": 45.24067798075322,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.04489204306203261,
+            "distance": 0.045240543989889206,
+            "start_gap": 0.04489204306203261,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 0.9423683777882631,
+            "u2_deg": 1.379861206997029
+          },
+          "right": {
+            "u1_deg": 0.9423683792506458,
+            "u2_deg": 1.3798612050105687
+          }
+        },
+        {
+          "pose": "fwd90",
+          "clearance_mm": 79.36664833179437,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.07927646998693681,
+            "distance": 0.07936664826339239,
+            "start_gap": 0.07927646998693681,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 1.0960113005464556,
+            "u2_deg": 1.6583812855001776
+          },
+          "right": {
+            "u1_deg": 1.096011299107146,
+            "u2_deg": 1.658381287168475
+          }
+        },
+        {
+          "pose": "fwd90_el60",
+          "clearance_mm": 77.9640242497331,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.07796402408770807,
+            "distance": 0.07796402408770807,
+            "start_gap": 0.07796403334917777,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 0.16091222708516276,
+            "u2_deg": 0.34864291875897235
+          },
+          "right": {
+            "u1_deg": 0.16091217887476222,
+            "u2_deg": 0.34864295870218315
+          }
+        },
+        {
+          "pose": "el90",
+          "clearance_mm": 13.636871151826698,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.013636753568022311,
+            "distance": 0.013636753568022311,
+            "start_gap": 0.014539207005334884,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 0.16172277548817293,
+            "u2_deg": 0.32697352126279094
+          },
+          "right": {
+            "u1_deg": 0.16172290946261392,
+            "u2_deg": 0.32697346204274036
+          }
+        },
+        {
+          "pose": "fwd60_el100",
+          "clearance_mm": 61.76383910764992,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.061379988490017294,
+            "distance": 0.061763837750777865,
+            "start_gap": 0.061379988490017294,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 0.07269688644562713,
+            "u2_deg": 0.5368156965670003
+          },
+          "right": {
+            "u1_deg": 0.07269660970569058,
+            "u2_deg": 0.5368157892821218
+          }
+        },
+        {
+          "pose": "abd60_el90",
+          "clearance_mm": 137.44051877403496,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.13744051393215567,
+            "distance": 0.13744051393215567,
+            "start_gap": 0.13800763477907452,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 0.34678648561389375,
+            "u2_deg": 0.5083689368455369
+          },
+          "right": {
+            "u1_deg": 0.3467865203520563,
+            "u2_deg": 0.5083689413980994
+          }
+        },
+        {
+          "pose": "cross_chest",
+          "clearance_mm": 0.5535400025243747,
+          "holding_ticks": 153,
+          "state": "holding",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.005000000000000018,
+            "distance": 0.005000000000000018,
+            "start_gap": 0.005064155094206005,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false
+          },
+          "brake": {
+            "reason": {
+              "pair": [
+                "torso",
+                "left_fore"
+              ],
+              "distance": 0.0025012461667205804,
+              "closing_speed": 0.11882332230941683,
+              "reference_closing_speed": 0.07180211955000797,
+              "reference_accel_closing": 0.0,
+              "required_margin": 0.041193224708357526,
+              "guard_required": 0.004,
+              "tracking_normal": 0.0019244934336062856,
+              "planned_path_min": 0.005000000000000018,
+              "margin_method": "planned-route-plus-reference-accel-jerk-tracking-lag",
+              "effective_deceleration": 0.25,
+              "latency_s": 0.06
+            },
+            "sim_time": 36.93999999999918,
+            "measured_certified": false
+          },
+          "left": {
+            "u1_deg": 2.1560001942376825,
+            "u2_deg": 1.0290647084154843
+          },
+          "right": {
+            "u1_deg": 2.15733383784287,
+            "u2_deg": 1.0297974812113013
+          }
+        },
+        {
+          "pose": "hum80",
+          "clearance_mm": 0.5535019332717078,
+          "holding_ticks": 200,
+          "state": "holding",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.005064155094206005,
+            "distance": 0.1587873683146847,
+            "start_gap": 0.005064155094206005,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false
+          },
+          "brake": {
+            "reason": {
+              "pair": [
+                "torso",
+                "left_fore"
+              ],
+              "distance": 0.0025012461667205804,
+              "closing_speed": 0.11882332230941683,
+              "reference_closing_speed": 0.07180211955000797,
+              "reference_accel_closing": 0.0,
+              "required_margin": 0.041193224708357526,
+              "guard_required": 0.004,
+              "tracking_normal": 0.0019244934336062856,
+              "planned_path_min": 0.005000000000000018,
+              "margin_method": "planned-route-plus-reference-accel-jerk-tracking-lag",
+              "effective_deceleration": 0.25,
+              "latency_s": 0.06
+            },
+            "sim_time": 36.93999999999918,
+            "measured_certified": false
+          },
+          "left": {
+            "u1_deg": 105.456571888925,
+            "u2_deg": 100.611474751573
+          },
+          "right": {
+            "u1_deg": 105.45791218347331,
+            "u2_deg": 100.61165744488896
+          }
+        },
+        {
+          "pose": "up120",
+          "clearance_mm": 0.5535015550515859,
+          "holding_ticks": 200,
+          "state": "holding",
+          "plan": {
+            "accepted": true,
+            "route": "projected_waypoint",
+            "path_min": 0.005064155094206005,
+            "first_min": 0.005064155094206005,
+            "second_min": 0.010467574552795171,
+            "distance": 0.012259294088010124,
+            "waypoint_margin": 0.012,
+            "endpoint_modified": false,
+            "modified": true
+          },
+          "brake": {
+            "reason": {
+              "pair": [
+                "torso",
+                "left_fore"
+              ],
+              "distance": 0.0025012461667205804,
+              "closing_speed": 0.11882332230941683,
+              "reference_closing_speed": 0.07180211955000797,
+              "reference_accel_closing": 0.0,
+              "required_margin": 0.041193224708357526,
+              "guard_required": 0.004,
+              "tracking_normal": 0.0019244934336062856,
+              "planned_path_min": 0.005000000000000018,
+              "margin_method": "planned-route-plus-reference-accel-jerk-tracking-lag",
+              "effective_deceleration": 0.25,
+              "latency_s": 0.06
+            },
+            "sim_time": 36.93999999999918,
+            "measured_certified": false
+          },
+          "left": {
+            "u1_deg": 67.25116932394947,
+            "u2_deg": 18.49297413222624
+          },
+          "right": {
+            "u1_deg": 67.25145695551176,
+            "u2_deg": 18.492378526741913
+          }
+        }
+      ],
+      "max_dir_deg": 105.45791218347331,
+      "mean_dir_deg": 12.851477310314662,
+      "safe4_mean_dir_deg": 11.428765516362411,
+      "holding_ticks": 553
+    },
+    {
+      "enabled": true,
+      "reset_each": true,
+      "rows": [
+        {
+          "pose": "rest",
+          "clearance_mm": 7.598148080664349,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.007598133546517075,
+            "distance": 0.007598133546517075,
+            "start_gap": 0.009106584140879989,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 0.3920617667383638,
+            "u2_deg": 0.5779509791209887
+          },
+          "right": {
+            "u1_deg": 0.3920616303597028,
+            "u2_deg": 0.5779511384580789
+          }
+        },
+        {
+          "pose": "abd45",
+          "clearance_mm": 110.21142270556332,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.11021142438068775,
+            "distance": 0.11021142438068775,
+            "start_gap": 0.11030782093235535,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 1.0296374349407584,
+            "u2_deg": 1.480356105766356
+          },
+          "right": {
+            "u1_deg": 1.0296374332833638,
+            "u2_deg": 1.4803561286606444
+          }
+        },
+        {
+          "pose": "abd85",
+          "clearance_mm": 161.30201075320062,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.1613020104316139,
+            "distance": 0.1613020104316139,
+            "start_gap": 0.16135251133584022,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 0.8957578357071145,
+            "u2_deg": 1.3167237027395629
+          },
+          "right": {
+            "u1_deg": 0.8957578356757837,
+            "u2_deg": 1.3167237027968646
+          }
+        },
+        {
+          "pose": "fwd45",
+          "clearance_mm": 45.24063473734959,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.04524054398988912,
+            "distance": 0.04524054398988912,
+            "start_gap": 0.046079540895222995,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 0.942367915896055,
+            "u2_deg": 1.379861837621193
+          },
+          "right": {
+            "u1_deg": 0.9423679117193083,
+            "u2_deg": 1.3798617902179817
+          }
+        },
+        {
+          "pose": "fwd90",
+          "clearance_mm": 79.25024948913772,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.07925024968719067,
+            "distance": 0.07925024968719067,
+            "start_gap": 0.07966852150715599,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 1.1758965628991531,
+            "u2_deg": 1.767815232429143
+          },
+          "right": {
+            "u1_deg": 1.1758966806733488,
+            "u2_deg": 1.7678150965267827
+          }
+        },
+        {
+          "pose": "fwd90_el60",
+          "clearance_mm": 78.03470631887545,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.07801968219944165,
+            "distance": 0.07803470669925884,
+            "start_gap": 0.07801968219944165,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 0.16923222312674085,
+            "u2_deg": 0.2825339064888857
+          },
+          "right": {
+            "u1_deg": 0.1692322249982538,
+            "u2_deg": 0.28253390459130895
+          }
+        },
+        {
+          "pose": "el90",
+          "clearance_mm": 13.70501912627327,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.013704990786365542,
+            "distance": 0.013704990786365542,
+            "start_gap": 0.015461810955102198,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 0.2078504088096507,
+            "u2_deg": 0.405992466190831
+          },
+          "right": {
+            "u1_deg": 0.2078501619308492,
+            "u2_deg": 0.40599266968427294
+          }
+        },
+        {
+          "pose": "fwd60_el100",
+          "clearance_mm": 60.7576781304323,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.06075767684031865,
+            "distance": 0.06075767684031865,
+            "start_gap": 0.06077911286164658,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 0.1282809260207045,
+            "u2_deg": 0.5898537271621274
+          },
+          "right": {
+            "u1_deg": 0.1282809397860631,
+            "u2_deg": 0.5898537360314771
+          }
+        },
+        {
+          "pose": "abd60_el90",
+          "clearance_mm": 137.48395050244,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.13748276564961553,
+            "distance": 0.1374839475982128,
+            "start_gap": 0.13748276564961553,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 0.1920302164499823,
+            "u2_deg": 0.23290043427643617
+          },
+          "right": {
+            "u1_deg": 0.19203021690549238,
+            "u2_deg": 0.23290043392120405
+          }
+        },
+        {
+          "pose": "cross_chest",
+          "clearance_mm": 4.999889677536159,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.005000000000000018,
+            "distance": 0.005000000000000018,
+            "start_gap": 0.005081961588222786,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 0.20868775284863417,
+            "u2_deg": 0.32685233906973526
+          },
+          "right": {
+            "u1_deg": 0.2088399118180992,
+            "u2_deg": 0.32746777939539007
+          }
+        },
+        {
+          "pose": "hum80",
+          "clearance_mm": 158.78736892610962,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.15878736831468476,
+            "distance": 0.15878736831468476,
+            "start_gap": 0.15882082222580685,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 1.1802899324384792,
+            "u2_deg": 1.6498133337055654
+          },
+          "right": {
+            "u1_deg": 1.1802899208801747,
+            "u2_deg": 1.6498133619929272
+          }
+        },
+        {
+          "pose": "up120",
+          "clearance_mm": 73.73337362296604,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.07364571682892164,
+            "distance": 0.07373337436685444,
+            "start_gap": 0.07364571682892164,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 1.5037883268761945,
+            "u2_deg": 2.127134925401972
+          },
+          "right": {
+            "u1_deg": 1.5037883279310855,
+            "u2_deg": 2.127134924300341
+          }
+        }
+      ],
+      "max_dir_deg": 2.127134925401972,
+      "mean_dir_deg": 0.8401689199013213,
+      "safe4_mean_dir_deg": 1.2018749288433082,
+      "holding_ticks": 0
+    }
+  ]
+}

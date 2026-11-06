@@ -207,22 +207,21 @@ class HumanoidServo:
             proxy=env.collision_model;candidate=qfull.copy()
             for name in proxy.names:candidate[env.qadr[name]]=self.des[self.index[name]]
             p0=time.perf_counter();fk0=proxy.fk_calls
+            start=qfull.copy()
+            for name in proxy.names:start[env.qadr[name]]=self.cmd[self.index[name]]
             cached=self._projection_cache
-            if cached is not None and np.max(np.abs(candidate[proxy.qadr]-cached[0]))<.002:
-                projected=cached[1].copy();diag=dict(cached[2],cache_hit=True)
+            if cached is not None and np.max(np.abs(candidate[proxy.qadr]-cached[0]))<.002 and np.max(np.abs(start[proxy.qadr]-cached[1]))<.01:
+                projected=cached[2].copy();diag=dict(cached[3],cache_hit=True)
             else:
-                projected,diag=proxy.project(candidate,margin=.01,enabled=True)
-                if not diag['accepted']:
-                    start=qfull.copy()
-                    for name in proxy.names:start[env.qadr[name]]=self.cmd[self.index[name]]
-                    projected,diag=proxy.approach_safe(start,candidate,margin=.01)
+                projected,diag=proxy.plan_safe_waypoint(start,candidate,margin=.010)
                 diag['modified']=bool(np.max(np.abs(projected[proxy.qadr]-candidate[proxy.qadr]))>1e-4)
-                self._projection_cache=(candidate[proxy.qadr].copy(),projected.copy(),dict(diag))
+                self._projection_cache=(candidate[proxy.qadr].copy(),start[proxy.qadr].copy(),projected.copy(),dict(diag))
             self.profile['projection_ms']=(time.perf_counter()-p0)*1000
             self.profile['projection_fk_calls']=proxy.fk_calls-fk0
             env.collision_status['goal_projection']=diag
             env.collision_status['collision_state']='avoiding' if diag.get('modified') and diag['accepted'] else 'clear' if diag['accepted'] else 'holding'
             env.collision_resume_goal=projected.copy() if diag['accepted'] else None
+            env.collision_plan=dict(diag)
             if diag['accepted']:
                 self._set_des(proxy.names,projected[proxy.qadr])
                 for side in ('left','right'):self.q_ik[side]=projected[self.iks[side].qadr].copy()
@@ -241,7 +240,7 @@ class HumanoidServo:
         # Braking: never exceed the speed that can stop within the remaining distance.
         v_stop = np.sqrt(2 * self.amax * np.abs(des - self.cmd))
         v_des = np.clip(v_des, -v_stop, v_stop)
-        if self.env.collision_avoidance and self.env.data.time-getattr(self.env,'collision_released_at',-1e6)<.4:
+        if self.env.collision_avoidance:
             ids=np.array([self.index[name] for name in self.env.collision_model.names]);task_v=v_des[ids].copy()
             for _ in range(2):
                 for row in self.env.collision_constraints:
@@ -249,11 +248,11 @@ class HumanoidServo:
                     gradient=row['gradient'];norm=float(gradient@gradient)
                     if norm<1e-12:continue
                     current=max(0.,-float(gradient@self.env.data.qvel[self.env.collision_model.dofs]))
-                    limit=min(np.sqrt(2*.04*max(0.,row['distance']-.003)),current+.04*dt)
+                    limit=min(np.sqrt(2*.25*max(0.,row['distance']-.005)),current+.25*dt)
                     violation=-limit-float(gradient@task_v)
                     if violation>0:task_v+=gradient*violation/norm
             v_des[ids]=np.clip(task_v,-self.vmax[ids],self.vmax[ids])
-            self.env.collision_status['resume_guard']={'seconds':.4,'approach_acceleration':.04,'static_margin':.003,'scope':'command-velocity-only-not-global-physical-certificate'}
+            self.env.collision_status['velocity_guard']={'approach_acceleration':.25,'static_margin':.005,'scope':'command-velocity-CBF-proxy-not-global-physical-certificate'}
         self.vel += np.clip(v_des - self.vel, -self.amax * dt, self.amax * dt)
         self.cmd = np.clip(self.cmd + self.vel * dt, self.lo + 1e-4, self.hi - 1e-4)
 

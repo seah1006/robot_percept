@@ -1,0 +1,92 @@
+{
+ "rows": [
+  {
+   "seed": 0,
+   "case": "held_gt_on",
+   "pick": true,
+   "raised": true,
+   "err": "Cannot return home while object is attached",
+   "verdict": "REJECT_EARLY",
+   "db": 1.0,
+   "dt": 1.0,
+   "disp": 0.0,
+   "elapsed": 0.0,
+   "q_err": 1.7647697283091819
+  },
+  {
+   "seed": 0,
+   "case": "held_gt_off",
+   "pick": true,
+   "raised": true,
+   "err": "Home path intersects table or object after clearance retreat",
+   "obj_dz_mm": 112.19237389060632,
+   "table_pen_mm": -1000.0,
+   "verdict": "REJECT_EARLY",
+   "db": 1.0,
+   "dt": 1.0,
+   "disp": 0.0,
+   "elapsed": 0.34,
+   "q_err": 1.7614233832678732
+  },
+  {
+   "seed": 0,
+   "blocker": "cup_d70_h60mm",
+   "f": "0.5",
+   "skipped": "blocker overlaps arm at start (-17.8 mm)"
+  },
+  {
+   "seed": 0,
+   "blocker": "cup_d70_h60mm",
+   "f": "0.7",
+   "raised": true,
+   "err": "Collision during home clearance retreat",
+   "verdict": "REJECT_EARLY",
+   "pen_mm": 0.9940494006663758,
+   "blocker_disp_mm": 0.06441442683758496,
+   "table_pen_mm": 0.0,
+   "q_err": 1.2454175573213075,
+   "elapsed": 0.05
+  },
+  {
+   "seed": 0,
+   "blocker": "cup_d70_h60mm",
+   "f": "0.85",
+   "raised": true,
+   "err": "Home path intersects table or object after clearance retreat",
+   "verdict": "REJECT_EARLY",
+   "pen_mm": 0.0,
+   "blocker_disp_mm": 0.039239999999995945,
+   "table_pen_mm": 0.0,
+   "q_err": 1.239019912141163,
+   "elapsed": 0.29
+  },
+  {
+   "seed": 0,
+   "blocker": "cup_d70_h60mm",
+   "f": "0.95",
+   "raised": true,
+   "err": "Home path intersects table or object after clearance retreat",
+   "verdict": "REJECT_EARLY",
+   "pen_mm": 0.0,
+   "blocker_disp_mm": 0.039239999999995945,
+   "table_pen_mm": 0.0,
+   "q_err": 1.239019912141163,
+   "elapsed": 0.33
+  },
+  {
+   "seed": 0,
+   "blocker": "cup_d70_h60mm",
+   "f": "above15",
+   "skipped": "blocker overlaps arm at start (-35.4 mm)"
+  },
+  {
+   "seed": 0,
+   "blocker": "cup_d70_h60mm",
+   "f": "above25",
+   "skipped": "blocker overlaps arm at start (-63.9 mm)"
+  }
+ ],
+ "summary": {
+  "REJECT_EARLY": 5
+ }
+}

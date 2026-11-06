@@ -1,0 +1,239 @@
+{
+ "tag": "b_stat_off_rst",
+ "load0": [
+  "0.98",
+  "1.06",
+  "0.74"
+ ],
+ "static": {
+  "rows": [
+   {
+    "pose": "rest",
+    "gap_mm": 7.5,
+    "left": {
+     "u1_deg": 0.43,
+     "u2_deg": 0.57,
+     "wrist_mm": 2.62,
+     "wrist_mm_actualS": 0.52
+    },
+    "right": {
+     "u1_deg": 0.43,
+     "u2_deg": 0.57,
+     "wrist_mm": 2.62,
+     "wrist_mm_actualS": 0.52
+    },
+    "lr_diff_u1": 0.0,
+    "lr_diff_u2": 0.0
+   },
+   {
+    "pose": "abd45",
+    "gap_mm": 110.2,
+    "left": {
+     "u1_deg": 0.69,
+     "u2_deg": 0.94,
+     "wrist_mm": 1.1,
+     "wrist_mm_actualS": 0.24
+    },
+    "right": {
+     "u1_deg": 0.69,
+     "u2_deg": 0.94,
+     "wrist_mm": 1.1,
+     "wrist_mm_actualS": 0.24
+    },
+    "lr_diff_u1": 0.0,
+    "lr_diff_u2": 0.0
+   },
+   {
+    "pose": "abd85",
+    "gap_mm": 161.3,
+    "left": {
+     "u1_deg": 0.61,
+     "u2_deg": 0.77,
+     "wrist_mm": 1.18,
+     "wrist_mm_actualS": 0.11
+    },
+    "right": {
+     "u1_deg": 0.61,
+     "u2_deg": 0.77,
+     "wrist_mm": 1.18,
+     "wrist_mm_actualS": 0.11
+    },
+    "lr_diff_u1": 0.0,
+    "lr_diff_u2": 0.0
+   },
+   {
+    "pose": "fwd45",
+    "gap_mm": 45.3,
+    "left": {
+     "u1_deg": 0.98,
+     "u2_deg": 1.34,
+     "wrist_mm": 11.29,
+     "wrist_mm_actualS": 0.3
+    },
+    "right": {
+     "u1_deg": 0.98,
+     "u2_deg": 1.34,
+     "wrist_mm": 11.29,
+     "wrist_mm_actualS": 0.3
+    },
+    "lr_diff_u1": 0.0,
+    "lr_diff_u2": 0.0
+   },
+   {
+    "pose": "fwd90",
+    "gap_mm": 79.3,
+    "left": {
+     "u1_deg": 1.09,
+     "u2_deg": 1.67,
+     "wrist_mm": 19.71,
+     "wrist_mm_actualS": 0.77
+    },
+    "right": {
+     "u1_deg": 1.09,
+     "u2_deg": 1.67,
+     "wrist_mm": 19.71,
+     "wrist_mm_actualS": 0.77
+    },
+    "lr_diff_u1": 0.0,
+    "lr_diff_u2": 0.0
+   },
+   {
+    "pose": "fwd90_el60",
+    "gap_mm": 78.0,
+    "left": {
+     "u1_deg": 0.17,
+     "u2_deg": 0.3,
+     "wrist_mm": 19.62,
+     "wrist_mm_actualS": 0.34
+    },
+    "right": {
+     "u1_deg": 0.17,
+     "u2_deg": 0.3,
+     "wrist_mm": 19.62,
+     "wrist_mm_actualS": 0.34
+    },
+    "lr_diff_u1": 0.0,
+    "lr_diff_u2": 0.0
+   },
+   {
+    "pose": "el90",
+    "gap_mm": 13.7,
+    "left": {
+     "u1_deg": 0.18,
+     "u2_deg": 0.26,
+     "wrist_mm": 4.32,
+     "wrist_mm_actualS": 0.74
+    },
+    "right": {
+     "u1_deg": 0.18,
+     "u2_deg": 0.26,
+     "wrist_mm": 4.32,
+     "wrist_mm_actualS": 0.74
+    },
+    "lr_diff_u1": 0.0,
+    "lr_diff_u2": 0.0
+   },
+   {
+    "pose": "fwd60_el100",
+    "gap_mm": 62.4,
+    "left": {
+     "u1_deg": 0.06,
+     "u2_deg": 0.49,
+     "wrist_mm": 12.99,
+     "wrist_mm_actualS": 1.16
+    },
+    "right": {
+     "u1_deg": 0.06,
+     "u2_deg": 0.49,
+     "wrist_mm": 12.99,
+     "wrist_mm_actualS": 1.16
+    },
+    "lr_diff_u1": 0.0,
+    "lr_diff_u2": 0.0
+   },
+   {
+    "pose": "abd60_el90",
+    "gap_mm": 137.5,
+    "left": {
+     "u1_deg": 0.33,
+     "u2_deg": 0.47,
+     "wrist_mm": 0.68,
+     "wrist_mm_actualS": 1.22
+    },
+    "right": {
+     "u1_deg": 0.33,
+     "u2_deg": 0.47,
+     "wrist_mm": 0.68,
+     "wrist_mm_actualS": 1.22
+    },
+    "lr_diff_u1": 0.0,
+    "lr_diff_u2": 0.0
+   },
+   {
+    "pose": "cross_chest",
+    "gap_mm": 4.9,
+    "left": {
+     "u1_deg": 1.1,
+     "u2_deg": 1.33,
+     "wrist_mm": 14.37,
+     "wrist_mm_actualS": 1.51
+    },
+    "right": {
+     "u1_deg": 1.1,
+     "u2_deg": 1.33,
+     "wrist_mm": 14.37,
+     "wrist_mm_actualS": 1.51
+    },
+    "lr_diff_u1": 0.0,
+    "lr_diff_u2": 0.0
+   },
+   {
+    "pose": "hum80",
+    "gap_mm": 158.8,
+    "left": {
+     "u1_deg": 1.18,
+     "u2_deg": 1.62,
+     "wrist_mm": 1.73,
+     "wrist_mm_actualS": 0.39
+    },
+    "right": {
+     "u1_deg": 1.18,
+     "u2_deg": 1.62,
+     "wrist_mm": 1.73,
+     "wrist_mm_actualS": 0.39
+    },
+    "lr_diff_u1": 0.0,
+    "lr_diff_u2": 0.0
+   },
+   {
+    "pose": "up120",
+    "gap_mm": 73.7,
+    "left": {
+     "u1_deg": 1.53,
+     "u2_deg": 2.1,
+     "wrist_mm": 24.42,
+     "wrist_mm_actualS": 0.36
+    },
+    "right": {
+     "u1_deg": 1.53,
+     "u2_deg": 2.1,
+     "wrist_mm": 24.42,
+     "wrist_mm_actualS": 0.36
+    },
+    "lr_diff_u1": 0.0,
+    "lr_diff_u2": 0.0
+   }
+  ],
+  "max_u1": 1.53,
+  "max_u2": 2.1,
+  "max_wrist_mm": 24.42,
+  "max_wrist_mm_actualS": 1.51,
+  "max_lr_diff": 0.0,
+  "mean_dir": 0.84
+ },
+ "load1": [
+  "0.81",
+  "1.04",
+  "0.76"
+ ]
+}

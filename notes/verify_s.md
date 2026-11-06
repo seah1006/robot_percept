@@ -107,3 +107,32 @@ I-S 보고(미독립): 최종 후보 runtime actual +12.185mm 침투 0·미인�
 - P1a PASS: 대칭 12자세 방향 1.53/2.10도, 손목 1.51mm, 비대칭 3.08도·1.59mm·좌우차 1.75도, IK p95 1.72ms, 30초 창 30.71fps(load 1.5~1.7, 절대 판정은 부모 조용한 창).
 - P1b PASS (OFF->ON 기준: 첫 40ms OFF 대조 이하 + 이후 가속비 <=1.0; 엄격 전 구간 <=1.0이면 최대 1.525로 FAIL, 참고): 기본 ON 속도/가속비 0.614/>=0.791(I-S 500Hz 0.618/0.784), 손 끊김 0.1도(-99.5%), 퇴화 복귀 0.13도·mixed_row 400, 토글 ON->OFF 속도 0.76(OFF 대조 0.78~1.04).
 - P1c FAIL, 기본 OFF 실험 기능으로 마감: 켜면 침투는 0이지만 팔이 거의 안 움직이거나(static 평균 35~45도 오차) 안전 목표를 추종하지 못함. 한계: rest clearance 약 7.5mm에서 정지 마진이 큼, clearance 45~79mm 자세도 추종 실패, 20Hz 폴링·근사 캡슐 기준, physical_stop_certified=False. P1a/P1b에는 영향 없음.
+
+## 2026-11-06 P1c 재설계 (집 PC) V-S2
+### 기준선 재현 (코드 8aad96e를 git archive로 /tmp/rp_s2base에 분리, 포트 5092, 측정 락 안, load 0.8~1.4, AMD RX 7600/Mesa D3D12, PERCEPTION=stub)
+스크립트 bench/verify_s2/ (base_s.py 사본 + job.sh), 원자료 bench/verify_s2/out_b_*.json. 내 독립 캡슐 torso118/upper53/fore45/hand57, status q 20Hz 폴링(500Hz 미관측), 합성 GT는 보조.
+| 항목 | 이 PC 재현 | 회사 수치 | 일치 |
+|-|-|-|-|
+| static OFF 순차 / rest독립 | 1.53/2.10도 평균 0.92 / 평균 0.84 | P1a 1.53/2.10 | 일치 |
+| static ON 순차 | 75.5/117.1도, 평균 35.4 | 75.6/117.1, 35.4 | 일치 |
+| static ON rest독립 | 77.4/42.0도, 평균 15.5 | 77.4/42.0, 15.7 | 일치 |
+| release | 0.64s에 8도 이내, 최종 1.3도 | 0.63s, 1.3도 | 일치 |
+| sweep OFF / ON 최소(침투프레임) | -41.6mm(116) / +16.2(0) | -41.1 / +16.8 | 일치(0.6mm 차) |
+| chest | -106.0(431) / +16.2(0) | -106.0 / +17.1 | 일치 |
+| jump | -106.0(276) / +16.2(0) | -106.0 / +17.1 | 일치 |
+| twist | -41.7(433) / +16.2(0) | -41.6 / +17.1 | 일치 |
+ON 팔 관절 범위: 4패턴 모두 0.0도 (OFF 88.3/21.5/54.2/3.5) = 동결. fps(ON 22s 창) 32.0~32.5, tick p95 최대 15.3ms(twist ON, 단일 창). 결론: 기준선은 회사와 같다(집/회사 차이 없음). 수락 (a)(b)(d) 미달 상태 그대로.
+### I-S2 설계 리뷰 (1차)
+rest독립 개선(39.6/4.81)은 진단이며 수락은 순차 기준. 순차 cross 이후 latch 번짐(96.5/15.9) 우선 수정, 3mm margin은 proxy-내캡슐 오프셋과 tracking overshoot 근거 필요, observed jerk 영구 latch 금지·hold 사유 카운터 노출, 경로 샘플 간격<45mm 스윕 확인, fwd60_el100 계속 대상. (I-S2에 직접 전달함)
+### 최종 후보 독립 재측정 (I-S2 sha256: collision 56cc4ed2 / env dd1b1139; 작업트리를 /tmp/rp_s2new로 동결 복사, 포트 5092, 락 안, load 0.7~2.5, AMD RX 7600)
+원자료 bench/verify_s2/out_n_*.json, 로그 log_n_*.txt. 내 독립 캡슐(118/53/45/57), 실제 status q 20Hz 폴링.
+| 기준 | 독립 측정 | 판정 |
+|-|-|-|
+| (a) static 12자세 ON 순차 / rest독립 | 1.93/2.25도 평균 1.00 / 1.53/2.10 평균 0.89 (OFF 1.53/2.10, 0.92). OFF clearance>=40mm 자세(fwd45/fwd90/fwd90_el60/fwd60_el100/abd*/hum80/up120) 오차 모두 <=2.1도. 얇은 자세 rest/el90/cross도 <=2.2도. 단 wrist_mm_actualS 9.71mm(OFF 1.51, 기준 10mm 직전) | PASS (직접 재현, 손목 오차는 여유 얇음) |
+| (b) release chest 3초->abd45 | 0.96s에 8도 이내, 최종 1.0도 (기준선 0.64s) | PASS |
+| (c) 4패턴 ON 최소거리(내 캡슐, 20Hz 폴링) | sweep +9.4 / chest +7.7 / jump +1.6 / twist +3.4 mm, 침투 프레임 0 (OFF -41.6/-106/-106/-40.8). jump·twist 마진 얇음. I-S2 자체 500Hz 모니터는 chest 31·twist 35 구간 미인증으로 스스로 (c) 미충족 보고 | 내 캡슐 침투 0 PASS(20Hz 한계), 연속 인증 미충족 -> 조건부 |
+| (d) 팔 실제 이동 | 관절 범위 최대 sweep 89.4 / chest 111.5 / jump 23.2 / twist 3.1도 (OFF 88.3/21.5/56.1/3.6). 기준선 0.0도 동결 해소. chest 111.5도는 고정 목표인데 OFF(21.5)보다 큼 -> 안전 경로 우회/진동 원인 미확인(요확인) | 대체로 PASS, twist 3.1도는 OFF와 같음, chest 이상치 |
+| (e) 서보 tick p95 <=20ms | 상태 tick_ms_p95 최대 sweep 62.2 / chest 197.1 / jump 207.7 / twist 121.6 ms (OFF 3.9~4.8). I-S2 자체 47.6/47.8보다 나쁨(내 측정은 status 보고값, 렌더 병행) | FAIL |
+| (e) G1 30fps·IK | ON 22s 창 fps sweep 33.2 / jump 32.2 / twist 32.2 (chest ON 영상 측정 실패). dyn 파트 30s 창은 MJPEG이 0.2~3초에서 끊겨 무효(ON tick p95 57~196ms), IK p95 0.5~0.6ms는 표본 4~64개뿐 | 판정 불가/불충분 |
+| (f) OFF 경로 불변 | 이 라운드 OFF 측정(static OFF 1.53/2.10, 4패턴 OFF 침투 수치)은 기준선과 동일. I-S2의 OFF np.array_equal 테스트는 미확인(내가 pytest 재현 안 함) | 부분 확인 |
+최종 판정: NEEDS WORK (P1c 기능 FAIL, 기본 OFF 유지). 핵심 개선(순차/독립 static, release, 팔 동결 해소, 침투 0)은 직접 재현했으나 (e) tick p95 20ms를 62~208ms로 크게 초과하고 연속 인증과 30fps 창 측정이 없어 수락 불가. 부트스트랩 CI: 이번 판정은 단일 반복 측정이며 A/B 차이 주장 없음(CI 미산출). 한계: 20Hz 폴링·근사 캡슐, 합성 입력, 단일 PC.

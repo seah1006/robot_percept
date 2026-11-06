@@ -1,0 +1,12 @@
+rest start 17.11 target 7.6 path 7.6 at 64 projtarget 7.6 projpath 7.6 accepted True
+abd45 start 17.11 target 110.21 path 17.11 at 0 projtarget 110.21 projpath 17.11 accepted True
+abd85 start 17.11 target 161.3 path 17.11 at 0 projtarget 161.3 projpath 17.11 accepted True
+fwd45 start 17.11 target 45.24 path 16.33 at 8 projtarget 45.24 projpath 16.33 accepted True
+fwd90 start 17.11 target 79.25 path 17.11 at 0 projtarget 79.25 projpath 17.11 accepted True
+fwd90_el60 start 17.11 target 78.03 path 17.11 at 0 projtarget 78.03 projpath 17.11 accepted True
+el90 start 17.11 target 13.7 path 12.69 at 43 projtarget 13.7 projpath 12.69 accepted True
+fwd60_el100 start 17.11 target 60.76 path 17.11 at 0 projtarget 60.76 projpath 17.11 accepted True
+abd60_el90 start 17.11 target 137.48 path 17.11 at 0 projtarget 137.48 projpath 17.11 accepted True
+cross_chest start 17.11 target 4.84 path -0.27 at 27 projtarget 4.84 projpath -0.27 accepted True
+hum80 start 17.11 target 158.79 path 17.11 at 0 projtarget 158.79 projpath 17.11 accepted True
+up120 start 17.11 target 69.91 path 17.11 at 0 projtarget 69.91 projpath 17.11 accepted True

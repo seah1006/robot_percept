@@ -1,0 +1,8 @@
+locked 20:14:35 load 1.28 1.02 0.63 1/557 3034 tag=b_stat_on_rst tree=/tmp/rp_s2base
+mode on 200
+=== part static
+collision_avoidance 1 200
+{'max_u1': 77.44, 'max_u2': 41.98, 'max_wrist_mm': 323.83, 'max_wrist_mm_actualS': 327.66, 'max_lr_diff': 0.15, 'mean_dir': 15.5}
+DONE
+5092 closed
+unlocked 20:15:42 load 0.94 1.01 0.65 1/561 5428

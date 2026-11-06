@@ -204,6 +204,7 @@ class HumanoidEnv:
         self.collision_monitor = None
         self.collision_reference_monitor = None
         self.collision_status = {}
+        self.collision_plan = None
         self.reset()
 
     def rest_q(self):
@@ -249,6 +250,7 @@ class HumanoidEnv:
         self.collision_braking=False
         self._collision_stop_goal=None
         self.collision_resume_goal=None;self.collision_released_at=-1e6;self.collision_constraints=[]
+        self.collision_plan=None;self._collision_prev_reference_a=None;self._collision_prev_update_t=None;self._collision_guard_counts={'margin':0,'path':0,'jerk':0,'lag':0}
         self.collision_status={'enabled':enabled,'experimental':True,'physical_stop_certified':False,'collision_state':'clear'}
 
     def request_collision_brake(self,reason):
@@ -262,11 +264,10 @@ class HumanoidEnv:
         self.collision_status['brake']={'reason':reason,'sim_time':float(self.data.time),'measured_certified':False}
 
     def update_collision_brake(self):
-        """Directional closing-speed margin; stationary/tangential motion is free.
+        """Predict closing motion and gate release on a validated proxy route.
 
-        Effective Cartesian deceleration is deliberately conservative (0.04 m/s2),
-        with 180ms jerk/PD/servo latency. These are empirical prototype settings,
-        NOT globally certified bounds. Previous 0.5m/s2+20ms allowed penetration.
+        The finite-sample route and empirical stopping model are not physical
+        safety certification. They only govern the opt-in capsule experiment.
         """
         if not self.collision_avoidance:return
         g=self.collision_model;g.forward(self.data.qpos)
@@ -278,34 +279,53 @@ class HumanoidEnv:
         rows=g.distances(True,.12);self.collision_constraints=rows
         critical_gap=min(row['distance'] for row in rows)
         resume_goal=getattr(self,'collision_resume_goal',None)
-        if resume_goal is None:can_release=False
+        plan=getattr(self,'collision_plan',None) or {}
+        path_min=float(plan.get('path_min',-1.))
+        if resume_goal is None or not plan.get('accepted') or path_min<.003:can_release=False
+        reference_a=np.zeros_like(reference_v) if self.setpoint is None else self.setpoint.acceleration[aids]
+        now=float(self.data.time)
+        previous_a=getattr(self,'_collision_prev_reference_a',None);previous_t=getattr(self,'_collision_prev_update_t',None)
+        if previous_a is None or previous_t is None or now<=previous_t:reference_j=np.zeros_like(reference_a)
+        else:reference_j=(reference_a-previous_a)/max(now-previous_t,1e-6)
+        self._collision_prev_reference_a=reference_a.copy();self._collision_prev_update_t=now
         for row in rows:
             if 'gradient' not in row:continue
             normal_velocity=-float(row['gradient']@actual_v)
             closing=max(0.,normal_velocity)
-            tracking=max(0.,-float(row['gradient']@(reference_q-self.data.qpos[g.qadr])))
-            pending=max(0.,-float(row['gradient']@reference_v)-closing)
-            effective_closing=max(closing,-float(row['gradient']@reference_v),0.)
-            required=.003+effective_closing**2/(2*.04)+effective_closing*.18+tracking
+            reference_closing=max(0.,-float(row['gradient']@reference_v))
+            accel_closing=max(0.,-float(row['gradient']@reference_a))
+            jerk_closing=max(0.,-float(row['gradient']@reference_j))
+            lag=max(0.,-float(row['gradient']@(reference_q-self.data.qpos[g.qadr])))
+            horizon=.06
+            predicted=max(closing,reference_closing)+accel_closing*horizon+.5*jerk_closing*horizon*horizon
+            required=.002+predicted*horizon+predicted**2/(2*.25)+min(lag,.01)
+            guard_required=.008
+            route_floor=min(row['distance'],path_min)
+            if required>.012:self._collision_guard_counts['margin']+=1
+            if accel_closing>0 or jerk_closing>0:self._collision_guard_counts['jerk']+=1
+            if lag>1e-4:self._collision_guard_counts['lag']+=1
             nearest=min(nearest,row['distance'])
             if resume_goal is not None and row['distance']<=critical_gap+.002:
                 directional=float(row['gradient']@(resume_goal[g.qadr]-self.data.qpos[g.qadr]))
-                if directional < -1e-5:can_release=False
                 if directional > 1e-4:improving=True
-            if normal_velocity>1e-4 or row['distance']<=.005:can_release=False
-            if closing>1e-5 and row['distance']<required:
-                risk={'pair':row['pair'],'distance':row['distance'],'closing_speed':closing,'reference_closing_speed':effective_closing,'required_margin':required,'tracking_normal':tracking,'margin_method':'directional-current-speed-with-jerk-tracking-latency','effective_deceleration':.04,'latency_s':.18}
+                elif route_floor<guard_required:can_release=False
+            if row['distance']<=.002 or (normal_velocity>1e-4 and route_floor<guard_required):can_release=False
+            if closing>1e-5 and route_floor<guard_required:
+                self._collision_guard_counts['path']+=1
+                risk={'pair':row['pair'],'distance':row['distance'],'closing_speed':closing,'reference_closing_speed':reference_closing,'reference_accel_closing':accel_closing,'required_margin':required,'guard_required':guard_required,'tracking_normal':lag,'planned_path_min':path_min,'margin_method':'planned-route-plus-reference-accel-jerk-tracking-lag','effective_deceleration':.25,'latency_s':horizon}
                 break
         if self.collision_braking:
             # Do not cancel an in-flight stop. Re-arm only after settling and
             # separating/stationary clearance > static(3mm)+hysteresis(2mm).
             settled=float(np.max(np.abs(actual_v)))<.02
-            if can_release and settled and improving:
+            held_s=float(self.data.time)-float((self.collision_status.get('brake') or {}).get('sim_time',-1e6))
+            if held_s>=.08 and can_release and settled and (improving or path_min>=required):
                 self.collision_braking=False;self._collision_stop_goal=None
                 self.collision_released_at=float(self.data.time)
                 self.collision_status['collision_state']='clear'
-                self.collision_status['release']={'sim_time':float(self.data.time),'clearance':nearest,'hysteresis':.002,'goal_direction':'increasing-clearance'}
+                self.collision_status['release']={'sim_time':float(self.data.time),'clearance':nearest,'hysteresis':.002,'goal_direction':'increasing-or-validated-route','planned_path_min':path_min}
             return
+        self.collision_status['guard_counts']=dict(self._collision_guard_counts)
         if risk is not None:self.request_collision_brake(risk)
 
     def set_safety_brake(self, enabled):

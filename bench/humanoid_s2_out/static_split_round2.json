@@ -1,0 +1,1335 @@
+{
+  "note": "synthetic GT auxiliary; MESH capsule proxy, not physical safety certification",
+  "load0": "1.74 1.65 1.38 1/564 37353",
+  "cases": [
+    {
+      "enabled": false,
+      "reset_each": false,
+      "rows": [
+        {
+          "pose": "rest",
+          "clearance_mm": 7.598112255560522,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {},
+          "brake": null,
+          "left": {
+            "u1_deg": 0.3920615058057398,
+            "u2_deg": 0.5779512285883728
+          },
+          "right": {
+            "u1_deg": 0.3920615054692179,
+            "u2_deg": 0.5779512287504437
+          }
+        },
+        {
+          "pose": "abd45",
+          "clearance_mm": 110.25293711950572,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {},
+          "brake": null,
+          "left": {
+            "u1_deg": 0.6861628521100832,
+            "u2_deg": 0.9856557540171038
+          },
+          "right": {
+            "u1_deg": 0.6861628535384162,
+            "u2_deg": 0.9856557522872401
+          }
+        },
+        {
+          "pose": "abd85",
+          "clearance_mm": 161.30036008575237,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {},
+          "brake": null,
+          "left": {
+            "u1_deg": 1.3752143881348866,
+            "u2_deg": 1.8799723504734556
+          },
+          "right": {
+            "u1_deg": 1.3752143879705558,
+            "u2_deg": 1.8799723506867476
+          }
+        },
+        {
+          "pose": "fwd45",
+          "clearance_mm": 45.24067621279941,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {},
+          "brake": null,
+          "left": {
+            "u1_deg": 0.9423679619737022,
+            "u2_deg": 1.3798615833490713
+          },
+          "right": {
+            "u1_deg": 0.9423679633022626,
+            "u2_deg": 1.3798615816935997
+          }
+        },
+        {
+          "pose": "fwd90",
+          "clearance_mm": 79.36664825280255,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {},
+          "brake": null,
+          "left": {
+            "u1_deg": 1.0960112885989892,
+            "u2_deg": 1.658381304875069
+          },
+          "right": {
+            "u1_deg": 1.0960112886485402,
+            "u2_deg": 1.6583813047396712
+          }
+        },
+        {
+          "pose": "fwd90_el60",
+          "clearance_mm": 77.96402426744521,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {},
+          "brake": null,
+          "left": {
+            "u1_deg": 0.1609122349356311,
+            "u2_deg": 0.3486429139899143
+          },
+          "right": {
+            "u1_deg": 0.1609122347159267,
+            "u2_deg": 0.3486429146453723
+          }
+        },
+        {
+          "pose": "el90",
+          "clearance_mm": 13.636873274761832,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {},
+          "brake": null,
+          "left": {
+            "u1_deg": 0.16172303424435408,
+            "u2_deg": 0.3269730440990016
+          },
+          "right": {
+            "u1_deg": 0.16172303491593826,
+            "u2_deg": 0.32697304383148107
+          }
+        },
+        {
+          "pose": "fwd60_el100",
+          "clearance_mm": 61.76384131947046,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {},
+          "brake": null,
+          "left": {
+            "u1_deg": 0.07269689389566684,
+            "u2_deg": 0.536816240745066
+          },
+          "right": {
+            "u1_deg": 0.07269689373523532,
+            "u2_deg": 0.5368162406561238
+          }
+        },
+        {
+          "pose": "abd60_el90",
+          "clearance_mm": 137.44051887330465,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {},
+          "brake": null,
+          "left": {
+            "u1_deg": 0.34678693088387336,
+            "u2_deg": 0.5083688241785653
+          },
+          "right": {
+            "u1_deg": 0.34678693154914514,
+            "u2_deg": 0.5083688235153967
+          }
+        },
+        {
+          "pose": "cross_chest",
+          "clearance_mm": 4.870391479190592,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {},
+          "brake": null,
+          "left": {
+            "u1_deg": 1.0663889897373655,
+            "u2_deg": 1.334959632681424
+          },
+          "right": {
+            "u1_deg": 1.0663889898217886,
+            "u2_deg": 1.3349596324785549
+          }
+        },
+        {
+          "pose": "hum80",
+          "clearance_mm": 158.78736620110823,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {},
+          "brake": null,
+          "left": {
+            "u1_deg": 1.180290221137886,
+            "u2_deg": 1.6498190475713321
+          },
+          "right": {
+            "u1_deg": 1.180290221844453,
+            "u2_deg": 1.649819045904542
+          }
+        },
+        {
+          "pose": "up120",
+          "clearance_mm": 73.73337495620076,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {},
+          "brake": null,
+          "left": {
+            "u1_deg": 1.503787749332785,
+            "u2_deg": 2.127135126936142
+          },
+          "right": {
+            "u1_deg": 1.503787750094139,
+            "u2_deg": 2.127135126168874
+          }
+        }
+      ],
+      "max_dir_deg": 2.127135126936142,
+      "mean_dir_deg": 0.9291225459012322,
+      "safe4_mean_dir_deg": 1.1646322686715584,
+      "holding_ticks": 0
+    },
+    {
+      "enabled": false,
+      "reset_each": true,
+      "rows": [
+        {
+          "pose": "rest",
+          "clearance_mm": 7.598112255560522,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {},
+          "brake": null,
+          "left": {
+            "u1_deg": 0.3920615058057398,
+            "u2_deg": 0.5779512285883728
+          },
+          "right": {
+            "u1_deg": 0.3920615054692179,
+            "u2_deg": 0.5779512287504437
+          }
+        },
+        {
+          "pose": "abd45",
+          "clearance_mm": 110.21142406486777,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {},
+          "brake": null,
+          "left": {
+            "u1_deg": 1.0296374280732963,
+            "u2_deg": 1.4803560174332528
+          },
+          "right": {
+            "u1_deg": 1.0296374277023117,
+            "u2_deg": 1.4803560174546748
+          }
+        },
+        {
+          "pose": "abd85",
+          "clearance_mm": 161.30201071860517,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {},
+          "brake": null,
+          "left": {
+            "u1_deg": 0.8957578770195905,
+            "u2_deg": 1.3167236524417356
+          },
+          "right": {
+            "u1_deg": 0.8957578772332105,
+            "u2_deg": 1.3167236521566097
+          }
+        },
+        {
+          "pose": "fwd45",
+          "clearance_mm": 45.240623452752466,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {},
+          "brake": null,
+          "left": {
+            "u1_deg": 0.9423679198101835,
+            "u2_deg": 1.3798614412091437
+          },
+          "right": {
+            "u1_deg": 0.9423679202766301,
+            "u2_deg": 1.3798614406311682
+          }
+        },
+        {
+          "pose": "fwd90",
+          "clearance_mm": 79.25024977135507,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {},
+          "brake": null,
+          "left": {
+            "u1_deg": 1.1758966391255514,
+            "u2_deg": 1.7678151874036336
+          },
+          "right": {
+            "u1_deg": 1.1758966401933912,
+            "u2_deg": 1.7678151862447928
+          }
+        },
+        {
+          "pose": "fwd90_el60",
+          "clearance_mm": 78.03470708201402,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {},
+          "brake": null,
+          "left": {
+            "u1_deg": 0.16923253843008057,
+            "u2_deg": 0.28253348277296414
+          },
+          "right": {
+            "u1_deg": 0.1692325397997929,
+            "u2_deg": 0.2825334814429814
+          }
+        },
+        {
+          "pose": "el90",
+          "clearance_mm": 13.705006156169361,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {},
+          "brake": null,
+          "left": {
+            "u1_deg": 0.2078503932420845,
+            "u2_deg": 0.4059924669817228
+          },
+          "right": {
+            "u1_deg": 0.2078503935138769,
+            "u2_deg": 0.4059924663622956
+          }
+        },
+        {
+          "pose": "fwd60_el100",
+          "clearance_mm": 60.75768044901544,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {},
+          "brake": null,
+          "left": {
+            "u1_deg": 0.1282818107253949,
+            "u2_deg": 0.5898527697436559
+          },
+          "right": {
+            "u1_deg": 0.12828181085892792,
+            "u2_deg": 0.5898527691455268
+          }
+        },
+        {
+          "pose": "abd60_el90",
+          "clearance_mm": 137.48395151937342,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {},
+          "brake": null,
+          "left": {
+            "u1_deg": 0.19202967676279648,
+            "u2_deg": 0.2329003590172876
+          },
+          "right": {
+            "u1_deg": 0.19202967705318494,
+            "u2_deg": 0.23290035867300965
+          }
+        },
+        {
+          "pose": "cross_chest",
+          "clearance_mm": 4.84450698793655,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {},
+          "brake": null,
+          "left": {
+            "u1_deg": 0.351275653154924,
+            "u2_deg": 0.5380190584676494
+          },
+          "right": {
+            "u1_deg": 0.351275653449589,
+            "u2_deg": 0.5380190581411283
+          }
+        },
+        {
+          "pose": "hum80",
+          "clearance_mm": 158.78736892067562,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {},
+          "brake": null,
+          "left": {
+            "u1_deg": 1.1802898823904766,
+            "u2_deg": 1.6498134315789952
+          },
+          "right": {
+            "u1_deg": 1.1802898829163875,
+            "u2_deg": 1.6498134304150662
+          }
+        },
+        {
+          "pose": "up120",
+          "clearance_mm": 73.73337362296604,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {},
+          "brake": null,
+          "left": {
+            "u1_deg": 1.5037883268761945,
+            "u2_deg": 2.127134925401972
+          },
+          "right": {
+            "u1_deg": 1.5037883279310855,
+            "u2_deg": 2.127134924300341
+          }
+        }
+      ],
+      "max_dir_deg": 2.127134925401972,
+      "mean_dir_deg": 0.8548926529702571,
+      "safe4_mean_dir_deg": 1.2018748774923496,
+      "holding_ticks": 0
+    },
+    {
+      "enabled": true,
+      "reset_each": false,
+      "rows": [
+        {
+          "pose": "rest",
+          "clearance_mm": 12.2107698374785,
+          "holding_ticks": 96,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.007598133546517075,
+            "distance": 0.007598133546517075,
+            "start_gap": 0.011591740840029521,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": {
+            "reason": {
+              "pair": [
+                "torso",
+                "right_hand"
+              ],
+              "distance": 0.04074994960241481,
+              "closing_speed": 0.00798816775958418,
+              "reference_closing_speed": 0.00840461940303852,
+              "reference_accel_closing": 0.08195151772666628,
+              "required_margin": 0.007782835118641785,
+              "guard_required": 0.007782835118641785,
+              "tracking_normal": 0.0003683446746820407,
+              "planned_path_min": 0.007598133546517075,
+              "margin_method": "planned-route-plus-reference-accel-jerk-tracking-lag",
+              "effective_deceleration": 0.25,
+              "latency_s": 0.06
+            },
+            "sim_time": 3.799999999999803,
+            "measured_certified": false
+          },
+          "left": {
+            "u1_deg": 1.5632689527297863,
+            "u2_deg": 1.3428606491266735
+          },
+          "right": {
+            "u1_deg": 1.5779623119829123,
+            "u2_deg": 1.347773440445727
+          }
+        },
+        {
+          "pose": "abd45",
+          "clearance_mm": 110.25296893911472,
+          "holding_ticks": 5,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.11025293280231756,
+            "distance": 0.11025293280231756,
+            "start_gap": 0.11067676709157757,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": {
+            "reason": {
+              "pair": [
+                "torso",
+                "left_hand"
+              ],
+              "distance": 0.04004526640734509,
+              "closing_speed": 0.00776440776786783,
+              "reference_closing_speed": 0.008523403334829614,
+              "reference_accel_closing": 0.10327446530082623,
+              "required_margin": 0.008478339865076167,
+              "guard_required": 0.008478339865076167,
+              "tracking_normal": 0.0003669582281043114,
+              "planned_path_min": 0.007598133546517075,
+              "margin_method": "planned-route-plus-reference-accel-jerk-tracking-lag",
+              "effective_deceleration": 0.25,
+              "latency_s": 0.06
+            },
+            "sim_time": 3.999999999999781,
+            "measured_certified": false
+          },
+          "left": {
+            "u1_deg": 0.6861626639461719,
+            "u2_deg": 0.9856568817340939
+          },
+          "right": {
+            "u1_deg": 0.6861630971990247,
+            "u2_deg": 0.985656471246488
+          }
+        },
+        {
+          "pose": "abd85",
+          "clearance_mm": 161.30036024285783,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.16130035999235304,
+            "distance": 0.16130035999235304,
+            "start_gap": 0.16130553946866377,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": {
+            "reason": {
+              "pair": [
+                "torso",
+                "left_hand"
+              ],
+              "distance": 0.04004526640734509,
+              "closing_speed": 0.00776440776786783,
+              "reference_closing_speed": 0.008523403334829614,
+              "reference_accel_closing": 0.10327446530082623,
+              "required_margin": 0.008478339865076167,
+              "guard_required": 0.008478339865076167,
+              "tracking_normal": 0.0003669582281043114,
+              "planned_path_min": 0.007598133546517075,
+              "margin_method": "planned-route-plus-reference-accel-jerk-tracking-lag",
+              "effective_deceleration": 0.25,
+              "latency_s": 0.06
+            },
+            "sim_time": 3.999999999999781,
+            "measured_certified": false
+          },
+          "left": {
+            "u1_deg": 1.3752143058476545,
+            "u2_deg": 1.8799728503634228
+          },
+          "right": {
+            "u1_deg": 1.3752146253251678,
+            "u2_deg": 1.8799731363681726
+          }
+        },
+        {
+          "pose": "fwd45",
+          "clearance_mm": 45.240675989415934,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.0448920430620328,
+            "distance": 0.04524054398988918,
+            "start_gap": 0.0448920430620328,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": {
+            "reason": {
+              "pair": [
+                "torso",
+                "left_hand"
+              ],
+              "distance": 0.04004526640734509,
+              "closing_speed": 0.00776440776786783,
+              "reference_closing_speed": 0.008523403334829614,
+              "reference_accel_closing": 0.10327446530082623,
+              "required_margin": 0.008478339865076167,
+              "guard_required": 0.008478339865076167,
+              "tracking_normal": 0.0003669582281043114,
+              "planned_path_min": 0.007598133546517075,
+              "margin_method": "planned-route-plus-reference-accel-jerk-tracking-lag",
+              "effective_deceleration": 0.25,
+              "latency_s": 0.06
+            },
+            "sim_time": 3.999999999999781,
+            "measured_certified": false
+          },
+          "left": {
+            "u1_deg": 0.9423674885044374,
+            "u2_deg": 1.379861968505886
+          },
+          "right": {
+            "u1_deg": 0.9423679421748646,
+            "u2_deg": 1.3798614003263685
+          }
+        },
+        {
+          "pose": "fwd90",
+          "clearance_mm": 79.36664800227085,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.0792764699869367,
+            "distance": 0.07936664826339236,
+            "start_gap": 0.0792764699869367,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": {
+            "reason": {
+              "pair": [
+                "torso",
+                "left_hand"
+              ],
+              "distance": 0.04004526640734509,
+              "closing_speed": 0.00776440776786783,
+              "reference_closing_speed": 0.008523403334829614,
+              "reference_accel_closing": 0.10327446530082623,
+              "required_margin": 0.008478339865076167,
+              "guard_required": 0.008478339865076167,
+              "tracking_normal": 0.0003669582281043114,
+              "planned_path_min": 0.007598133546517075,
+              "margin_method": "planned-route-plus-reference-accel-jerk-tracking-lag",
+              "effective_deceleration": 0.25,
+              "latency_s": 0.06
+            },
+            "sim_time": 3.999999999999781,
+            "measured_certified": false
+          },
+          "left": {
+            "u1_deg": 1.0960110997275063,
+            "u2_deg": 1.658381375154576
+          },
+          "right": {
+            "u1_deg": 1.0960111678872035,
+            "u2_deg": 1.6583813574079787
+          }
+        },
+        {
+          "pose": "fwd90_el60",
+          "clearance_mm": 77.96402373505136,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.07796402408770801,
+            "distance": 0.07796402408770801,
+            "start_gap": 0.07796403333914988,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": {
+            "reason": {
+              "pair": [
+                "torso",
+                "left_hand"
+              ],
+              "distance": 0.04004526640734509,
+              "closing_speed": 0.00776440776786783,
+              "reference_closing_speed": 0.008523403334829614,
+              "reference_accel_closing": 0.10327446530082623,
+              "required_margin": 0.008478339865076167,
+              "guard_required": 0.008478339865076167,
+              "tracking_normal": 0.0003669582281043114,
+              "planned_path_min": 0.007598133546517075,
+              "margin_method": "planned-route-plus-reference-accel-jerk-tracking-lag",
+              "effective_deceleration": 0.25,
+              "latency_s": 0.06
+            },
+            "sim_time": 3.999999999999781,
+            "measured_certified": false
+          },
+          "left": {
+            "u1_deg": 0.16091197038641428,
+            "u2_deg": 0.3486421720692033
+          },
+          "right": {
+            "u1_deg": 0.1609125158081949,
+            "u2_deg": 0.34864286990382687
+          }
+        },
+        {
+          "pose": "el90",
+          "clearance_mm": 13.636850141533666,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.013636753568022283,
+            "distance": 0.013636753568022283,
+            "start_gap": 0.014568255989839227,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": {
+            "reason": {
+              "pair": [
+                "torso",
+                "left_hand"
+              ],
+              "distance": 0.04004526640734509,
+              "closing_speed": 0.00776440776786783,
+              "reference_closing_speed": 0.008523403334829614,
+              "reference_accel_closing": 0.10327446530082623,
+              "required_margin": 0.008478339865076167,
+              "guard_required": 0.008478339865076167,
+              "tracking_normal": 0.0003669582281043114,
+              "planned_path_min": 0.007598133546517075,
+              "margin_method": "planned-route-plus-reference-accel-jerk-tracking-lag",
+              "effective_deceleration": 0.25,
+              "latency_s": 0.06
+            },
+            "sim_time": 3.999999999999781,
+            "measured_certified": false
+          },
+          "left": {
+            "u1_deg": 0.16172299141846222,
+            "u2_deg": 0.32697370034184914
+          },
+          "right": {
+            "u1_deg": 0.16172301892412105,
+            "u2_deg": 0.3269737971093956
+          }
+        },
+        {
+          "pose": "fwd60_el100",
+          "clearance_mm": 61.76383856995326,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.06137998731375304,
+            "distance": 0.06176383775077789,
+            "start_gap": 0.06137998731375304,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": {
+            "reason": {
+              "pair": [
+                "torso",
+                "left_hand"
+              ],
+              "distance": 0.04004526640734509,
+              "closing_speed": 0.00776440776786783,
+              "reference_closing_speed": 0.008523403334829614,
+              "reference_accel_closing": 0.10327446530082623,
+              "required_margin": 0.008478339865076167,
+              "guard_required": 0.008478339865076167,
+              "tracking_normal": 0.0003669582281043114,
+              "planned_path_min": 0.007598133546517075,
+              "margin_method": "planned-route-plus-reference-accel-jerk-tracking-lag",
+              "effective_deceleration": 0.25,
+              "latency_s": 0.06
+            },
+            "sim_time": 3.999999999999781,
+            "measured_certified": false
+          },
+          "left": {
+            "u1_deg": 0.07269677058387498,
+            "u2_deg": 0.5368157069019497
+          },
+          "right": {
+            "u1_deg": 0.07269715639126233,
+            "u2_deg": 0.5368160377960738
+          }
+        },
+        {
+          "pose": "abd60_el90",
+          "clearance_mm": 137.44051872148617,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.13744051393215562,
+            "distance": 0.13744051393215562,
+            "start_gap": 0.13800766244234997,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": {
+            "reason": {
+              "pair": [
+                "torso",
+                "left_hand"
+              ],
+              "distance": 0.04004526640734509,
+              "closing_speed": 0.00776440776786783,
+              "reference_closing_speed": 0.008523403334829614,
+              "reference_accel_closing": 0.10327446530082623,
+              "required_margin": 0.008478339865076167,
+              "guard_required": 0.008478339865076167,
+              "tracking_normal": 0.0003669582281043114,
+              "planned_path_min": 0.007598133546517075,
+              "margin_method": "planned-route-plus-reference-accel-jerk-tracking-lag",
+              "effective_deceleration": 0.25,
+              "latency_s": 0.06
+            },
+            "sim_time": 3.999999999999781,
+            "measured_certified": false
+          },
+          "left": {
+            "u1_deg": 0.34678677020124604,
+            "u2_deg": 0.5083694372285427
+          },
+          "right": {
+            "u1_deg": 0.34678661404197647,
+            "u2_deg": 0.5083689430707179
+          }
+        },
+        {
+          "pose": "cross_chest",
+          "clearance_mm": 116.09449399317127,
+          "holding_ticks": 178,
+          "state": "holding",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.004870355802723533,
+            "distance": 0.004870355802723561,
+            "start_gap": 0.1154688372453057,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false
+          },
+          "brake": {
+            "reason": {
+              "pair": [
+                "torso",
+                "left_fore"
+              ],
+              "distance": 0.11637567468556691,
+              "closing_speed": 0.006470942773873753,
+              "reference_closing_speed": 0.01701432807501839,
+              "reference_accel_closing": 0.6066520653324272,
+              "required_margin": 0.014372092208380522,
+              "guard_required": 0.012,
+              "tracking_normal": 0.00015182709725356213,
+              "planned_path_min": 0.004870355802723533,
+              "margin_method": "planned-route-plus-reference-accel-jerk-tracking-lag",
+              "effective_deceleration": 0.25,
+              "latency_s": 0.06
+            },
+            "sim_time": 39.78000000000265,
+            "measured_certified": false
+          },
+          "left": {
+            "u1_deg": 74.80487905245501,
+            "u2_deg": 10.58344853386178
+          },
+          "right": {
+            "u1_deg": 74.80501988413313,
+            "u2_deg": 10.583436345172437
+          }
+        },
+        {
+          "pose": "hum80",
+          "clearance_mm": 158.7873624937002,
+          "holding_ticks": 25,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.1587867708456261,
+            "distance": 0.1587873683146847,
+            "start_gap": 0.1587867708456261,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": {
+            "reason": {
+              "pair": [
+                "torso",
+                "left_fore"
+              ],
+              "distance": 0.11637567468556691,
+              "closing_speed": 0.006470942773873753,
+              "reference_closing_speed": 0.01701432807501839,
+              "reference_accel_closing": 0.6066520653324272,
+              "required_margin": 0.014372092208380522,
+              "guard_required": 0.012,
+              "tracking_normal": 0.00015182709725356213,
+              "planned_path_min": 0.004870355802723533,
+              "margin_method": "planned-route-plus-reference-accel-jerk-tracking-lag",
+              "effective_deceleration": 0.25,
+              "latency_s": 0.06
+            },
+            "sim_time": 39.78000000000265,
+            "measured_certified": false
+          },
+          "left": {
+            "u1_deg": 1.1802892305646497,
+            "u2_deg": 1.6498189021198182
+          },
+          "right": {
+            "u1_deg": 1.1802892797810427,
+            "u2_deg": 1.6498188681945412
+          }
+        },
+        {
+          "pose": "up120",
+          "clearance_mm": 73.73337366173148,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.07353279529376926,
+            "distance": 0.07373337436686327,
+            "start_gap": 0.07353279529376926,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": {
+            "reason": {
+              "pair": [
+                "torso",
+                "left_fore"
+              ],
+              "distance": 0.11637567468556691,
+              "closing_speed": 0.006470942773873753,
+              "reference_closing_speed": 0.01701432807501839,
+              "reference_accel_closing": 0.6066520653324272,
+              "required_margin": 0.014372092208380522,
+              "guard_required": 0.012,
+              "tracking_normal": 0.00015182709725356213,
+              "planned_path_min": 0.004870355802723533,
+              "margin_method": "planned-route-plus-reference-accel-jerk-tracking-lag",
+              "effective_deceleration": 0.25,
+              "latency_s": 0.06
+            },
+            "sim_time": 39.78000000000265,
+            "measured_certified": false
+          },
+          "left": {
+            "u1_deg": 1.5037882547771166,
+            "u2_deg": 2.1271349141414464
+          },
+          "right": {
+            "u1_deg": 1.5037881817605805,
+            "u2_deg": 2.1271348733552258
+          }
+        }
+      ],
+      "max_dir_deg": 74.80501988413313,
+      "mean_dir_deg": 4.467996041218709,
+      "safe4_mean_dir_deg": 1.1646322309622719,
+      "holding_ticks": 304
+    },
+    {
+      "enabled": true,
+      "reset_each": true,
+      "rows": [
+        {
+          "pose": "rest",
+          "clearance_mm": 12.2107698374785,
+          "holding_ticks": 96,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.007598133546517075,
+            "distance": 0.007598133546517075,
+            "start_gap": 0.011591740840029521,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": {
+            "reason": {
+              "pair": [
+                "torso",
+                "right_hand"
+              ],
+              "distance": 0.04074994960241481,
+              "closing_speed": 0.00798816775958418,
+              "reference_closing_speed": 0.00840461940303852,
+              "reference_accel_closing": 0.08195151772666628,
+              "required_margin": 0.007782835118641785,
+              "guard_required": 0.007782835118641785,
+              "tracking_normal": 0.0003683446746820407,
+              "planned_path_min": 0.007598133546517075,
+              "margin_method": "planned-route-plus-reference-accel-jerk-tracking-lag",
+              "effective_deceleration": 0.25,
+              "latency_s": 0.06
+            },
+            "sim_time": 3.799999999999803,
+            "measured_certified": false
+          },
+          "left": {
+            "u1_deg": 1.5632689527297863,
+            "u2_deg": 1.3428606491266735
+          },
+          "right": {
+            "u1_deg": 1.5779623119829123,
+            "u2_deg": 1.347773440445727
+          }
+        },
+        {
+          "pose": "abd45",
+          "clearance_mm": 110.21142270556332,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.11021142438068775,
+            "distance": 0.11021142438068775,
+            "start_gap": 0.11030782093235535,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 1.0296374349407584,
+            "u2_deg": 1.480356105766356
+          },
+          "right": {
+            "u1_deg": 1.0296374332833638,
+            "u2_deg": 1.4803561286606444
+          }
+        },
+        {
+          "pose": "abd85",
+          "clearance_mm": 161.30201075320062,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.1613020104316139,
+            "distance": 0.1613020104316139,
+            "start_gap": 0.16135251133584022,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 0.8957578357071145,
+            "u2_deg": 1.3167237027395629
+          },
+          "right": {
+            "u1_deg": 0.8957578356757837,
+            "u2_deg": 1.3167237027968646
+          }
+        },
+        {
+          "pose": "fwd45",
+          "clearance_mm": 45.24063473734959,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.04524054398988912,
+            "distance": 0.04524054398988912,
+            "start_gap": 0.046079540895222995,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 0.942367915896055,
+            "u2_deg": 1.379861837621193
+          },
+          "right": {
+            "u1_deg": 0.9423679117193083,
+            "u2_deg": 1.3798617902179817
+          }
+        },
+        {
+          "pose": "fwd90",
+          "clearance_mm": 79.25024948913772,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.07925024968719067,
+            "distance": 0.07925024968719067,
+            "start_gap": 0.07966852150715599,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 1.1758965628991531,
+            "u2_deg": 1.767815232429143
+          },
+          "right": {
+            "u1_deg": 1.1758966806733488,
+            "u2_deg": 1.7678150965267827
+          }
+        },
+        {
+          "pose": "fwd90_el60",
+          "clearance_mm": 78.03470631887545,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.07801968219944165,
+            "distance": 0.07803470669925884,
+            "start_gap": 0.07801968219944165,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 0.16923222312674085,
+            "u2_deg": 0.2825339064888857
+          },
+          "right": {
+            "u1_deg": 0.1692322249982538,
+            "u2_deg": 0.28253390459130895
+          }
+        },
+        {
+          "pose": "el90",
+          "clearance_mm": 13.70501912627327,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.013704990786365542,
+            "distance": 0.013704990786365542,
+            "start_gap": 0.015461810955102198,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 0.2078504088096507,
+            "u2_deg": 0.405992466190831
+          },
+          "right": {
+            "u1_deg": 0.2078501619308492,
+            "u2_deg": 0.40599266968427294
+          }
+        },
+        {
+          "pose": "fwd60_el100",
+          "clearance_mm": 60.7576781304323,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.06075767684031865,
+            "distance": 0.06075767684031865,
+            "start_gap": 0.06077911286164658,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 0.1282809260207045,
+            "u2_deg": 0.5898537271621274
+          },
+          "right": {
+            "u1_deg": 0.1282809397860631,
+            "u2_deg": 0.5898537360314771
+          }
+        },
+        {
+          "pose": "abd60_el90",
+          "clearance_mm": 137.48395050244,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.13748276564961553,
+            "distance": 0.1374839475982128,
+            "start_gap": 0.13748276564961553,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 0.1920302164499823,
+            "u2_deg": 0.23290043427643617
+          },
+          "right": {
+            "u1_deg": 0.19203021690549238,
+            "u2_deg": 0.23290043392120405
+          }
+        },
+        {
+          "pose": "cross_chest",
+          "clearance_mm": 15.704762321357798,
+          "holding_ticks": 187,
+          "state": "holding",
+          "plan": {
+            "accepted": true,
+            "route": "projected_waypoint",
+            "path_min": 0.004623274005725833,
+            "first_min": 0.012984399206735178,
+            "second_min": 0.004623274005725833,
+            "distance": 0.020000000000000004,
+            "waypoint_margin": 0.02,
+            "endpoint_modified": false,
+            "modified": true
+          },
+          "brake": {
+            "reason": {
+              "pair": [
+                "torso",
+                "left_fore"
+              ],
+              "distance": 0.015834979483891856,
+              "closing_speed": 0.0003314395783078886,
+              "reference_closing_speed": 0.012458651901984977,
+              "reference_accel_closing": 0.49458511017155016,
+              "required_margin": 0.009242741608711759,
+              "guard_required": 0.009242741608711759,
+              "tracking_normal": 0.00011834847935857752,
+              "planned_path_min": 0.004623274005725833,
+              "margin_method": "planned-route-plus-reference-accel-jerk-tracking-lag",
+              "effective_deceleration": 0.25,
+              "latency_s": 0.06
+            },
+            "sim_time": 3.4399999999998427,
+            "measured_certified": false
+          },
+          "left": {
+            "u1_deg": 67.12698197241056,
+            "u2_deg": 88.06855836725852
+          },
+          "right": {
+            "u1_deg": 67.12700426774312,
+            "u2_deg": 88.0685643708602
+          }
+        },
+        {
+          "pose": "hum80",
+          "clearance_mm": 158.78736892610962,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.15878736831468476,
+            "distance": 0.15878736831468476,
+            "start_gap": 0.15882082222580685,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 1.1802899324384792,
+            "u2_deg": 1.6498133337055654
+          },
+          "right": {
+            "u1_deg": 1.1802899208801747,
+            "u2_deg": 1.6498133619929272
+          }
+        },
+        {
+          "pose": "up120",
+          "clearance_mm": 73.73337362296604,
+          "holding_ticks": 0,
+          "state": "clear",
+          "plan": {
+            "accepted": true,
+            "route": "direct",
+            "path_min": 0.07364571682892164,
+            "distance": 0.07373337436685444,
+            "start_gap": 0.07364571682892164,
+            "samples": 48,
+            "endpoint_modified": false,
+            "modified": false,
+            "cache_hit": true
+          },
+          "brake": null,
+          "left": {
+            "u1_deg": 1.5037883268761945,
+            "u2_deg": 2.127134925401972
+          },
+          "right": {
+            "u1_deg": 1.5037883279310855,
+            "u2_deg": 2.127134924300341
+          }
+        }
+      ],
+      "max_dir_deg": 88.0685643708602,
+      "mean_dir_deg": 7.365400191458583,
+      "safe4_mean_dir_deg": 1.2018749288433082,
+      "holding_ticks": 283
+    }
+  ],
+  "elapsed_s": 59.38467997100088,
+  "load1": "1.31 1.54 1.35 1/565 37448"
+}

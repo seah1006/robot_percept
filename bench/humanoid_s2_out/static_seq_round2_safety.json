@@ -1,0 +1,382 @@
+{
+  "enabled": true,
+  "reset_each": false,
+  "rows": [
+    {
+      "pose": "rest",
+      "clearance_mm": 10.000002036262682,
+      "holding_ticks": 0,
+      "state": "avoiding",
+      "plan": {
+        "accepted": true,
+        "route": "direct",
+        "path_min": 0.010000000000000023,
+        "distance": 0.010000000000000023,
+        "start_gap": 0.011329707355607663,
+        "samples": 48,
+        "endpoint_modified": true,
+        "modified": true,
+        "cache_hit": true
+      },
+      "brake": null,
+      "left": {
+        "u1_deg": 0.8183131625850815,
+        "u2_deg": 0.7137902345499302
+      },
+      "right": {
+        "u1_deg": 0.8201708591005926,
+        "u2_deg": 0.7154294242028604
+      }
+    },
+    {
+      "pose": "abd45",
+      "clearance_mm": 110.23609121666537,
+      "holding_ticks": 0,
+      "state": "clear",
+      "plan": {
+        "accepted": true,
+        "route": "direct",
+        "path_min": 0.11023608694934155,
+        "distance": 0.11023608694934155,
+        "start_gap": 0.11122177529734527,
+        "samples": 48,
+        "endpoint_modified": false,
+        "modified": false,
+        "cache_hit": true
+      },
+      "brake": null,
+      "left": {
+        "u1_deg": 0.6055295858877658,
+        "u2_deg": 0.8702970403974445
+      },
+      "right": {
+        "u1_deg": 0.6053694296526091,
+        "u2_deg": 0.870071705293069
+      }
+    },
+    {
+      "pose": "abd85",
+      "clearance_mm": 161.30114547707657,
+      "holding_ticks": 0,
+      "state": "clear",
+      "plan": {
+        "accepted": true,
+        "route": "direct",
+        "path_min": 0.16130114537760198,
+        "distance": 0.16130114537760198,
+        "start_gap": 0.16142445439979208,
+        "samples": 48,
+        "endpoint_modified": false,
+        "modified": false,
+        "cache_hit": true
+      },
+      "brake": null,
+      "left": {
+        "u1_deg": 1.3217300561538743,
+        "u2_deg": 1.8148012495326078
+      },
+      "right": {
+        "u1_deg": 1.3216130592356237,
+        "u2_deg": 1.8146509768344308
+      }
+    },
+    {
+      "pose": "fwd45",
+      "clearance_mm": 45.2406436760517,
+      "holding_ticks": 0,
+      "state": "clear",
+      "plan": {
+        "accepted": true,
+        "route": "direct",
+        "path_min": 0.044953841670548264,
+        "distance": 0.04524054398988912,
+        "start_gap": 0.044953841670548264,
+        "samples": 48,
+        "endpoint_modified": false,
+        "modified": false,
+        "cache_hit": true
+      },
+      "brake": null,
+      "left": {
+        "u1_deg": 0.9423672477269828,
+        "u2_deg": 1.379862394755609
+      },
+      "right": {
+        "u1_deg": 0.9423672261698649,
+        "u2_deg": 1.3798624472715528
+      }
+    },
+    {
+      "pose": "fwd90",
+      "clearance_mm": 79.36664893411847,
+      "holding_ticks": 0,
+      "state": "clear",
+      "plan": {
+        "accepted": true,
+        "route": "direct",
+        "path_min": 0.07927646998693678,
+        "distance": 0.07936664826339239,
+        "start_gap": 0.07927646998693678,
+        "samples": 48,
+        "endpoint_modified": false,
+        "modified": false,
+        "cache_hit": true
+      },
+      "brake": null,
+      "left": {
+        "u1_deg": 1.096011786950162,
+        "u2_deg": 1.6583808208645057
+      },
+      "right": {
+        "u1_deg": 1.096011775456642,
+        "u2_deg": 1.658380820882749
+      }
+    },
+    {
+      "pose": "fwd90_el60",
+      "clearance_mm": 77.9640242574474,
+      "holding_ticks": 0,
+      "state": "clear",
+      "plan": {
+        "accepted": true,
+        "route": "direct",
+        "path_min": 0.07796402408770804,
+        "distance": 0.07796402408770804,
+        "start_gap": 0.07796403335721748,
+        "samples": 48,
+        "endpoint_modified": false,
+        "modified": false,
+        "cache_hit": true
+      },
+      "brake": null,
+      "left": {
+        "u1_deg": 0.16091220160171535,
+        "u2_deg": 0.3486429896958285
+      },
+      "right": {
+        "u1_deg": 0.16091222692661317,
+        "u2_deg": 0.3486429771710425
+      }
+    },
+    {
+      "pose": "el90",
+      "clearance_mm": 13.636868186292103,
+      "holding_ticks": 0,
+      "state": "clear",
+      "plan": {
+        "accepted": true,
+        "route": "direct",
+        "path_min": 0.013636753568022256,
+        "distance": 0.013636753568022256,
+        "start_gap": 0.014539173200914204,
+        "samples": 48,
+        "endpoint_modified": false,
+        "modified": false,
+        "cache_hit": true
+      },
+      "brake": null,
+      "left": {
+        "u1_deg": 0.161722765860615,
+        "u2_deg": 0.326973649577694
+      },
+      "right": {
+        "u1_deg": 0.16172285809313763,
+        "u2_deg": 0.32697299292454635
+      }
+    },
+    {
+      "pose": "fwd60_el100",
+      "clearance_mm": 61.763839272428974,
+      "holding_ticks": 0,
+      "state": "clear",
+      "plan": {
+        "accepted": true,
+        "route": "direct",
+        "path_min": 0.0613799933449238,
+        "distance": 0.06176383775077792,
+        "start_gap": 0.0613799933449238,
+        "samples": 48,
+        "endpoint_modified": false,
+        "modified": false,
+        "cache_hit": true
+      },
+      "brake": null,
+      "left": {
+        "u1_deg": 0.07269688643560017,
+        "u2_deg": 0.5368157096781688
+      },
+      "right": {
+        "u1_deg": 0.07269661612799022,
+        "u2_deg": 0.5368157942547376
+      }
+    },
+    {
+      "pose": "abd60_el90",
+      "clearance_mm": 137.44051878121388,
+      "holding_ticks": 0,
+      "state": "clear",
+      "plan": {
+        "accepted": true,
+        "route": "direct",
+        "path_min": 0.13744051393215573,
+        "distance": 0.13744051393215573,
+        "start_gap": 0.13800763485962292,
+        "samples": 48,
+        "endpoint_modified": false,
+        "modified": false,
+        "cache_hit": true
+      },
+      "brake": null,
+      "left": {
+        "u1_deg": 0.346786487015906,
+        "u2_deg": 0.5083689320148022
+      },
+      "right": {
+        "u1_deg": 0.34678652174671154,
+        "u2_deg": 0.5083689338623538
+      }
+    },
+    {
+      "pose": "cross_chest",
+      "clearance_mm": 9.376455259056796,
+      "holding_ticks": 91,
+      "state": "holding",
+      "plan": {
+        "distance": 0.009400266793904613,
+        "active": 0,
+        "accepted": false,
+        "progress_fraction": 0.0,
+        "route": "partial_fallback",
+        "path_min": 0.009400266793904613,
+        "endpoint_modified": true,
+        "modified": true,
+        "cache_hit": true
+      },
+      "brake": {
+        "reason": {
+          "pair": [
+            "torso",
+            "left_hand"
+          ],
+          "distance": 0.11374741492021267,
+          "closing_speed": 0.0005228402883074896,
+          "reference_closing_speed": 0.0,
+          "reference_accel_closing": 0.0,
+          "required_margin": 0.0020855931759097505,
+          "guard_required": 0.008,
+          "tracking_normal": 5.3676034677145845e-05,
+          "planned_path_min": 0.005855020980241307,
+          "margin_method": "planned-route-plus-reference-accel-jerk-tracking-lag",
+          "effective_deceleration": 0.25,
+          "latency_s": 0.06
+        },
+        "sim_time": 38.440000000001014,
+        "measured_certified": false
+      },
+      "left": {
+        "u1_deg": 1.7736113702520337,
+        "u2_deg": 1.8533265375683656
+      },
+      "right": {
+        "u1_deg": 1.776567345319279,
+        "u2_deg": 1.8555285888960253
+      }
+    },
+    {
+      "pose": "hum80",
+      "clearance_mm": 158.78737112580976,
+      "holding_ticks": 0,
+      "state": "clear",
+      "plan": {
+        "accepted": true,
+        "route": "direct",
+        "path_min": 0.1587873683146847,
+        "distance": 0.1587873683146847,
+        "start_gap": 0.15894572629465276,
+        "samples": 48,
+        "endpoint_modified": false,
+        "modified": false,
+        "cache_hit": true
+      },
+      "brake": {
+        "reason": {
+          "pair": [
+            "torso",
+            "left_hand"
+          ],
+          "distance": 0.11374741492021267,
+          "closing_speed": 0.0005228402883074896,
+          "reference_closing_speed": 0.0,
+          "reference_accel_closing": 0.0,
+          "required_margin": 0.0020855931759097505,
+          "guard_required": 0.008,
+          "tracking_normal": 5.3676034677145845e-05,
+          "planned_path_min": 0.005855020980241307,
+          "margin_method": "planned-route-plus-reference-accel-jerk-tracking-lag",
+          "effective_deceleration": 0.25,
+          "latency_s": 0.06
+        },
+        "sim_time": 38.440000000001014,
+        "measured_certified": false
+      },
+      "left": {
+        "u1_deg": 1.180288570862761,
+        "u2_deg": 1.6498192174844757
+      },
+      "right": {
+        "u1_deg": 1.180288510583668,
+        "u2_deg": 1.6498189872767945
+      }
+    },
+    {
+      "pose": "up120",
+      "clearance_mm": 73.73337384782057,
+      "holding_ticks": 0,
+      "state": "clear",
+      "plan": {
+        "accepted": true,
+        "route": "direct",
+        "path_min": 0.07353279529376168,
+        "distance": 0.07373337436685533,
+        "start_gap": 0.07353279529376168,
+        "samples": 48,
+        "endpoint_modified": false,
+        "modified": false,
+        "cache_hit": true
+      },
+      "brake": {
+        "reason": {
+          "pair": [
+            "torso",
+            "left_hand"
+          ],
+          "distance": 0.11374741492021267,
+          "closing_speed": 0.0005228402883074896,
+          "reference_closing_speed": 0.0,
+          "reference_accel_closing": 0.0,
+          "required_margin": 0.0020855931759097505,
+          "guard_required": 0.008,
+          "tracking_normal": 5.3676034677145845e-05,
+          "planned_path_min": 0.005855020980241307,
+          "margin_method": "planned-route-plus-reference-accel-jerk-tracking-lag",
+          "effective_deceleration": 0.25,
+          "latency_s": 0.06
+        },
+        "sim_time": 38.440000000001014,
+        "measured_certified": false
+      },
+      "left": {
+        "u1_deg": 1.5037881835811886,
+        "u2_deg": 2.1271347074132407
+      },
+      "right": {
+        "u1_deg": 1.5037880756301096,
+        "u2_deg": 2.127134774112471
+      }
+    }
+  ],
+  "max_dir_deg": 2.127134774112471,
+  "mean_dir_deg": 0.9906655149056632,
+  "safe4_mean_dir_deg": 1.1646322042069732,
+  "holding_ticks": 91
+}
