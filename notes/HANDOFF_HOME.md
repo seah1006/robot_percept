@@ -26,7 +26,7 @@
 
 ### 남은 일
 1. P1c: 서보 tick 비용(충돌 계산) 줄이기, chest 우회/진동, twist 이동 부족, 500Hz 미인증 구간. 통과 전 기본 OFF.
-2. 트래커 기본 --transport ws 전환 검토: 근거는 전송 지연·서버 부하 감소(처리율 차이는 입증 안 됨). 전환 전 ws 장시간 안정성 측정.
+2. (완료 2026-11-06, master 9fd1c50) 트래커 기본 --transport ws, http 자동 폴백. 남은 확인: 1시간 이상 구동, 일시 실패 후 30초 ws 복귀 실측, 회사 녹화본·실카메라.
 3. 알려진 한계: Windows→WSL preview HTTP p95 +3~9ms, 원인 미규명.
 4. 회사 PC 필요(CUDA): SAM2/FoundationPose, FP 워밍업 defer 재측정, E 평가, 실카메라 수락, 회사 녹화본으로 트래커 재판정.
 5. 집 PC 트래커 재현: Windows venv C:\Users\my\rp_tracker\venv(Python 3.12.10, mediapipe 1.2.2), 영상 Documents\sam_camera\stock\stock_person_720p30.mp4(Pexels 무료, make30.py로 생성), 실행 전 PYTHONHOME 등 제거.
