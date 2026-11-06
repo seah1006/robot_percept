@@ -208,17 +208,20 @@ def create_blueprint(runtime=None, panda_runtime=None):
                 panda_runtime.send('teleop_render_pause', enabled=data['enabled'])
             return jsonify(ok=True, enabled=data['enabled'], ready=data['enabled'])
 
-    @bp.post('/humanoid/update')
-    def update():
+    def accept_update(data):
         process_start = time.perf_counter()
-        if request.content_length and request.content_length > 65536: return jsonify(error='payload too large'), 413
-        sample, err = validate_sample(request.get_json(silent=True))
-        if err: return jsonify(error=err), 400
+        sample, err = validate_sample(data)
+        if err: return {'error': err}, 400
         with hr.lock:
             hr.sample_seq += 1; sample['seq'] = hr.sample_seq
             hr.sample = sample; hr.times.append(time.monotonic())
             if hr.running(): hr.push()
-        return jsonify(ok=True, process_ms=round((time.perf_counter()-process_start)*1000, 3))
+        return {'ok': True, 'process_ms': round((time.perf_counter()-process_start)*1000, 3)}, 200
+
+    @bp.post('/humanoid/update')
+    def update():
+        if request.content_length and request.content_length > 65536: return jsonify(error='payload too large'), 413
+        body, code = accept_update(request.get_json(silent=True)); return jsonify(body), code
 
     @bp.post('/humanoid/calibrate')
     def calibrate():
@@ -243,8 +246,7 @@ def create_blueprint(runtime=None, panda_runtime=None):
         with hr.lock: hr.ctrl['reset_seq'] = int(hr.ctrl.get('reset_seq', 0)) + 1; hr.push()
         return jsonify(ok=True)
 
-    @bp.get('/humanoid/status')
-    def status():
+    def status_payload():
         st = hr.status(); now = time.monotonic()
         with hr.lock:
             recent = [t for t in hr.times if now - t < 2]; s = hr.sample or {}
@@ -274,7 +276,10 @@ def create_blueprint(runtime=None, panda_runtime=None):
         with hr.stream_lock:
             st['stream_debug'] = {k:v for k,v in hr.stream_stats.items() if k!='events'}
             st['stream_debug']['long_events'] = list(hr.stream_stats['events'])
-        return jsonify(st)
+        return st
+
+    @bp.get('/humanoid/status')
+    def status(): return jsonify(status_payload())
 
     @bp.get('/humanoid/video')
     def video():
@@ -312,4 +317,5 @@ def create_blueprint(runtime=None, panda_runtime=None):
         _, jpg = hr.blobs['frame'].read()
         return Response(jpg or b'', status=200 if jpg else 204, mimetype='image/jpeg', headers={'Cache-Control': 'no-store'})
 
+    bp.accept_update = accept_update; bp.status_payload = status_payload
     return bp

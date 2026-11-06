@@ -15,10 +15,25 @@ http://localhost:5091 에서 G1 선택. ON 응답은 첫 JPEG ready 후 반환�
 
 ## Windows 트래커
 
-Windows Python에 OpenCV, numpy, mediapipe, requests 및 모델이 필요합니다. 최신 tools/teleop_tracker_win.py를 %USERPROFILE%/Documents/sam_camera/teleop_tracker_win.py로 복사합니다. 기본 모델은 같은 폴더 models/hand_landmarker.task 및 models/pose_landmarker_lite.task입니다.
+서버 환경에는 WebSocket 지원을 고정 버전으로 설치합니다.
+
+```bash
+python -m pip install flask-sock==0.7.0 simple-websocket==1.1.0
+```
+
+Windows Python에 OpenCV, numpy, mediapipe, requests 및 모델이 필요합니다. WebSocket 입력을 선택하려면 가벼운 동기 클라이언트도 설치합니다.
+
+```powershell
+python -m pip install websocket-client==1.8.0
+```
+
+최신 `tools/teleop_tracker_win.py`를 `%USERPROFILE%/Documents/sam_camera/teleop_tracker_win.py`로 복사합니다. 기본 모델은 같은 폴더 `models/hand_landmarker.task` 및 `models/pose_landmarker_lite.task`입니다.
 
 ```powershell
 python "$env:USERPROFILE/Documents/sam_camera/teleop_tracker_win.py" --url http://localhost:5091 --mode humanoid
+# 기본 전송은 기존 HTTP 폴백입니다. WebSocket 제어 입력은 아래처럼 명시합니다.
+# Windows localhost→WSL의 binary WS 지연 때문에 카메라 preview JPEG는 이 모드에서도 HTTP를 유지합니다.
+python "$env:USERPROFILE/Documents/sam_camera/teleop_tracker_win.py" --url http://localhost:5091 --mode humanoid --transport ws
 # Panda 전용은 --mode panda. 실제 카메라가 분리되어 있으면 --video <녹화.mp4> 사용.
 ```
 
