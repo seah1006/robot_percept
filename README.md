@@ -21,7 +21,7 @@ http://localhost:5091 에서 G1 선택. ON 응답은 첫 JPEG ready 후 반환�
 python -m pip install flask-sock==0.7.0 simple-websocket==1.1.0
 ```
 
-Windows Python에 OpenCV, numpy, mediapipe, requests 및 모델이 필요합니다. WebSocket 입력을 선택하려면 가벼운 동기 클라이언트도 설치합니다.
+Windows Python에 OpenCV, numpy, mediapipe, requests 및 모델이 필요합니다. 제어 입력은 기본적으로 WebSocket을 사용하므로 가벼운 동기 클라이언트도 설치합니다. 미설치 시 설치 명령을 안내하고 HTTP로 자동 폴백합니다.
 
 ```powershell
 python -m pip install websocket-client==1.8.0
@@ -31,15 +31,16 @@ python -m pip install websocket-client==1.8.0
 
 ```powershell
 python "$env:USERPROFILE/Documents/sam_camera/teleop_tracker_win.py" --url http://localhost:5091 --mode humanoid
-# 기본 전송은 기존 HTTP 폴백입니다. WebSocket 제어 입력은 아래처럼 명시합니다.
-# Windows localhost→WSL의 binary WS 지연 때문에 카메라 preview JPEG는 이 모드에서도 HTTP를 유지합니다.
-python "$env:USERPROFILE/Documents/sam_camera/teleop_tracker_win.py" --url http://localhost:5091 --mode humanoid --transport ws
+# 기본 제어 전송은 WS입니다. 404·websocket-client 미설치처럼 WS 미지원이 확실하면 경고 1회 후 세션 동안 HTTP로 고정합니다. WS를 다시 시도하려면 트래커를 재시작합니다.
+# 연결 거부·timeout 같은 일시 실패는 HTTP로 임시 우회하고 30초마다 WS 복귀를 시도합니다. WS 연결 후 끊김은 기존처럼 요청 안에서 한 번 자동 재연결합니다. preview JPEG는 항상 HTTP입니다.
+# HTTP를 고정하려면 아래처럼 명시합니다.
+python "$env:USERPROFILE/Documents/sam_camera/teleop_tracker_win.py" --url http://localhost:5091 --mode humanoid --transport http
 # Panda 전용은 --mode panda. 실제 카메라가 분리되어 있으면 --video <녹화.mp4> 사용.
 ```
 
 ## 독립 창 실행기
 
-tools/humanoid_launch.bat -DryRun 으로 명령/경로를 출력합니다. 실제 실행은 -DryRun 없이 사용합니다. -Port 5091, -Python <Windows Python 경로>, -TrackerRoot <트래커 폴더>를 선택할 수 있습니다. 서버와 트래커는 서로 독립된 Windows PowerShell 창에서 실행됩니다. 서버 포트 중복은 거부하며 5080은 금지합니다. 종료는 각 독립 창의 Ctrl+C. 이 구현은 실제 창 실행/생존 시험을 하지 않았고 문법 및 dry-run만 검증했습니다. 트래커는 서버 준비 전 연결 오류가 날 수 있으므로 서버 ready 후 해당 창에서 재실행하세요.
+tools/humanoid_launch.bat -DryRun 으로 명령/경로를 출력합니다. 실제 실행은 -DryRun 없이 사용합니다. -Port 5091, -Python <Windows Python 경로>, -TrackerRoot <트래커 폴더>를 선택할 수 있습니다. 서버와 트래커는 서로 독립된 Windows PowerShell 창에서 실행됩니다. 서버 포트 중복은 거부하며 5080은 금지합니다. 종료는 각 독립 창의 Ctrl+C. 이 구현은 실제 창 실행/생존 시험을 하지 않았고 문법 및 dry-run만 검증했습니다. 런처는 WS를 명시합니다. WS 미지원이 확실하면 세션을 HTTP로 고정하고, 서버 기동 지연 같은 일시 실패면 HTTP로 우회하면서 30초마다 WS 복귀를 시도합니다.
 
 ## 검증 / 지연 정의
 
@@ -91,7 +92,7 @@ G1의 **안전 감속(실제 로봇 한계 준수)**은 기본 ON입니다. `/hu
 | G1 따라하기 30fps, 팔 정확도(P1a), 안전 감속(P1b) | PASS |
 | 웹 안정성(잘못된 payload 400, 동시 ON/OFF, worker 복구, 첫 끊김) | PASS (조용한 창: G1 32.0fps x3, 서버 p95 30~33ms 프록시) |
 | 벽시계 점프 대응(monotonic 대기) | PASS. 단 G1 렌더 루프는 이전에도 monotonic이라 실측 개선 입증은 아님 |
-| 트래커 update WebSocket(/tracker/ws) + 브라우저 상태 push(/status/ws) | PASS (update p95 15~17ms→2.3ms, 서버 main CPU -11%p 수준, 조용한 창 G1 32fps). 트래커 기본 --transport는 http |
+| 트래커 update WebSocket(/tracker/ws) + 브라우저 상태 push(/status/ws) | PASS (V-T: update post p95 21~23ms→2.3ms, 서버 main CPU -2.3%p, 처리율은 양쪽 100%로 차이 입증 안 됨). 트래커 기본 --transport는 ws이며 초기 실패 시 HTTP 폴백 |
 | preview(JPEG) 전송 지연 | 알려진 한계: Windows→WSL HTTP p95 +3~9ms(처리량 동일). WS preview는 회귀로 폐기 |
 | 서버 종료 시 worker 잔존 | PASS (TERM/INT/KILL x G1 ON/OFF 60/60 잔존 0, 종료 p95 1.3초 이하). 기동 중 신호는 미검증 |
 | 자기충돌 회피(P1c) | **FAIL, 기본 OFF 실험 기능**. 켜면 팔이 거의 움직이지 않거나 목표를 따라가지 못할 수 있음 |

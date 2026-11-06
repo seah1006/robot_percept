@@ -3,7 +3,8 @@ from pathlib import Path
 from types import SimpleNamespace
 
 from web.realtime import ConnectionLimiter, StatusSchedule, handle_tracker_message, origin_allowed
-from tools.teleop_tracker_win import WebSocketTransport, websocket_route_enabled
+from tools.teleop_tracker_win import (FallbackTransport, WebSocketTransport, parse_args,
+                                      websocket_route_enabled)
 
 
 class Endpoint:
@@ -92,3 +93,58 @@ def test_windows_ws_transport_reconnects_once_and_preserves_default_protocol():
     assert reply['ok'] and len(made)==2
     assert made[0][0]=='ws://127.0.0.1:5093/tracker/ws'
     assert json.loads(made[1][2].sent)['route']=='/humanoid/update'
+
+
+def test_windows_tracker_transport_argument_defaults_to_ws_and_keeps_http_opt_in():
+    assert parse_args([]).transport=='ws'
+    assert parse_args(['--transport','http']).transport=='http'
+    assert not websocket_route_enabled(parse_args(['--transport','http']).transport,False)
+
+
+def test_windows_tracker_transient_ws_failure_retries_and_recovers():
+    http_calls=[];warnings=[];ws_calls=[];now=[10.]
+    def http_post(route,data,raw=False):
+        http_calls.append((route,data,raw));return {'http':True}
+    class FlakyWS:
+        def request(self,route,data,raw=False):
+            ws_calls.append((route,data,raw))
+            if len(ws_calls)==1:raise TimeoutError('startup timed out\nignored detail')
+            return {'ok':True}
+    def warn(message,**kwargs):warnings.append((message,kwargs))
+    transport=FallbackTransport(http_post,FlakyWS,warn=warn,clock=lambda:now[0],retry_interval=30)
+    assert transport.request('/humanoid/update',{'seq':1})=={'http':True}
+    now[0]=39.;assert transport.request('/humanoid/update',{'seq':2})=={'http':True}
+    now[0]=40.;assert transport.request('/humanoid/update',{'seq':3})=={'ok':True}
+    warning=json.loads(warnings[0][0])
+    assert len(ws_calls)==2 and len(http_calls)==2 and len(warnings)==1
+    assert transport.effective=='ws' and transport.fallback
+    assert 'retrying WS every 30 seconds' in warning['warning']
+    assert warning['ws_error']=='startup timed out'
+
+
+def test_windows_tracker_404_pins_http_and_shortens_error():
+    http_calls=[];warnings=[];ws_calls=[];now=[10.]
+    class Unsupported(Exception):status_code=404
+    class BrokenWS:
+        def request(self,route,data,raw=False):
+            ws_calls.append(route);raise Unsupported('Handshake status 404\n<html>'+('x'*500))
+    transport=FallbackTransport(lambda *args,**kwargs:http_calls.append(args) or {'http':True},BrokenWS,
+                                warn=lambda message,**kwargs:warnings.append(message),clock=lambda:now[0])
+    assert transport.request('/humanoid/update',{})=={'http':True}
+    now[0]=1000.;assert transport.request('/humanoid/update',{})=={'http':True}
+    warning=json.loads(warnings[0])
+    assert len(ws_calls)==1 and len(http_calls)==2 and transport.retry_at is None
+    assert 'Restart the tracker to retry WS' in warning['warning']
+    assert warning['ws_error']=='Handshake status 404' and len(warning['ws_error'])<=200
+
+
+def test_windows_tracker_missing_websocket_client_message_and_http_path():
+    warnings=[]
+    missing=ModuleNotFoundError("No module named 'websocket'",name='websocket')
+    class MissingWS:
+        def request(self,*_args,**_kwargs):raise missing
+    transport=FallbackTransport(lambda *_args,**_kwargs:'http',MissingWS,
+                                warn=lambda message,**_kwargs:warnings.append(message))
+    assert transport.request('/teleop/update',{})=='http'
+    assert 'python -m pip install' in warnings[0]
+    assert 'websocket-client==1.8.0' in warnings[0]

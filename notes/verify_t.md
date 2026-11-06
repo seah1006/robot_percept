@@ -97,3 +97,48 @@ verdict: FAIL (라운드 1) - 안전/게이팅/히스테리시스/스모크 PASS
 - 트래커 절대 판정(처리율 ≥99%, 수신 ≥29.7Hz): 스톡 영상 기준 PASS. 단 실카메라·회사 녹화본은 미실시이므로 "스톡 영상 한정 PASS".
 - ws를 기본으로 바꿀 근거: 처리율/수신Hz 개선은 입증 안 됨. 근거가 되는 것은 post_ms p95 약 20ms→2.3ms, 서버 main CPU −2.3%p로 지연·서버 부하 이득뿐이고 오류·회귀는 0건. 전환하려면 "처리율 개선"이 아니라 "전송 지연·서버 부하 감소" 명목이어야 하며, 기본값 전환은 되돌리기 쉬운 변경(--transport http 폴백 유지)이라 위험은 낮다. 장시간(수 분~수십 분) ws 안정성(재연결, 누수)은 이번에 미측정이라 전환 전 확인 권장.
 - 정리: 측정 종료 후 서버·worker 0, 5094/5092 리스너 0, Windows python 프로세스 0 확인. worktree ~/work/rp_master 유지, 커밋 없음.
+
+
+## 2026-11-06 ws 장시간·기본값 전환 (V-J)
+기본 판정 **NEEDS WORK**. 직접 잰 항목만 PASS. 스크립트 bench/verify_j/, 원자료 bench/verify_j/out/{long,recon,adopt}/ + Windows C:\Users\my\rp_tracker\out_vj\{long,recon,adopt}\ (트래커 metrics·stdout).
+
+### 구성
+- 서버 master 7f96fec(worktree ~/work/rp_master), PERCEPTION=stub, 포트 5094, G1 ON(humanoid mode on, /humanoid/video 시청 1 + status 0.25초 샘플). V-T 때의 MJPEG 시청 2·/status/ws push 구독 1은 이번엔 생략(부하가 약간 낮음). 트래커는 Windows 사본(sam_camera, SHA256 9378ABC5…) 그대로, 스톡 영상 --loop-video --mode humanoid --transport ws, PowerShell 환경변수 정리.
+- 조용한 창: 다른 에이전트 작업 없음 가정(I-J에게 중단 요청). 세그먼트 직전 load1 0.66~1.21, openclaw CPU 합 1.6~9.9%(세그먼트1 직전 45%는 기동 직후). 이중 락, 한 번 5분 이내(트래커 285초). 벽시계 점프는 이 PC 특성(status.csv 벽시계 열에서 수십~90초 점프 관찰, 판정엔 monotonic만 사용).
+
+### 1) 장시간 (서버 1회 기동 약 22분, 트래커 285초 세그먼트 4개)
+| 세그먼트 | 처리율 | 트래커 Hz | 서버 수신 Hz(monotonic) | post p50/p95 ms | 네트워크 오류 | 재연결 |
+|-|-|-|-|-|-|-|
+| 1 | 100.000% (8551/8551) | 30.001 | 29.977 | 1.67/2.49 | 0 | 0(오류 0이라 재연결 경로 미발동) |
+| 2 | 100.000% | 30.000 | 30.001 | 1.62/2.31 | 0 | 0 |
+| 3 | 100.000% | 30.000 | 29.983 | 1.64/2.34 | 0 | 0 |
+| 4 | 100.000% | 30.000 | 29.958 | 1.66/2.40 | 0 | 0 |
+- 서버(1분 간격 20점): G1 fps 첫 1분 30.67(기동 직후), 이후 31.86~32.01 안정. main 스레드 28~31(기울기 -0.015/분), fd 29~33, tree 스레드 157~160, fd 121~125, 프로세스 6 고정. RSS main 79→82MB(+0.17MB/분), tree 1315→1318MB(+0.17MB/분). 누수 판정: 세그먼트 1 vs 4에서 처리율·post p95·Hz 차이 없음(post p95 2.49→2.40), 스레드·fd 증가 없음, RSS 22분간 +3MB(약 0.2%)로 누수 징후 없음. 단 22분이라 시간 단위 누수는 미확인.
+- 트래커 재연결 수는 트래커가 집계하지 않음(metrics에 필드 없음). 오류 0이므로 재연결 없었다고 추정(간접).
+- 판정: 20분급 ws 안정성 **PASS**(스톡 영상, 22분 한정). 원자료 out/long/{summary.txt,mon/,env.txt}.
+
+### 2) 서버 SIGTERM 후 10초 뒤 재기동 (3회, 트래커 100초, 22초 시점 종료)
+| 회차 | 서버 종료 소요 | 마지막 처리→재기동 후 첫 응답 | 첫 응답→첫 입력 증가 | 총 처리 중단 | 트래커 network_errors | sent_updates/3001 |
+|-|-|-|-|-|-|-|
+| r1 | 1.23s | 12.78s | 0.26s | 13.04s | 9 | 2649 |
+| r2 | 1.23s | 13.07s | 0.77s | 13.84s | 9 | 2630 |
+| r3 | 1.23s | 13.06s | 0.78s | 13.84s | 10 | 2624 |
+- 트래커는 종료되지 않고 자동 재연결해 서버 기동 직후(0.3~0.8초) 처리 재개. 트래커 처리율은 3001/3001(100%, 송신만 끊김 동안 손실, 큐잉·재전송 없음). 오류 형태: stdout `upload_error: "timed out"`(3건만 출력, 총 9~10건 카운트). 서버 정상 종료(SIGTERM)는 1.2초, 잔존 worker 0(마스터 서버).
+- **발견: 서버 재기동 후 humanoid mode가 off로 돌아가 G1 상태 state=off**(트래커가 mode를 켜지 않음). 입력은 계속 수용되지만 G1 렌더는 재개 안 됨. 기본 ws 전환과 무관한 기존 동작이나 재기동 시 UI/스크립트가 mode를 다시 켜야 함.
+- 한계: monitor 가 재기동 서버에 mode를 다시 켜지 않는 설정(once)으로 측정. 3회 모두 같은 조건. 판정: 재연결 **PASS**(3/3).
+- 정리: 원자료 out/recon/{summary.txt,env.txt,mon_r*/}.
+
+### 4) I-J 기본값 전환 직접 확인 (tools/teleop_tracker_win.py SHA256 67112f60…02dd, vj_new 사본으로 실행, 30초 스톡 영상)
+| 케이스 | 서버 | 플래그 | transport(실사용) | fallback | updates | post p95 ms | 오류 |
+|-|-|-|-|-|-|-|-|
+| A | master 7f96fec | 없음 | **ws** | false | 901/901 | 2.18 | 0 |
+| C | master 7f96fec | --transport http | http | false | 901/901 | 23.15 | 0 |
+| B | cc37144 (ws 없음) | 없음 | http | **true** | 901/901 | 21.93 | 0, 경고 1회 |
+| D | cc37144 | --transport http | http | false | 901/901 | 23.33 | 0 |
+- (a) PASS, (b) PASS(자동 폴백, 404 경고 1회 후 정상 처리), (c) PASS(기존 http와 같은 post p95 21~23ms, ws 객체 미생성 확인은 metrics에 ws_roundtrip 항목 없음으로 확인).
+- 지적: ① 폴백 경고에 ws_error로 404 HTML 전문이 한 줄에 출력됨(길이 제한 권장). ② 첫 WS 성공 전 일시 실패(예: 서버 기동 직후)로도 세션 전체가 HTTP 고정되며 이후 WS 재시도 없음(의도된 설계이나 사용자에게 경고 문구만으로 알림). ③ 단일 FallbackTransport가 여러 스레드에서 공유되나 WS 경로는 control_sender 단일 스레드라 현재 문제 없음.
+- 정리: cc37144 구 서버는 SIGTERM 후 worker 6개가 고아로 남음(구 버그, H 라운드에서 수정된 것). 수동 종료함. 종료 후 리스너 0, 잔존 worker 0, Windows python 0.
+- 미실시: 전체 pytest 회귀(아래 별도), 실카메라, 1시간 이상.
+- 전체 pytest(I-J 수정 작업 트리, V-J 직접 실행): 93 passed, 5 warnings, 44.6초, 실패 0. 실행 후 리스너·worker 0.
+- **최종 판정(V-J)**: 기본값 ws 전환 — 장시간(22분)·재연결 3회·(a)(b)(c) 직접 확인 모두 PASS이므로 전환 자체는 진행 가능. 단 전체는 스톡 영상·22분 한정이라 문서 판정은 "조건부 PASS(스톡 영상 한정), 지적 ①②는 NEEDS WORK 소항목". 커밋 없음.
+- **재확인(I-J 수정 2판, tools/teleop_tracker_win.py SHA256 18ec32de…)**: 같은 4케이스 재실행(out/adopt/, 이전은 out/adopt_v1/). A ws(p95 2.44ms, 901/901, 오류 0), C http(21.4ms), B cc37144 → http 폴백, 경고 1회 "WebSocket is unsupported... Restart the tracker to retry WS." ws_error는 200자로 잘림, 901/901, D http(22.3ms). 지적 ①②는 해소(②: 404/미설치는 세션 고정 + 재시작 안내, 일시 실패는 30초 재시도). 일시 실패 후 30초 재시도·WS 복귀는 단위 테스트로만 있고 V-J 실측은 안 함. 재시도 시 WS 연결 시도가 최대 약 0.6초 update 스레드를 막을 수 있음(미측정). cc37144 구 서버 worker 잔존은 수동 종료.
