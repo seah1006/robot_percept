@@ -25,7 +25,7 @@
 - 주의: wip/r2에는 P1c WIP가 있어 master로 통째 병합 금지. 검증 PASS 커밋만 cherry-pick.
 
 ### 남은 일
-1. P1c: 서보 tick 비용(충돌 계산) 줄이기, chest 우회/진동, twist 이동 부족, 500Hz 미인증 구간. 통과 전 기본 OFF.
+1. P1c: 성능 1라운드(wip/r2 d81993d)에서 waypoint 중복 계산 제거(판단 동일, 궤적 byte 동일)로 sweep 약 2배 개선했으나 4패턴 ON tick p95 29~155ms로 20ms 기준 FAIL, 스파이크 최대 293ms. 다음은 waypoint 계획을 서보 루프에서 분리(별도 주기/스레드)하는 구조 변경. chest 우회/진동, twist 이동 부족, 500Hz 미인증 구간도 남음. 통과 전 기본 OFF. notes/humanoid_s3_perf.md, notes/verify_s.md
 2. (완료 2026-11-06, master 9fd1c50) 트래커 기본 --transport ws, http 자동 폴백. 남은 확인: 1시간 이상 구동, 일시 실패 후 30초 ws 복귀 실측, 회사 녹화본·실카메라.
 3. 알려진 한계: Windows→WSL preview HTTP p95 +3~9ms, 원인 미규명.
 4. 회사 PC 필요(CUDA): SAM2/FoundationPose, FP 워밍업 defer 재측정, E 평가, 실카메라 수락, 회사 녹화본으로 트래커 재판정.
