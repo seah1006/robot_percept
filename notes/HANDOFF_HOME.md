@@ -1,8 +1,45 @@
-# robot_percept 인계 문서 (2026-11-05 회사 → 집)
+# robot_percept 인계 문서 (2026-11-05 회사 → 집, 2026-11-06 집 PC 갱신)
 
 저장소: https://github.com/seah1006/robot_percept (public)
 - `master`: 독립 검증 PASS된 커밋만 (최신 a9f2c26). 태그 `baseline-1102`, `humanoid-30fps-pass`.
 - `wip/r2`: 진행 중인 r2 작업 전체 스냅샷 (검증 미완 포함). **집에서는 이 브랜치에서 이어서 작업.**
+
+## 0. 2026-11-06 집 PC 세션 갱신 (이 섹션이 최신. 아래 1~2장은 11-05 기록)
+
+### 완료 (master 반영)
+| 커밋 | 내용 | 근거 |
+|-|-|-|
+| 970a681 | r2 라운드 병합(P1a, P1b, W, monotonic 대기, UI 확인). P1c는 기본 OFF 실험, 트래커 절대 판정·FP 워밍업 defer는 미검증으로 명시 | notes/humanoid_w_changes.md, notes/verify_w.md |
+| 16e49a8 | F 라운드: Flask 유지 성능 개선. 트래커 update `/tracker/ws`, 브라우저 상태 `/status/ws` push(폴링 자동 폴백). update p95 15~17ms→2.3ms, 서버 main CPU 약 -11%p. 트래커 기본 `--transport http` | notes/flask_perf_changes.md, notes/verify_f.md |
+| 452378f | G 라운드: 서버 종료 시 worker 잔존 수정(부모 신호 정리 5초 상한, 자식 부모 PID 감시, Manager 감시). 60/60 잔존 0 | notes/shutdown_changes.md, notes/verify_g.md |
+- 11-05 남은 일 1~4번은 위로 처리됨. 5번(FastAPI)은 사용자 결정으로 하지 않음(Flask 유지).
+- G1 4.9초 정지: 집 PC에서 HEAD의 G1 렌더 루프는 이미 monotonic이라 재현 안 됨. Panda/teleop/perception/하네스의 timed wait를 monotonic으로 바꿈(개선 근거는 코드 리뷰와 모의 테스트).
+
+### 추가 완료 (같은 날 후반)
+| 커밋 | 내용 |
+|-|-|
+| master 7f96fec (wip/r2 1c5bd90) | H 라운드: 기동 직후 kill -9 잔존 경쟁 수정(기준선 3/100 → 0/150), test_pick_place 경로 이식성. notes/small_fixes_h.md, notes/verify_h.md |
+| master ba8ccb6 (wip/r2 b3ef3d2) | 트래커 절대 판정 스톡 영상 한정 PASS(처리율 100%, 30.0Hz, ws post p95 2.3ms). notes/verify_t.md |
+| wip/r2 c1656d7 (master 미반영) | P1c 재설계 스냅샷 NEEDS WORK: 추종·복귀·팔 이동 회복, 그러나 서보 tick p95 62~208ms(기준 20ms), 미인증 구간 잔존. 기본 OFF. notes/humanoid_s2_changes.md, notes/verify_s.md |
+| 검증만 | 유휴 렌더 2fps PASS, Panda 집기 N=20 PASS(GT 보조). notes/verify_b.md |
+- 주의: wip/r2에는 P1c WIP가 있어 master로 통째 병합 금지. 검증 PASS 커밋만 cherry-pick.
+
+### 남은 일
+1. P1c: 서보 tick 비용(충돌 계산) 줄이기, chest 우회/진동, twist 이동 부족, 500Hz 미인증 구간. 통과 전 기본 OFF.
+2. 트래커 기본 --transport ws 전환 검토: 근거는 전송 지연·서버 부하 감소(처리율 차이는 입증 안 됨). 전환 전 ws 장시간 안정성 측정.
+3. 알려진 한계: Windows→WSL preview HTTP p95 +3~9ms, 원인 미규명.
+4. 회사 PC 필요(CUDA): SAM2/FoundationPose, FP 워밍업 defer 재측정, E 평가, 실카메라 수락, 회사 녹화본으로 트래커 재판정.
+5. 집 PC 트래커 재현: Windows venv C:\Users\my\rp_tracker\venv(Python 3.12.10, mediapipe 1.2.2), 영상 Documents\sam_camera\stock\stock_person_720p30.mp4(Pexels 무료, make30.py로 생성), 실행 전 PYTHONHOME 등 제거.
+
+### 집 PC 환경 (회사와 다른 점, 3장 설치 외 추가로 필요했던 것)
+- GPU AMD Radeon RX 7600: `sim_test/gl_env.sh`의 `MESA_D3D12_DEFAULT_ADAPTER_NAME=AMD`(로컬 전용, skip-worktree). nvidia-smi 없음 → GPU 기록은 GL_RENDERER로.
+- 경로 /home/my/work/robot_percept, conda는 ~/miniforge3(Python 3.12.16, HAVE_SEM_CLOCKWAIT=0). sudo 비번 필요.
+- Panda 장면/테스트용: `pip install imageio gdown`, FP 데모 데이터 중 mustard0만(`gdown 1AwV9sESDKMgXGUu2n1o0Pc4x2JGYdVB3` → downloads/demo_data/mustard0), `python sim_test/build_scene.py`로 panda_mod.xml을 이 PC 경로로 재생성(로컬 전용, skip-worktree), CAD 샘플 변환용 `.venvs/cad`(cadquery 2.8.0, coacd) 후 `tools/stp_to_mesh.py ... --collision coacd`로 box_fillet·cup 변환. 이후 pytest 전부 통과.
+- PowerShell에서 WSL 명령은 `wsl -d Ubuntu-24.04 --exec bash -lc '...'`(--exec 없으면 바깥 셸이 $변수 확장).
+- WSL 벽시계가 약 5초마다 ±92초 점프(systemd-timesyncd active, 동기화 no). 측정 창마다 14회 정도 겹침.
+- Windows→WSL 5092 중계에 CloseWait가 쌓여 막힌 적 있음(5094로 우회). WSL 재시작으로 풀릴 가능성.
+- WSL 안에 사용자 openclaw gateway(:18789) 상주. 건드리지 말고 측정 시 CPU만 기록.
+- Windows: Claude Code·Codex에 agency-agents 개발 7개 부서(131개) 전역 설치(~/.claude/agents, ~/.codex/agents, WSL ~/.codex/agents).
 
 ## 1. 현재 상태 (r2 개선 라운드)
 
