@@ -82,3 +82,15 @@
 2. YBL E·F 배정: 카탈로그 정면도로 확인 가능하면 알려주기(없으면 O-1 '추정'으로 진행)
 3. 진행 순서: B0·A·B는 r3와 병행, 화면 연결은 P1c 다음 동결 이후 — 괜찮은지
 4. 유일로보틱스 STEP(CAD) 문의 여부(받기 전에는 실제 외형 사용 안 함)
+
+## 12. [대기] Codex 2차 검토 (착수 전 필수)
+상태: **미실시**. 2026-11-09 R4-X(Codex gpt-6.1-sol)가 사용량 한도로 시작하지 못해, 구현 관점 검토를 R4-O(Claude Opus)가 대신함. 구현(I-A)을 Codex가 맡으므로 착수 전에 Codex의 2차 검토를 받는다.
+- 결과 파일: notes/plan_r4_review_x.md (Codex만 작성)
+- 통과 조건: Codex가 v3를 '구현 가능'으로 판정하거나, 지적이 v4에 반영되고 R4-C/R4-O(또는 새 Claude 검토자)와 이견이 정리될 것.
+- Codex 검토자에게 줄 지시문:
+```
+너는 robot_percept r4 계획서 2차 검토자 R4-X(Codex, 구현자 관점)다. 한국어. 읽기 전용(코드·서버·카메라 실행 금지, 가벼운 git/grep/파일 읽기·짧은 python 계산만). 쓰기는 notes/plan_r4_review_x.md 하나만. 사용자 5080 서버 금지.
+읽을 것: notes/plan_r4_industrial_cobot.md(v3, 검토 대상), notes/plan_r4_review_c.md, notes/plan_r4_review_o.md(1차 합의), notes/yuil_specs.md, notes/TEAM_R3.md, notes/HANDOFF_R3.md, 참고 코드 web/app.py, web/realtime.py, web/static/humanoid.js, web/templates/index.html, sim/humanoid_ik.py, assets/mujoco_menagerie/universal_robots_ur5e/.
+확인할 것: (1) 1차 합의의 치수 해석(YMX 5모델 관계식, YBL D=d5, E/F 대안 O-1/O-2)과 UR5e MJCF-DH 차이(최대 0.7mm·베이스 180°)를 직접 재계산, (2) 구조(three.js 렌더 + Flask numpy ArmRuntime + /status/ws 'arm' 10Hz)의 구현 난이도·누락(three.js 로봇 형상 생성 방식, payload 계약, 해석해 IK 8해 구현), (3) 합격 기준이 구현자 입장에서 측정 가능한지와 소요(약 5일) 현실성, (4) 공유 파일(app.py, realtime.py, humanoid.js, index.html) 패치 범위와 P1c와의 순서, (5) 빠진 것·과한 것.
+1차 검토자와 이견이 있으면 해당 근거를 명시하고, 가능하면 Claude 검토자(부모가 task id 전달)와 message_agent로 1회 이상 왕복해 해소. 최종: notes/plan_r4_review_x.md에 판정(구현 가능/수정 필요)·항목별 지적·수정안, 최종 응답은 요약 30줄 이내.
+```
