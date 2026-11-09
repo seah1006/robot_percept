@@ -28,7 +28,7 @@ robot_percept 프로젝트를 이어서 진행해줘. 답변은 처음부터 끝
 
 ## 이어서 할 작업 (순서)
 1. **Codex 2차 검토**: 계획서 v2를 Codex 검토자(R5-X)에게 맡겨 notes/plan_r5_review_x.md를 받고, 필요하면 Claude 검토자와 1회 이상 왕복 → 지적을 반영해 계획서 v3로 커밋.
-2. **G0(환경 시험)**: conda env를 복제해서 `-c notes/rp_constraints.txt`로 transformers 설치 시험(torch·numpy 고정 깨지지 않게), Grounding DINO 버전·가중치 리비전 고정, 가중치·모델카드 라이선스 직접 확인, 집 PC에서는 CPU 지연만 측정(VRAM·GPU 지연은 회사 PC 몫으로 남김). 설치 재현 스크립트 커밋.
+2. **G0(환경 시험)**: conda env를 복제해서 `-c notes/rp_constraints.txt`로 transformers 설치 시험(torch·numpy 고정 깨지지 않게), Grounding DINO 버전·가중치 리비전 고정, 가중치·모델카드 라이선스 직접 확인, 집 PC는 **ROCm 시험부터**: 기존 env는 그대로 두고 ROCm 전용 env(예 robot_percept_rocm)를 새로 만들어 ROCm용 torch 2.14 설치 → `HSA_ENABLE_DXG_DETECTION=1`(WSL에서 /dev/dxg로 GPU 인식) → torch.cuda.is_available()·작은 행렬 연산 확인 → Grounding DINO 1회 실행해 GPU 지연·VRAM 측정. 근거: ROCm 7.14/10.x 호환표에 RX 7600(gfx1102) 등재(Linux·Windows), ROCm 7.2.1 WSL 표에는 없었음, RX 7600 XT WSL 이슈(ROCm/ROCm #6119) 완료 처리. FoundationPose(nvdiffrast·pytorch3d CUDA 확장)는 ROCm 대상 아님 → 회사 PC 몫. ROCm이 안 되면 CPU 지연만 측정하고 회사 PC로 GPU 측정을 넘김. 설치 재현 스크립트(성공/실패 로그 포함) 커밋.
 3. **집 PC에서 가능한 MVP 작업**(GPU 불필요): 인식 모듈 인터페이스(perception/grounding·segment·localize, config/objects.yaml·vocab_ko_en.yaml), 시뮬 장면 자산 확장(색·형태가 다른 물체), 평가 하네스 확장(튜닝/평가 시드 분리, 출처 배지), 작업 셀 K(/tasks·상태 머신·로봇 소유권 락·취소/비상정지·상태별 타임아웃·재시작 시 aborted·SQLite 단일 쓰기 스레드·셀 전용 장면), 대시보드 1화면. 카메라가 있으면 W2 보정 도구(tools/calibrate_camera.py).
 4. 회사 PC 몫(손대지 말고 남겨): Grounding DINO GPU 지연·VRAM(≤7.0GB) 측정, SAM2/FoundationPose 경로, r3 E 평가 배치 330회 재개, 회사 녹화본·실카메라 판정.
 

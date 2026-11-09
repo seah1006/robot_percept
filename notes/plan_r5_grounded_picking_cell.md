@@ -45,7 +45,7 @@ r4 기구학 시각화(notes/plan_r4_industrial_cobot.md v3)는 v2 범위의 티
 ## 6. 단계·순서·소요
 | 단계 | 내용 | 완료 조건(시연) | 추정 |
 |-|-|-|-|
-| G0 | env **복제본**에서 `-c notes/rp_constraints.txt`로 transformers 설치 시험(torch 2.14·numpy 2.5.3 고정 유지), 버전·가중치 리비전 고정, 라이선스 확인, VRAM·지연(첫 로드/재사용) 측정 | 설치 재현 스크립트, 측정표 | 0.5~1일 |
+| G0 | (집 PC) ROCm 전용 env로 RX 7600 GPU 시험(HSA_ENABLE_DXG_DETECTION=1, torch 2.14 ROCm 빌드, Grounding DINO·SAM2 대상, FP 제외). env **복제본**에서 `-c notes/rp_constraints.txt`로 transformers 설치 시험(torch 2.14·numpy 2.5.3 고정 유지), 버전·가중치 리비전 고정, 라이선스 확인, VRAM·지연(첫 로드/재사용) 측정 | 설치 재현 스크립트, 측정표 | 0.5~1일 |
 | G1 | perception worker 통합(ground, segment_box), 모듈 인터페이스, 장면 자산 확장, 평가 하네스(튜닝/평가 시드 분리) | 시뮬 장면에서 문장→물체 선택, 지표 표 | 3~4일 |
 | W2 | 보정 도구, 요청 시 오버레이, 평면 좌표+높이 보정, 스냅샷 트윈 | 실물 물체 → 시뮬 배치, 위치 오차(보정 전/후) | 2~3일(+카메라 일정) |
 | K | /tasks·상태 머신·락·DB·셀 장면·분류 적재 | "A는 왼쪽, B는 오른쪽"이 끝까지 실행, needs_help 확인 후 재개 | 3~4일 |
