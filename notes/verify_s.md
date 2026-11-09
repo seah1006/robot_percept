@@ -153,3 +153,51 @@ rest독립 개선(39.6/4.81)은 진단이며 수락은 순차 기준. 순차 cro
 - ON tick_p95 최대(ms) 신 1회 vs 기준선 2회: sweep 29.4 vs 62.1/65.2, chest 131.0 vs 188.9/201.2, jump 155.3 vs 92.6/190.8. 반복 1~2회라 CI 산출 불가("차이 입증 안 됨"). sweep만 약 2배 개선 경향, 전부 기준 20ms FAIL. ON 최소거리 sweep 9.7, chest 3.4, jump -1.5mm(침투 1프레임; 기준선 jump도 r1에서 -0.7 1프레임), 관절 범위 sweep 89.3, chest 13.4, jump 21.6도(기준선 반복 편차 범위 내). twist 미측정.
 - 미수행: OFF 경로 불변 직접 확인, static 순차/rest/release, G1 30초 창, pytest 직접 실행, 잔여 반복. 판정: NEEDS WORK (P1c 기능 FAIL 유지, tick 20ms 미달, 직접 재현 PASS 항목 없음).
 - 정리: 5092 리스너, job.sh, run_tick, web.app 잔존 0 확인(00시 20분경).
+
+
+## 2026-11-09 r3 P1c 구조 변경 (V-S3, 회사 PC, 포트 5094, 측정 락 안)
+### 기준선 HEAD cab9e7f (git archive ~/rp_vs3/base; collision ba9b376c / env dd1b1139)
+인프로세스 하네스 bench/verify_s/r3_inproc.py(실시간 페이싱, 렌더 스레드 없음, 24s) + 500Hz qpos npz(bench/verify_s/r3raw/raw_b0_*), 내 독립 캡슐 118/53/45/57 재계산(r3_recalc.py, 로그 log_b0_recalc.txt). load 0.6~1.1.
+| 패턴 | ON tick p95 / max / >40ms 개수 / rtf | 500Hz 최소거리(OFF) | 침투 | monitor 미인증 |
+|-|-|-|-|-|
+| sweep | 32.95 / 74.5 / 14 / 0.85 | +9.53mm (-40.2) | 0 | 0 |
+| chest | 2.97 / 332.8 / 24 / 0.86 | +1.83 (-106.0) | 0 | 58 |
+| jump | 59.5 / 266.6 / 63 / 0.71 | +2.10 (-106.0) | 0 | 8 |
+| twist | 32.6 / 269.1 / 41 / 0.89 | +3.59 (-61.7) | 0 | 79 |
+팔 후반 12s 관절 범위(ON/OFF, 도): sweep 89.4/88.1, chest 0/0, jump 0/54.2, twist 0/0. OFF tick p95 5.5~6.4ms, max<=17.7.
+
+### 후보 c4 = I-S3 최종 동결 (collision 75b68ce5 / env 294d0bc1 / teleop bb163931 / tests d0fdfa30, 내가 git hash-object로 일치 확인; ~/rp_vs3/c4)
+인프로세스 24s, load 0.8~1.5, 락 안. 원자료 r3raw/raw_c4_*, log_c4.txt, log_c4_recalc.txt, log_c4_traj.txt.
+| 패턴 | tick p95 / max / >40ms | 500Hz 최소거리 | 침투 | 미인증 | 후반 12s 경로(ON, 도) |
+|-|-|-|-|-|-|
+| sweep | 12.8 / 19.6 / 0 | +9.69mm | 0 | 0 | 179 (OFF 178) |
+| chest | 8.2 / 42.0 (t=0.31s 1회) / 1 | +8.91 | 0 | 0 | 0.4 (진동 없음, 6s에 정지) |
+| jump | 13.1 / 31.7 / 0 | +6.49 | 0 | 0 | 0.3 (OFF 935) |
+| twist | 7.7 / 22.6 / 0 | +8.99 | 0 | 0 | 0.4 (OFF도 고정목표) |
+- 기능 문제: jump ON은 t=8s 이후 완전 정지(rest 자세 근처), 교차/rest 교대 미추종 -> '팔이 실제로 움직임' FAIL. chest는 right_shoulder_pitch -113.7도 수렴, 범위 122.5도(OFF 104).
+- 서버 경로(5094, ON): static 12 대칭 방향 max 7.52/7.72도(up120 7.72, 8도 직전), 손목 max 33.3mm(up120; 나머지 11자세 <=9.73, cross_chest 9.73) -> 방향 PASS(여유 얇음) / 손목 FAIL. release chest->abd45 2.33s에 8도 이내, 최종 1.4도 PASS. out_c4_stON.json.
+- 미실시: 4패턴 30초 fps 서버 창, 비대칭 12, OFF 회귀(P1a/P1b), planner 종료/kill -9/ON-OFF 반복. 사유: 12:5x 부모가 사용자 카메라 테스트 동안 새 성능 측정 중단 공지 -> 체인 중단(체인 r3_chain.sh 중단, 5094 미기동 확인). I-S3 자체 30fps(31.9~32.0, 957~961프레임/30s)는 미재현.
+- 판정(c4): NEEDS WORK. 근거: jump 영구 hold, up120 손목 33mm, chest 스파이크 42ms 1회(40 초과), 직접 재현 못한 항목 다수.
+
+### 후보 c5 (collision 6be22eb6 / env 444b9d74 / teleop bb163931 / tests 3d73db1e, 해시 직접 일치; ~/rp_vs3/c5) 부분 측정 — 부모 지시로 13:3x 중지
+인프로세스 24s(락 안, load 0.85~3.5; jump는 동시 eval.r3_batch GPU 일부) + 서버 5094 경로. 원자료 r3raw/raw_c5_*, raw_c5b_*, out_c5_*.json, log_c5*_recalc.txt.
+| 항목 | 결과 |
+|-|-|
+| jump ON (인프로세스) | p95 15.5 / max 30.5 / >40 0, 500Hz 최소 +6.51mm 침투 0 미인증 0, 후반 12s 경로 354.9도·범위 41.6도 (c4는 0.3도 동결, OFF 935도) -> 영구 hold 해소(부분 추종) |
+| sweep / twist | p95 10.3 / 9.2, max 24.6 / 20.2, 최소 +9.47 / +9.05mm, 침투 0 미인증 0 |
+| chest | p95 9.3, max 41.9 (t=0.34s 1회, c4와 동일 재현) -> 초기 스파이크 40ms 초과 미해결; 최소 +9.55mm 침투 0 |
+| 서버 status tick_ms_p95(200샘플 창)의 최대 | sweep 27.4 / chest 22.5 / jump 21.3 / twist 12.7 (렌더 병행; 20ms 초과 -> 서버 경로 기준이면 FAIL 여지) |
+| 서버 MJPEG fps | jump 959프레임/29.99s=31.95, twist 961/29.98s=32.02 (>=29.7 PASS). sweep 714/22.46s, chest 750/23.48s는 창이 30s 미달(원인: 벽시계 time.time() 기반 종료, 이후 monotonic으로 수정) -> 30s 창 재측정 필요 |
+| 정적 12 ON 순차 (settle 3.2s) | **회귀**: hum80 u1/u2 45.0/78.5도 손목 238.7mm, up120 23.4/7.3도 손목 86.1mm (c4: hum80 2.4도/4.5mm, up120 7.7도/33mm). 나머지 10자세 <=2.2도, <=9.79mm. release 2.17s/최종 1.4도 PASS |
+| planner lifecycle (1차, 카운트 기준 오류로 시간값 무효) | web.app+mp 4+planner 1: mode ON 시 planner 1 추가, mode OFF/옵션 OFF 시 planner 소멸, 6회 ON/OFF·3회 옵션 토글에서 프로세스 수 증가 없음, shm 44->59(실행 중)->44(종료 후). TERM·kill-9·kill-9 초기: cwd 기준 잔존은 계측 서브셸 1개뿐(=실제 0), 종료 시간은 측정 오류로 무효 -> 재측정 필요 |
+판정(c5): NEEDS WORK (정적 회귀 hum80/up120, chest 초기 42ms, 서버 경로 tick p95 창 최대 >20, 미실시 항목 다수).
+
+### 재개 지점 (V-S3, 부모 중지 지시로 중단)
+정리 완료: 5094 닫힘, r3_* 체인/잡/서버/planner 자식 종료(r3_cleanup.sh). 동결 트리 ~/rp_vs3/{base,c3,c4,c5}.
+남은 측정(c5 또는 새 동결 c6):
+1. 정적 12 ON: SETTLE=8 재측정(서버 RTF 저하로 3.2s 내 미수렴 여부 분리): `bash bench/verify_s/r3_chain2.sh /home/user/rp_vs3/c5 c5` (stON8, sweep/chest 30s 창 포함; 락 필요, 약 6분).
+2. 비대칭 12자세 ON/OFF: `bash bench/verify_s/r3_srv_job.sh TREE TAG "STATOPT=1" asym` (OFF는 STATOPT=0).
+3. OFF 회귀 P1a/P1b: `r3_srv_job.sh TREE TAG "STATOPT=0" static,asym` 및 `dynv,degen`, 기준값은 이 문서 앞의 PASS 표.
+4. planner lifecycle 재측정: `bash bench/verify_s/r3_life.sh TREE TAG` (BASHPID 보정 완료).
+5. chest 초기 스파이크: 인프로세스 `bash bench/verify_s/r3_ip_job.sh TREE TAG "chest" 24` 반복(>40ms는 t~0.3s).
+6. I-S3 시드 진단: bench/humanoid_s4_out/c6_seed_diagnose/result.json (생성 확인, 내용 미검토); 가설 = collision waypoint가 task IK seed를 덮어 hum80/up120이 순차 실행에서만 어긋남. I-S3 인프로세스 sim-시간 기준에서는 hum80 1.85도/up120 1.67도로 재현 안 됨 -> 서버 RTF/settle 차이 분리가 우선(1번).

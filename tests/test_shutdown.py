@@ -13,7 +13,7 @@ import pytest
 def _proc_info(pid):
     try:
         tail = Path(f"/proc/{pid}/stat").read_text().rsplit(")", 1)[1].split()
-        return {"pid": pid, "ppid": int(tail[1]), "state": tail[0]}
+        return {"pid": pid, "ppid": int(tail[1]), "pgrp": int(tail[2]), "state": tail[0]}
     except (FileNotFoundError, ProcessLookupError, PermissionError):
         return None
 
@@ -89,7 +89,17 @@ def test_server_signal_reaps_spawn_children(sig, tmp_path):
 
 
 
-@pytest.mark.parametrize("delay", [.4, .6, .8])
+def _process_group_members(group_id):
+    """Catch late-spawned and reparented children, not just pre-kill PPID rows."""
+    rows=[]
+    for entry in Path('/proc').iterdir():
+        if entry.name.isdigit():
+            row=_proc_info(int(entry.name))
+            if row and row['pgrp']==group_id:rows.append(row)
+    return rows
+
+
+@pytest.mark.parametrize("delay", [.4, .6, .8, "first_spawn"])
 def test_server_sigkill_during_startup_reaps_spawn_children(delay, tmp_path):
     port = _free_port()
     env = os.environ.copy()
@@ -102,23 +112,39 @@ def test_server_sigkill_during_startup_reaps_spawn_children(delay, tmp_path):
         )
         captured = []
         try:
-            time.sleep(delay)
-            captured = _descendants(proc.pid)
-            assert captured, "expected Manager/resource-tracker children during startup"
+            if delay == 'first_spawn':
+                deadline=time.monotonic()+15
+                while time.monotonic()<deadline:
+                    assert proc.poll() is None,log_path.read_text(errors='replace')
+                    captured=_descendants(proc.pid)
+                    if captured:break
+                    time.sleep(.005)
+                assert captured,'no spawn within 15s; child-reaping coverage not exercised'
+            else:
+                # Keep the original fixed-delay early-kill race. No assumption
+                # that Python imports/Manager spawn finish within .4 seconds.
+                time.sleep(delay)
+                captured = _descendants(proc.pid)
+            known={row['pid'] for row in captured}
+            known.update(row['pid'] for row in _process_group_members(proc.pid))
             os.kill(proc.pid, signal.SIGKILL)
             proc.wait(timeout=3)
             deadline = time.monotonic() + 5
-            while time.monotonic() < deadline and any(_proc_info(row["pid"]) for row in captured):
-                time.sleep(.05)
-            alive = [_proc_info(row["pid"]) for row in captured]
-            assert not [row for row in alive if row is not None], log_path.read_text(errors="replace")
+            while time.monotonic() < deadline:
+                group=_process_group_members(proc.pid)
+                known.update(row['pid'] for row in group)
+                alive=[row for pid in known if (row:=_proc_info(pid)) is not None]
+                if not alive and not group:break
+                time.sleep(.02)
+            alive=[row for pid in known if (row:=_proc_info(pid)) is not None]
+            assert not alive and not _process_group_members(proc.pid),log_path.read_text(errors='replace')
         finally:
             if proc.poll() is None:
                 proc.kill(); proc.wait(timeout=3)
-            for row in reversed(captured):
-                if _proc_info(row["pid"]):
-                    try: os.kill(row["pid"], signal.SIGKILL)
-                    except ProcessLookupError: pass
+            # Only this server's dedicated process group, including late orphans.
+            for row in reversed(_process_group_members(proc.pid)):
+                try:os.kill(row['pid'],signal.SIGKILL)
+                except ProcessLookupError:pass
 
 def _pid_watched_child(expected_parent_pid, ready):
     from web.process_lifecycle import start_parent_pid_watch

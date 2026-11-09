@@ -1,0 +1,47 @@
+{
+  "concurrent_context": "\uc0ac\uc6a9\uc790 \ud14c\uc2a4\ud2b8 \ub3d9\uc2dc \uc9c4\ud589",
+  "config": {
+    "perception": "fp",
+    "gt_assist": "on",
+    "objects": "box",
+    "n": 5,
+    "seeds": null,
+    "seed": 5,
+    "frames": 5,
+    "pick": "off",
+    "width": 640,
+    "height": 480,
+    "out": "bench/eval/r3_gpu_1109a/pilot_fp_on_box_005_a5",
+    "save_replay": false
+  },
+  "seeds": [
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "git_hash": "cab9e7fd820020ae9fec3543e0e9243146916db3",
+  "dirty": " M eval/harness/report.py\n M eval/harness/worker.py\n M eval/run_benchmark.py\n M notes/verify_e.md\n M notes/verify_s.md\n M notes/verify_t.md\n M sim/humanoid_collision.py\n M sim/humanoid_env.py\n M sim/humanoid_teleop.py\n M tests/test_humanoid.py\n M tests/test_shutdown.py\n M tools/teleop_tracker_win.py\n?? bench/eval/r3_gpu_1109a/\n?? bench/eval/r3_matrix.sh\n?? bench/eval/r3_warmup.py\n?? bench/eval/r3_warmup.sh\n?? bench/eval/r3_warmup_cancel_1109a/\n?? bench/humanoid_s4_async.py\n?? bench/humanoid_s4_c5.py\n?? bench/humanoid_s4_c5_inproc.py\n?? bench/humanoid_s4_diagnose.py\n?? bench/humanoid_s4_final.py\n?? bench/humanoid_s4_function.py\n?? bench/humanoid_s4_lifecycle.py\n?? bench/humanoid_s4_out/\n?? bench/humanoid_s4_render30.py\n?? bench/humanoid_s4_validate.py\n?? bench/tracker_r3_company.py\n?? bench/tracker_r3_contract.py\n?? bench/tracker_r3_recovery.py\n?? bench/tracker_r3_slots.sh\n?? bench/verify_e/r3/\n?? bench/verify_s/log_b0.txt\n?? bench/verify_s/log_b0_recalc.txt\n?? bench/verify_s/log_c3.txt\n?? bench/verify_s/log_c4.txt\n?? bench/verify_s/log_c4_pat_sweep.txt\n?? bench/verify_s/log_c4_recalc.txt\n?? bench/verify_s/log_c4_stON.txt\n?? bench/verify_s/log_c4_traj.txt\n?? bench/verify_s/out_c4_stON.json\n?? bench/verify_s/r3_base_s.py\n?? bench/verify_s/r3_chain.sh\n?? bench/verify_s/r3_freeze.sh\n?? bench/verify_s/r3_inproc.py\n?? bench/verify_s/r3_ip_job.sh\n?? bench/verify_s/r3_recalc.py\n?? bench/verify_s/r3_recalc_all.sh\n?? bench/verify_s/r3_srv_job.sh\n?? bench/verify_s/r3_static_rows.py\n?? bench/verify_s/r3_summ.py\n?? bench/verify_s/r3_traj.py\n?? bench/verify_s/r3raw/\n?? bench/verify_t/out_r3/\n?? bench/verify_t/r3_all.sh\n?? bench/verify_t/r3_all2.sh\n?? bench/verify_t/r3_chain.sh\n?? bench/verify_t/r3_cross.py\n?? bench/verify_t/r3_detect.py\n?? bench/verify_t/r3_dummy_server.py\n?? bench/verify_t/r3_panda_base.sh\n?? bench/verify_t/r3_rates_rest.ps1\n?? bench/verify_t/r3_rec_one.sh\n?? bench/verify_t/r3_rec_run.sh\n?? bench/verify_t/r3_rec_win.ps1\n?? bench/verify_t/r3_recover.py\n?? bench/verify_t/r3_run.sh\n?? bench/verify_t/r3_summ.py\n?? bench/verify_t/r3_win_run.ps1\n?? eval/r3_batch.py\n?? eval/report/r3_matrix_1109a_PENDING.png\n?? eval/report/r3_pilot_1109a_PENDING.png\n?? eval/report/r3_r3_gpu_1109a.md\n?? eval/report/r3_r3_gpu_1109a_matrix.png\n?? eval/report/r3_r3_gpu_1109a_pilot.png\n?? eval/tests/test_r3_batch.py\n?? notes/TEAM_R3.md\n?? notes/TEAM_R3_schedule.md\n?? notes/eval_r3_changes.md\n?? notes/humanoid_s4_changes.md\n?? notes/tracker_r3_changes.md\n",
+  "python": "3.12.14 | packaged by Anaconda, Inc. | (main, Aug 27 2026, 14:46:43) [GCC 14.3.0]",
+  "gt_disclosure": "GT supplies target identity and nearest-visible-centroid click only for fp; all GT poses score-only except explicitly enabled control assistance. SAM uses current depth-aware select_candidate and click-connected component.",
+  "source_sha256": {
+    "eval/run_benchmark.py": "d482a2e35bf1872c2500f6460fd0449f9556ccf81184b064167cb4ae79582367",
+    "eval/harness/__init__.py": "41bc680c965c2c96dc4c5b1d60fccb952fc58111dbd9124c7affabefd55ba386",
+    "eval/harness/metrics.py": "f4149e5f7579a17b11cac09eed739516d73098e1dbbdf076122f949e7fd9471a",
+    "eval/harness/report.py": "2768a673053043b399536262cb08b8371b1865cc83bee8aab39fea502c6889d5",
+    "eval/harness/rescore.py": "1f28877472ba5f6cfa37dd27680a3c2afe1a19fde7e55b84339bf30d467038e4",
+    "eval/harness/worker.py": "e3f2784a35c4016849076cc4d2c00405e1e2be7ceb1de705dcd506c529f1c37e"
+  },
+  "dependencies": {
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "mujoco": "3.17.0",
+    "torch": "2.14.0+cu130",
+    "trimesh": "5.2.0"
+  },
+  "upstream_git": {
+    "FoundationPose": "a1b694b83e633c2cb6115b9063d940a687759392",
+    "sam2.1": "2b90b9f5ceec907a1c18123530e92e794ad901a4"
+  }
+}

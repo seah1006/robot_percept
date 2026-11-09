@@ -1,0 +1,105 @@
+{
+  "signals": [
+    {
+      "signal": "SIGTERM",
+      "children": 6,
+      "planners": 1,
+      "remaining": [],
+      "new_shm_remaining": [],
+      "elapsed_s": 2.877022178000061
+    },
+    {
+      "signal": "SIGTERM",
+      "children": 6,
+      "planners": 1,
+      "remaining": [],
+      "new_shm_remaining": [],
+      "elapsed_s": 3.6256558160000623
+    },
+    {
+      "signal": "SIGKILL",
+      "children": 6,
+      "planners": 1,
+      "remaining": [],
+      "new_shm_remaining": [],
+      "elapsed_s": 1.5507172590000664
+    },
+    {
+      "signal": "SIGKILL",
+      "children": 6,
+      "planners": 1,
+      "remaining": [],
+      "new_shm_remaining": [],
+      "elapsed_s": 1.4060118400000192
+    }
+  ],
+  "collision_toggles": [
+    {
+      "iteration": 0,
+      "off_count": 0,
+      "on_count": 1
+    },
+    {
+      "iteration": 1,
+      "off_count": 0,
+      "on_count": 1
+    },
+    {
+      "iteration": 2,
+      "off_count": 0,
+      "on_count": 1
+    },
+    {
+      "iteration": 3,
+      "off_count": 0,
+      "on_count": 1
+    },
+    {
+      "iteration": 4,
+      "off_count": 0,
+      "on_count": 1
+    },
+    {
+      "iteration": 5,
+      "off_count": 0,
+      "on_count": 1
+    },
+    {
+      "iteration": 6,
+      "off_count": 0,
+      "on_count": 1
+    },
+    {
+      "iteration": 7,
+      "off_count": 0,
+      "on_count": 1
+    },
+    {
+      "iteration": 8,
+      "off_count": 0,
+      "on_count": 1
+    },
+    {
+      "iteration": 9,
+      "off_count": 0,
+      "on_count": 1
+    }
+  ],
+  "mode_toggles": [
+    {
+      "iteration": 0,
+      "old_planners_remaining": 0,
+      "new_planners": 1
+    },
+    {
+      "iteration": 1,
+      "old_planners_remaining": 0,
+      "new_planners": 1
+    },
+    {
+      "iteration": 2,
+      "old_planners_remaining": 0,
+      "new_planners": 1
+    }
+  ]
+}

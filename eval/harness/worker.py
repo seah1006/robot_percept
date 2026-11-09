@@ -8,6 +8,7 @@ def worker(requests, responses):
     # No simulator or web imports in this CUDA process.
     import torch
     from perception.fp_runner import FPRunner
+    from perception.sam_runner import select_candidate
     from sam2.build_sam import build_sam2
     from sam2.sam2_image_predictor import SAM2ImagePredictor
     import os
@@ -29,8 +30,15 @@ def worker(requests, responses):
                 with torch.inference_mode(), torch.autocast('cuda',dtype=torch.float16):
                     predictor.set_image(a['rgb'])
                     masks, scores, _ = predictor.predict(point_coords=np.asarray([a['click']]),point_labels=np.array([1]),multimask_output=True)
-                selected = int(np.argmax(scores))
-                mask = masks[selected].astype(bool)
+                selected = select_candidate(masks, scores, a['click'], a['depth'])
+                import cv2
+                mask = masks[selected].astype(np.uint8)
+                _, labels, _, _ = cv2.connectedComponentsWithStats(mask, 8)
+                x, y = map(int, a['click'])
+                component = int(labels[y, x])
+                if component:
+                    mask = labels == component
+                mask = mask.astype(bool)
                 torch.cuda.synchronize()
                 sam_s = time.perf_counter()-t
                 sam_peak = torch.cuda.max_memory_allocated()
@@ -68,15 +76,26 @@ class Client:
             result=self.r.get(timeout=self.timeout)
         except Exception:
             # Never allow a timed-out reply to be misassociated with a later trial.
-            self.p.terminate(); self.p.join(3)
+            self.close(force=True)
             self.__init__(self.timeout)
             raise
         if not result['ok']:
             raise RuntimeError(result['error'])
         return result
-    def close(self):
-        self.q.put(None)
+    def close(self, force=False):
+        if force:
+            self.p.terminate()
+        else:
+            self.q.put(None)
         self.p.join(3)
         if self.p.is_alive():
             self.p.terminate()
             self.p.join(3)
+        if self.p.is_alive():
+            self.p.kill()
+            self.p.join(3)
+        if self.p.is_alive():
+            raise RuntimeError('owned FP worker failed to exit')
+        for queue in (self.q, self.r):
+            queue.cancel_join_thread()
+            queue.close()

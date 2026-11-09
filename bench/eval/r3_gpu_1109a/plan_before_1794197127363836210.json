@@ -1,0 +1,619 @@
+[
+  {
+    "id": "pilot_fp_on_mustard_000",
+    "stage": "pilot",
+    "p": "fp",
+    "a": "on",
+    "obj": "mustard",
+    "seed": 0,
+    "n": 2
+  },
+  {
+    "id": "pilot_fp_on_mustard_002",
+    "stage": "pilot",
+    "p": "fp",
+    "a": "on",
+    "obj": "mustard",
+    "seed": 2,
+    "n": 2
+  },
+  {
+    "id": "pilot_fp_on_mustard_004",
+    "stage": "pilot",
+    "p": "fp",
+    "a": "on",
+    "obj": "mustard",
+    "seed": 4,
+    "n": 2
+  },
+  {
+    "id": "pilot_fp_on_mustard_006_a24",
+    "stage": "pilot",
+    "p": "fp",
+    "a": "on",
+    "obj": "mustard",
+    "seed": 6,
+    "n": 24,
+    "estimated_slot_s": 154.24833249899962
+  },
+  {
+    "id": "pilot_fp_on_box_000_a24",
+    "stage": "pilot",
+    "p": "fp",
+    "a": "on",
+    "obj": "box",
+    "seed": 0,
+    "n": 24,
+    "estimated_slot_s": 154.24833249899962
+  },
+  {
+    "id": "pilot_fp_on_box_024_a6",
+    "stage": "pilot",
+    "p": "fp",
+    "a": "on",
+    "obj": "box",
+    "seed": 24,
+    "n": 6,
+    "estimated_slot_s": 57.98985916499987
+  },
+  {
+    "id": "pilot_fp_on_cup_000_a24",
+    "stage": "pilot",
+    "p": "fp",
+    "a": "on",
+    "obj": "cup",
+    "seed": 0,
+    "n": 24,
+    "estimated_slot_s": 154.24833249899962
+  },
+  {
+    "id": "pilot_fp_on_cup_024_a6",
+    "stage": "pilot",
+    "p": "fp",
+    "a": "on",
+    "obj": "cup",
+    "seed": 24,
+    "n": 6,
+    "estimated_slot_s": 57.98985916499987
+  },
+  {
+    "id": "matrix_gt_on_mustard_000_a5",
+    "stage": "matrix",
+    "p": "gt",
+    "a": "on",
+    "obj": "mustard",
+    "seed": 0,
+    "n": 5,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_gt_on_mustard_005_a5",
+    "stage": "matrix",
+    "p": "gt",
+    "a": "on",
+    "obj": "mustard",
+    "seed": 5,
+    "n": 5,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_gt_on_mustard_010_a5",
+    "stage": "matrix",
+    "p": "gt",
+    "a": "on",
+    "obj": "mustard",
+    "seed": 10,
+    "n": 5,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_gt_on_mustard_015_a5",
+    "stage": "matrix",
+    "p": "gt",
+    "a": "on",
+    "obj": "mustard",
+    "seed": 15,
+    "n": 5,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_gt_on_box_000_a5",
+    "stage": "matrix",
+    "p": "gt",
+    "a": "on",
+    "obj": "box",
+    "seed": 0,
+    "n": 5,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_gt_on_box_005_a5",
+    "stage": "matrix",
+    "p": "gt",
+    "a": "on",
+    "obj": "box",
+    "seed": 5,
+    "n": 5,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_gt_on_box_010_a5",
+    "stage": "matrix",
+    "p": "gt",
+    "a": "on",
+    "obj": "box",
+    "seed": 10,
+    "n": 5,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_gt_on_box_015_a5",
+    "stage": "matrix",
+    "p": "gt",
+    "a": "on",
+    "obj": "box",
+    "seed": 15,
+    "n": 5,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_gt_on_cup_000_a5",
+    "stage": "matrix",
+    "p": "gt",
+    "a": "on",
+    "obj": "cup",
+    "seed": 0,
+    "n": 5,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_gt_on_cup_005_a5",
+    "stage": "matrix",
+    "p": "gt",
+    "a": "on",
+    "obj": "cup",
+    "seed": 5,
+    "n": 5,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_gt_on_cup_010_a5",
+    "stage": "matrix",
+    "p": "gt",
+    "a": "on",
+    "obj": "cup",
+    "seed": 10,
+    "n": 5,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_gt_on_cup_015_a5",
+    "stage": "matrix",
+    "p": "gt",
+    "a": "on",
+    "obj": "cup",
+    "seed": 15,
+    "n": 5,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_gt_off_mustard_000_a5",
+    "stage": "matrix",
+    "p": "gt",
+    "a": "off",
+    "obj": "mustard",
+    "seed": 0,
+    "n": 5,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_gt_off_mustard_005_a5",
+    "stage": "matrix",
+    "p": "gt",
+    "a": "off",
+    "obj": "mustard",
+    "seed": 5,
+    "n": 5,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_gt_off_mustard_010_a5",
+    "stage": "matrix",
+    "p": "gt",
+    "a": "off",
+    "obj": "mustard",
+    "seed": 10,
+    "n": 5,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_gt_off_mustard_015_a5",
+    "stage": "matrix",
+    "p": "gt",
+    "a": "off",
+    "obj": "mustard",
+    "seed": 15,
+    "n": 5,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_gt_off_box_000_a5",
+    "stage": "matrix",
+    "p": "gt",
+    "a": "off",
+    "obj": "box",
+    "seed": 0,
+    "n": 5,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_gt_off_box_005_a5",
+    "stage": "matrix",
+    "p": "gt",
+    "a": "off",
+    "obj": "box",
+    "seed": 5,
+    "n": 5,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_gt_off_box_010_a5",
+    "stage": "matrix",
+    "p": "gt",
+    "a": "off",
+    "obj": "box",
+    "seed": 10,
+    "n": 5,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_gt_off_box_015_a5",
+    "stage": "matrix",
+    "p": "gt",
+    "a": "off",
+    "obj": "box",
+    "seed": 15,
+    "n": 5,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_gt_off_cup_000_a5",
+    "stage": "matrix",
+    "p": "gt",
+    "a": "off",
+    "obj": "cup",
+    "seed": 0,
+    "n": 5,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_gt_off_cup_005_a5",
+    "stage": "matrix",
+    "p": "gt",
+    "a": "off",
+    "obj": "cup",
+    "seed": 5,
+    "n": 5,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_gt_off_cup_010_a5",
+    "stage": "matrix",
+    "p": "gt",
+    "a": "off",
+    "obj": "cup",
+    "seed": 10,
+    "n": 5,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_gt_off_cup_015_a5",
+    "stage": "matrix",
+    "p": "gt",
+    "a": "off",
+    "obj": "cup",
+    "seed": 15,
+    "n": 5,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_on_mustard_000_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "on",
+    "obj": "mustard",
+    "seed": 0,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_on_mustard_004_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "on",
+    "obj": "mustard",
+    "seed": 4,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_on_mustard_008_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "on",
+    "obj": "mustard",
+    "seed": 8,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_on_mustard_012_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "on",
+    "obj": "mustard",
+    "seed": 12,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_on_mustard_016_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "on",
+    "obj": "mustard",
+    "seed": 16,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_on_box_000_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "on",
+    "obj": "box",
+    "seed": 0,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_on_box_004_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "on",
+    "obj": "box",
+    "seed": 4,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_on_box_008_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "on",
+    "obj": "box",
+    "seed": 8,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_on_box_012_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "on",
+    "obj": "box",
+    "seed": 12,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_on_box_016_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "on",
+    "obj": "box",
+    "seed": 16,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_on_cup_000_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "on",
+    "obj": "cup",
+    "seed": 0,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_on_cup_004_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "on",
+    "obj": "cup",
+    "seed": 4,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_on_cup_008_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "on",
+    "obj": "cup",
+    "seed": 8,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_on_cup_012_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "on",
+    "obj": "cup",
+    "seed": 12,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_on_cup_016_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "on",
+    "obj": "cup",
+    "seed": 16,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_off_mustard_000_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "off",
+    "obj": "mustard",
+    "seed": 0,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_off_mustard_004_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "off",
+    "obj": "mustard",
+    "seed": 4,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_off_mustard_008_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "off",
+    "obj": "mustard",
+    "seed": 8,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_off_mustard_012_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "off",
+    "obj": "mustard",
+    "seed": 12,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_off_mustard_016_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "off",
+    "obj": "mustard",
+    "seed": 16,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_off_box_000_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "off",
+    "obj": "box",
+    "seed": 0,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_off_box_004_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "off",
+    "obj": "box",
+    "seed": 4,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_off_box_008_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "off",
+    "obj": "box",
+    "seed": 8,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_off_box_012_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "off",
+    "obj": "box",
+    "seed": 12,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_off_box_016_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "off",
+    "obj": "box",
+    "seed": 16,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_off_cup_000_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "off",
+    "obj": "cup",
+    "seed": 0,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_off_cup_004_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "off",
+    "obj": "cup",
+    "seed": 4,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_off_cup_008_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "off",
+    "obj": "cup",
+    "seed": 8,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_off_cup_012_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "off",
+    "obj": "cup",
+    "seed": 12,
+    "n": 4,
+    "estimated_slot_s": 150
+  },
+  {
+    "id": "matrix_fp_off_cup_016_a4",
+    "stage": "matrix",
+    "p": "fp",
+    "a": "off",
+    "obj": "cup",
+    "seed": 16,
+    "n": 4,
+    "estimated_slot_s": 150
+  }
+]

@@ -1,0 +1,362 @@
+{
+  "GT_auxiliary": true,
+  "load": "2.29 2.06 1.52 3/288 53692\n",
+  "replay": [
+    {
+      "adaptive": false,
+      "uncertified": 12,
+      "penetrating": 0,
+      "exact_checks": 267,
+      "min_actual": 0.008721636058262192,
+      "events": [
+        {
+          "step": 1348,
+          "time_s": 2.696,
+          "delta_max_rad": 0.0013439785234904411,
+          "clearance_lower_bound": 0.01246209639847752,
+          "continuous_interval_certified": false,
+          "uncertified_intervals": 1,
+          "penetration_checks": 0,
+          "exact_checks": 128,
+          "step_motion_bound": 0.005041295058855841,
+          "refresh_threshold": 0.002
+        },
+        {
+          "step": 1408,
+          "time_s": 2.816,
+          "delta_max_rad": 0.0013249050647333727,
+          "clearance_lower_bound": 0.011843372370034147,
+          "continuous_interval_certified": false,
+          "uncertified_intervals": 2,
+          "penetration_checks": 0,
+          "exact_checks": 140,
+          "step_motion_bound": 0.005544135775677375,
+          "refresh_threshold": 0.002
+        },
+        {
+          "step": 1413,
+          "time_s": 2.826,
+          "delta_max_rad": 0.0013270273362034901,
+          "clearance_lower_bound": 0.011770687090998919,
+          "continuous_interval_certified": false,
+          "uncertified_intervals": 3,
+          "penetration_checks": 0,
+          "exact_checks": 141,
+          "step_motion_bound": 0.0055985820954379765,
+          "refresh_threshold": 0.002
+        },
+        {
+          "step": 1465,
+          "time_s": 2.93,
+          "delta_max_rad": 0.0013347447277598512,
+          "clearance_lower_bound": 0.010810523021199128,
+          "continuous_interval_certified": false,
+          "uncertified_intervals": 4,
+          "penetration_checks": 0,
+          "exact_checks": 154,
+          "step_motion_bound": 0.0060322757134894135,
+          "refresh_threshold": 0.002
+        },
+        {
+          "step": 1469,
+          "time_s": 2.938,
+          "delta_max_rad": 0.00133562272101595,
+          "clearance_lower_bound": 0.010718026575739378,
+          "continuous_interval_certified": false,
+          "uncertified_intervals": 5,
+          "penetration_checks": 0,
+          "exact_checks": 155,
+          "step_motion_bound": 0.0060492401001841474,
+          "refresh_threshold": 0.002
+        },
+        {
+          "step": 1473,
+          "time_s": 2.946,
+          "delta_max_rad": 0.0013358667701790505,
+          "clearance_lower_bound": 0.010622726438433608,
+          "continuous_interval_certified": false,
+          "uncertified_intervals": 6,
+          "penetration_checks": 0,
+          "exact_checks": 156,
+          "step_motion_bound": 0.006061046772729846,
+          "refresh_threshold": 0.002
+        },
+        {
+          "step": 1477,
+          "time_s": 2.954,
+          "delta_max_rad": 0.0013355796033844847,
+          "clearance_lower_bound": 0.010525426099038102,
+          "continuous_interval_certified": false,
+          "uncertified_intervals": 7,
+          "penetration_checks": 0,
+          "exact_checks": 157,
+          "step_motion_bound": 0.006068771351256719,
+          "refresh_threshold": 0.002
+        },
+        {
+          "step": 1481,
+          "time_s": 2.962,
+          "delta_max_rad": 0.001332457840786283,
+          "clearance_lower_bound": 0.010424990278620164,
+          "continuous_interval_certified": false,
+          "uncertified_intervals": 8,
+          "penetration_checks": 0,
+          "exact_checks": 158,
+          "step_motion_bound": 0.0060628265981736255,
+          "refresh_threshold": 0.002
+        },
+        {
+          "step": 1485,
+          "time_s": 2.97,
+          "delta_max_rad": 0.0013260799119243494,
+          "clearance_lower_bound": 0.010309185342983793,
+          "continuous_interval_certified": false,
+          "uncertified_intervals": 9,
+          "penetration_checks": 0,
+          "exact_checks": 159,
+          "step_motion_bound": 0.006043325072637691,
+          "refresh_threshold": 0.002
+        },
+        {
+          "step": 1489,
+          "time_s": 2.978,
+          "delta_max_rad": 0.001316273713374505,
+          "clearance_lower_bound": 0.01019525685210286,
+          "continuous_interval_certified": false,
+          "uncertified_intervals": 10,
+          "penetration_checks": 0,
+          "exact_checks": 160,
+          "step_motion_bound": 0.00601318713804478,
+          "refresh_threshold": 0.002
+        },
+        {
+          "step": 1514,
+          "time_s": 3.028,
+          "delta_max_rad": 0.0011016205661040779,
+          "clearance_lower_bound": 0.009738978479887458,
+          "continuous_interval_certified": false,
+          "uncertified_intervals": 11,
+          "penetration_checks": 0,
+          "exact_checks": 168,
+          "step_motion_bound": 0.005163300901247632,
+          "refresh_threshold": 0.002
+        },
+        {
+          "step": 1518,
+          "time_s": 3.036,
+          "delta_max_rad": 0.0010292536138680752,
+          "clearance_lower_bound": 0.00975667715381455,
+          "continuous_interval_certified": false,
+          "uncertified_intervals": 12,
+          "penetration_checks": 0,
+          "exact_checks": 169,
+          "step_motion_bound": 0.004904802495047876,
+          "refresh_threshold": 0.002
+        }
+      ]
+    },
+    {
+      "adaptive": true,
+      "uncertified": 0,
+      "penetrating": 0,
+      "exact_checks": 1049,
+      "min_actual": 0.008721636058262192,
+      "events": []
+    }
+  ],
+  "hum80": {
+    "final_errors_deg": [
+      0.9371393034239655,
+      1.2939347275616593,
+      0.9371393220000084,
+      1.293934714782257
+    ],
+    "tail_max_deg": 1.3296327205023377,
+    "first_within8_s": 2.16,
+    "actual": {
+      "clearance_lower_bound": 0.12939917704242376,
+      "continuous_interval_certified": true,
+      "uncertified_intervals": 0,
+      "penetration_checks": 0,
+      "exact_checks": 20,
+      "step_motion_bound": 4.759815629365346e-06,
+      "refresh_threshold": 0.0020095196312587306,
+      "minimum_exact_clearance": 0.017111814775471204
+    },
+    "snapshot": {
+      "state": "clear",
+      "braking": false,
+      "brake": null,
+      "plan": {
+        "accepted": true,
+        "route": "direct",
+        "path_min": 0.15879873082401608,
+        "distance": 0.15879873082401608,
+        "start_gap": 0.15879873082401613,
+        "samples": 48,
+        "endpoint_modified": false,
+        "planner_ms": 24.590494999984003,
+        "submitted_at": 2042.735254541,
+        "completed_at": 2042.760198499,
+        "sequence": 197,
+        "local_path_min": 0.15879873082401608,
+        "plan_age_ms": 13.344163000056142,
+        "modified": false
+      },
+      "planner_diag": {
+        "accepted": true,
+        "route": "direct",
+        "path_min": 0.15879873082401608,
+        "distance": 0.15879873082401608,
+        "start_gap": 0.15879873082401613,
+        "samples": 48,
+        "endpoint_modified": false,
+        "planner_ms": 24.590494999984003,
+        "submitted_at": 2042.735254541,
+        "completed_at": 2042.760198499,
+        "sequence": 197
+      },
+      "cmd_des_max_rad": 2.220446049250313e-16,
+      "actual_cmd_max_rad": 4.541850352481159e-05,
+      "target_actual_max_rad": 4.541850352481159e-05,
+      "target_cmd_max_rad": 2.220446049250313e-16,
+      "target_clearance_mm": 158.79873082401608
+    }
+  },
+  "up120_4s": {
+    "final_errors_deg": [
+      28.60413427246947,
+      11.888369415466352,
+      28.603208650290828,
+      11.884116860161425
+    ],
+    "tail_max_deg": 28.825575741606478,
+    "first_within8_s": null,
+    "actual": {
+      "clearance_lower_bound": 0.011536281760081521,
+      "continuous_interval_certified": true,
+      "uncertified_intervals": 0,
+      "penetration_checks": 0,
+      "exact_checks": 30,
+      "step_motion_bound": 1.4286638181865352e-05,
+      "refresh_threshold": 0.0020285732763637306,
+      "minimum_exact_clearance": 0.017111814775471204
+    },
+    "snapshot": {
+      "state": "holding",
+      "braking": true,
+      "brake": {
+        "reason": {
+          "pair": [
+            "torso",
+            "right_fore"
+          ],
+          "distance": 0.10220931043995395,
+          "closing_speed": 3.7735307769737515e-05,
+          "reference_closing_speed": 0.002383404494501854,
+          "reference_accel_closing": 0.0703019827237502,
+          "required_margin": 0.0025119028283915705,
+          "guard_required": 0.008,
+          "tracking_normal": 2.8651196984841518e-05,
+          "planned_path_min": -1.0,
+          "margin_method": "planned-route-plus-reference-accel-jerk-tracking-lag",
+          "effective_deceleration": 0.25,
+          "latency_s": 0.06
+        },
+        "sim_time": 7.3599999999994115,
+        "measured_certified": false
+      },
+      "plan": {
+        "accepted": false,
+        "route": "planner_pending",
+        "modified": true
+      },
+      "planner_diag": {
+        "accepted": true,
+        "route": "direct",
+        "path_min": 0.07416177708950407,
+        "distance": 0.07416177708950407,
+        "start_gap": 0.10209286537778127,
+        "samples": 48,
+        "endpoint_modified": false,
+        "planner_ms": 22.713489999887315,
+        "submitted_at": 2046.6386998,
+        "completed_at": 2046.661763977,
+        "sequence": 325
+      },
+      "cmd_des_max_rad": 0.0,
+      "actual_cmd_max_rad": 0.009588508283903008,
+      "target_actual_max_rad": 0.9157097076297019,
+      "target_cmd_max_rad": 0.9078084865842662,
+      "target_clearance_mm": 74.16177708950407
+    }
+  },
+  "up120_8s": {
+    "final_errors_deg": [
+      28.17076581640396,
+      12.150838603449731,
+      28.166282867501323,
+      12.130299313929626
+    ],
+    "tail_max_deg": 28.2673544242557,
+    "first_within8_s": null,
+    "actual": {
+      "clearance_lower_bound": 0.013624265608860014,
+      "continuous_interval_certified": true,
+      "uncertified_intervals": 0,
+      "penetration_checks": 0,
+      "exact_checks": 31,
+      "step_motion_bound": 2.1113026291010634e-05,
+      "refresh_threshold": 0.0020422260525820215,
+      "minimum_exact_clearance": 0.017111814775471204
+    },
+    "snapshot": {
+      "state": "holding",
+      "braking": true,
+      "brake": {
+        "reason": {
+          "pair": [
+            "torso",
+            "left_fore"
+          ],
+          "distance": 0.10210675612500945,
+          "closing_speed": 0.00011994954751404778,
+          "reference_closing_speed": 0.0019173388898866682,
+          "reference_accel_closing": 0.08207180932259597,
+          "required_margin": 0.0026953350744564277,
+          "guard_required": 0.008,
+          "tracking_normal": 1.4543625280578562e-05,
+          "planned_path_min": -1.0,
+          "margin_method": "planned-route-plus-reference-accel-jerk-tracking-lag",
+          "effective_deceleration": 0.25,
+          "latency_s": 0.06
+        },
+        "sim_time": 11.38000000000047,
+        "measured_certified": false
+      },
+      "plan": {
+        "accepted": false,
+        "route": "planner_pending",
+        "modified": true
+      },
+      "planner_diag": {
+        "accepted": true,
+        "route": "direct",
+        "path_min": 0.0742313122096085,
+        "distance": 0.0742313122096085,
+        "start_gap": 0.10195594205266155,
+        "samples": 48,
+        "endpoint_modified": false,
+        "planner_ms": 17.004782000185514,
+        "submitted_at": 2050.63942612,
+        "completed_at": 2050.656717519,
+        "sequence": 353
+      },
+      "cmd_des_max_rad": 0.0,
+      "actual_cmd_max_rad": 0.010082602922029227,
+      "target_actual_max_rad": 0.9144928090913571,
+      "target_cmd_max_rad": 0.9061232932878132,
+      "target_clearance_mm": 74.2313122096085
+    }
+  }
+}

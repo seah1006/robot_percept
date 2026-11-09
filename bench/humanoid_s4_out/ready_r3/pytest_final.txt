@@ -1,0 +1,64 @@
+........................................................................ [ 72%]
+............F..............                                              [100%]
+=================================== FAILURES ===================================
+_________ test_server_sigkill_during_startup_reaps_spawn_children[0.4] _________
+
+delay = 0.4
+tmp_path = PosixPath('/tmp/pytest-of-user/pytest-1/test_server_sigkill_during_sta0')
+
+    @pytest.mark.parametrize("delay", [.4, .6, .8])
+    def test_server_sigkill_during_startup_reaps_spawn_children(delay, tmp_path):
+        port = _free_port()
+        env = os.environ.copy()
+        env.update(PORT=str(port), HOST="127.0.0.1", PERCEPTION="stub", RP_PERCEPTION_WARMUP="0")
+        log_path = tmp_path / f"startup-kill-{delay}.log"
+        with log_path.open("wb") as log:
+            proc = subprocess.Popen(
+                [sys.executable, "-m", "web.app"], cwd=Path(__file__).parents[1], env=env,
+                stdout=log, stderr=subprocess.STDOUT, start_new_session=True,
+            )
+            captured = []
+            try:
+                time.sleep(delay)
+                captured = _descendants(proc.pid)
+>               assert captured, "expected Manager/resource-tracker children during startup"
+E               AssertionError: expected Manager/resource-tracker children during startup
+E               assert []
+
+tests/test_shutdown.py:107: AssertionError
+=============================== warnings summary ===============================
+../../anaconda3/envs/robot_percept/lib/python3.12/site-packages/dash/testing/plugin.py:104
+  /home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/dash/testing/plugin.py:104: PytestRemovedIn10Warning: The hookimpl pytest_addhooks uses old-style configuration options (marks or attributes).
+  Please use the pytest.hookimpl(tryfirst=True) decorator instead
+   to configure the hooks.
+   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
+    @pytest.mark.tryfirst
+
+tests/test_control.py::test_ik
+  /home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/_pytest/python.py:191: PytestReturnNotNoneWarning: Test functions should return None, but tests/test_control.py::test_ik returned <class 'dict'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+tests/test_control.py::test_cartesian
+  /home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/_pytest/python.py:191: PytestReturnNotNoneWarning: Test functions should return None, but tests/test_control.py::test_cartesian returned <class 'dict'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+tests/test_control.py::test_pick_place
+  /home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/_pytest/python.py:191: PytestReturnNotNoneWarning: Test functions should return None, but tests/test_control.py::test_pick_place returned <class 'dict'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+tests/test_control.py::test_simenv
+  /home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/_pytest/python.py:191: PytestReturnNotNoneWarning: Test functions should return None, but tests/test_control.py::test_simenv returned <class 'dict'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_shutdown.py::test_server_sigkill_during_startup_reaps_spawn_children[0.4]
+1 failed, 98 passed, 5 warnings in 88.38s (0:01:28)

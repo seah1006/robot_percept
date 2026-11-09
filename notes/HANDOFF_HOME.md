@@ -1,5 +1,7 @@
 # robot_percept 인계 문서 (2026-11-05 회사 → 집, 2026-11-06 집 PC 갱신)
 
+> **최신 인계는 notes/HANDOFF_R3.md (2026-11-09 회사 PC r3).** 이 문서는 11-05~11-07 기록.
+
 저장소: https://github.com/seah1006/robot_percept (public)
 - `master`: 독립 검증 PASS된 커밋만 (최신 a9f2c26). 태그 `baseline-1102`, `humanoid-30fps-pass`.
 - `wip/r2`: 진행 중인 r2 작업 전체 스냅샷 (검증 미완 포함). **집에서는 이 브랜치에서 이어서 작업.**

@@ -1,0 +1,13 @@
+[
+  {
+    "object": "mustard",
+    "perception": "fp",
+    "gt_assist": "on",
+    "n": 24,
+    "successes": 24,
+    "wilson95": [
+      0.8620237953250198,
+      1.0
+    ]
+  }
+]

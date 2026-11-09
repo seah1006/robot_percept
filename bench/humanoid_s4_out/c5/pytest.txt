@@ -1,0 +1,36 @@
+........................................................................ [ 69%]
+................................                                         [100%]
+=============================== warnings summary ===============================
+../../anaconda3/envs/robot_percept/lib/python3.12/site-packages/dash/testing/plugin.py:104
+  /home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/dash/testing/plugin.py:104: PytestRemovedIn10Warning: The hookimpl pytest_addhooks uses old-style configuration options (marks or attributes).
+  Please use the pytest.hookimpl(tryfirst=True) decorator instead
+   to configure the hooks.
+   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
+    @pytest.mark.tryfirst
+
+tests/test_control.py::test_ik
+  /home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/_pytest/python.py:191: PytestReturnNotNoneWarning: Test functions should return None, but tests/test_control.py::test_ik returned <class 'dict'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+tests/test_control.py::test_cartesian
+  /home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/_pytest/python.py:191: PytestReturnNotNoneWarning: Test functions should return None, but tests/test_control.py::test_cartesian returned <class 'dict'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+tests/test_control.py::test_pick_place
+  /home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/_pytest/python.py:191: PytestReturnNotNoneWarning: Test functions should return None, but tests/test_control.py::test_pick_place returned <class 'dict'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+tests/test_control.py::test_simenv
+  /home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/_pytest/python.py:191: PytestReturnNotNoneWarning: Test functions should return None, but tests/test_control.py::test_simenv returned <class 'dict'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+104 passed, 5 warnings in 63.17s (0:01:03)

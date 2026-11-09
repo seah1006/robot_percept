@@ -1,0 +1,155 @@
+{
+ "label": "w3_http",
+ "transport": "http",
+ "video": "C:\\Users\\USER\\Documents\\sam_camera\\teleop_final_hand.mp4",
+ "mode": "humanoid",
+ "load_before": [
+  "2.77",
+  "1.79",
+  "1.17"
+ ],
+ "ps_rc": 0,
+ "ps_err": "",
+ "tracker": {
+  "detail_ms": {
+   "visibility": {
+    "p50": 0.011699999959091656,
+    "p95": 0.01922000046761239,
+    "n": 899
+   },
+   "hold_quality": {
+    "p50": 0.008600000001024455,
+    "p95": 0.01650000012887176,
+    "n": 899
+   },
+   "timestamp": {
+    "p50": 0.003899998773704283,
+    "p95": 0.005699999746866524,
+    "n": 899
+   },
+   "pose_overlay": {
+    "p50": 0.227999998969608,
+    "p95": 0.6140400008007416,
+    "n": 899
+   },
+   "panda_features_overlay": {
+    "p50": 0.0014000015653437003,
+    "p95": 0.0024000000848900527,
+    "n": 899
+   },
+   "hand_overlay": {
+    "p50": 0.3875999991578283,
+    "p95": 1.0697899999286165,
+    "n": 899
+   },
+   "http_headers": {
+    "p50": 8.262850001301558,
+    "p95": 21.277955000368813,
+    "n": 898
+   },
+   "http_body": {
+    "p50": 0.32624999948893674,
+    "p95": 1.148524999098298,
+    "n": 898
+   },
+   "http_response_decode": {
+    "p50": 0.0349000001733657,
+    "p95": 0.09336500042991244,
+    "n": 898
+   }
+  },
+  "transport": "http",
+  "transport_requested": "http",
+  "transport_fallback": false,
+  "transport_events": [],
+  "ws_failures": 0,
+  "ws_connections": 0,
+  "preview_transport": "http",
+  "http_client": "urllib3",
+  "hand_detection_rate": 0.6896551724137931,
+  "pose_detection_rate": 1.0,
+  "camera_read_failed": false,
+  "capture_clock": "unix wall clock at decode completion/video or read completion/camera",
+  "stages_ms": {
+   "pacing": {
+    "p50": 30.00054999938584,
+    "p95": 32.71906000045419
+   },
+   "preprocess": {
+    "p50": 0.5599999994956306,
+    "p95": 1.9191999993381599
+   },
+   "neural": {
+    "p50": 30.116049999378447,
+    "p95": 41.6239700006372
+   },
+   "retarget": {
+    "p50": 0.5743999990954762,
+    "p95": 1.1498699996081994
+   },
+   "overlay": {
+    "p50": 0.3956000000471249,
+    "p95": 1.0764700002255265
+   },
+   "queue": {
+    "p50": 0.008299999535665847,
+    "p95": 0.012700000297627412
+   }
+  },
+  "source_fps": 30.0,
+  "source_frames_due": 901,
+  "processed_input_ratio": 0.9977802441731409,
+  "unprocessed_source_slots": 2,
+  "dropped_frames": 0,
+  "updates": 899,
+  "seconds": 30.021,
+  "hz": 29.946,
+  "network_errors": 0,
+  "sent_updates": 898,
+  "preview_sent": 899,
+  "preview_encode_ms_p50": 1.2133000000176253,
+  "preview_post_ms_p50": 8.733299999221344,
+  "preview_post_ms_p95": 21.629039999424982,
+  "post_ms_p50": 8.722249998754705,
+  "post_ms_p95": 21.82131499966999,
+  "json_ms_p50": 0.35525000021152664,
+  "payload_bytes_p50": 6499.0,
+  "server_ms_p50": 0.5145,
+  "loop_ms_p50": 103.05019999941578,
+  "inference_ms_p50": 30.84130000024743,
+  "inference_ms_p95": 43.035330000202514,
+  "hand_ms_p50": 29.669449999346398,
+  "pose_ms_p50": 22.176349999426748
+ },
+ "wincpu": {
+  "label": "w3_http",
+  "exit": null,
+  "wall_s": 39.77,
+  "proc_cpu_s_last_sample": 57.45,
+  "logical_cores": 8,
+  "proc_cpu_pct_of_1core": 144.5,
+  "sys_cpu_mean_pct": 68.1,
+  "sys_samples": 37
+ },
+ "server": {
+  "span_s": 30.09,
+  "recv_updates": 897,
+  "recv_hz": 29.809,
+  "screen_frames": 954,
+  "screen_fps": 31.703,
+  "screen_max_gap_ms": 69.9,
+  "screen_gaps_gt200": 0,
+  "cpu_main_pct": 25.2,
+  "cpu_tree_pct": 151.8,
+  "rss_tree_mb": 1569.9,
+  "preview_updates": 898,
+  "preview_fps": 29.842
+ },
+ "walljumps_in_span": 12,
+ "load_after": [
+  "2.42",
+  "1.82",
+  "1.21"
+ ],
+ "wall_s": 40.6
+}

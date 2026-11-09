@@ -1,0 +1,160 @@
+{
+ "label": "w1_http",
+ "transport": "http",
+ "video": "C:\\Users\\USER\\Documents\\sam_camera\\teleop_final_hand.mp4",
+ "mode": "humanoid",
+ "load_before": [
+  "1.92",
+  "1.90",
+  "1.53"
+ ],
+ "ps_rc": 0,
+ "ps_err": "",
+ "tracker": {
+  "detail_ms": {
+   "visibility": {
+    "p50": 0.012900000001536682,
+    "p95": 0.0229800003580749,
+    "n": 853
+   },
+   "hold_quality": {
+    "p50": 0.009900000804918818,
+    "p95": 0.016199999663513154,
+    "n": 853
+   },
+   "timestamp": {
+    "p50": 0.0039000005926936865,
+    "p95": 0.005699999746866524,
+    "n": 853
+   },
+   "pose_overlay": {
+    "p50": 0.33179999991261866,
+    "p95": 0.7931400003144516,
+    "n": 853
+   },
+   "panda_features_overlay": {
+    "p50": 0.0013999997463542968,
+    "p95": 0.002200000380980782,
+    "n": 853
+   },
+   "hand_overlay": {
+    "p50": 0.6248000008781673,
+    "p95": 1.3373599995247787,
+    "n": 853
+   },
+   "http_headers": {
+    "p50": 9.865999998510233,
+    "p95": 23.794139999881736,
+    "n": 853
+   },
+   "http_body": {
+    "p50": 0.35960000059276354,
+    "p95": 1.7593799999303876,
+    "n": 853
+   },
+   "http_response_decode": {
+    "p50": 0.0366000003850786,
+    "p95": 0.1357799999823328,
+    "n": 853
+   }
+  },
+  "transport": "http",
+  "transport_requested": "http",
+  "transport_fallback": false,
+  "transport_events": [],
+  "ws_failures": 0,
+  "ws_connections": 0,
+  "preview_transport": "http",
+  "http_client": "urllib3",
+  "hand_detection_rate": 0.6834701055099648,
+  "pose_detection_rate": 1.0,
+  "camera_read_failed": false,
+  "capture_clock": "unix wall clock at decode completion/video or read completion/camera",
+  "stages_ms": {
+   "pacing": {
+    "p50": 0.027099998987978324,
+    "p95": 12.291880000702696
+   },
+   "preprocess": {
+    "p50": 0.579400000788155,
+    "p95": 2.2344199995131895
+   },
+   "neural": {
+    "p50": 34.02084999925137,
+    "p95": 45.73324499942828
+   },
+   "retarget": {
+    "p50": 0.7098999994923361,
+    "p95": 1.4942199995857661
+   },
+   "overlay": {
+    "p50": 0.6331999993562931,
+    "p95": 1.3461000002280343
+   },
+   "queue": {
+    "p50": 0.00940000063565094,
+    "p95": 0.01503999992564786
+   }
+  },
+  "source_fps": 30.0,
+  "source_frames_due": 901,
+  "processed_input_ratio": 0.946725860155383,
+  "unprocessed_source_slots": 48,
+  "dropped_frames": 0,
+  "updates": 853,
+  "seconds": 30.007,
+  "hz": 28.426,
+  "network_errors": 0,
+  "sent_updates": 853,
+  "preview_sent": 853,
+  "preview_encode_ms_p50": 1.3035000010859221,
+  "preview_post_ms_p50": 11.005300000761054,
+  "preview_post_ms_p95": 21.380759999374277,
+  "post_ms_p50": 10.421599999972386,
+  "post_ms_p95": 24.460159999580355,
+  "json_ms_p50": 0.4226000000926433,
+  "payload_bytes_p50": 6499.0,
+  "server_ms_p50": 0.603,
+  "loop_ms_p50": 141.40779999979713,
+  "inference_ms_p50": 34.91510000094422,
+  "inference_ms_p95": 46.962799999528215,
+  "hand_ms_p50": 33.41695000017353,
+  "pose_ms_p50": 26.064900000164926
+ },
+ "wincpu": {
+  "label": "w1_http",
+  "exit": null,
+  "wall_s": 43.64,
+  "proc_cpu_s_last_sample": 60.97,
+  "logical_cores": 8,
+  "proc_cpu_pct_of_1core": 139.7,
+  "sys_cpu_mean_pct": 80.5,
+  "sys_samples": 40
+ },
+ "server": {
+  "span_s": 29.94,
+  "recv_updates": 852,
+  "recv_hz": 28.46,
+  "recv_hz_fit": 28.302,
+  "screen_frames": 945,
+  "screen_fps": 31.566,
+  "screen_max_gap_ms": 92.2,
+  "screen_gaps_gt200": 0,
+  "cpu_main_pct": 41.0,
+  "cpu_tree_pct": 190.1,
+  "rss_tree_mb": 1566.4,
+  "preview_updates": 852,
+  "preview_fps": 28.46
+ },
+ "walljumps_in_span": 12,
+ "top_mid_window": [
+  "    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND\n  57467 user      20   0  259024  47348  28160 R  90.9   0.3   0:00.17 python\n  56351 user      20   0 2980280 554068 213376 R  63.6   3.4   0:16.41 python\n  56294 user      20   0 1996044  93436  54144 S  18.2   0.6   0:03.64 python\n  56322 user      20   0 3003292 690956 219904 R  18.2   4.3   0:09.90 python\n    278 user      20   0   10.0g 426132  64920 S   9.1   2.6   0:32.83 MainThread\n",
+  "    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND\n  56351 user      20   0 2984972 557780 216192 R  81.8   3.4   0:30.89 python\n  56294 user      20   0 2144564  94716  54144 S  27.3   0.6   0:09.19 python\n  56322 user      20   0 3003292 690956 219904 S  27.3   4.3   0:14.05 python\n  56306 user      20   0 1839560  86116  50816 S  18.2   0.5   0:04.34 python\n     98 root      20   0   25284   6400   4992 R   9.1   0.0   0:14.56 systemd-udevd\n"
+ ],
+ "load_after": [
+  "2.93",
+  "2.19",
+  "1.65"
+ ],
+ "wall_s": 44.7
+}

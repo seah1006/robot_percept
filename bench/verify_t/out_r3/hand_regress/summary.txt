@@ -1,0 +1,6 @@
+teleop_final_hand t_1da4b93 hand_rate= pose_rate= updates=89
+teleop_final_hand t_3cf1b19 hand_rate=0.696629213483146 pose_rate=0 updates=89
+teleop_final_hand t_cur hand_rate=0.696629213483146 pose_rate=0 updates=89
+teleop_round2_async t_1da4b93 hand_rate= pose_rate= updates=89
+teleop_round2_async t_3cf1b19 hand_rate=0.0112359550561798 pose_rate=0 updates=89
+teleop_round2_async t_cur hand_rate=0.0112359550561798 pose_rate=0 updates=89

@@ -1,0 +1,156 @@
+{
+ "label": "w2_ws",
+ "transport": "ws",
+ "video": "C:\\Users\\USER\\Documents\\sam_camera\\teleop_final_hand.mp4",
+ "mode": "humanoid",
+ "load_before": [
+  "2.93",
+  "2.19",
+  "1.65"
+ ],
+ "ps_rc": 0,
+ "ps_err": "",
+ "tracker": {
+  "detail_ms": {
+   "visibility": {
+    "p50": 0.012200000128359534,
+    "p95": 0.021599999763566302,
+    "n": 892
+   },
+   "hold_quality": {
+    "p50": 0.009699999282020144,
+    "p95": 0.017045000640791834,
+    "n": 892
+   },
+   "timestamp": {
+    "p50": 0.0037999998312443495,
+    "p95": 0.005699999746866524,
+    "n": 892
+   },
+   "pose_overlay": {
+    "p50": 0.2777499994408572,
+    "p95": 0.7407400002193752,
+    "n": 892
+   },
+   "panda_features_overlay": {
+    "p50": 0.0013000008038943633,
+    "p95": 0.002099999619531445,
+    "n": 892
+   },
+   "hand_overlay": {
+    "p50": 0.5237499990471406,
+    "p95": 1.2429199992766367,
+    "n": 892
+   },
+   "ws_roundtrip": {
+    "p50": 3.579800000807154,
+    "p95": 5.953240000417279,
+    "n": 892
+   }
+  },
+  "transport": "ws",
+  "transport_requested": "ws",
+  "transport_fallback": false,
+  "transport_events": [
+   {
+    "event": "ws_connected",
+    "elapsed_s": 7.515000000001237,
+    "qpc_s": 13082.8795774
+   }
+  ],
+  "ws_failures": 0,
+  "ws_connections": 1,
+  "preview_transport": "http",
+  "http_client": "urllib3",
+  "hand_detection_rate": 0.695067264573991,
+  "pose_detection_rate": 1.0,
+  "camera_read_failed": false,
+  "capture_clock": "unix wall clock at decode completion/video or read completion/camera",
+  "stages_ms": {
+   "pacing": {
+    "p50": 16.574299999774667,
+    "p95": 32.60452000067744
+   },
+   "preprocess": {
+    "p50": 0.5821999984618742,
+    "p95": 2.259879999292025
+   },
+   "neural": {
+    "p50": 31.658949999837205,
+    "p95": 42.9777100002866
+   },
+   "retarget": {
+    "p50": 0.6408499993995065,
+    "p95": 1.405514999623846
+   },
+   "overlay": {
+    "p50": 0.528900000063004,
+    "p95": 1.2514200003352012
+   },
+   "queue": {
+    "p50": 0.008799999704933725,
+    "p95": 0.01354500045636086
+   }
+  },
+  "source_fps": 30.0,
+  "source_frames_due": 901,
+  "processed_input_ratio": 0.9900110987791343,
+  "unprocessed_source_slots": 9,
+  "dropped_frames": 0,
+  "updates": 892,
+  "seconds": 30.01,
+  "hz": 29.723,
+  "network_errors": 0,
+  "sent_updates": 892,
+  "preview_sent": 892,
+  "preview_encode_ms_p50": 1.2517499990281067,
+  "preview_post_ms_p50": 8.484599999974307,
+  "preview_post_ms_p95": 19.3350900010955,
+  "post_ms_p50": 3.579800000807154,
+  "post_ms_p95": 5.953240000417279,
+  "json_ms_p50": 0.4321999995227088,
+  "payload_bytes_p50": 6499.0,
+  "server_ms_p50": 0.48,
+  "loop_ms_p50": 119.79999999948632,
+  "inference_ms_p50": 32.493399999111716,
+  "inference_ms_p95": 43.88695000034203,
+  "hand_ms_p50": 31.121249999159772,
+  "pose_ms_p50": 23.6381499989875
+ },
+ "wincpu": {
+  "label": "w2_ws",
+  "exit": null,
+  "wall_s": 39.82,
+  "proc_cpu_s_last_sample": 56.7,
+  "logical_cores": 8,
+  "proc_cpu_pct_of_1core": 142.4,
+  "sys_cpu_mean_pct": 73.3,
+  "sys_samples": 37
+ },
+ "server": {
+  "span_s": 29.87,
+  "recv_updates": 888,
+  "recv_hz": 29.727,
+  "recv_hz_fit": 30.005,
+  "screen_frames": 948,
+  "screen_fps": 31.736,
+  "screen_max_gap_ms": 63.1,
+  "screen_gaps_gt200": 0,
+  "cpu_main_pct": 33.1,
+  "cpu_tree_pct": 170.8,
+  "rss_tree_mb": 1568.1,
+  "preview_updates": 890,
+  "preview_fps": 29.719
+ },
+ "walljumps_in_span": 11,
+ "top_mid_window": [
+  "    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND\n  56351 user      20   0 2985104 557908 216192 R  90.0   3.4   0:58.86 python\n  56322 user      20   0 3003292 690956 219904 S  30.0   4.3   0:22.32 python\n  56294 user      20   0 2218296  95728  54144 S  20.0   0.6   0:18.93 python\n  56346 user      20   0  565800  53632  32256 S  10.0   0.3   0:03.28 python\n  61590 root      20   0   25288   4124   2560 S  10.0   0.0   0:00.34 (udev-worker)\n",
+  "    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND\n  56351 user      20   0 2985104 557908 216192 R  90.9   3.4   1:11.87 python\n  56322 user      20   0 3003292 690956 219904 R  27.3   4.3   0:26.01 python\n  56294 user      20   0 2218296  96360  54144 S  18.2   0.6   0:23.31 python\n     98 root      20   0   25284   6400   4992 S   9.1   0.0   0:16.73 systemd-udevd\n  56306 user      20   0 1839544  86500  50816 S   9.1   0.5   0:09.84 python\n"
+ ],
+ "load_after": [
+  "2.47",
+  "2.16",
+  "1.66"
+ ],
+ "wall_s": 40.7
+}

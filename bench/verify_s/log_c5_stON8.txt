@@ -1,0 +1,1 @@
+locked 13:34:19 load 1.38 1.32 1.47 5/240 244109 tag=c5_stON8 tree=/home/user/rp_vs3/c5 gpu 5 % others:      98  1.0 /usr/lib/systemd/systemd-udevd|    278  1.0 /home/user/.nvm/versions/node/v24.20.0/bin/node --max-old-space-size=7924 /ho|     44  0.8 /usr/lib/systemd/systemd-journald|

@@ -802,3 +802,117 @@ def test_collision_planner_minimum_fast_path_keeps_degenerate_normal():
     remembered={pair:np.array([.2,.3,.4]) for pair in PAIRS};g.previous_normals={k:v.copy() for k,v in remembered.items()}
     assert g.minimum_distance(np.zeros(1))==0.
     for pair in PAIRS:assert np.array_equal(g.previous_normals[pair],remembered[pair])
+
+
+def test_async_collision_planner_isolated_geometry_latest_only_and_closes():
+    import time
+    from sim.humanoid_env import HumanoidEnv
+    env=HumanoidEnv()
+    try:
+        env.set_collision_avoidance(True)
+        planner=env.collision_planner
+        q=env.data.qpos.copy()
+        for _ in range(8):planner.submit(q,q)
+        until=time.monotonic()+3
+        while not planner._started and time.monotonic()<until:time.sleep(.005)
+        assert planner._process.poll() is None
+        until=time.monotonic()+2
+        while planner.latest() is None and time.monotonic()<until:time.sleep(.005)
+        result=planner.latest()
+        assert result is not None and result[3]['sequence']<=8
+        diag=planner.diagnostics()
+        assert diag['planner_ready'] and diag['planner_prepare_ms']>0
+        assert diag['planner_child_warmup_ms']>0
+        assert planner.submitted==8
+        env.set_collision_avoidance(False)
+        assert planner._process.poll() is not None and env.collision_planner is None
+    finally:env.close()
+
+
+def test_async_collision_planner_immediate_off_does_not_leave_process():
+    from sim.humanoid_env import HumanoidEnv
+    env=HumanoidEnv()
+    try:
+        for _ in range(3):
+            env.set_collision_avoidance(True)
+            planner=env.collision_planner
+            env.set_collision_avoidance(False)
+            assert planner._closed and not planner._starter.is_alive()
+            assert planner._process is None or planner._process.poll() is not None
+    finally:env.close()
+
+
+def test_collision_resources_prepared_before_enable_and_reused_on_reset():
+    from sim.humanoid_env import HumanoidEnv
+    env=HumanoidEnv()
+    try:
+        assert env.collision_model is None and not env.collision_avoidance
+        prepared=env._collision_resources
+        env.set_collision_avoidance(True)
+        assert env.collision_model is prepared[0]
+        assert env.collision_monitor is prepared[1]
+        assert env.collision_status['planner_ready'] is False
+        env.reset()
+        assert env.collision_model is prepared[0]
+        assert env.collision_monitor.exact_checks==0
+        assert not env.collision_braking
+    finally:env.close()
+
+
+def test_collision_monitor_refreshes_before_accumulated_bound_crossing():
+    from sim.humanoid_env import HumanoidEnv
+    from sim.humanoid_collision import CollisionPathMonitor,MESH_RADII
+    env=HumanoidEnv()
+    try:
+        monitor=CollisionPathMonitor(env.model,radii=MESH_RADII)
+        q=env.data.qpos.copy()
+        for angle in np.linspace(0,.2,101):
+            q[env.qadr['waist_yaw_joint']]=angle
+            monitor.inspect(q)
+        assert monitor.uncertified==0 and monitor.penetrating==0
+        q[env.qadr['waist_yaw_joint']]+=1.
+        result=monitor.inspect(q)
+        assert monitor.uncertified==1  # An actually unbounded step is never hidden.
+        assert not result['continuous_interval_certified']
+    finally:env.close()
+
+def test_collision_pending_plan_does_not_invent_negative_clearance():
+    from sim.humanoid_env import HumanoidEnv
+    from sim.humanoid_teleop import HumanoidServo
+    from tools.humanoid_synth import payload
+    env=HumanoidEnv();servo=HumanoidServo(env)
+    try:
+        env.set_collision_avoidance(True)
+        planner=env.collision_planner;planner.ready=True
+        planner.submit=lambda *args:None
+        planner.latest=lambda:None
+        p,_=payload(0);p['received_at']=100.
+        servo.tick(p,{'enabled':True,'options':{'collision_avoidance':True}},100.)
+        assert not env.collision_plan['accepted']
+        assert env.collision_plan['path_min']>.008
+        env.collision_model.forward(env.data.qpos)
+        row=min(env.collision_model.distances(True,.12),key=lambda r:r['distance'])
+        env.data.qvel[env.collision_model.dofs]=-row['gradient']*.01
+        env.update_collision_brake()
+        assert not env.collision_braking
+    finally:env.close()
+
+def test_collision_escape_accepts_small_margin_recovery_without_lowering_goal_margin():
+    from sim.humanoid_env import HumanoidEnv
+    from sim.humanoid_teleop import HumanoidServo
+    from sim.humanoid_collision import CapsuleModel,MESH_RADII
+    from tools import humanoid_synth as hs
+    e=HumanoidEnv();s=HumanoidServo(e);g=CapsuleModel(e.model,MESH_RADII)
+    try:
+        p,_=hs.payload(0);s._retarget(p)
+        goal=e.data.qpos.copy()
+        for name in g.names:goal[e.qadr[name]]=s.des[s.index[name]]
+        # Real jump-rest raw IK endpoint is 7.598mm; start at 8.6mm.
+        start,_=g.project(goal,margin=.0086,iterations=30,enabled=True)
+        start_gap=g.minimum_distance(start)
+        assert .0085<start_gap<.009
+        waypoint,diag=g.plan_safe_waypoint(start,goal,margin=.010)
+        assert diag['accepted'] and diag['route']=='escape_direct'
+        assert diag['distance']>=.010-1e-8
+        assert diag['path_min']>=start_gap-1e-6
+    finally:e.close()

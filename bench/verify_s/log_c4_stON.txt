@@ -1,0 +1,11 @@
+locked 12:57:57 load 1.29 1.33 1.38 1/235 146134 tag=c4_stON tree=/home/user/rp_vs3/c4 gpu 16 % others:      98  1.3 /usr/lib/systemd/systemd-udevd|    278  1.1 /home/user/.nvm/versions/node/v24.20.0/bin/node --max-old-space-size=7924 /ho|     44  0.8 /usr/lib/systemd/systemd-journald|
+mode on 200
+=== part static
+collision_avoidance 1 200
+{'max_u1': 7.52, 'max_u2': 7.72, 'max_wrist_mm': 33.36, 'max_wrist_mm_actualS': 33.27, 'max_lr_diff': 0.01, 'mean_dir': 1.38}
+=== part release
+collision_avoidance 1 200
+{'first_within_8deg_s': 2.33, 'final_err_deg': 1.4}
+DONE
+5094 closed
+unlocked 12:59:02 load 0.91 1.21 1.33 1/244 148963

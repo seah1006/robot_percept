@@ -1,0 +1,8 @@
+locked 13:19:54 load 1.44 1.49 1.76 2/236 183864 tag=c5_pat_chest tree=/home/user/rp_vs3/c5 gpu 36 % others:  183867  100 /home/user/anaconda3/bin/python /home/user/anaconda3/bin/conda shell.posix ac|     98  1.1 /usr/lib/systemd/systemd-udevd|    278  1.0 /home/user/.nvm/versions/node/v24.20.0/bin/node --max-old-space-size=7924 /ho|
+mode on 200
+=== part coll1
+collision_avoidance 1 200
+{'n': 571, 'min_mm': 9.3, 'p5_mm': 9.9, 'frames_below_0mm': 0, 'frames_below_10mm': 484, 'frames_below_5mm': 0, 'collision_opt': '1', 'pattern': 'chest', 'worst_pair': 'torso|right_fore', 'radii': {'torso': 0.118, 'upper': 0.053, 'fore': 0.045, 'hand': 0.057, 'note': 'approximate capsules, torso axis pelvis->shoulder mid'}}
+DONE
+5094 closed
+unlocked 13:20:40 load 1.58 1.51 1.75 1/233 186943

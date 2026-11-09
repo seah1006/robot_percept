@@ -1,0 +1,35 @@
+[
+  {
+    "object": "mustard",
+    "perception": "fp",
+    "gt_assist": "on",
+    "n": 30,
+    "successes": 30,
+    "wilson95": [
+      0.8864866068260312,
+      0.9999999999999999
+    ]
+  },
+  {
+    "object": "box",
+    "perception": "fp",
+    "gt_assist": "on",
+    "n": 30,
+    "successes": 5,
+    "wilson95": [
+      0.0733654237184855,
+      0.3356435050641603
+    ]
+  },
+  {
+    "object": "cup",
+    "perception": "fp",
+    "gt_assist": "on",
+    "n": 30,
+    "successes": 0,
+    "wilson95": [
+      0.0,
+      0.11351339317396876
+    ]
+  }
+]

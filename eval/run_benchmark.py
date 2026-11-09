@@ -33,7 +33,7 @@ def make_env(name,seed,width,height):
 
 def trial(a,name,seed,client,git_hash):
     started=time.perf_counter()
-    r=dict(schema_version=1,object=name,seed=seed,git_hash=git_hash,config=vars(a).copy(),success=False,frames=[],failure_reasons=[],pick_success=None,place_success=None,tracking_fps=None,register_s=None,lock_wait_s=float(os.getenv('RP_LOCK_WAIT_S','0')))
+    r=dict(concurrent_context=os.getenv("RP_E_CONCURRENT_CONTEXT",""),schema_version=1,object=name,seed=seed,git_hash=git_hash,config=vars(a).copy(),success=False,frames=[],failure_reasons=[],pick_success=None,place_success=None,tracking_fps=None,register_s=None,lock_wait_s=float(os.getenv('RP_LOCK_WAIT_S','0')))
     env=None
     try:
         env=make_env(name,seed,a.width,a.height); full=NAMES[name]
@@ -121,7 +121,7 @@ def main():
     if len(seeds)!=a.n or len(set(seeds))!=a.n:p.error('seeds must contain n distinct seeds')
     out=Path(a.out);out.mkdir(parents=True,exist_ok=False)
     git_hash=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
-    manifest=dict(config=vars(a),seeds=seeds,git_hash=git_hash,dirty=subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True),python=sys.version,gt_disclosure='GT supplies target identity and nearest-visible-centroid click only for fp; all GT poses score-only except explicitly enabled control assistance. SAM chooses argmax model score.')
+    manifest=dict(concurrent_context=os.getenv("RP_E_CONCURRENT_CONTEXT",""),config=vars(a),seeds=seeds,git_hash=git_hash,dirty=subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True),python=sys.version,gt_disclosure='GT supplies target identity and nearest-visible-centroid click only for fp; all GT poses score-only except explicitly enabled control assistance. SAM uses current depth-aware select_candidate and click-connected component.')
     manifest['source_sha256']={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [ROOT/'eval/run_benchmark.py',*sorted((ROOT/'eval/harness').glob('*.py'))]}
     manifest['dependencies']={}
     for package in ['numpy','scipy','mujoco','torch','trimesh']:

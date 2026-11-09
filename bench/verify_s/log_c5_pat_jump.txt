@@ -1,0 +1,8 @@
+locked 13:25:34 load 1.10 1.24 1.56 2/228 226334 tag=c5_pat_jump tree=/home/user/rp_vs3/c5 gpu 15 % others:  226337 81.8 /home/user/anaconda3/bin/python /home/user/anaconda3/bin/conda shell.posix ac|     98  1.1 /usr/lib/systemd/systemd-udevd|    278  1.0 /home/user/.nvm/versions/node/v24.20.0/bin/node --max-old-space-size=7924 /ho|
+mode on 200
+=== part coll1
+collision_avoidance 1 200
+{'n': 575, 'min_mm': 8.2, 'p5_mm': 10.8, 'frames_below_0mm': 0, 'frames_below_10mm': 19, 'frames_below_5mm': 0, 'collision_opt': '1', 'pattern': 'jump', 'worst_pair': 'torso|left_fore', 'radii': {'torso': 0.118, 'upper': 0.053, 'fore': 0.045, 'hand': 0.057, 'note': 'approximate capsules, torso axis pelvis->shoulder mid'}}
+DONE
+5094 closed
+unlocked 13:26:22 load 1.79 1.38 1.59 1/228 229426

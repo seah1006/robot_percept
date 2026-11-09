@@ -1,0 +1,421 @@
+{
+  "GT_auxiliary": true,
+  "load": "2.07 1.36 0.90 1/244 26587\n",
+  "gpu": "NVIDIA GeForce RTX 2080 SUPER, 4 %, 805 MiB",
+  "cases": [
+    {
+      "final_errors_deg": [
+        0.39182618257530266,
+        0.5782866000589214,
+        0.3918261614705244,
+        0.5782866054974348
+      ],
+      "tail_max_deg": 0.5783048835019531,
+      "first_within8_s": 0.2,
+      "actual": {},
+      "pose": "rest",
+      "enabled": false
+    },
+    {
+      "final_errors_deg": [
+        0.6863325340765223,
+        0.985898726848255,
+        0.6863325633997625,
+        0.9858989018652304
+      ],
+      "tail_max_deg": 0.9860489378617389,
+      "first_within8_s": 0.46,
+      "actual": {},
+      "pose": "abd45",
+      "enabled": false
+    },
+    {
+      "final_errors_deg": [
+        1.37534909072674,
+        1.879669547409333,
+        1.3753491061624992,
+        1.8796693878256734
+      ],
+      "tail_max_deg": 1.8804716054244761,
+      "first_within8_s": 0.46,
+      "actual": {},
+      "pose": "abd85",
+      "enabled": false
+    },
+    {
+      "final_errors_deg": [
+        0.9422309921400375,
+        1.3797245514446885,
+        0.9422309236440486,
+        1.3797244132533941
+      ],
+      "tail_max_deg": 1.380040879641187,
+      "first_within8_s": 0.8,
+      "actual": {},
+      "pose": "fwd45",
+      "enabled": false
+    },
+    {
+      "final_errors_deg": [
+        1.0962117496178874,
+        1.6579877028414,
+        1.096211759163872,
+        1.6579875905035857
+      ],
+      "tail_max_deg": 1.6589614559798453,
+      "first_within8_s": 0.52,
+      "actual": {},
+      "pose": "fwd90",
+      "enabled": false
+    },
+    {
+      "final_errors_deg": [
+        0.16120969808744387,
+        0.34849351289824354,
+        0.1612098154485354,
+        0.3484932399130491
+      ],
+      "tail_max_deg": 0.3491614558440217,
+      "first_within8_s": 0.6,
+      "actual": {},
+      "pose": "fwd90_el60",
+      "enabled": false
+    },
+    {
+      "final_errors_deg": [
+        0.1617560983125278,
+        0.3271417237499932,
+        0.16175610946800928,
+        0.32714182438722167
+      ],
+      "tail_max_deg": 0.32719551881714615,
+      "first_within8_s": 0.78,
+      "actual": {},
+      "pose": "el90",
+      "enabled": false
+    },
+    {
+      "final_errors_deg": [
+        0.07310652940422115,
+        0.5367090714114217,
+        0.07310643644152896,
+        0.5367090641900522
+      ],
+      "tail_max_deg": 0.5377822535108521,
+      "first_within8_s": 0.46,
+      "actual": {},
+      "pose": "fwd60_el100",
+      "enabled": false
+    },
+    {
+      "final_errors_deg": [
+        0.34655779655971697,
+        0.5081774700379836,
+        0.34655777269505655,
+        0.508177571639964
+      ],
+      "tail_max_deg": 0.5085693956742702,
+      "first_within8_s": 0.62,
+      "actual": {},
+      "pose": "abd60_el90",
+      "enabled": false
+    },
+    {
+      "final_errors_deg": [
+        1.0665558668796968,
+        1.335308701449139,
+        1.0665559587341809,
+        1.3353086033100003
+      ],
+      "tail_max_deg": 1.3353202053496558,
+      "first_within8_s": 0.8200000000000001,
+      "actual": {},
+      "pose": "cross_chest",
+      "enabled": false
+    },
+    {
+      "final_errors_deg": [
+        1.180353654285758,
+        1.6494750139819354,
+        1.18035362085223,
+        1.6494750539388723
+      ],
+      "tail_max_deg": 1.6504051053311735,
+      "first_within8_s": 1.22,
+      "actual": {},
+      "pose": "hum80",
+      "enabled": false
+    },
+    {
+      "final_errors_deg": [
+        1.5041385727165941,
+        2.1268938131898354,
+        1.5041385529936124,
+        2.126893818518644
+      ],
+      "tail_max_deg": 2.127395315302061,
+      "first_within8_s": 1.2,
+      "actual": {},
+      "pose": "up120",
+      "enabled": false
+    },
+    {
+      "final_errors_deg": [
+        0.8144869860280135,
+        0.6952219779244059,
+        0.8167694673029963,
+        0.697250827989647
+      ],
+      "tail_max_deg": 0.8172284823717737,
+      "first_within8_s": 0.24,
+      "actual": {
+        "clearance_lower_bound": 0.009060157161822204,
+        "continuous_interval_certified": true,
+        "uncertified_intervals": 0,
+        "penetration_checks": 0,
+        "exact_checks": 13,
+        "minimum_exact_clearance": 0.009549360178317243
+      },
+      "pose": "rest",
+      "enabled": true
+    },
+    {
+      "final_errors_deg": [
+        0.5262294310744676,
+        0.8170856914724131,
+        0.526194031283217,
+        0.8170528939647785
+      ],
+      "tail_max_deg": 0.8174045127369105,
+      "first_within8_s": 1.12,
+      "actual": {
+        "clearance_lower_bound": 0.007877097421145021,
+        "continuous_interval_certified": true,
+        "uncertified_intervals": 0,
+        "penetration_checks": 0,
+        "exact_checks": 22,
+        "minimum_exact_clearance": 0.009549360178317243
+      },
+      "pose": "abd45",
+      "enabled": true
+    },
+    {
+      "final_errors_deg": [
+        0.43192467866381373,
+        0.6011345329847848,
+        0.43190728350324387,
+        0.6011458846687583
+      ],
+      "tail_max_deg": 0.6018800619352309,
+      "first_within8_s": 0.9,
+      "actual": {
+        "clearance_lower_bound": 0.15053226061020966,
+        "continuous_interval_certified": true,
+        "uncertified_intervals": 0,
+        "penetration_checks": 0,
+        "exact_checks": 26,
+        "minimum_exact_clearance": 0.009549360178317243
+      },
+      "pose": "abd85",
+      "enabled": true
+    },
+    {
+      "final_errors_deg": [
+        0.9567946638498928,
+        1.3712018111787936,
+        0.9567824993259104,
+        1.3712247405262226
+      ],
+      "tail_max_deg": 1.372436243770084,
+      "first_within8_s": 1.9000000000000001,
+      "actual": {
+        "clearance_lower_bound": 0.04218131726655763,
+        "continuous_interval_certified": true,
+        "uncertified_intervals": 0,
+        "penetration_checks": 0,
+        "exact_checks": 36,
+        "minimum_exact_clearance": 0.009549360178317243
+      },
+      "pose": "fwd45",
+      "enabled": true
+    },
+    {
+      "final_errors_deg": [
+        1.154759436448666,
+        1.6506180557055,
+        1.154745477880146,
+        1.650638186563746
+      ],
+      "tail_max_deg": 1.650955895846646,
+      "first_within8_s": 1.28,
+      "actual": {
+        "clearance_lower_bound": 0.07341201398766158,
+        "continuous_interval_certified": true,
+        "uncertified_intervals": 0,
+        "penetration_checks": 0,
+        "exact_checks": 43,
+        "minimum_exact_clearance": 0.009549360178317243
+      },
+      "pose": "fwd90",
+      "enabled": true
+    },
+    {
+      "final_errors_deg": [
+        0.17435292178670983,
+        0.17485536657729062,
+        0.1743532282812417,
+        0.1748647817667018
+      ],
+      "tail_max_deg": 0.17589032442280758,
+      "first_within8_s": 1.48,
+      "actual": {
+        "clearance_lower_bound": 0.035629619099772934,
+        "continuous_interval_certified": true,
+        "uncertified_intervals": 0,
+        "penetration_checks": 0,
+        "exact_checks": 47,
+        "minimum_exact_clearance": 0.009549360178317243
+      },
+      "pose": "fwd90_el60",
+      "enabled": true
+    },
+    {
+      "final_errors_deg": [
+        0.46067001360480964,
+        0.5107300851539381,
+        0.46441761898683875,
+        0.5136005198025356
+      ],
+      "tail_max_deg": 0.515902372544712,
+      "first_within8_s": 2.02,
+      "actual": {
+        "clearance_lower_bound": 0.0078031052800693855,
+        "continuous_interval_certified": true,
+        "uncertified_intervals": 1,
+        "penetration_checks": 0,
+        "exact_checks": 65,
+        "minimum_exact_clearance": 0.009549360178317243
+      },
+      "pose": "el90",
+      "enabled": true
+    },
+    {
+      "final_errors_deg": [
+        0.09608658179906027,
+        0.07153965773254287,
+        0.09607075256734057,
+        0.07153526594383619
+      ],
+      "tail_max_deg": 0.09651027935957239,
+      "first_within8_s": 1.06,
+      "actual": {
+        "clearance_lower_bound": 0.049479982574076556,
+        "continuous_interval_certified": true,
+        "uncertified_intervals": 1,
+        "penetration_checks": 0,
+        "exact_checks": 80,
+        "minimum_exact_clearance": 0.009549360178317243
+      },
+      "pose": "fwd60_el100",
+      "enabled": true
+    },
+    {
+      "final_errors_deg": [
+        0.18826676553344482,
+        0.4341877127642117,
+        0.18831196932568073,
+        0.43422453526955873
+      ],
+      "tail_max_deg": 0.43450126449491205,
+      "first_within8_s": 1.52,
+      "actual": {
+        "clearance_lower_bound": 0.1140312345072913,
+        "continuous_interval_certified": true,
+        "uncertified_intervals": 5,
+        "penetration_checks": 0,
+        "exact_checks": 93,
+        "minimum_exact_clearance": 0.009549360178317243
+      },
+      "pose": "abd60_el90",
+      "enabled": true
+    },
+    {
+      "final_errors_deg": [
+        2.0221726159615683,
+        1.909082052850871,
+        2.0227578495004352,
+        1.9096356824432206
+      ],
+      "tail_max_deg": 2.0480531092657097,
+      "first_within8_s": 2.4,
+      "actual": {
+        "clearance_lower_bound": 0.00527062344603149,
+        "continuous_interval_certified": true,
+        "uncertified_intervals": 5,
+        "penetration_checks": 0,
+        "exact_checks": 121,
+        "minimum_exact_clearance": 0.009297140011054986
+      },
+      "pose": "cross_chest",
+      "enabled": true
+    },
+    {
+      "final_errors_deg": [
+        1.159484329049403,
+        1.6425831343231756,
+        1.1594094431721393,
+        1.642727799106007
+      ],
+      "tail_max_deg": 26.44855532078021,
+      "first_within8_s": 3.3200000000000003,
+      "actual": {
+        "clearance_lower_bound": 0.15638776295053505,
+        "continuous_interval_certified": true,
+        "uncertified_intervals": 8,
+        "penetration_checks": 0,
+        "exact_checks": 154,
+        "minimum_exact_clearance": 0.009297140011054986
+      },
+      "pose": "hum80",
+      "enabled": true
+    },
+    {
+      "final_errors_deg": [
+        15.865078676988938,
+        11.793260970638496,
+        15.843512777021706,
+        11.745824617142967
+      ],
+      "tail_max_deg": 25.792415420535868,
+      "first_within8_s": null,
+      "actual": {
+        "clearance_lower_bound": 0.030695028979899265,
+        "continuous_interval_certified": true,
+        "uncertified_intervals": 8,
+        "penetration_checks": 0,
+        "exact_checks": 166,
+        "minimum_exact_clearance": 0.009297140011054986
+      },
+      "pose": "up120",
+      "enabled": true
+    }
+  ],
+  "release": {
+    "final_errors_deg": [
+      0.7906908441756344,
+      1.1549072619383454,
+      0.7991340207295834,
+      1.1691616143321035
+    ],
+    "tail_max_deg": 1.1692767623743858,
+    "first_within8_s": 1.18,
+    "actual": {
+      "clearance_lower_bound": 0.08062545088518175,
+      "continuous_interval_certified": true,
+      "uncertified_intervals": 0,
+      "penetration_checks": 0,
+      "exact_checks": 73,
+      "minimum_exact_clearance": 0.009200526902377701
+    }
+  }
+}

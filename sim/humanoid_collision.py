@@ -172,7 +172,12 @@ class CapsuleModel:
         final_normals=dict(self.previous_normals)
         start_gap=self.minimum_distance(start);endpoint_gap=self.minimum_distance(endpoint)
         self.previous_normals=final_normals
-        escaping=start_gap<margin and endpoint_gap>start_gap+.002 and min(np.diff(samples))>=-2e-4
+        # Rest targets project to exactly 10mm. Requiring a further 2mm gain
+        # makes 8~10mm command starts permanently infeasible after a brake.
+        # Keep the endpoint margin and reject any path below its entry gap.
+        escaping=(start_gap<margin and endpoint_gap>=margin-1e-8
+                  and endpoint_gap>start_gap+1e-6
+                  and min(samples)>=start_gap-1e-6 and min(np.diff(samples))>=-2e-4)
         if direct_min>=margin or escaping:
             return endpoint,dict(accepted=True,route='escape_direct' if escaping else 'direct',path_min=direct_min,distance=endpoint_gap,start_gap=start_gap,samples=steps,endpoint_modified=endpoint_modified)
         bad=start+(endpoint-start)*(worst/steps)
@@ -233,8 +238,8 @@ class CollisionPathMonitor:
     on all intermediate segment motions. Nonpositive bounds are reported as
     uncertified and force a fresh FK, never silently called continuously safe.
     """
-    def __init__(self,model,refresh_margin=.002,radii=None):
-        self.geometry=CapsuleModel(model,radii);self.margin=refresh_margin;self.anchor=None;self.last=None;self.variation=np.zeros(len(self.geometry.qadr));self.gaps=None;self.coefficients=None
+    def __init__(self,model,refresh_margin=.002,radii=None,adaptive_refresh=True):
+        self.adaptive_refresh=adaptive_refresh;self.geometry=CapsuleModel(model,radii);self.margin=refresh_margin;self.anchor=None;self.last=None;self.variation=np.zeros(len(self.geometry.qadr));self.gaps=None;self.coefficients=None
         self.min_actual=float('inf');self.uncertified=0;self.penetrating=0;self.exact_checks=0
     def _anchor_coefficients(self,anchor):
         m=self.geometry.m;out=np.zeros(len(self.geometry.dofs));lookup={int(m.jnt_bodyid[m.joint(n).id]):i for i,n in enumerate(self.geometry.names)}
@@ -246,10 +251,13 @@ class CollisionPathMonitor:
         return out
     def inspect(self,qpos):
         q=np.asarray(qpos);g=self.geometry
-        if self.last is not None:self.variation+=np.abs(q[g.qadr]-self.last[g.qadr])
+        delta=np.zeros(len(g.qadr)) if self.last is None else np.abs(q[g.qadr]-self.last[g.qadr])
+        self.variation+=delta
         self.last=q.copy();bound=None if self.gaps is None else self.gaps-self.coefficients@self.variation
         certified=bool(bound is not None and np.min(bound)>=0)
-        if bound is None or np.min(bound)<self.margin:
+        step_motion=0. if self.coefficients is None else float(np.max(self.coefficients@delta))
+        refresh_threshold=self.margin+(2*step_motion if self.adaptive_refresh else 0.)
+        if bound is None or np.min(bound)<refresh_threshold:
             if bound is not None and not certified:self.uncertified+=1
             g.forward(q);rows=g.distances();self.gaps=np.array([r['distance'] for r in rows]);self.variation[:]=0.;self.anchor=q.copy();self.exact_checks+=1
             if self.coefficients is None:
@@ -258,4 +266,117 @@ class CollisionPathMonitor:
             distance=float(np.min(self.gaps));self.min_actual=min(self.min_actual,distance)
             if distance<0:self.penetrating+=1
         else:distance=float(np.min(bound))
-        return dict(clearance_lower_bound=distance,continuous_interval_certified=certified,uncertified_intervals=self.uncertified,penetration_checks=self.penetrating,exact_checks=self.exact_checks)
+        return dict(clearance_lower_bound=distance,continuous_interval_certified=certified,uncertified_intervals=self.uncertified,penetration_checks=self.penetrating,exact_checks=self.exact_checks,step_motion_bound=step_motion,refresh_threshold=refresh_threshold)
+
+def _waypoint_process(connection,model,radii,initial_q):
+    import time
+    t0=time.monotonic()
+    geometry=CapsuleModel(model,radii)
+    geometry.plan_safe_waypoint(initial_q,initial_q,margin=.003)
+    connection.send({'planner_ready':True,'child_warmup_ms':(time.monotonic()-t0)*1000})
+    try:
+        while True:
+            request=connection.recv()
+            if request is None:break
+            sequence,start,target,submitted=request;t0=time.monotonic()
+            try:
+                waypoint,diag=geometry.plan_safe_waypoint(start,target,margin=.010)
+                diag=dict(diag,planner_ms=(time.monotonic()-t0)*1000,submitted_at=submitted,
+                          completed_at=time.monotonic(),sequence=sequence)
+                connection.send((start,target,waypoint,diag))
+            except Exception as exc:
+                connection.send((start,target,start,dict(accepted=False,error=type(exc).__name__,
+                                completed_at=time.monotonic(),sequence=sequence)))
+    except (EOFError,BrokenPipeError):pass
+    finally:connection.close()
+
+
+class AsyncWaypointPlanner:
+    """10Hz one-in-flight planner process, no shared GIL or MjData.
+
+    Servo retains latest request locally and polls at most one result. Pipe
+    capacity cannot accumulate stale requests. No planner locks in servo.
+    """
+    def __init__(self,model,radii=None,period=.1,initial_q=None,serialized_model=None):
+        import socket,subprocess,sys,os,pickle
+        from multiprocessing.connection import Connection
+        import time
+        self.created_at=time.monotonic();self.ready=False;self.prepare_ms=None;self.child_warmup_ms=None
+        self.period=period;self._result=None;self.submitted=0;self.completed=0
+        self._busy=False;self._closed=False;self._sent_at=-1e6
+        left,right=socket.socketpair()
+        self._connection=Connection(left.detach())
+        child=Connection(right.detach());self._process=None
+        import threading
+        self._started=False
+        def launch():
+            try:
+                self._process=subprocess.Popen([sys.executable,'-m','sim.humanoid_collision',
+                    '--planner-fd',str(child.fileno()),str(os.getpid())],pass_fds=(child.fileno(),),
+                    stdin=subprocess.PIPE,stdout=subprocess.DEVNULL)
+                if self._closed:
+                    self._process.terminate();self._process.wait(timeout=1.)
+                    self._process.stdin.close();return
+                if serialized_model is None:
+                    pickle.dump((model,radii,np.array(model.qpos0 if initial_q is None else initial_q,copy=True)),self._process.stdin,protocol=5)
+                else:self._process.stdin.write(serialized_model)
+                self._process.stdin.close();self._started=True
+            except (BrokenPipeError,OSError):self._closed=True
+            finally:child.close()
+        self._starter=threading.Thread(target=launch,name='planner-start',daemon=True)
+        self._starter.start()
+
+    def submit(self,start,target):
+        import time
+        self.submitted+=1
+        self._pending=(self.submitted,np.array(start,copy=True),np.array(target,copy=True),time.monotonic())
+        self.latest()
+
+    def latest(self):
+        import time
+        if self._closed:return self._result
+        try:
+            if self._connection.poll():
+                message=self._connection.recv()
+                if isinstance(message,dict) and message.get('planner_ready'):
+                    self.ready=True;self.prepare_ms=(time.monotonic()-self.created_at)*1000
+                    self.child_warmup_ms=message['child_warmup_ms']
+                else:self._result=message;self.completed+=1;self._busy=False
+            # Keep the latest request even before child startup. A stationary
+            # collision latch may only poll, not retarget, after the first tick.
+            now=time.monotonic()
+            pending=getattr(self,'_pending',None)
+            if self._started and self.ready and not self._busy and pending is not None and now-self._sent_at>=self.period and self._process.poll() is None:
+                self._connection.send(pending);self._pending=None
+                self._sent_at=now;self._busy=True
+        except (EOFError,BrokenPipeError,OSError):self._closed=True
+        return self._result
+
+    def diagnostics(self):
+        self.latest()
+        return dict(planner_ready=bool(self.ready and not self._closed and self._process is not None and self._process.poll() is None),
+                    planner_prepare_ms=self.prepare_ms,planner_child_warmup_ms=self.child_warmup_ms)
+
+    def close(self):
+        self._closed=True
+        self._starter.join(timeout=3.)
+        if self._process is not None and self._process.poll() is None:
+            # Lifecycle cleanup only, never called by a normal servo tick.
+            import subprocess
+            self._process.terminate()
+            try:self._process.wait(timeout=1.)
+            except subprocess.TimeoutExpired:self._process.kill();self._process.wait(timeout=1.)
+        self._connection.close();self._closed=True
+
+
+if __name__=='__main__':
+    import sys,os,time,threading,pickle
+    from multiprocessing.connection import Connection
+    if len(sys.argv)==4 and sys.argv[1]=='--planner-fd':
+        parent=int(sys.argv[3])
+        def watch_parent():
+            while os.getppid()==parent:time.sleep(.1)
+            os._exit(0)
+        threading.Thread(target=watch_parent,name='planner-parent-watch',daemon=True).start()
+        model,radii,initial_q=pickle.load(sys.stdin.buffer)
+        _waypoint_process(Connection(int(sys.argv[2])),model,radii,initial_q)

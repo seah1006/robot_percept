@@ -1,0 +1,130 @@
+{
+ "label": "w3_http",
+ "transport": "http",
+ "video": "C:\\Users\\USER\\Documents\\sam_camera\\teleop_final_hand.mp4",
+ "mode": "panda",
+ "load_before": [
+  "1.91",
+  "1.54",
+  "1.48"
+ ],
+ "ps_rc": 0,
+ "ps_err": "",
+ "tracker": {
+  "detail_ms": {
+   "timestamp": {
+    "p50": 0.003600000127335079,
+    "p95": 0.004899999112240039,
+    "n": 901
+   },
+   "panda_features_overlay": {
+    "p50": 0.3668999997898936,
+    "p95": 0.6145999996078899,
+    "n": 901
+   },
+   "hand_overlay": {
+    "p50": 0.13919999946665484,
+    "p95": 0.29999999969732016,
+    "n": 901
+   }
+  },
+  "transport": "http",
+  "transport_requested": "http",
+  "transport_fallback": false,
+  "transport_events": [],
+  "ws_failures": 0,
+  "ws_connections": 0,
+  "preview_transport": "http",
+  "http_client": "requests",
+  "hand_detection_rate": 0.6881243063263041,
+  "pose_detection_rate": 0.0,
+  "camera_read_failed": false,
+  "capture_clock": "unix wall clock at decode completion/video or read completion/camera",
+  "stages_ms": {
+   "pacing": {
+    "p50": 18.226899999717716,
+    "p95": 20.643999998355866
+   },
+   "preprocess": {
+    "p50": 0.6030000004102476,
+    "p95": 0.8649999999761349
+   },
+   "neural": {
+    "p50": 12.57400000031339,
+    "p95": 17.769699999917066
+   },
+   "retarget": {
+    "p50": 0.008400000297115184,
+    "p95": 0.012800001059076749
+   },
+   "overlay": {
+    "p50": 0.515800000357558,
+    "p95": 0.9092000000237022
+   },
+   "queue": {
+    "p50": 0.7798000006005168,
+    "p95": 1.372699998682947
+   }
+  },
+  "source_fps": 30.0,
+  "source_frames_due": 901,
+  "processed_input_ratio": 1.0,
+  "unprocessed_source_slots": 0,
+  "dropped_frames": 0,
+  "updates": 901,
+  "seconds": 30.018,
+  "hz": 30.016,
+  "network_errors": 0,
+  "sent_updates": 901,
+  "preview_sent": 901,
+  "preview_encode_ms_p50": null,
+  "preview_post_ms_p50": 8.249600001363433,
+  "preview_post_ms_p95": 22.734899999704794,
+  "post_ms_p50": null,
+  "post_ms_p95": null,
+  "json_ms_p50": null,
+  "payload_bytes_p50": null,
+  "server_ms_p50": null,
+  "loop_ms_p50": 33.27979999994568,
+  "inference_ms_p50": 12.926600000355393,
+  "inference_ms_p95": 18.161800000598305,
+  "hand_ms_p50": 12.562600000819657,
+  "pose_ms_p50": null
+ },
+ "wincpu": {
+  "label": "w3_http",
+  "exit": null,
+  "wall_s": 39.98,
+  "proc_cpu_s_last_sample": 27.66,
+  "logical_cores": 8,
+  "proc_cpu_pct_of_1core": 69.2,
+  "sys_cpu_mean_pct": 54.6,
+  "sys_samples": 37
+ },
+ "server": {
+  "span_s": 29.95,
+  "recv_updates": 898,
+  "recv_hz": 29.982,
+  "recv_hz_fit": 30.002,
+  "screen_frames": 879,
+  "screen_fps": 29.348,
+  "screen_max_gap_ms": 70.7,
+  "screen_gaps_gt200": 0,
+  "cpu_main_pct": 69.2,
+  "cpu_tree_pct": 133.1,
+  "rss_tree_mb": 1017.4,
+  "preview_updates": 898,
+  "preview_fps": 29.982
+ },
+ "walljumps_in_span": 12,
+ "top_mid_window": [
+  "    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND\n 114764 user      20   0 2739512 113464  62976 S  54.5   0.7   0:58.69 python\n 114792 user      20   0 2930020 693092 219904 D  36.4   4.3   0:41.14 python\n 114776 user      20   0 1987040  86472  50816 S  27.3   0.5   0:23.33 python\n     98 root      20   0   25284   6400   4992 S   9.1   0.0   0:36.92 systemd-udevd\n 122551 root      20   0   25288   4124   2560 S   9.1   0.0   0:00.01 (udev-worker)\n",
+  "    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND\n 114764 user      20   0 2740536 113972  62976 S  60.0   0.7   1:07.88 python\n 114792 user      20   0 2930020 693092 219904 R  30.0   4.3   0:46.25 python\n 114776 user      20   0 1987040  86600  50816 S  20.0   0.5   0:26.69 python\n 122123 root      20   0   25288   4252   2688 R  20.0   0.0   0:02.25 (udev-worker)\n      1 root      20   0   22136  12780   9324 S   0.0   0.1   0:02.89 systemd\n"
+ ],
+ "load_after": [
+  "1.77",
+  "1.56",
+  "1.49"
+ ],
+ "wall_s": 40.9
+}

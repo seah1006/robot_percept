@@ -142,3 +142,51 @@ verdict: FAIL (라운드 1) - 안전/게이팅/히스테리시스/스모크 PASS
 - 전체 pytest(I-J 수정 작업 트리, V-J 직접 실행): 93 passed, 5 warnings, 44.6초, 실패 0. 실행 후 리스너·worker 0.
 - **최종 판정(V-J)**: 기본값 ws 전환 — 장시간(22분)·재연결 3회·(a)(b)(c) 직접 확인 모두 PASS이므로 전환 자체는 진행 가능. 단 전체는 스톡 영상·22분 한정이라 문서 판정은 "조건부 PASS(스톡 영상 한정), 지적 ①②는 NEEDS WORK 소항목". 커밋 없음.
 - **재확인(I-J 수정 2판, tools/teleop_tracker_win.py SHA256 18ec32de…)**: 같은 4케이스 재실행(out/adopt/, 이전은 out/adopt_v1/). A ws(p95 2.44ms, 901/901, 오류 0), C http(21.4ms), B cc37144 → http 폴백, 경고 1회 "WebSocket is unsupported... Restart the tracker to retry WS." ws_error는 200자로 잘림, 901/901, D http(22.3ms). 지적 ①②는 해소(②: 404/미설치는 세션 고정 + 재시작 안내, 일시 실패는 30초 재시도). 일시 실패 후 30초 재시도·WS 복귀는 단위 테스트로만 있고 V-J 실측은 안 함. 재시도 시 WS 연결 시도가 최대 약 0.6초 update 스레드를 막을 수 있음(미측정). cc37144 구 서버 worker 잔존은 수동 종료.
+
+
+## r3 회사 PC 트래커 판정 (V-T3, 2026-11-09, 포트 5092) - 기본 판정 NEEDS WORK
+구성: 서버 wip/r2 작업트리 cab9e7f + 미커밋(서버 web/*.py 해시 3c3976ed..., I-K3 서버 변경 0), PERCEPTION=stub, G1 ON(humanoid) 또는 Panda(teleop mode). 트래커 FREEZE tools/teleop_tracker_win.py SHA256 c98c3db3...(TEMP\vt3 사본), Windows Python 3.12.10 mediapipe 1.2.0, `--loop-video --seconds 30`, ws/http 교차 3쌍(A: http,ws,http,ws / B: ws,http), 슬롯마다 WSL 측정 락 안에서 Windows 실행 완료까지 대기. 하네스 bench/verify_t/r3_{run.sh,chain.sh,cross.py,win_run.ps1,summ.py,rec_*,panda_base.sh,recover.py}, 원자료 bench/verify_t/out_r3/ (수치·JSON만, 영상·프레임 없음). 회사 PC 8코어, 서버 수신/preview/화면은 개수 기반(샘플 50ms, 첫 증가~마지막 값 도달), 수신 Hz는 slope 회귀(recv_hz_fit)도 병기. 실카메라 '미실시(카메라 분리)'.
+
+### 영상별 검출률 (트래커 파이프라인 그대로: flip, 640, 더미 서버; out_r3/hand_regress/)
+- 내 첫 측정(직접 detector, flip 없음)은 무효. final_hand 손 69.7%(62/89, 11/3 수치 재현, 3cf1b19 = 현재 FREEZE 동일, 회귀 아님), 자세 100%. round2_async 손 1.1%/자세 100%, compact 손 0%/자세 100%(179f), round2 손 30.8%(26f).
+- 판정 영상(I-K3 합의): 주 final_hand(손+자세), 부 round2_compact(자세 전용). test_fast(1280x720)는 이번 미측정.
+
+### 1) 절대 판정 (30초 창, 개수 기반, 창 A 4개 + B 2개)
+| 영상 | 전송 | 처리율 | 수신Hz | preview fps | G1 fps | post p95 ms | 비고 |
+|-|-|-|-|-|-|-|-|
+| compact (cp, 조용, load1 0.9~1.5) | http 3창 | 100/100/100 | 30.02~30.04 | 30.00~30.04 | 31.9~32.0 | 22.4/26.7/17.6 | 6/6창 모두 기준 충족 |
+| compact | ws 3창 | 100 x3 | 29.99~30.03 | 29.96~30.06 | 31.9~32.0 | 3.6~3.7 | |
+| final_hand fh(최초, load 1.5~2.8) | http | 98.89/99.78 | 29.68/29.81 | 29.68/29.84 | 31.3/31.7 | 23.5/21.8 | w1 기준 미달 |
+| final_hand fh | ws | 100/100 | 29.74/29.76 | 29.80/29.76 | 31.0/32.0 | 6.6/4.1 | |
+| final_hand fh2 (락 밖 pytest -q 100% CPU 동시 → 오염) | http | 94.7/95.0/95.9 | 28.5~28.7 | 28.5~28.7 | 30.5~31.6 | 21.6~27.6 | |
+| final_hand fh2 | ws | 99.0/99.0/100 | 29.72~30.06 | 29.71~30.06 | 31.7 | 5.3~6.1 | |
+- fh B(ws 92.7%, http 88.3%)는 원인 불명의 외부 부하로 폐기(Windows 시스템 CPU 81~87%, neural p95 49~51ms). fh3 재측정은 부모의 '사용자 실카메라 테스트' 공지로 중단(미완).
+- 해석: 손 검출 영상(neural p95 36~43ms > 프레임 33ms)에서는 http가 99% 미달 경향, ws는 99~100%로 경계. 자세 전용 compact는 양쪽 충족. final_hand의 '조용한 슬롯 6창 판정'은 미완.
+- ws-http 차이(compact, 3쌍 부트스트랩 95% CI): post p95 -18.6ms [-23.0,-14.0], 서버 main CPU -6.0%p [-6.7,-5.6], tree CPU -10.9%p, 처리율·수신Hz·preview·G1 fps·neural 차이 입증 안 됨(0 포함). fh2는 오염 슬롯이라 참고.
+- 서버 main CPU: 이 PC http 25~33%, ws 17~27% (집 PC 13~17%보다 높음).
+
+### 2) WS 일시 실패 후 ≤30초 복귀 (독립 프록시 r3_recover.py, 프록시 시계 + 트래커 QPC + 서버 로그 3중 확인; out_r3/rec2/)
+- A(연결 후 차단): 프록시가 WS 파이프 절단(t=25.0)+업그레이드 503 차단 25~35s. 트래커 http_fallback(24.47s), ws_connected(54.5s), 프록시 'passed' 55.1s → **복구 후 20.1초**(≤30 충족). 차단 중 서버 입력은 HTTP로 초당 25~30건 유지, 트래커 network_errors 0, ws_failures 1, ws_connections 2. 서버 로그 /tracker/ws 101 건수 3(A 2 + B 1)으로 연결 횟수 일치.
+- B(첫 연결 거부 0~30s): fallback 6.98s, ws_connected 37.0s → **복구 후 7.6초**. network_errors 0, 처리율 100%.
+- 한계: 복구 지연은 30초 재시도 주기에 의해 결정되어 0~30초 범위. 차단 종료가 재시도 직후면 최악 ~30초+연결 시간(최대 0.6초)이라 경계. 최악 위상(차단 25~55.2s) 시험은 중단으로 미실시(r3_rec_one.sh 준비됨). N=각 1회.
+- 판정: 2건 직접 재현 PASS, 최악 위상 미확인이므로 '조건부'.
+
+### 4) Panda 모드 (--mode panda, final_hand, out_r3/pd_A, pd_B, pdbase)
+- 6창 모두 처리율 100%, 트래커 30.01~30.02Hz, 수신 29.94~30.02Hz(fit 29.99~30.00), preview 29.98~30.04fps. Panda 화면 fps: http 29.28/29.35/29.22, ws 29.29/29.37/29.34. 트래커 없는 기준선 29.41/29.41(teleop off), 29.38/29.31(teleop on, 트래커 없음) → 트래커 부하에 의한 하락 0.1fps 이내(http/ws 차이 +0.05, CI [+0.01,+0.11] 수준). Panda 화면 ~29.3은 트래커와 무관한 기준선. 서버 main CPU http 68~70% vs ws 58~60% (-9.6%p CI [-9.8,-9.3]). Panda 모드 post 지표는 트래커 metrics에 없음(None).
+- 판정: Panda 회귀 없음(기준선 대비) PASS(3cf1b19 이전 비교는 요청대로 생략).
+
+### 3) 장시간 1h: 미실시 (부모의 사용자 카메라 테스트 공지로 시작 금지). schedule 기록 없음.
+### 5) preview HTTP +3~9ms 원인 재현: I-K3 조사 결과 미수신(preview 기본 변경 없음). 이번 측정 preview post p95는 별도 계측 필드 없이 미확인.
+
+### 정리
+- 5092 리스너 0 확인, 잔존 worker 0 확인(각 run env 파일 post_listener=0 leftover=0). 중단한 fh3_A는 내가 PID 지정 종료.
+
+
+### r3 후반 추가 기록 (13:06 재개 후, 13:34 부모 지시로 중지)
+- 실카메라 수락(측정 락 안, 서버 5092 humanoid, 트래커 FREEZE c98c3db3, ws 기본, 30초 창 1회, 원자료 bench/verify_t/out_r3/cam4/cam4.json): 카메라 29.29fps, 처리율 98.80%(1071/1084, 미처리 13슬롯), 트래커 28.94Hz(37초 평균), 손 검출 1.3%·자세 100%(손이 거의 안 보이는 자세), 서버 수신 893건/30.13초=29.64Hz, preview 29.64Hz, 캡처→서버 도착 p50 27.9ms/p95 46.5ms(두 호스트 시계 동기 전제, 참고), 네트워크 오류 0, ws 연결 1회 폴백 0, post ws p95 3.95ms, neural p95 31.4~32.2ms. 판정: 기준(처리율 99%, 수신 29.7Hz) 근소 미달 → 실카메라 NEEDS WORK(1회, N=1). '실카메라 미실시'는 해소.
+- 디버그용 실카메라 30초 1회(서버 없음, 포트 5099 더미)를 락 밖에서 실행한 실수 있음(13:12경, 측정 수치 아님, 카메라 fps 29.24, 처리율 99.35%, 손 35%).
+- 무효 처리한 실행: fh3/fh4(및 cam1~cam3): WSL에서 nohup 백그라운드로 띄운 드라이버는 powershell.exe interop(accept4 failed 110)이 끊겨 트래커가 실제로는 안 돌았고 Windows 쪽 이전 metrics 파일이 재사용됨(처리율 1.0/hz 30.014 recv None 패턴). 하네스는 이제 창 시작 전 stale 파일 삭제 + \\wsl.localhost UNC 대신 로컬 복사본(TEMP\vt3\bin, r3_sync.sh)을 쓰도록 수정. 장시간/측정 드라이버는 반드시 Bash yield 라이브 세션(bash_interact)에서 실행할 것.
+- 이전 유효 데이터(fh, fh2, cp, pd, pdbase, rec2)는 모두 라이브 세션 실행이며 서버 recv 값이 있는 정상 창.
+- preview +3~9ms 조사(I-K3 notes/tracker_r3_changes.md): 원인 미규명(F1 Connection:close 구조비용 확정, 상대 회귀 원인은 미확정). 재현 확인은 미실시.
+- 재개 지점: (1) final_hand 조용한 슬롯 6창(`bash r3_chain.sh fhN teleop_final_hand humanoid`, 라이브 세션) (2) 복구 최악 위상 `r3_rec_one.sh rec3 25 56 100` (3) 실카메라 반복 2~3회(`r3_cam_run.sh camN humanoid`, 카메라 단독 사용 확인 후) (4) 1h 장시간(락 밖, schedule 기록 후, bash_interact 세션) (5) preview 재현. 모두 bench/verify_t/ 스크립트, 포트 5092, 락 /tmp/rp_measure.lock.
+- 중지 시각 13:34(KST). 5092 리스너 0, Windows 트래커·camera_acceptance 프로세스 0, 카메라 해제됨.

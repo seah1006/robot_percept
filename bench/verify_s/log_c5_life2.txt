@@ -1,0 +1,3 @@
+locked 13:34:06 load 1.30 1.30 1.47 1/234 243412 shm0=46 residual0=0
+server pid 243495 procs=5
+cycle 1 procs_after_on=6 after_off=4 shm=61

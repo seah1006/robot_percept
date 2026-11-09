@@ -1,0 +1,8 @@
+locked 13:28:18 load 1.35 1.30 1.53 3/248 233582 tag=c5_pat_twist tree=/home/user/rp_vs3/c5 gpu 14 % others:  233598  100 ps -eo pid,pcpu,cmd --sort=-pcpu| 233587 91.6 /home/user/anaconda3/bin/python /home/user/anaconda3/bin/conda shell.posix ac|     98  1.0 /usr/lib/systemd/systemd-udevd|
+mode on 200
+=== part coll1
+collision_avoidance 1 200
+{'n': 575, 'min_mm': 9.2, 'p5_mm': 9.8, 'frames_below_0mm': 0, 'frames_below_10mm': 443, 'frames_below_5mm': 0, 'collision_opt': '1', 'pattern': 'twist', 'worst_pair': 'torso|left_fore', 'radii': {'torso': 0.118, 'upper': 0.053, 'fore': 0.045, 'hand': 0.057, 'note': 'approximate capsules, torso axis pelvis->shoulder mid'}}
+DONE
+5094 closed
+unlocked 13:29:05 load 1.95 1.50 1.59 1/248 236723

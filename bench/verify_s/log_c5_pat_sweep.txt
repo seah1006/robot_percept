@@ -1,0 +1,8 @@
+locked 13:16:29 load 1.07 1.71 1.89 2/228 176672 tag=c5_pat_sweep tree=/home/user/rp_vs3/c5 gpu 15 % others:  176676 90.9 /home/user/anaconda3/bin/python /home/user/anaconda3/bin/conda shell.posix ac|     98  1.2 /usr/lib/systemd/systemd-udevd|    278  1.0 /home/user/.nvm/versions/node/v24.20.0/bin/node --max-old-space-size=7924 /ho|
+mode on 200
+=== part coll1
+collision_avoidance 1 200
+{'n': 571, 'min_mm': 9.5, 'p5_mm': 10.3, 'frames_below_0mm': 0, 'frames_below_10mm': 14, 'frames_below_5mm': 0, 'collision_opt': '1', 'pattern': 'sweep', 'worst_pair': 'torso|right_fore', 'radii': {'torso': 0.118, 'upper': 0.053, 'fore': 0.045, 'hand': 0.057, 'note': 'approximate capsules, torso axis pelvis->shoulder mid'}}
+DONE
+5094 closed
+unlocked 13:17:16 load 1.62 1.75 1.89 3/230 179777

@@ -206,6 +206,17 @@ class HumanoidEnv:
         self.collision_status = {}
         self.collision_plan = None
         self.reset()
+        # Mode startup, before the first JPEG/servo: allocate all three MjData.
+        # Public OFF state remains None and OFF physics/control is untouched.
+        from .humanoid_collision import CapsuleModel,CollisionPathMonitor,MESH_RADII
+        self._collision_resources=(CapsuleModel(self.model,MESH_RADII),
+            CollisionPathMonitor(self.model,radii=MESH_RADII),CollisionPathMonitor(self.model,radii=MESH_RADII))
+        for resource in self._collision_resources:
+            geometry=resource.geometry if hasattr(resource,'geometry') else resource
+            geometry.forward(self.data.qpos);geometry.distances(True,.12)
+        import pickle
+        self._collision_payload=pickle.dumps((self.model,MESH_RADII,self.data.qpos.copy()),protocol=5)
+
 
     def rest_q(self):
         q = {}
@@ -240,18 +251,31 @@ class HumanoidEnv:
 
     def set_collision_avoidance(self,enabled):
         enabled=bool(enabled)
-        if enabled==self.collision_avoidance:return
+        if enabled==self.collision_avoidance:
+            if enabled:self.refresh_collision_planner()
+            return
+        previous=getattr(self,'collision_planner',None)
+        if previous is not None:previous.close()
+        self.collision_planner=None
         self.collision_avoidance=enabled
         if enabled:
-            from .humanoid_collision import CapsuleModel,CollisionPathMonitor,MESH_RADII
-            self.collision_model=CapsuleModel(self.model,MESH_RADII)
-            self.collision_monitor=CollisionPathMonitor(self.model,radii=MESH_RADII)
-            self.collision_reference_monitor=CollisionPathMonitor(self.model,radii=MESH_RADII)
+            from .humanoid_collision import CapsuleModel,CollisionPathMonitor,MESH_RADII,AsyncWaypointPlanner
+            self.collision_model,self.collision_monitor,self.collision_reference_monitor=self._collision_resources
+            for monitor in (self.collision_monitor,self.collision_reference_monitor):
+                monitor.anchor=None;monitor.last=None;monitor.variation[:]=0.;monitor.gaps=None
+                monitor.min_actual=float('inf');monitor.uncertified=0;monitor.penetrating=0;monitor.exact_checks=0
+                monitor.geometry.previous_normals.clear()
+            self.collision_model.previous_normals.clear()
+            self.collision_planner=AsyncWaypointPlanner(self.model,MESH_RADII,initial_q=self.data.qpos,serialized_model=self._collision_payload)
         self.collision_braking=False
         self._collision_stop_goal=None
         self.collision_resume_goal=None;self.collision_released_at=-1e6;self.collision_constraints=[]
         self.collision_plan=None;self._collision_prev_reference_a=None;self._collision_prev_update_t=None;self._collision_guard_counts={'margin':0,'path':0,'jerk':0,'lag':0}
-        self.collision_status={'enabled':enabled,'experimental':True,'physical_stop_certified':False,'collision_state':'clear'}
+        self.collision_status={'enabled':enabled,'experimental':True,'physical_stop_certified':False,'collision_state':'clear','planner_ready':False,'planner_prepare_ms':None}
+
+    def refresh_collision_planner(self):
+        if self.collision_avoidance and self.collision_planner is not None:
+            self.collision_status.update(self.collision_planner.diagnostics())
 
     def request_collision_brake(self,reason):
         """Latch a jerk-limited stop goal without resetting reference p/v/a."""
@@ -310,7 +334,9 @@ class HumanoidEnv:
                 if directional > 1e-4:improving=True
                 elif route_floor<guard_required:can_release=False
             if row['distance']<=.002 or (normal_velocity>1e-4 and route_floor<guard_required):can_release=False
-            if closing>1e-5 and route_floor<guard_required:
+            # Match the release noise threshold, preventing immediate re-latch
+            # on settled micron-scale PD closing motion (guard distance unchanged).
+            if closing>1e-4 and route_floor<guard_required:
                 self._collision_guard_counts['path']+=1
                 risk={'pair':row['pair'],'distance':row['distance'],'closing_speed':closing,'reference_closing_speed':reference_closing,'reference_accel_closing':accel_closing,'required_margin':required,'guard_required':guard_required,'tracking_normal':lag,'planned_path_min':path_min,'margin_method':'planned-route-plus-reference-accel-jerk-tracking-lag','effective_deceleration':.25,'latency_s':horizon}
                 break
@@ -414,5 +440,7 @@ class HumanoidEnv:
         return self._renderer.render()
 
     def close(self):
+        planner=getattr(self,'collision_planner',None)
+        if planner is not None:planner.close();self.collision_planner=None
         if self._renderer is not None:
             self._renderer.close(); self._renderer = None

@@ -1,0 +1,4 @@
+w1_http ratio 1.0 hz 30.014 recv_hz 30.034 prev_fps 30.0 screen_fps 31.938 post_p95 22.410000001400476
+w2_ws ratio 1.0 hz 30.012 recv_hz 29.988 prev_fps 29.956 screen_fps 31.994 post_p95 3.66540000140958
+w3_http ratio 1.0 hz 30.013 recv_hz 30.043 prev_fps 30.04 screen_fps 31.917 post_p95 26.67020000080811
+w4_ws ratio 1.0 hz 30.014 recv_hz 30.004 prev_fps 30.004 screen_fps 31.94 post_p95 3.6228000008122763

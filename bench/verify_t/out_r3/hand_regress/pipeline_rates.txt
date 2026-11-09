@@ -1,0 +1,8 @@
+teleop_final_hand.mp4 panda frames=89 hand=69.7% pose=0.0%
+teleop_final_hand.mp4 humanoid frames=89 hand=69.7% pose=100.0%
+teleop_round2_async.mp4 panda frames=89 hand=1.1% pose=0.0%
+teleop_round2_async.mp4 humanoid frames=89 hand=1.1% pose=100.0%
+teleop_round2_compact.mp4 panda frames=179 hand=0.0% pose=0.0%
+teleop_round2_compact.mp4 humanoid frames=179 hand=0.0% pose=100.0%
+teleop_round2.mp4 panda frames=26 hand=30.8% pose=0.0%
+teleop_round2.mp4 humanoid frames=26 hand=30.8% pose=100.0%

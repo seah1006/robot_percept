@@ -23,3 +23,6 @@ cad_uploads/web/
 
 # 재생성 가능한 합성 payload
 bench/*/out/pl/
+
+# r3 V-S 500Hz raw (122MB, company PC only)
+bench/verify_s/r3raw/

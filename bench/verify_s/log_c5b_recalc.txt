@@ -1,0 +1,18 @@
+== sweep coll=0
+{'wall_s': 24.0, 'rtf': 1.0, 'n_ticks': 1200, 'tick_p50': 2.63, 'tick_p95': 5.86, 'tick_p99': 8.17, 'tick_max': 14.34, 'n_gt20': 0, 'n_gt40': 0, 'load': ['1.20', '2.43', '2.12']} None
+{"file": "raw_c5b_sweep_c0.npz", "n": 12000, "min_mm": -39.59, "argmin_t": 5.98, "pair": "left_upper|right_upper", "below0": 3209, "below5": 3582, "arm_range_max_deg": 99.3, "arm_range_2nd_half_deg": 87.7, "path_len_2nd_half_deg": 178.4}
+== sweep coll=1
+{'wall_s': 24.0, 'rtf': 1.0, 'n_ticks': 1200, 'tick_p50': 5.8, 'tick_p95': 10.31, 'tick_p99': 14.65, 'tick_max': 24.57, 'n_gt20': 3, 'n_gt40': 0, 'load': ['1.05', '2.30', '2.08']} {'min_actual': 0.009472908118061243, 'penetrating': 0.0, 'uncertified': 0.0, 'exact_checks': 652.0}
+{"file": "raw_c5b_sweep_c1.npz", "n": 12000, "min_mm": 9.47, "argmin_t": 20.25, "pair": "torso|left_fore", "below0": 0, "below5": 0, "arm_range_max_deg": 97.6, "arm_range_2nd_half_deg": 89.4, "path_len_2nd_half_deg": 179.0}
+== chest coll=0
+{'wall_s': 24.0, 'rtf': 1.0, 'n_ticks': 1200, 'tick_p50': 2.45, 'tick_p95': 5.68, 'tick_p99': 8.06, 'tick_max': 13.72, 'n_gt20': 0, 'n_gt40': 0, 'load': ['1.08', '2.21', '2.06']} None
+{"file": "raw_c5b_chest_c0.npz", "n": 12000, "min_mm": -106.0, "argmin_t": 14.89, "pair": "left_upper|right_upper", "below0": 11902, "below5": 11914, "arm_range_max_deg": 104.0, "arm_range_2nd_half_deg": 0.0, "path_len_2nd_half_deg": 0.3}
+== chest coll=1
+{'wall_s': 24.12, 'rtf': 0.995, 'n_ticks': 1200, 'tick_p50': 4.93, 'tick_p95': 9.25, 'tick_p99': 16.06, 'tick_max': 41.89, 'n_gt20': 4, 'n_gt40': 1, 'load': ['1.17', '2.12', '2.04']} {'min_actual': 0.009807398810385101, 'penetrating': 0.0, 'uncertified': 0.0, 'exact_checks': 214.0}
+{"file": "raw_c5b_chest_c1.npz", "n": 12000, "min_mm": 9.55, "argmin_t": 5.38, "pair": "torso|left_fore", "below0": 0, "below5": 0, "arm_range_max_deg": 122.3, "arm_range_2nd_half_deg": 0.0, "path_len_2nd_half_deg": 0.4}
+== twist coll=0
+{'wall_s': 24.0, 'rtf': 1.0, 'n_ticks': 1200, 'tick_p50': 2.4, 'tick_p95': 5.53, 'tick_p99': 7.72, 'tick_max': 13.93, 'n_gt20': 0, 'n_gt40': 0, 'load': ['0.77', '1.95', '1.98']} None
+{"file": "raw_c5b_twist_c0.npz", "n": 12000, "min_mm": -61.74, "argmin_t": 0.58, "pair": "torso|right_fore", "below0": 11902, "below5": 11914, "arm_range_max_deg": 75.0, "arm_range_2nd_half_deg": 0.0, "path_len_2nd_half_deg": 0.5}
+== twist coll=1
+{'wall_s': 24.0, 'rtf': 1.0, 'n_ticks': 1200, 'tick_p50': 4.68, 'tick_p95': 9.15, 'tick_p99': 13.7, 'tick_max': 20.19, 'n_gt20': 1, 'n_gt40': 0, 'load': ['0.85', '1.87', '1.95']} {'min_actual': 0.009047723986140413, 'penetrating': 0.0, 'uncertified': 0.0, 'exact_checks': 1220.0}
+{"file": "raw_c5b_twist_c1.npz", "n": 12000, "min_mm": 9.05, "argmin_t": 1.73, "pair": "torso|left_fore", "below0": 0, "below5": 0, "arm_range_max_deg": 73.6, "arm_range_2nd_half_deg": 0.0, "path_len_2nd_half_deg": 0.4}

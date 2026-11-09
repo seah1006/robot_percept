@@ -74,7 +74,7 @@ class HumanoidServo:
         if self.env.collision_avoidance:
             if self.env.collision_braking and fresh and t-self._last_holding_probe>=.2 and np.max(np.abs(self.env.data.qvel[self.env.collision_model.dofs]))<.02:
                 feature=np.concatenate([np.asarray(sample['pose'],float)[:,:3].ravel()]+[np.asarray(v,float).ravel() for _,v in sorted((sample.get('hands') or {}).items())])
-                if self._holding_probe is None or feature.shape!=self._holding_probe.shape or np.max(np.abs(feature-self._holding_probe))>.01:
+                if self._holding_probe is None or feature.shape!=self._holding_probe.shape or np.max(np.abs(feature-self._holding_probe))>.01 or self.env.collision_planner.latest() is not None:
                     rt0=time.perf_counter();self._retarget(sample)
                     self.profile['retarget_ms']+=(time.perf_counter()-rt0)*1000
                     self._holding_probe=feature.copy();self.solved=True
@@ -104,7 +104,7 @@ class HumanoidServo:
             # remains 50 Hz; repeating identical IK at 50 Hz wastes the render budget.
             key = (sample.get('received_at'), ctrl.get('calibration'))
             opts = tuple(sorted(self.options.items()))
-            if key != self.sample_seen or opts != self.options_seen:
+            if key != self.sample_seen or opts != self.options_seen or self.env.collision_avoidance:
                 rt0=time.perf_counter()
                 self._retarget(sample)
                 self.profile['retarget_ms']=(time.perf_counter()-rt0)*1000
@@ -209,13 +209,46 @@ class HumanoidServo:
             p0=time.perf_counter();fk0=proxy.fk_calls
             start=qfull.copy()
             for name in proxy.names:start[env.qadr[name]]=self.cmd[self.index[name]]
-            cached=self._projection_cache
-            if cached is not None and np.max(np.abs(candidate[proxy.qadr]-cached[0]))<.002 and np.max(np.abs(start[proxy.qadr]-cached[1]))<.01:
-                projected=cached[2].copy();diag=dict(cached[3],cache_hit=True)
-            else:
-                projected,diag=proxy.plan_safe_waypoint(start,candidate,margin=.010)
-                diag['modified']=bool(np.max(np.abs(projected[proxy.qadr]-candidate[proxy.qadr]))>1e-4)
-                self._projection_cache=(candidate[proxy.qadr].copy(),start[proxy.qadr].copy(),projected.copy(),dict(diag))
+            env.collision_planner.submit(start,candidate)
+            result=env.collision_planner.latest()
+            projected=start.copy();diag=dict(accepted=False,route='planner_pending',modified=True)
+            if not env.collision_planner.ready:
+                # Only project the next short servo neighborhood, not the full
+                # unreachable goal. Three FK checks, while the planner warms.
+                delta=candidate[proxy.qadr]-start[proxy.qadr]
+                fraction=min(1.,.04/max(float(np.max(np.abs(delta))),1e-12))
+                projected=start.copy();projected[proxy.qadr]+=fraction*delta
+                gaps=[proxy.minimum_distance(start+(projected-start)*k/2) for k in range(3)]
+                accepted=min(gaps)>=.010 or (min(gaps)>=gaps[0]-1e-5 and gaps[-1]>gaps[0]+1e-5)
+                diag=dict(accepted=bool(accepted),route='warmup_local',path_min=min(gaps))
+            if result is not None:
+                origin,planned_target,waypoint,proposal=result
+                age=time.monotonic()-proposal['completed_at']
+                # Retain a route while a replacement is computing, but never use
+                # an old route after a large input jump or a dead worker.
+                if age<=.5 and proposal.get('accepted'):
+                    # Bound work to three exact FK checks over a short local step.
+                    delta=waypoint[proxy.qadr]-start[proxy.qadr]
+                    # Larger .12 neighborhoods caused actual-q jump penetration; retain .04.
+                    # Retain <=.02rad local check spacing and the conservative speed.
+                    fraction=min(1.,.04/max(float(np.max(np.abs(delta))),1e-12))
+                    projected=start.copy();projected[proxy.qadr]+=fraction*delta
+                    checks=max(2,int(np.ceil(np.max(np.abs(projected[proxy.qadr]-start[proxy.qadr]))/.02)))
+                    gaps=[proxy.minimum_distance(start+(projected-start)*k/checks) for k in range(checks+1)]
+                    safe=min(gaps)>=.005 or (min(gaps)>=gaps[0]-1e-5 and gaps[-1]>gaps[0]+1e-5)
+                    if safe:diag=dict(proposal,accepted=True,local_path_min=min(gaps),plan_age_ms=age*1000)
+            if diag.get('route')=='warmup_partial':
+                delta=projected[proxy.qadr]-start[proxy.qadr]
+                fraction=min(1.,.04/max(float(np.max(np.abs(delta))),1e-12))
+                projected=start+(projected-start)*fraction
+                gaps=[proxy.minimum_distance(start+(projected-start)*k/2) for k in range(3)]
+                diag['path_min']=min(gaps);diag['accepted']=bool(min(gaps)>=.005)
+            if not diag.get('accepted'):
+                # No plan means command hold, not a fictitious negative clearance.
+                # The physical brake still uses the measured current gap/CBF.
+                diag['path_min']=proxy.minimum_distance(start)
+            env.refresh_collision_planner()
+            diag['modified']=bool(np.max(np.abs(projected[proxy.qadr]-candidate[proxy.qadr]))>1e-4)
             self.profile['projection_ms']=(time.perf_counter()-p0)*1000
             self.profile['projection_fk_calls']=proxy.fk_calls-fk0
             env.collision_status['goal_projection']=diag

@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/user/work/robot_percept/bench/humanoid_s4_lifecycle.py", line 89, in <module>
+    proc,log=new_server(f'{sig.name}_{i}');children=descendants(proc.pid);shm=set(Path('/dev/shm').glob('psm_*'));t0=time.monotonic()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/work/robot_percept/bench/humanoid_s4_lifecycle.py", line 74, in new_server
+    wait_server(proc);wait_g1();request('POST','/humanoid/options',{'collision_avoidance':True})
+    ^^^^^^^^^^^^^^^^^
+  File "/home/user/work/robot_percept/bench/humanoid_s4_lifecycle.py", line 39, in wait_server
+    if proc.poll() is not None: raise RuntimeError(f"server exited rc={proc.returncode}")
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: server exited rc=1

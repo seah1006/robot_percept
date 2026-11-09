@@ -1,0 +1,134 @@
+{
+  "detail_ms": {
+    "visibility": {
+      "p50": 0.011599999197642319,
+      "p95": 0.020924999262206256,
+      "n": 2376
+    },
+    "hold_quality": {
+      "p50": 0.008949999937613029,
+      "p95": 0.016399999367422424,
+      "n": 2376
+    },
+    "timestamp": {
+      "p50": 0.003700000888784416,
+      "p95": 0.005699999746866524,
+      "n": 2376
+    },
+    "pose_overlay": {
+      "p50": 0.25755000024219044,
+      "p95": 0.6860500002403569,
+      "n": 2376
+    },
+    "panda_features_overlay": {
+      "p50": 0.0013999997463542968,
+      "p95": 0.002200000380980782,
+      "n": 2376
+    },
+    "hand_overlay": {
+      "p50": 0.47184999948512996,
+      "p95": 1.087599999664235,
+      "n": 2376
+    },
+    "http_headers": {
+      "p50": 12.101850000362901,
+      "p95": 29.35096000055637,
+      "n": 900
+    },
+    "http_body": {
+      "p50": 0.3041500003746478,
+      "p95": 1.1030300000129498,
+      "n": 900
+    },
+    "http_response_decode": {
+      "p50": 0.03429999924264848,
+      "p95": 0.09880999932647681,
+      "n": 900
+    },
+    "ws_roundtrip": {
+      "p50": 3.7357999999585445,
+      "p95": 6.08107500056576,
+      "n": 1474
+    }
+  },
+  "transport": "ws",
+  "transport_requested": "ws",
+  "transport_fallback": true,
+  "transport_events": [
+    {
+      "event": "ws_connected",
+      "elapsed_s": 8.140999999999622,
+      "qpc_s": 14710.3894653
+    },
+    {
+      "event": "http_fallback",
+      "elapsed_s": 24.46899999999914,
+      "qpc_s": 14726.7128065,
+      "permanent": false,
+      "error": "Handshake status 503 Service Unavailable -+-+- {'content-length': '0', 'connection': 'close'} -+-+- b''"
+    },
+    {
+      "event": "ws_connected",
+      "elapsed_s": 54.5,
+      "qpc_s": 14756.7537224
+    }
+  ],
+  "ws_failures": 1,
+  "ws_connections": 2,
+  "preview_transport": "http",
+  "http_client": "urllib3",
+  "hand_detection_rate": 0.6931818181818182,
+  "pose_detection_rate": 1.0,
+  "camera_read_failed": false,
+  "capture_clock": "unix wall clock at decode completion/video or read completion/camera",
+  "stages_ms": {
+    "pacing": {
+      "p50": 28.359850000015285,
+      "p95": 32.834845000161295
+    },
+    "preprocess": {
+      "p50": 0.8562999992136611,
+      "p95": 3.096995000942108
+    },
+    "neural": {
+      "p50": 31.46299999934854,
+      "p95": 43.380299999626004
+    },
+    "retarget": {
+      "p50": 0.6078000005800277,
+      "p95": 1.3463000004776404
+    },
+    "overlay": {
+      "p50": 0.47714999982417794,
+      "p95": 1.1000999998032057
+    },
+    "queue": {
+      "p50": 0.008499999239575118,
+      "p95": 0.012799999240087345
+    }
+  },
+  "source_fps": 30.0,
+  "source_frames_due": 2402,
+  "processed_input_ratio": 0.9891756869275604,
+  "unprocessed_source_slots": 26,
+  "dropped_frames": 0,
+  "updates": 2376,
+  "seconds": 80.044,
+  "hz": 29.684,
+  "network_errors": 0,
+  "sent_updates": 2374,
+  "preview_sent": 2372,
+  "preview_encode_ms_p50": 1.2442999995982973,
+  "preview_post_ms_p50": 12.086999999155523,
+  "preview_post_ms_p95": 30.961710000701707,
+  "post_ms_p50": 4.660599999624537,
+  "post_ms_p95": 22.84091000083206,
+  "json_ms_p50": 0.3683499999169726,
+  "payload_bytes_p50": 6499.0,
+  "server_ms_p50": 0.472,
+  "loop_ms_p50": 109.2478000000483,
+  "inference_ms_p50": 32.27615000105288,
+  "inference_ms_p95": 44.787349999751314,
+  "hand_ms_p50": 30.98379999937606,
+  "pose_ms_p50": 23.627200000191806
+}

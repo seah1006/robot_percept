@@ -1,0 +1,24 @@
+== sweep coll=0
+{'wall_s': 24.0, 'rtf': 1.0, 'n_ticks': 1200, 'tick_p50': 2.6, 'tick_p95': 8.74, 'tick_p99': 10.43, 'tick_max': 14.98, 'n_gt20': 0, 'n_gt40': 0, 'load': ['0.88', '1.41', '1.51']} None
+{"file": "raw_c4_sweep_c0.npz", "n": 12000, "min_mm": -39.6, "argmin_t": 17.98, "pair": "left_upper|right_upper", "below0": 3233, "below5": 3628, "arm_range_max_deg": 99.3, "arm_range_2nd_half_deg": 87.7, "path_len_2nd_half_deg": 178.3}
+== sweep coll=1
+{'wall_s': 24.0, 'rtf': 1.0, 'n_ticks': 1200, 'tick_p50': 5.78, 'tick_p95': 12.77, 'tick_p99': 16.32, 'tick_max': 19.62, 'n_gt20': 0, 'n_gt40': 0, 'load': ['0.80', '1.34', '1.49']} {'min_actual': 0.00968788418038323, 'penetrating': 0.0, 'uncertified': 0.0, 'exact_checks': 659.0}
+{"file": "raw_c4_sweep_c1.npz", "n": 12000, "min_mm": 9.69, "argmin_t": 8.18, "pair": "torso|right_fore", "below0": 0, "below5": 0, "arm_range_max_deg": 97.6, "arm_range_2nd_half_deg": 89.5, "path_len_2nd_half_deg": 179.3}
+== chest coll=0
+{'wall_s': 24.0, 'rtf': 1.0, 'n_ticks': 1200, 'tick_p50': 2.38, 'tick_p95': 7.37, 'tick_p99': 9.41, 'tick_max': 15.17, 'n_gt20': 0, 'n_gt40': 0, 'load': ['0.74', '1.28', '1.46']} None
+{"file": "raw_c4_chest_c0.npz", "n": 12000, "min_mm": -106.0, "argmin_t": 21.13, "pair": "left_upper|right_upper", "below0": 11902, "below5": 11914, "arm_range_max_deg": 104.0, "arm_range_2nd_half_deg": 0.0, "path_len_2nd_half_deg": 0.3}
+== chest coll=1
+{'wall_s': 24.0, 'rtf': 1.0, 'n_ticks': 1200, 'tick_p50': 4.58, 'tick_p95': 8.22, 'tick_p99': 12.6, 'tick_max': 41.96, 'n_gt20': 1, 'n_gt40': 1, 'load': ['0.90', '1.27', '1.45']} {'min_actual': 0.008947881836078572, 'penetrating': 0.0, 'uncertified': 0.0, 'exact_checks': 265.0}
+{"file": "raw_c4_chest_c1.npz", "n": 12000, "min_mm": 8.91, "argmin_t": 6.46, "pair": "torso|left_fore", "below0": 0, "below5": 0, "arm_range_max_deg": 122.5, "arm_range_2nd_half_deg": 0.0, "path_len_2nd_half_deg": 0.4}
+== jump coll=0
+{'wall_s': 24.0, 'rtf': 1.0, 'n_ticks': 1200, 'tick_p50': 2.41, 'tick_p95': 7.03, 'tick_p99': 11.06, 'tick_max': 31.59, 'n_gt20': 2, 'n_gt40': 0, 'load': ['1.62', '1.66', '1.60']} None
+{"file": "raw_c4_jump_c0.npz", "n": 12000, "min_mm": -106.0, "argmin_t": 1.51, "pair": "left_upper|right_upper", "below0": 7721, "below5": 8174, "arm_range_max_deg": 87.4, "arm_range_2nd_half_deg": 50.5, "path_len_2nd_half_deg": 935.2}
+== jump coll=1
+{'wall_s': 24.0, 'rtf': 1.0, 'n_ticks': 1200, 'tick_p50': 1.47, 'tick_p95': 13.12, 'tick_p99': 18.44, 'tick_max': 31.65, 'n_gt20': 8, 'n_gt40': 0, 'load': ['1.39', '1.60', '1.58']} {'min_actual': 0.0064901632878455046, 'penetrating': 0.0, 'uncertified': 0.0, 'exact_checks': 443.0}
+{"file": "raw_c4_jump_c1.npz", "n": 12000, "min_mm": 6.49, "argmin_t": 4.91, "pair": "torso|left_fore", "below0": 0, "below5": 0, "arm_range_max_deg": 37.0, "arm_range_2nd_half_deg": 0.0, "path_len_2nd_half_deg": 0.3}
+== twist coll=0
+{'wall_s': 24.0, 'rtf': 1.0, 'n_ticks': 1200, 'tick_p50': 2.48, 'tick_p95': 6.61, 'tick_p99': 7.72, 'tick_max': 11.0, 'n_gt20': 0, 'n_gt40': 0, 'load': ['0.99', '1.49', '1.54']} None
+{"file": "raw_c4_twist_c0.npz", "n": 12000, "min_mm": -61.74, "argmin_t": 0.58, "pair": "torso|right_fore", "below0": 11902, "below5": 11914, "arm_range_max_deg": 75.0, "arm_range_2nd_half_deg": 0.0, "path_len_2nd_half_deg": 0.5}
+== twist coll=1
+{'wall_s': 24.08, 'rtf': 0.997, 'n_ticks': 1200, 'tick_p50': 4.28, 'tick_p95': 7.74, 'tick_p99': 11.22, 'tick_max': 22.63, 'n_gt20': 1, 'n_gt40': 0, 'load': ['1.52', '1.59', '1.58']} {'min_actual': 0.00898575390769614, 'penetrating': 0.0, 'uncertified': 0.0, 'exact_checks': 907.0}
+{"file": "raw_c4_twist_c1.npz", "n": 12000, "min_mm": 8.99, "argmin_t": 1.7, "pair": "torso|left_fore", "below0": 0, "below5": 0, "arm_range_max_deg": 74.0, "arm_range_2nd_half_deg": 0.0, "path_len_2nd_half_deg": 0.4}

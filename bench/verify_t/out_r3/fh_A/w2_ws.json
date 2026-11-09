@@ -1,0 +1,151 @@
+{
+ "label": "w2_ws",
+ "transport": "ws",
+ "video": "C:\\Users\\USER\\Documents\\sam_camera\\teleop_final_hand.mp4",
+ "mode": "humanoid",
+ "load_before": [
+  "2.50",
+  "1.57",
+  "1.07"
+ ],
+ "ps_rc": 0,
+ "ps_err": "",
+ "tracker": {
+  "detail_ms": {
+   "visibility": {
+    "p50": 0.011899999663000926,
+    "p95": 0.019600000086938962,
+    "n": 901
+   },
+   "hold_quality": {
+    "p50": 0.009499999578110874,
+    "p95": 0.015300000086426735,
+    "n": 901
+   },
+   "timestamp": {
+    "p50": 0.0036999990697950125,
+    "p95": 0.005500000042957254,
+    "n": 901
+   },
+   "pose_overlay": {
+    "p50": 0.23839999994379468,
+    "p95": 0.5933000011282274,
+    "n": 901
+   },
+   "panda_features_overlay": {
+    "p50": 0.0013000008038943633,
+    "p95": 0.002099999619531445,
+    "n": 901
+   },
+   "hand_overlay": {
+    "p50": 0.36410000029718503,
+    "p95": 1.035700001011719,
+    "n": 901
+   },
+   "ws_roundtrip": {
+    "p50": 3.281100000094739,
+    "p95": 6.585649999760788,
+    "n": 899
+   }
+  },
+  "transport": "ws",
+  "transport_requested": "ws",
+  "transport_fallback": false,
+  "transport_events": [
+   {
+    "event": "ws_connected",
+    "elapsed_s": 7.875,
+    "qpc_s": 12372.8927754
+   }
+  ],
+  "ws_failures": 0,
+  "ws_connections": 1,
+  "preview_transport": "http",
+  "http_client": "urllib3",
+  "hand_detection_rate": 0.6881243063263041,
+  "pose_detection_rate": 1.0,
+  "camera_read_failed": false,
+  "capture_clock": "unix wall clock at decode completion/video or read completion/camera",
+  "stages_ms": {
+   "pacing": {
+    "p50": 30.731200000445824,
+    "p95": 32.574169999861624
+   },
+   "preprocess": {
+    "p50": 0.9209999998347485,
+    "p95": 2.4621399999887217
+   },
+   "neural": {
+    "p50": 29.70189999905415,
+    "p95": 40.25490000094578
+   },
+   "retarget": {
+    "p50": 0.5934999990131473,
+    "p95": 1.173900000139838
+   },
+   "overlay": {
+    "p50": 0.37030000021331944,
+    "p95": 1.0448000011820113
+   },
+   "queue": {
+    "p50": 0.008699998943484388,
+    "p95": 0.013199998647905886
+   }
+  },
+  "source_fps": 30.0,
+  "source_frames_due": 901,
+  "processed_input_ratio": 1.0,
+  "unprocessed_source_slots": 0,
+  "dropped_frames": 0,
+  "updates": 901,
+  "seconds": 30.02,
+  "hz": 30.014,
+  "network_errors": 0,
+  "sent_updates": 899,
+  "preview_sent": 901,
+  "preview_encode_ms_p50": 1.1790999997174367,
+  "preview_post_ms_p50": 7.766199998513912,
+  "preview_post_ms_p95": 22.764300001654192,
+  "post_ms_p50": 3.281100000094739,
+  "post_ms_p95": 6.585649999760788,
+  "json_ms_p50": 0.37880000127188396,
+  "payload_bytes_p50": 6498.0,
+  "server_ms_p50": 0.421,
+  "loop_ms_p50": 85.8250000001135,
+  "inference_ms_p50": 30.51469999991241,
+  "inference_ms_p95": 41.36529999959748,
+  "hand_ms_p50": 29.16960000038671,
+  "pose_ms_p50": 22.03430000008666
+ },
+ "wincpu": {
+  "label": "w2_ws",
+  "exit": null,
+  "wall_s": 40.92,
+  "proc_cpu_s_last_sample": 59.22,
+  "logical_cores": 8,
+  "proc_cpu_pct_of_1core": 144.7,
+  "sys_cpu_mean_pct": 69.2,
+  "sys_samples": 38
+ },
+ "server": {
+  "span_s": 29.92,
+  "recv_updates": 890,
+  "recv_hz": 29.742,
+  "screen_frames": 929,
+  "screen_fps": 31.046,
+  "screen_max_gap_ms": 111.8,
+  "screen_gaps_gt200": 0,
+  "cpu_main_pct": 20.9,
+  "cpu_tree_pct": 146.5,
+  "rss_tree_mb": 1569.7,
+  "preview_updates": 900,
+  "preview_fps": 29.803
+ },
+ "walljumps_in_span": 12,
+ "load_after": [
+  "2.77",
+  "1.79",
+  "1.17"
+ ],
+ "wall_s": 42.0
+}

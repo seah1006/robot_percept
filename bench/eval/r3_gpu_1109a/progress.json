@@ -1,0 +1,14 @@
+{
+  "completed": 35,
+  "planned": 330,
+  "missing": 295,
+  "trials_per_hour": 30.177060938715087,
+  "observed_eta_unix": 1794232391.2657483,
+  "adaptive_eta_unix": 1794209821.4001565,
+  "assumed_queue_wait_s": 0.01611948013305664,
+  "lock_wait_samples": [
+    0.01611948013305664
+  ],
+  "chunk_failures": 0,
+  "timeouts": 0
+}

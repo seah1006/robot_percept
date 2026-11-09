@@ -1,0 +1,32 @@
+locked 13:21:46 load 1.05 1.39 1.69 1/235 190714 shm0=44 residual0=1
+server pid 190811 procs=6
+cycle 1 procs_after_on=7 after_off=5 shm=59
+cycle 1 procs_after_on=7 after_off=5 shm=59
+cycle 1 procs_after_on=7 after_off=5 shm=59
+cycle 1 procs_after_on=7 after_off=5 shm=59
+cycle 1 procs_after_on=7 after_off=5 shm=59
+cycle 1 procs_after_on=7 after_off=5 shm=59
+ON final procs=7
+190811 python -m web.app 
+190822 /home/user/anaconda3/envs/robot_percept/bin/python -c from multiproces
+190823 /home/user/anaconda3/envs/robot_percept/bin/python -c from multiproces
+190833 /home/user/anaconda3/envs/robot_percept/bin/python -c from multiproces
+192525 /home/user/anaconda3/envs/robot_percept/bin/python -c from multiproces
+192550 /home/user/anaconda3/envs/robot_percept/bin/python -m sim.humanoid_col
+opt cycle 1 off=6 on=7
+opt cycle 2 off=6 on=7
+opt cycle 3 off=6 on=7
+TERM: residual=1 after 24.641544601s shm=44
+pre-kill procs=7
+203117 python -m web.app 
+203128 /home/user/anaconda3/envs/robot_percept/bin/python -c from multiproces
+203129 /home/user/anaconda3/envs/robot_percept/bin/python -c from multiproces
+203139 /home/user/anaconda3/envs/robot_percept/bin/python -c from multiproces
+203168 /home/user/anaconda3/envs/robot_percept/bin/python -c from multiproces
+203205 /home/user/anaconda3/envs/robot_percept/bin/python -m sim.humanoid_col
+environment: line 101: 203117 Killed                  HOST=0.0.0.0 PYTHONPATH=$TREE PORT=5094 PERCEPTION=stub setsid python -m web.app > /tmp/vs3_life_$TAG.log 2>&1
+KILL9: residual=1 after 25.568703321s shm=44
+environment: line 121: 213562 Killed                  HOST=0.0.0.0 PYTHONPATH=$TREE PORT=5094 PERCEPTION=stub setsid python -m web.app > /tmp/vs3_life_$TAG.log 2>&1
+KILL9-early: residual=1 shm=44
+5094 closed
+unlocked 13:24:17 load 0.72 1.19 1.58 1/234 222752 shm=44

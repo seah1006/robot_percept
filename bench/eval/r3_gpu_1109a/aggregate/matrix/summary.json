@@ -1,0 +1,134 @@
+[
+  {
+    "object": "mustard",
+    "perception": "gt",
+    "gt_assist": "on",
+    "n": 20,
+    "successes": 0,
+    "wilson95": [
+      0.0,
+      0.16112515805281938
+    ]
+  },
+  {
+    "object": "box",
+    "perception": "gt",
+    "gt_assist": "on",
+    "n": 20,
+    "successes": 0,
+    "wilson95": [
+      0.0,
+      0.16112515805281938
+    ]
+  },
+  {
+    "object": "cup",
+    "perception": "gt",
+    "gt_assist": "on",
+    "n": 20,
+    "successes": 0,
+    "wilson95": [
+      0.0,
+      0.16112515805281938
+    ]
+  },
+  {
+    "object": "mustard",
+    "perception": "gt",
+    "gt_assist": "off",
+    "n": 20,
+    "successes": 0,
+    "wilson95": [
+      0.0,
+      0.16112515805281938
+    ]
+  },
+  {
+    "object": "box",
+    "perception": "gt",
+    "gt_assist": "off",
+    "n": 20,
+    "successes": 0,
+    "wilson95": [
+      0.0,
+      0.16112515805281938
+    ]
+  },
+  {
+    "object": "cup",
+    "perception": "gt",
+    "gt_assist": "off",
+    "n": 20,
+    "successes": 0,
+    "wilson95": [
+      0.0,
+      0.16112515805281938
+    ]
+  },
+  {
+    "object": "mustard",
+    "perception": "fp",
+    "gt_assist": "on",
+    "n": 20,
+    "successes": 0,
+    "wilson95": [
+      0.0,
+      0.16112515805281938
+    ]
+  },
+  {
+    "object": "box",
+    "perception": "fp",
+    "gt_assist": "on",
+    "n": 20,
+    "successes": 0,
+    "wilson95": [
+      0.0,
+      0.16112515805281938
+    ]
+  },
+  {
+    "object": "cup",
+    "perception": "fp",
+    "gt_assist": "on",
+    "n": 20,
+    "successes": 0,
+    "wilson95": [
+      0.0,
+      0.16112515805281938
+    ]
+  },
+  {
+    "object": "mustard",
+    "perception": "fp",
+    "gt_assist": "off",
+    "n": 20,
+    "successes": 0,
+    "wilson95": [
+      0.0,
+      0.16112515805281938
+    ]
+  },
+  {
+    "object": "box",
+    "perception": "fp",
+    "gt_assist": "off",
+    "n": 20,
+    "successes": 0,
+    "wilson95": [
+      0.0,
+      0.16112515805281938
+    ]
+  },
+  {
+    "object": "cup",
+    "perception": "fp",
+    "gt_assist": "off",
+    "n": 20,
+    "successes": 0,
+    "wilson95": [
+      0.0,
+      0.16112515805281938
+    ]
+  }
+]

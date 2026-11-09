@@ -1,0 +1,673 @@
+{
+  "note": "GT auxiliary, capsule proxy only; real-time paced; no render fps claim",
+  "load": "1.34 1.80 1.62 1/246 72942\n",
+  "gpu": "NVIDIA GeForce RTX 2080 SUPER, 23 %, 932 MiB",
+  "concurrent_processes": "your 131072x1 screen size is bogus. expect trouble\n    PID %CPU COMMAND\n  72109 47.7 /home/user/anaconda3/envs/robot_percept/bin/python -m bench.humanoid_s4_validate\n    278  1.5 /home/user/.nvm/versions/node/v24.20.0/bin/node --max-old-space-size=7924 /home/user/.nvm/versions/node/v24.20.0/lib/node_modules/openclaw/dist/index.js gateway --port 18789\n     98  0.9 /usr/lib/systemd/systemd-udevd\n     44  0.8 /usr/lib/systemd/systemd-journald\n      8  0.5 plan9 --control-socket 7 --log-level 4 --server-fd 8 --pipe-fd 10 --log-truncate\n  53181  0.2 python -m eval.r3_batch --resume --out bench/eval/r3_gpu_1109a\n  72901  0.1 bash -lc cd /home/user/work/robot_percept; flock -w 900 /tmp/rp_measure.lock flock -w 900 /tmp/rp_gpu.lock timeout 220 bash -c \"source sim_test/gl_env.sh; export PYTHONPATH=$PWD; date; uptime; nvidia-smi; /home/user/anaconda3/envs/robot_percept/bin/python -m bench.humanoid_s4_render30\" > /tmp/s4_render30.log 2>&1\n      1  0.0 /sbin/init\n    168  0.0 @dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only",
+  "cases": [
+    {
+      "pattern": "sweep",
+      "enabled": false,
+      "first_tick_profile": {
+        "ik_ms": 1.907,
+        "retarget_ms": 3.7228819996926177,
+        "projection_ms": 0.0,
+        "brake_ms": 0.0,
+        "integration_ms": 0.17142100023193052,
+        "ik_fk_calls": 15,
+        "total_ms": 3.9153339998847514
+      },
+      "env_prepare_ms": 113.5186269998485,
+      "planner_ready": false,
+      "planner_prepare_ms": null,
+      "ready_tick_ms": {
+        "n": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0,
+        "mean": 0.0
+      },
+      "warmup_tick_ms": {
+        "n": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0,
+        "mean": 0.0
+      },
+      "tick_ms": {
+        "n": 200,
+        "p50": 2.6924945000246225,
+        "p95": 6.732141300108195,
+        "max": 13.051123999957781,
+        "mean": 2.3905305650077935
+      },
+      "first_tick_ms": 3.9153339998847514,
+      "steady_tick_ms": {
+        "n": 199,
+        "p50": 2.674289999959001,
+        "p95": 6.737856600102531,
+        "max": 13.051123999957781,
+        "mean": 2.3828682361893163
+      },
+      "wall_elapsed_s": 4.040288916000009,
+      "chest_tail_range_deg": 42.1753157209561,
+      "planner_ms": {
+        "n": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0,
+        "mean": 0.0
+      },
+      "range_deg": [
+        76.14265948182903,
+        28.648400065186507,
+        51.47309789841884,
+        47.657424704620084,
+        45.8359077363934,
+        0.8993286318146314,
+        3.4022550138924723,
+        76.14277247135975,
+        28.648392070811923,
+        51.47308895997826,
+        47.65747307610479,
+        45.835907494463235,
+        0.8993318337030114,
+        3.402253135143538
+      ],
+      "actual": {},
+      "plan": null,
+      "state": null
+    },
+    {
+      "pattern": "sweep",
+      "enabled": true,
+      "first_tick_profile": {
+        "ik_ms": 2.95,
+        "retarget_ms": 7.511309000165056,
+        "projection_ms": 1.0318750000806176,
+        "brake_ms": 1.9307040001876885,
+        "integration_ms": 0.2648770000632794,
+        "projection_fk_calls": 3,
+        "ik_fk_calls": 15,
+        "total_ms": 10.279333000198676
+      },
+      "env_prepare_ms": 90.77233900006831,
+      "planner_ready": true,
+      "planner_prepare_ms": 1478.5806830000183,
+      "ready_tick_ms": {
+        "n": 126,
+        "p50": 6.024893999892811,
+        "p95": 11.283887749868882,
+        "max": 21.944658999927924,
+        "mean": 6.861466944450339
+      },
+      "warmup_tick_ms": {
+        "n": 74,
+        "p50": 6.213618999936443,
+        "p95": 10.281595050150827,
+        "max": 18.7905640000281,
+        "mean": 6.694302567549696
+      },
+      "tick_ms": {
+        "n": 200,
+        "p50": 6.128319500021462,
+        "p95": 10.752912649627428,
+        "max": 21.944658999927924,
+        "mean": 6.799616124997101
+      },
+      "first_tick_ms": 10.279333000198676,
+      "steady_tick_ms": {
+        "n": 199,
+        "p50": 6.124310999894078,
+        "p95": 10.770632299636416,
+        "max": 21.944658999927924,
+        "mean": 6.782130110548852
+      },
+      "wall_elapsed_s": 4.029261031999795,
+      "chest_tail_range_deg": 40.97874146950119,
+      "planner_ms": {
+        "n": 125,
+        "p50": 17.644816000029095,
+        "p95": 38.27598899988516,
+        "max": 46.9706160001806,
+        "mean": 20.286422736011446
+      },
+      "range_deg": [
+        76.14124859300664,
+        23.52739138944103,
+        49.588414492981286,
+        46.98611293607452,
+        41.70818862300316,
+        0.8382403170414706,
+        2.733272438271582,
+        76.17426158213163,
+        23.392978484156217,
+        49.5942814170326,
+        46.98684343241978,
+        41.70817406327281,
+        0.8382576844538304,
+        2.733048874597363
+      ],
+      "actual": {
+        "clearance_lower_bound": 0.007203852660362027,
+        "continuous_interval_certified": true,
+        "uncertified_intervals": 0,
+        "penetration_checks": 0,
+        "exact_checks": 116,
+        "step_motion_bound": 0.0020439961389673647,
+        "refresh_threshold": 0.0060879922779347295,
+        "minimum_exact_clearance": 0.011727281301788475
+      },
+      "plan": {
+        "accepted": true,
+        "route": "direct",
+        "path_min": 0.010000000000000023,
+        "distance": 0.010000000000000023,
+        "start_gap": 0.02082479449496917,
+        "samples": 48,
+        "endpoint_modified": true,
+        "planner_ms": 20.592735999798606,
+        "submitted_at": 2469.523756015,
+        "completed_at": 2469.559274313,
+        "sequence": 193,
+        "local_path_min": 0.010000000000000023,
+        "plan_age_ms": 102.72613200004344,
+        "modified": true
+      },
+      "state": "avoiding"
+    },
+    {
+      "pattern": "chest",
+      "enabled": false,
+      "first_tick_profile": {
+        "ik_ms": 7.504,
+        "retarget_ms": 10.394565999831684,
+        "projection_ms": 0.0,
+        "brake_ms": 0.0,
+        "integration_ms": 0.18590300032883533,
+        "ik_fk_calls": 49,
+        "total_ms": 10.6141490000482
+      },
+      "env_prepare_ms": 64.15834500012352,
+      "planner_ready": false,
+      "planner_prepare_ms": null,
+      "ready_tick_ms": {
+        "n": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0,
+        "mean": 0.0
+      },
+      "warmup_tick_ms": {
+        "n": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0,
+        "mean": 0.0
+      },
+      "tick_ms": {
+        "n": 200,
+        "p50": 2.392740999994203,
+        "p95": 6.905223949979694,
+        "max": 11.111345999779587,
+        "mean": 2.222574600009466
+      },
+      "first_tick_ms": 10.6141490000482,
+      "steady_tick_ms": {
+        "n": 199,
+        "p50": 2.392524999777379,
+        "p95": 6.565272600164461,
+        "max": 11.111345999779587,
+        "mean": 2.180405884431382
+      },
+      "wall_elapsed_s": 4.031784308000169,
+      "chest_tail_range_deg": 0.019913972252118006,
+      "planner_ms": {
+        "n": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0,
+        "mean": 0.0
+      },
+      "range_deg": [
+        103.98039383787751,
+        63.51151061712998,
+        94.22452909068477,
+        81.39101123747614,
+        74.75469588977671,
+        1.1166909226846486,
+        3.996679708980604,
+        103.98048651120065,
+        63.511505429320614,
+        94.22452163025157,
+        81.39105198869824,
+        74.75469576101061,
+        1.1166871711077322,
+        3.9966830065071997
+      ],
+      "actual": {},
+      "plan": null,
+      "state": null
+    },
+    {
+      "pattern": "chest",
+      "enabled": true,
+      "first_tick_profile": {
+        "ik_ms": 8.114,
+        "retarget_ms": 13.06850100036172,
+        "projection_ms": 1.0852380000869744,
+        "brake_ms": 1.520448000064789,
+        "integration_ms": 0.26132399989364785,
+        "projection_fk_calls": 3,
+        "ik_fk_calls": 49,
+        "total_ms": 15.444586000285199
+      },
+      "env_prepare_ms": 66.72703800040836,
+      "planner_ready": true,
+      "planner_prepare_ms": 1458.8555930004077,
+      "ready_tick_ms": {
+        "n": 127,
+        "p50": 1.276890000099229,
+        "p95": 8.782839899777171,
+        "max": 13.348074000077759,
+        "mean": 2.441097141747277
+      },
+      "warmup_tick_ms": {
+        "n": 73,
+        "p50": 6.823868000083166,
+        "p95": 20.785094599887085,
+        "max": 31.074516999979096,
+        "mean": 9.018824136970355
+      },
+      "tick_ms": {
+        "n": 200,
+        "p50": 2.661122499830526,
+        "p95": 14.525757850174156,
+        "max": 31.074516999979096,
+        "mean": 4.841967495003701
+      },
+      "first_tick_ms": 15.444586000285199,
+      "steady_tick_ms": {
+        "n": 199,
+        "p50": 2.654663999692275,
+        "p95": 13.917294799875886,
+        "max": 31.074516999979096,
+        "mean": 4.788688005027412
+      },
+      "wall_elapsed_s": 4.030868333000399,
+      "chest_tail_range_deg": 12.493748621093546,
+      "planner_ms": {
+        "n": 120,
+        "p50": 130.47508399995422,
+        "p95": 170.4439789996286,
+        "max": 170.4439789996286,
+        "mean": 121.2049739415382
+      },
+      "range_deg": [
+        33.24450132487322,
+        10.720862000748891,
+        32.453623389078324,
+        27.424960121827993,
+        25.577293396377698,
+        0.4789121816422391,
+        1.2212849467316282,
+        37.3027798280412,
+        9.601377492352468,
+        31.58453912375043,
+        27.612042483862698,
+        25.577552737439113,
+        0.4786488291438983,
+        1.2126527865785506
+      ],
+      "actual": {
+        "clearance_lower_bound": 0.005182284133626791,
+        "continuous_interval_certified": true,
+        "uncertified_intervals": 0,
+        "penetration_checks": 0,
+        "exact_checks": 342,
+        "step_motion_bound": 8.923732263487836e-06,
+        "refresh_threshold": 0.0020178474645269756,
+        "minimum_exact_clearance": 0.004250553715723318
+      },
+      "plan": {
+        "accepted": false,
+        "route": "planner_pending",
+        "modified": true,
+        "path_min": 0.0069981546441258285
+      },
+      "state": "holding"
+    },
+    {
+      "pattern": "jump",
+      "enabled": false,
+      "first_tick_profile": {
+        "ik_ms": 1.221,
+        "retarget_ms": 3.486522999992303,
+        "projection_ms": 0.0,
+        "brake_ms": 0.0,
+        "integration_ms": 0.17157199999928707,
+        "ik_fk_calls": 11,
+        "total_ms": 3.6861419998786005
+      },
+      "env_prepare_ms": 73.38592699989022,
+      "planner_ready": false,
+      "planner_prepare_ms": null,
+      "ready_tick_ms": {
+        "n": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0,
+        "mean": 0.0
+      },
+      "warmup_tick_ms": {
+        "n": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0,
+        "mean": 0.0
+      },
+      "tick_ms": {
+        "n": 200,
+        "p50": 2.3900234998563974,
+        "p95": 7.096493099993492,
+        "max": 22.926363999886235,
+        "mean": 2.438115709987869
+      },
+      "first_tick_ms": 3.6861419998786005,
+      "steady_tick_ms": {
+        "n": 199,
+        "p50": 2.389074999882723,
+        "p95": 7.105344199999307,
+        "max": 22.926363999886235,
+        "mean": 2.4318442210939457
+      },
+      "wall_elapsed_s": 4.048930496000139,
+      "chest_tail_range_deg": 62.24470789208205,
+      "planner_ms": {
+        "n": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0,
+        "mean": 0.0
+      },
+      "range_deg": [
+        87.42540000036962,
+        61.25737828529388,
+        77.01790034098069,
+        67.30659945386064,
+        75.96744136651897,
+        1.5152451343042594,
+        6.712342184235755,
+        87.42552503276966,
+        61.25735641275049,
+        77.01789161033969,
+        67.3067015025104,
+        75.96744122191791,
+        1.5152408886248288,
+        6.712353413614949
+      ],
+      "actual": {},
+      "plan": null,
+      "state": null
+    },
+    {
+      "pattern": "jump",
+      "enabled": true,
+      "first_tick_profile": {
+        "ik_ms": 3.293,
+        "retarget_ms": 10.240537999834487,
+        "projection_ms": 1.3861529996574973,
+        "brake_ms": 4.066876000251796,
+        "integration_ms": 0.34132299970224267,
+        "projection_fk_calls": 3,
+        "ik_fk_calls": 11,
+        "total_ms": 15.264199999819539
+      },
+      "env_prepare_ms": 74.76847799989628,
+      "planner_ready": true,
+      "planner_prepare_ms": 1400.299484000243,
+      "ready_tick_ms": {
+        "n": 130,
+        "p50": 8.36399950003397,
+        "p95": 14.895113450120332,
+        "max": 23.59534100014571,
+        "mean": 7.915121000041836
+      },
+      "warmup_tick_ms": {
+        "n": 70,
+        "p50": 6.38969550004731,
+        "p95": 15.043294099859848,
+        "max": 19.603248999828793,
+        "mean": 8.158822700007866
+      },
+      "tick_ms": {
+        "n": 200,
+        "p50": 8.110217499961436,
+        "p95": 15.167912750280264,
+        "max": 23.59534100014571,
+        "mean": 8.000416595029947
+      },
+      "first_tick_ms": 15.264199999819539,
+      "steady_tick_ms": {
+        "n": 199,
+        "p50": 8.108083000024635,
+        "p95": 14.812252699948656,
+        "max": 23.59534100014571,
+        "mean": 7.963915170885275
+      },
+      "wall_elapsed_s": 4.034641769000245,
+      "chest_tail_range_deg": 70.58394880223418,
+      "planner_ms": {
+        "n": 122,
+        "p50": 148.9520159998392,
+        "p95": 168.37949599994317,
+        "max": 187.26773400021557,
+        "mean": 112.05350272961905
+      },
+      "range_deg": [
+        63.50978770706372,
+        27.02152645672187,
+        67.47117956852567,
+        51.684573096056006,
+        52.40834920964551,
+        1.4703779227996985,
+        3.3100028117171,
+        83.34027472935603,
+        23.285284376863384,
+        63.86921663269256,
+        52.316022349481734,
+        52.52881716733779,
+        1.5795668313390612,
+        3.369714581327503
+      ],
+      "actual": {
+        "clearance_lower_bound": 0.004401926735395009,
+        "continuous_interval_certified": true,
+        "uncertified_intervals": 48,
+        "penetration_checks": 29,
+        "exact_checks": 750,
+        "step_motion_bound": 0.0022678949012340755,
+        "refresh_threshold": 0.006535789802468151,
+        "minimum_exact_clearance": -0.0008281771676711264
+      },
+      "plan": {
+        "distance": 0.010090531574037817,
+        "active": 0,
+        "accepted": true,
+        "progress_fraction": 0.998046875,
+        "partial": true,
+        "route": "partial_fallback",
+        "path_min": 0.010090531574037817,
+        "endpoint_modified": true,
+        "planner_ms": 148.9520159998392,
+        "submitted_at": 2485.486426879,
+        "completed_at": 2485.635823919,
+        "sequence": 164,
+        "local_path_min": 0.010084341281661871,
+        "plan_age_ms": 45.09195299988278,
+        "modified": true
+      },
+      "state": "holding"
+    },
+    {
+      "pattern": "twist",
+      "enabled": false,
+      "first_tick_profile": {
+        "ik_ms": 3.237,
+        "retarget_ms": 5.059506000179681,
+        "projection_ms": 0.0,
+        "brake_ms": 0.0,
+        "integration_ms": 0.1764280000315921,
+        "ik_fk_calls": 23,
+        "total_ms": 5.257300999801373
+      },
+      "env_prepare_ms": 80.89535099998102,
+      "planner_ready": false,
+      "planner_prepare_ms": null,
+      "ready_tick_ms": {
+        "n": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0,
+        "mean": 0.0
+      },
+      "warmup_tick_ms": {
+        "n": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0,
+        "mean": 0.0
+      },
+      "tick_ms": {
+        "n": 200,
+        "p50": 2.283752000266759,
+        "p95": 5.610390400192948,
+        "max": 8.80863100019269,
+        "mean": 1.985124125008042
+      },
+      "first_tick_ms": 5.257300999801373,
+      "steady_tick_ms": {
+        "n": 199,
+        "p50": 2.2820260001026327,
+        "p95": 5.630306800185278,
+        "max": 8.80863100019269,
+        "mean": 1.9686810251347087
+      },
+      "wall_elapsed_s": 4.034119250999993,
+      "chest_tail_range_deg": 0.015030466574309238,
+      "planner_ms": {
+        "n": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0,
+        "mean": 0.0
+      },
+      "range_deg": [
+        74.99260336342942,
+        44.34221984661494,
+        56.63079538398648,
+        52.57497267803971,
+        51.098007137272084,
+        0.3678049644511154,
+        2.645285082865911,
+        74.98904291824634,
+        44.341996638291754,
+        56.6360662765136,
+        52.570564031064066,
+        51.097998185152036,
+        0.3653384300553072,
+        2.629398875018119
+      ],
+      "actual": {},
+      "plan": null,
+      "state": null
+    },
+    {
+      "pattern": "twist",
+      "enabled": true,
+      "first_tick_profile": {
+        "ik_ms": 4.746,
+        "retarget_ms": 9.349409999686031,
+        "projection_ms": 1.1331669998071447,
+        "brake_ms": 2.7745560000767,
+        "integration_ms": 0.2644310002324346,
+        "projection_fk_calls": 3,
+        "ik_fk_calls": 23,
+        "total_ms": 13.258630999644083
+      },
+      "env_prepare_ms": 68.13547399997333,
+      "planner_ready": true,
+      "planner_prepare_ms": 1358.7837499999296,
+      "ready_tick_ms": {
+        "n": 132,
+        "p50": 1.512094999952751,
+        "p95": 7.140576600022539,
+        "max": 17.426267999780976,
+        "mean": 2.2861280681664455
+      },
+      "warmup_tick_ms": {
+        "n": 68,
+        "p50": 6.471738500067659,
+        "p95": 12.974249349895215,
+        "max": 34.846451000248635,
+        "mean": 7.269037147031721
+      },
+      "tick_ms": {
+        "n": 200,
+        "p50": 1.9832794998819736,
+        "p95": 9.321032100024235,
+        "max": 34.846451000248635,
+        "mean": 3.9803171549806393
+      },
+      "first_tick_ms": 13.258630999644083,
+      "steady_tick_ms": {
+        "n": 199,
+        "p50": 1.982033999865962,
+        "p95": 9.06555059978018,
+        "max": 34.846451000248635,
+        "mean": 3.9336924622938882
+      },
+      "wall_elapsed_s": 4.038542332999896,
+      "chest_tail_range_deg": 2.9725613694564306,
+      "planner_ms": {
+        "n": 131,
+        "p50": 43.481003000124474,
+        "p95": 182.63490900017132,
+        "max": 199.9488339997697,
+        "mean": 71.16377411446467
+      },
+      "range_deg": [
+        38.51166419088909,
+        13.343338807335707,
+        29.21821218407726,
+        26.633292143065553,
+        26.1510071092741,
+        0.3912115460132071,
+        1.2495137399189804,
+        38.77009002947876,
+        12.495840966896033,
+        29.191436143350145,
+        26.579673962880353,
+        26.1482833050976,
+        0.3976788671306175,
+        1.2584047511298766
+      ],
+      "actual": {
+        "clearance_lower_bound": 0.003880874815974724,
+        "continuous_interval_certified": true,
+        "uncertified_intervals": 0,
+        "penetration_checks": 0,
+        "exact_checks": 459,
+        "step_motion_bound": 6.0775475890424215e-06,
+        "refresh_threshold": 0.002012155095178085,
+        "minimum_exact_clearance": 0.002945616668638948
+      },
+      "plan": {
+        "accepted": false,
+        "route": "planner_pending",
+        "modified": true,
+        "path_min": 0.006040212423220101
+      },
+      "state": "holding"
+    }
+  ]
+}

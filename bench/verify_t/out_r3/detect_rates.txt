@@ -1,0 +1,9 @@
+sam_camera\teleop_final_hand.mp4 {'frames': 89, 'hand': 0.0, 'pose': 100.0}
+sam_camera\teleop_round2.mp4 {'frames': 26, 'hand': 26.9, 'pose': 100.0}
+sam_camera\teleop_round2_async.mp4 {'frames': 89, 'hand': 65.2, 'pose': 100.0}
+sam_camera\teleop_round2_compact.mp4 {'frames': 179, 'hand': 0.0, 'pose': 100.0}
+sam_camera\teleop_round3.mp4 {'frames': 169, 'hand': 0.0, 'pose': 100.0}
+sam_camera\teleop_round3_direct.mp4 {'frames': 179, 'hand': 0.0, 'pose': 100.0}
+sam_camera\teleop_round3_hand_reprocess.mp4 {'frames': 179, 'hand': 0.0, 'pose': 100.0}
+sam_camera\teleop_test.mp4 {'frames': 7, 'hand': 0.0, 'pose': 100.0}
+sam_camera\teleop_test_fast.mp4 {'frames': 61, 'hand': 1.6, 'pose': 100.0}
