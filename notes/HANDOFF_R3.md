@@ -38,6 +38,12 @@
 - `bench/verify_s/r3raw/`(V-S3 500Hz 원시 npz 122MB): 용량 때문에 .gitignore, 회사 PC에만. 요약 JSON·스크립트(bench/verify_s/*)로 재생성 가능.
 - 회사 녹화본(Documents/sam_camera/teleop_*.mp4, 얼굴 포함), 유일 카탈로그 PDF(저작권) — 수치만 notes에.
 
+
+## 방향 변경 (11-09 오후)
+- 프로젝트 방향: **자연어 지시 기반 범용 피킹 셀**(Grounding DINO 중심, 분할·위치 모듈 교체형, 실물 웹캠 평면 투영 디지털 트윈, /tasks 작업 셀·대시보드). 계획서 notes/plan_r5_grounded_picking_cell.md(v2, Claude 검토 합의 반영).
+- r4 기구학 시각화는 r5의 v2 범위(티칭 탭)로 흡수. P1c(G1 자기충돌)는 추가 투자 중단 권장(사용자 확인 대기).
+- **착수 전: Codex 2차 검토(notes/plan_r5_review_x.md) → v3 반영 → G0(transformers env 복제본 설치 시험)부터.**
+
 ## 남은 일 (우선순위)
 1. S: c6 seed 진단 결과 검토 → IK seed 분리(collision waypoint와 task IK warm start 분리) 수정 → 정적 12자세(대칭·비대칭, 방향 ≤8°, 손목 ≤10mm) 회복, chest 첫 tick ≤40ms, 서버 tick p95 ≤20ms, 30fps 4패턴, OFF 회귀(P1a/P1b), 종료 누수 → V-S3 판정. 통과 전 기본 OFF.
 2. E: 평가 배치 330회 재개 → V-E3 recompute3.py 재계산·결정론 확인. 워밍업 취소 시 `failed` 순간 노출 수정.
