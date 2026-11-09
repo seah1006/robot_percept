@@ -1,5 +1,8 @@
 # r4 계획서 v3: 유일 산업용·협동로봇 추가와 기구학 데이터 시각화
 
+> **2026-11-09 방향 변경:** 이 계획은 r5 "자연어 지시 기반 범용 피킹 셀"(notes/plan_r5_grounded_picking_cell.md)의 5단계 티칭·디버깅 탭으로 흡수·축소됨. 단독 진행하지 않음.
+
+
 작성 2026-11-09 부모(1NIgF2z2BvfBSkOh). v3는 검토자 R4-C(Claude Sonnet, 사용자·교육 관점)·R4-O(Claude Opus, 구현 관점) 합의안 반영(notes/plan_r4_review_c.md, notes/plan_r4_review_o.md). Codex 검토(R4-X)는 사용량 한도로 미실시 → 리셋 후 2차 확인 예정.
 근거: notes/yuil_specs.md(카탈로그 치수·사양), notes/TEAM_R3.md(작업 규칙).
 
