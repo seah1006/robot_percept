@@ -1,0 +1,1 @@
+/home/my/miniforge3/envs/robot_percept/lib/python3.12/site-packages/numpy-2.5.3.dist-info

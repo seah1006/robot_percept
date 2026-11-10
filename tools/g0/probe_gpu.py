@@ -1,0 +1,10 @@
+import os,json,torch
+r=dict(torch=torch.__version__,hip=torch.version.hip,HSA_ENABLE_DXG_DETECTION=os.getenv('HSA_ENABLE_DXG_DETECTION'),available=torch.cuda.is_available())
+print(json.dumps(r),flush=True)
+if not r['available']: raise SystemExit(2)
+r['name']=torch.cuda.get_device_name(0)
+a=torch.ones((32,32),device='cuda'); b=a@a; torch.cuda.synchronize()
+r['matmul_sum']=b.sum().item()
+free,total=torch.cuda.mem_get_info()
+r.update(device_used_bytes=total-free,process_allocated_bytes=torch.cuda.memory_allocated(),process_reserved_bytes=torch.cuda.memory_reserved())
+print(json.dumps(r),flush=True)

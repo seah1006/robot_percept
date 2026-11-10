@@ -1,0 +1,8 @@
+numpy==2.5.3
+opencv-python==5.0.0.93
+torch==2.14.0+cu130
+torchvision==0.29.0+cu130
+
+flask-sock==0.7.0
+simple-websocket==1.1.0
+websocket-client==1.8.0

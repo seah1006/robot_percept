@@ -3,6 +3,29 @@
 이 문서가 최신. 이전 기록은 notes/HANDOFF_HOME.md(11-05~11-07). 공통 규칙은 notes/TEAM_R3.md + HANDOFF_HOME 4장.
 브랜치: `wip/r2`(이 커밋 포함, 작업 브랜치). `master`는 3cf1b19 그대로(오늘 새로 master에 올린 것 없음).
 
+## 11-10 집 PC 세션 (최신, 이 절부터 읽을 것)
+환경: 집 PC(RX 7600, WSL Ubuntu-24.04), wip/r2 pull 후 전체 pytest **104 passed**(65s, 측정 락). 부모가 HOME_PROMPT 진행.
+
+**사용자 확정 6개** → 계획서 10장 아래 '사용자 확정 (2026-11-10)'. 요약: Panda로 시작·유일 v2 / 실물 3개+상자 2개 / 깊이 카메라 불필요 / **P1c 중단 동의** / N≥100+Wilson CI / 보정판 새 녹화 어려움(녹화 기반 위치 오차 '측정 불가'). 집에 웹캠 없음 → **W2 실촬영·보정은 회사 PC(11-11~)**.
+
+**Codex 사용량 한도**: 11-10 22:00경 I-G0·I-CT·I-SA 모두 정지, "Try again in ~2389 min" → **재개 약 11-12(목) 13:50 KST**. 규칙상 구현은 대기, 설계·검증만 Claude.
+
+| 항목 | 판정 | 근거·수치 |
+|-|-|-|
+| G0 ROCm(RX 7600 gfx1102, WSL) | 동작 확인(V-G0 재현), 스크립트 NEEDS WORK | env robot_percept_rocm: torch 2.14.0+rocm10.1.0, HIP 7.16. **HSA_ENABLE_DXG_DETECTION=1 + LD_LIBRARY_PATH=$CONDA_PREFIX/lib 필수**(없으면 libgomp.so.1 ImportError — install_rocm.sh·probe에 누락, Codex 수정 대상) |
+| G0 Grounding DINO tiny GPU [시뮬인식] GT보조 없음 | 측정 재현 | rev a2bb814(apache-2.0, HF API 확인), transformers 4.57.6, 640×360 N=20: p50 299/p95 306ms(V-G0 296/317), 첫 추론 21s(재현 7.7s, 캐시), 로드 18s, 프로세스 max_alloc 1016MiB, 장치 peak 샘플 3721MiB(기준 2332, Windows 포함). AMD 값은 회사 NVIDIA 합격 증거 아님 |
+| G0 CPU | 측정 재현 | env robot_percept_cpu(torch 2.14.0+cpu), 4스레드 p50 3349/p95 3754ms(loadavg 6), V-G0 재측정 3049/3301ms |
+| G0 의존성 | 확인 | 원본 env robot_percept freeze 해시 불변(torch 없음 — PERCEPTION=stub). 복제 env robot_percept_g0에 transformers 4.57.6 -c 설치 OK. backend별 constraints: notes/constraints/{common,cu130,rocm,cpu}.txt. numpy dist-info 중복은 집 env에 없음(단일 2.5.3) |
+| G0 검출 품질 메모 | 결함 기록 | 'a blue cube' 0.49가 책상 전체 박스(오검출, 장면엔 빨간 큐브만). G1에서 임계·프롬프트 조정 |
+| 계약 notes/contract_r5.md v1.1 | **문서 PASS**(V-CT) | Codex v1(61줄) → Claude D-CT 설계 대행 보완(205줄), C1~C6·V1~V4 반영. **Codex 확인 대기**: warm 30s, 정지 ACK 3s, 정지 지연 상한 IK 500ms/physics 100ms, 셀 home 별도 명령, 오류코드 3개·SQLite 컬럼 추가, solve_ik 콜백 여부 |
+| 장면 자산 확장(I-SA) | 미착수 | Codex 한도로 산출물 없음 |
+
+**재개 순서 (Codex 복귀 후)**
+1. I-G0: install_rocm.sh·probe에 LD_LIBRARY_PATH 반영, tools/g0/bench_gpu.py(부모 임시 작성) 정식화, notes/g0_results.md 작성, 멱등 재실행 → V-G0(notes/verify_g0.md 재개점) 판정.
+2. I-CT: notes/contract_r5_changes.md 재개점대로 perception/interfaces.py·셀 상태 머신(가짜 시계)·tests/test_contracts_r5.py, 전체 pytest → V-CT(notes/verify_contract_r5.md E·F).
+3. I-SA: 셀 장면·물체 ≥8종·config/objects.yaml·vocab_ko_en.yaml·시드 생성기 → V-SA(notes/verify_scene_r5.md).
+4. 회사 PC: W2 보정 도구·실카메라, Grounding DINO cu130 GPU 지연·VRAM ≤7.0GiB, SAM2/FP, r3 E 330회.
+
 ## 오늘 상태 요약 (11-09)
 에이전트 구성: S(I-S3 Codex / V-S3 Claude), T(I-K3 Codex / V-T3 Claude), E(I-E3 Codex / V-E3 Claude). 13:32 Codex 사용량 한도 → 사용자 지시로 Claude 검증자도 정지. 모든 측정 프로세스 정리됨.
 
