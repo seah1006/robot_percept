@@ -1,6 +1,6 @@
-# r5 계획서 v2: 자연어 지시 기반 범용 피킹 셀 (Grounding DINO 중심)
+# r5 계획서 v3: 자연어 지시 기반 범용 피킹 셀 (Grounding DINO 중심)
 
-작성 2026-11-09 부모(1NIgF2z2BvfBSkOh). v2는 Claude 검토자 R5-O(Opus, 구현)·R5-C(Sonnet, 사용자·실용) 합의 반영(notes/plan_r5_review_o.md, notes/plan_r5_review_c.md). **Codex 2차 검토 대기**(11장).
+작성 2026-11-09 부모(1NIgF2z2BvfBSkOh). v3 = v2 + Codex 2차 검토 R5-X(notes/plan_r5_review_x.md, 판정 "수정 필요" → 12항목 반영, R5-O와 이견 해소). v2는 Claude 검토자 R5-O(Opus, 구현)·R5-C(Sonnet, 사용자·실용) 합의 반영(notes/plan_r5_review_o.md, notes/plan_r5_review_c.md).
 r4 기구학 시각화(notes/plan_r4_industrial_cobot.md v3)는 v2 범위의 티칭 탭으로 흡수(MVP 제외). 휴머노이드 G1은 보조 데모, P1c 추가 투자 중단(기본 OFF, 회귀만 관리).
 
 ## 1. 한 줄 정의와 표현 원칙
@@ -89,5 +89,24 @@ r4 기구학 시각화(notes/plan_r4_industrial_cobot.md v3)는 v2 범위의 티
 6. (추가) 보정판을 함께 찍은 얼굴 없는 새 녹화 가능 여부(위치 오차 측정용)
 
 ## 11. 검토 상태
-- 1차(완료): Claude R5-O·R5-C 합의, 이견 없음.
-- 2차(대기): **Codex 검토** — 16:55경 사용량 리셋 예상. 결과 notes/plan_r5_review_x.md. Codex 지적 반영(v3) 후 구현 착수.
+- 1차(완료): Claude R5-O·R5-C 합의.
+- 2차(완료): Codex R5-X 판정 "수정 필요"(착수 승인이나 아래 P0 선반영 조건), R5-O 재확인·합의. 상세 notes/plan_r5_review_x.md 7장.
+
+## 12. v3 반영 — Codex 2차 검토 (착수 조건)
+**P0 (G0/G1·K 착수 전 계약으로 고정)**
+1. 의존성: transformers 후보 4.57.6(대안 4.45.2)는 PyPI 메타데이터상 torch 2.14·numpy 2.5.3과 직접 충돌 없음 — 실제 설치·ABI는 G0에서 검증. 현재 env에 numpy 2.5.2/2.5.3 dist-info 중복 발견 → 임의 삭제 금지, 진단 후 깨끗한 검증 env. **constraints를 backend별로 분리**(cu130 / ROCm overlay / CPU). Grounding DINO tiny 모델카드 apache-2.0(main, 11-10 확인), 사용할 revision 고정.
+2. 인터페이스 계약: Detector/Segmenter/Localizer DTO(프레임 id·촬영/수신 시각·mirror 여부·보정 id·좌표계·오류 코드) 고정, G/W2 소유 경계 확정.
+3. perception worker: lazy import, capabilities 보고, CPU 분기, finally에서 GPU 메모리 해제, FP 전역 tensor default 회귀 테스트.
+4. VRAM 7GiB 정의: 장치 전체 vs 프로세스별 측정 분리, 박스만 모드는 FP 워밍업 OFF, 선택 조합(SAM2 등)은 별도 합격.
+5. **기존 클릭 경로의 GT identity 겹침·GT jitter를 새 E2E에서 분리**(새 평가가 정답으로 물체를 고르지 않게), 고정 클래스 사전·인스턴스 선택 계약.
+6. **sim_worker 명령 실행 재설계**: 단일 executor + worker 명령 epoch + 명령 id별 결과 저장(last_command 덮임 제거), FIFO 밖 stop/cancel 경로, 집기·IK 단계마다 중단 checkpoint, worker ACK 전까지 로봇 소유 유지(timeout 후 늦은 실행 방지).
+7. 정지·복구: stop latch/hold/recovery, failed 상태·재확인·상태별 deadline, 재시작 시 abort 범위, DB commit ACK, 단일 프로세스 조건 명시.
+8. W2 프레임 계약: preview는 좌우 반전·손/자세 오버레이가 그려져 있고 촬영 시각이 없음 → unflip·UI 역변환, 오버레이 없는 불변 캡처+메타데이터, 수신 시각 한계 명시, 스냅샷 트윈은 배치 명령 하나로. 보정은 트래커를 멈추고 단독 도구로 1280 원본 촬영(카메라 단일 소유), 캡처 모드·FOV·crop 동일 확인 → preview 스케일·unflip 좌표 변환 검증 → 독립 격자점으로 평가(원본 보정이 preview 정확도를 보장하진 않음).
+**P1**
+9. 높이·특징점 기준·원점·좌표 변환, yaw 불명·대칭 정책, 집기 정책: 높이 ≤70mm는 strict top, >70mm는 side 우선(현 코드 경계).
+10. 평가: 장면당 물체 수·인스턴스 등록·시드/해시 분리, 분모(대상 없음·가림 포함), CI 기준, 자산·가중치 notices.
+11. 목적지 단층 slot/용량, 공유 파일 목록 확대와 변경 순서, 2~3주 일정의 병렬 조건과 예비일.
+12. 집 PC ROCm: 시험 시간 상한(timebox), 지원표+wheel 확인, 실패 시 CPU+mock으로 대체, 회사 PC 측정 잔여 항목 분리.
+
+## 13. 다음 단계
+v3 확정 → **계약 문서(DTO·payload·명령 epoch) 작성 + G0** 착수(구현 Codex / 검증 Claude). 사용자 확인 6개(10장) 답에 따라 범위 조정.

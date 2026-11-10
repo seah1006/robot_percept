@@ -7,7 +7,7 @@ robot_percept 프로젝트를 이어서 진행해줘. 답변은 처음부터 끝
 
 ## 저장소와 먼저 읽을 문서
 - https://github.com/seah1006/robot_percept , 작업 브랜치 wip/r2 (master는 독립 검증 PASS 커밋만).
-- 순서대로 읽어: notes/HOME_PROMPT.md(이 문서), notes/HANDOFF_R3.md(11-09 상태·남은 일·방향 변경), notes/plan_r5_grounded_picking_cell.md(현재 계획서 v2), notes/plan_r5_review_o.md·notes/plan_r5_review_c.md(Claude 1차 검토 합의), notes/TEAM_R3.md(작업 규칙), notes/HANDOFF_HOME.md 0장·3장(집 PC 환경 차이와 설치).
+- 순서대로 읽어: notes/HOME_PROMPT.md(이 문서), notes/HANDOFF_R3.md(11-09 상태·남은 일·방향 변경), notes/plan_r5_grounded_picking_cell.md(현재 계획서 v3, 12장 착수 조건), notes/plan_r5_review_o.md·notes/plan_r5_review_c.md(Claude 1차)·notes/plan_r5_review_x.md(Codex 2차), notes/TEAM_R3.md(작업 규칙), notes/HANDOFF_HOME.md 0장·3장(집 PC 환경 차이와 설치).
 
 ## 프로젝트 방향 (11-09 확정)
 "자연어 지시 기반 범용 피킹 셀": 작업자가 말로 지시하면 Grounding DINO로 글에 맞는 물체를 찾고(분할은 선택: 기본 박스만, SAM 2.1 등 교체 가능), 실물 웹캠은 책상 평면 투영(+물체 높이 보정)으로 위치를 구해 시뮬레이션에 같은 배치를 만들고, 로봇(Panda)이 IK·충돌 검사·안전 감속을 거쳐 집어 정리한다. /tasks 작업 지시 API·상태 머신·이력 DB·대시보드로 생산 지표를 보여준다. 표현 원칙: "인식과 위치 추정은 실물 웹캠, 집기는 시뮬레이션", "MES 흉내 지표", "공장 투입 가능" 같은 과장 금지.

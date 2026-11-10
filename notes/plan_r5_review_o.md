@@ -144,3 +144,15 @@
 6. 4장: MVP는 트래커 무변경(preview), still 라우트는 v2, 보정 도구의 카메라 사용 방식 명시, 카메라 분리 상태 반영.
 7. 9장 위험 추가: 의존성 설치로 env 파손, 평가 자산 부족, 높이 편향, 공유 파일 소유권.
 8. 라이선스 표(6장 표) THIRD_PARTY_NOTICES에 반영, Florence-2는 custom_code 주의.
+
+## 9. 2차 합의 (Codex R5-X, notes/plan_r5_review_x.md)
+왕복 2회 완료, 이견 없음. R5-X 지적은 R5-O가 코드로 직접 확인함(web/sim_worker.py 123·127·152·162행, web/app.py Runtime.wait, tools/teleop_tracker_win.py 303·374·418~438행, sim/grasp.py TOP_MAX_H, robot_percept env site-packages의 numpy dist-info).
+
+1차 합의를 정정·보강한 내용:
+1. **취소·정지(4장 2번 정정)**: sim_worker는 `command_q.get_nowait()` 후 pick_object/place_object를 끝까지 동기로 실행하고, stop_event는 바깥 루프에서만 검사함. cancel을 같은 FIFO에 넣으면 진행 중인 동작을 못 멈춤 → 별도 mp.Event + Controller step_hook/IK 경계에서 협조적으로 중단, worker ACK가 올 때까지 owner 유지. 명령에 owner/epoch 토큰을 넣음.
+2. **결과 유실**: `Runtime.wait`는 `last_command` 하나만 폴링해서 후속 명령이 덮어쓰면 결과가 사라지고, timeout이 나도 큐 실행은 취소되지 않음 → 결과를 cid별로 보관.
+3. **GT 경로 재사용 금지**: 기존 select_at은 SAM 마스크와 GT seg 겹침으로 물체를 식별하고, non-fp estimate_pose는 GT에 지터를 더한 값임 → 셀 E2E에서 재사용 금지. 쓰면 GT 보조로 표기.
+4. **G0 의존성(1.1 정정)**: transformers 4.57.6이 1차 후보, 4.45.2가 비교 후보(PyPI 메타데이터상 고정 numpy/torch와 선언 충돌 없음, 실행은 G0에서 검증). 위험 서술은 "resolver/ABI/선택 import 위험"으로 고침. numpy 2.5.2·2.5.3 dist-info가 중복돼 있으니 임의로 지우지 말고 import/version/file + `pip check`로 진단한 뒤 검증 env에서 복구. ROCm/CPU는 공통 pin + backend overlay로 분리. PyYAML 6.0.3이 설치돼 있으니 YAML 설정 유지(2장 6번 정정). Grounding DINO tiny HF README의 apache-2.0 메타태그는 R5-X가 직접 확인함.
+5. **집기 일관성**: plan_grasps는 h≤0.07이면 top, h>0.07(>70mm)이면 side 우선 → 계획서의 "top-down + 기존 grasp 재사용"과 모순. strict top 필터를 쓰거나 MVP 물체에서 70mm 초과는 빼고, 판단은 높이 사전값으로.
+6. **W2 preview(3.1·3.2 정정, P0)**: 트래커는 `cv2.flip(frame,1)` 후 640×360으로 줄이고, 손·자세 그림을 frame에 직접 그린 뒤 JPEG q65로 보냄. 1차의 "K 0.5배"만으로는 틀림 → 좌우 반전 역변환(u'=W-1-u) 필수. MVP에서 트래커를 바꾸지 않으려면 서버에서 unflip하고, 손·사람이 없는 장면으로 한정하고, UI 박스는 역변환. 서버에 received_at+seq를 기록(실제 촬영 시각이 아님을 명시). 깨끗한 원본은 v2 still 경로(트래커 변경 + 회귀 재측정).
+7. **보정 캡처**(R5-O 제안, R5-X 조건부 동의): 체커보드/ArUco 보정은 트래커를 멈춘 상태에서 단독 도구로 1280 원본을 캡처. 조건: 캡처 장치·모드·FOV·crop이 같은지 확인, K는 preview 배율과 mirror/unflip 변환을 반영, 독립 격자점으로 검증.
