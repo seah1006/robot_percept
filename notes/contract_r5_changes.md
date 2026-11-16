@@ -89,3 +89,9 @@
 - 생존3가드(begin_rpc inactive, watchdog 종료확인 시 outstanding/commit 정리, unknown deadline key)에 반례4case만 추가. state/interfaces 미변경.
 - exec1022 측정락 자기테스트 **165 passed, 1 warning, 0.28s**, 로그 /tmp/rp_ct_last_guards.log. tests blob80dc097c09f735cb2dd8302e48c60ba227dfcb00.
 - V-CT 최신 mutation 재검증/PASS 요청 완료. 구현자 전체 신규 실행없음. 재개: V-CT 최종 PASS 회신 기록 및 부모 전달만 남음.
+
+## 최종 마감 (11-16 I-CT)
+- V-CT notes/verify_contract_r5.md K절 최종 **PASS** 확인: 독립166/166, 계약165 passed, 비동치 mutation45/45 양쪽 KILL(48개 중 동치3 제외), 운영·공유 diff0.
+- 전체323 passed/0 failed는 마지막 테스트4case 추가 전 검증자 실행이며, 이후 state/interfaces 불변. 최신 전체327 PASS로 외삽 보고하지 않음.
+- 계약 v1.2 갱신 이미 완료. 최종 소유 변경5파일: notes/contract_r5.md, notes/contract_r5_changes.md, perception/interfaces.py, web/cell_state.py, tests/test_contracts_r5.py. 커밋 없음.
+- 재개 지점: CT 순수 DTO/정책 구현 완료. 후속 K에서 실제 worker 중단·DB durable ACK·프로세스 종료·회사 IK/physics 상한 재측정 통합 검증 필요.

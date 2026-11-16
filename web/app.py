@@ -30,13 +30,19 @@ def _axes(img,K,T,scale=1.,length=.06,label=None):
 class Runtime:
  def __init__(self):
   ctx=mp.get_context("spawn"); parent_pid=os.getpid(); self.manager=SyncManager(ctx=ctx); self.manager.start(initializer=manager_parent_watch_initializer,initargs=(parent_pid,)); self._manager_watchdog=ctx.Process(target=run_manager_watchdog,args=(parent_pid,self.manager._process.pid),daemon=True); self._manager_watchdog.start(); self.status=self.manager.dict(); self.command_q=ctx.Queue(); self.lock=ctx.Lock(); self.stop_event=ctx.Event()
+  self.command_lock=threading.RLock(); self.outstanding={}; self.safety_db_error=None; self._collector_stop=threading.Event()
+  self.safety={"epoch":ctx.Value("q",1),"stop":ctx.Event(),"requested_at":ctx.Value("d",0.),"boundary":ctx.Value("i",0)}; self.command_results=self.manager.dict()
   self.shms={"rgb":shared_memory.SharedMemory(create=True,size=HEIGHT*WIDTH*3),"depth":shared_memory.SharedMemory(create=True,size=HEIGHT*WIDTH*4),"seg":shared_memory.SharedMemory(create=True,size=HEIGHT*WIDTH*4)}
   self.rgb=np.ndarray((HEIGHT,WIDTH,3),np.uint8,buffer=self.shms["rgb"].buf); self.depth=np.ndarray((HEIGHT,WIDTH),np.float32,buffer=self.shms["depth"].buf); self.seg=np.ndarray((HEIGHT,WIDTH),np.int32,buffer=self.shms["seg"].buf)
   self.rgb.fill(0); self.depth.fill(0); self.seg.fill(-1)
   cfg={"width":WIDTH,"height":HEIGHT,"objects":["mustard"],"cam":"front","seed":7}; names={k:v.name for k,v in self.shms.items()}
-  self.proc=ctx.Process(target=run_worker,args=(cfg,names,self.lock,self.command_q,self.status,os.getpid(),self.stop_event),daemon=True); self.proc.start()
+  self.proc=ctx.Process(target=run_worker,args=(cfg,names,self.lock,self.command_q,self.status,os.getpid(),self.stop_event,self.safety,self.command_results),daemon=True); self.proc.start()
   self.perception=PerceptionBackend(os.getenv("PERCEPTION","fp").lower()); self.selected=None; self.estimate=None; self.estimate_time_ms=None; self.logs=[]; self.state_lock=threading.RLock(); self.gpu_cache={"at":0,"value":None}; self.mask=None; self.metrics={}; self.tracking_hist={k:deque(maxlen=300) for k in ('status_copy','frame_copy','perception','commit')}; self.generation=0; self.running=True; self.perception_lock=threading.RLock(); threading.Thread(target=self.track_loop,daemon=True).start(); self._warmup_manager_thread=threading.Thread(target=self.warmup_loop,daemon=True); self._warmup_manager_thread.start()
   self._close_lock=threading.Lock(); self._closed=False
+  from .cell_db import CellDB
+  from .cell_executor import CellExecutor
+  self.cell_db=CellDB(os.getenv("RP_CELL_DB",str(ROOT/"cell_runtime.sqlite3"))); self.cell=CellExecutor(self,self.cell_db)
+  self._collector=threading.Thread(target=self.collect_loop,daemon=True,name="cell-safety-collector"); self._collector.start()
  def _g1_requested(self):
   humanoid=getattr(self,'humanoid_runtime',None)
   return bool(getattr(self,'_humanoid_starting',False) or (humanoid is not None and (humanoid.ctrl.get('enabled',False) or (hasattr(humanoid,'running') and humanoid.running()))))
@@ -153,15 +159,103 @@ class Runtime:
   result=self.wait(self.send("refresh"),timeout=30)
   if not result.get("ok"):raise RuntimeError(result.get("error","refresh failed"))
   return self.frame()
+ def request_stop(self):
+  if not self.safety['stop'].is_set(): self.safety['requested_at'].value=time.monotonic()
+  self.safety['stop'].set()
+  with self.safety['epoch'].get_lock(): self.safety['epoch'].value+=1
  def send(self,op,**kwargs):
-  cid=uuid.uuid4().hex[:10]; self.command_q.put({"id":cid,"op":op,**kwargs}); return cid
+  cid=kwargs.pop('cid',None) or uuid.uuid4().hex
+  epoch=kwargs.pop('epoch',self.safety['epoch'].value); deadline=kwargs.pop('deadline',time.monotonic()+180)
+  command={'id':cid,'cid':cid,'epoch':epoch,'deadline':deadline,'op':op,**kwargs}
+  with self.command_lock:
+   if cid in self.outstanding:
+    if self.outstanding[cid]!=command: raise ValueError('duplicate payload conflict')
+    return cid
+   self.cell_db.command({**command,'status':'sent'})
+   self.outstanding[cid]=command
+   self.command_q.put(command)
+  return cid
+ def collect_safety(self):
+  with self.command_lock:
+   for cid in list(self.outstanding):
+    result=self.command_results.get(cid)
+    if result and result.get('status') in ('completed','failed','stopped','expired','stale_epoch'):
+     self.cell_db.command(result)
+     del self.outstanding[cid]
+   ack=dict(self.status).get('stop_ack'); baseline=dict(self.status).get('stop_baseline')
+   if ack and baseline and baseline.get('request_at')==ack['request_at'] and self.safety['stop'].is_set():
+    key='stop:'+self.cell_db.boot_id+':'+str(ack['request_at'])
+    if self.cell_db.meta_get(key) is None:
+     self.cell_db.meta_put(key,{'boot_id':self.cell_db.boot_id,'request_at':ack['request_at'],'epoch':ack['epoch'],'baseline':baseline})
+ def collect_loop(self):
+  while not self._collector_stop.wait(.02):
+   try: self.collect_safety()
+   except Exception as exc:
+    self.safety_db_error=str(exc); self.request_stop()
+ def recover_stop(self,data):
+  with self.cell.lock, self.command_lock:
+   try: self.collect_safety()
+   except Exception: return {"error":"DB_UNAVAILABLE","failed":["db"]},503
+   st=dict(self.status); ack=st.get("stop_ack") or {}; obs=st.get("recovery_observation") or {}; s=self.cell.current
+   key="stop:"+self.cell_db.boot_id+":"+str(ack.get("request_at"))
+   try: saved=self.cell_db.meta_get(key)
+   except Exception: return {"error":"DB_UNAVAILABLE","failed":["db"]},503
+   base=saved["baseline"] if saved else {}; contact=obs.get("contact_body")
+   checks={
+    "stop_latched":self.safety["stop"].is_set(),
+    "task_terminal":bool(s and s.state in ("done","failed","cancelled","aborted")),
+    "version":bool(s and data.get("version")==s.version),
+    "outstanding":not self.outstanding and not st.get("active_command"),
+    "worker_ready":bool(st.get("ready") and self.proc.is_alive()),
+    "boot_id":bool(saved and saved["boot_id"]==self.cell_db.boot_id and data.get("boot_id",self.cell_db.boot_id)==self.cell_db.boot_id),
+    "durable_baseline":bool(saved and ack.get("request_at")==self.safety["requested_at"].value and base.get("at") is not None and base.get("request_at")==ack.get("request_at") and obs.get("request_at")==ack.get("request_at")),
+    "fresh_observation":time.monotonic()-obs.get("at",0)<.25,
+    "window":obs.get("window_s",0)>=.5 and obs.get("window_samples",0)>=250,
+    "q_hold":obs.get("window_max_hold_error",float("inf"))<=.02,
+    "velocity":obs.get("window_max_velocity",float("inf"))<=.05,
+    "gripper_width":obs.get("window_max_width_delta",float("inf"))<=.002,
+    "gripper_ctrl":obs.get("window_ctrl_unchanged") is True,
+    "contact":obs.get("window_contact_unchanged") is True and contact==base.get("finger_contact_body") and contact==st.get("held_object"),
+    "held_object_ack":"held_object_ack" in data and data.get("held_object_ack")==contact,
+    "confirmed":data.get("confirmed") is True,
+    "scene_confirmed":data.get("scene_confirmed") is True,
+   }
+   failed=[k for k,v in checks.items() if not v]
+   if failed: return {"error":"RECOVERY_CHECK_FAILED","failed":failed},409
+   previous={**s.__dict__,"events":list(s.events)}
+   code,failed=s.reset_stop(confirmed=True,scene_confirmed=True,held_object_ack=contact,held_object=contact,worker_ready=True,boot_id=self.cell_db.boot_id,q_hold_ok=True,velocity_ok=True,gripper_ok=True)
+   if code!=200: return {"error":"RECOVERY_CHECK_FAILED","failed":failed},code
+   next_epoch=max(s.epoch,self.safety["epoch"].value+1); s.epoch=next_epoch
+   snapshot=self.cell.snapshot(); snapshot["stop_latched"]=False; snapshot["held_object_uncertain"]=False
+   try: self.cell_db.reset({"boot_id":self.cell_db.boot_id,"epoch":next_epoch,"stop_latched":False,"request_at":ack["request_at"],"event":"reset_stop"},snapshot)
+   except Exception:
+    s.__dict__.clear(); s.__dict__.update(previous)
+    return {"error":"DB_UNAVAILABLE","failed":["db"]},503
+   self.safety["epoch"].value=next_epoch; self.safety["stop"].clear(); self.safety_db_error=None
+   self.status["held_object_uncertain"]=False
+   return {"ok":True,"cell":self.cell.snapshot()},200
  def wait(self,cid,timeout=30):
-  end=time.monotonic()+timeout
+  end=time.monotonic()+timeout; accepted=False; accepted_end=time.monotonic()+2
   while time.monotonic()<end:
-   last=dict(self.status).get("last_command")
-   if last and last.get("id")==cid: return last
+   last=self.command_results.get(cid)
+   if last and last.get("id")==cid:
+    accepted=True
+    if last.get('status') not in ('accepted','running'): return last
+   cell=getattr(self,'cell',None)
+   if cell and cell.current and cid in cell.current.commands:
+    with cell.lock:
+     if last and last.get('status') in ('accepted','running'):
+      from perception.interfaces import Ack
+      cell.current.receive_ack(Ack(cid,cell.current.commands[cid].owner_epoch,last['status']))
+     action=cell.current.tick()
+     if action in ('expired','deadline'): self.request_stop(); cell.persist()
+   if not accepted and time.monotonic()>=accepted_end: break
    sleep_until(min(end,time.monotonic()+.05))
-  return {"id":cid,"ok":False,"error":"command timeout"}
+  cell=getattr(self,'cell',None)
+  if cell and cell.current and cid in cell.current.commands:
+   with cell.lock: cell.current.expire(cid)
+  self.request_stop()
+  return {"id":cid,"ok":False,"status":"expired","error":"command timeout"}
  def log(self,text):
   with self.state_lock: self.logs=([{"time":time.strftime("%H:%M:%S"),"message":text}]+self.logs)[:40]
  def gpu(self):
@@ -178,6 +272,11 @@ class Runtime:
    self._closed=True
    deadline=time.monotonic()+5.0 if deadline is None else deadline
    self.running=False
+   self.request_stop()
+   if hasattr(self,"cell"): self.cell.close(timeout=min(1.,max(0.,deadline-time.monotonic())))
+   self._collector_stop.set()
+   if hasattr(self,"_collector"): self._collector.join(timeout=min(.5,max(0.,deadline-time.monotonic())))
+   if hasattr(self,"cell_db"): self.cell_db.close(timeout=min(1.,max(0.,deadline-time.monotonic())))
    self.stop_event.set()
    try:self.command_q.put({"id":"shutdown","op":"shutdown"})
    except Exception:pass
@@ -199,6 +298,39 @@ def create_app():
  rt.humanoid_runtime=humanoid_bp.humanoid_runtime
  app.register_blueprint(humanoid_bp)  # G1 worker starts only on /humanoid/mode
  from .focus import focus; app.register_blueprint(focus)
+ @app.before_request
+ def cell_arbiter():
+  if request.method=='POST' and request.path.startswith(('/robot/','/teleop/','/humanoid/','/reset','/scene/','/cad/')):
+   cell=rt.cell.snapshot()
+   if cell['owner'] or cell['stop_latched']: return jsonify(ok=False,error='OWNER_CONFLICT'),409
+ @app.post('/tasks')
+ def create_task():
+  try: return jsonify(rt.cell.submit_api(request.get_json(silent=True),request.headers.get("Idempotency-Key"))),202
+  except ValueError as exc: return jsonify(ok=False,error=str(exc)),409 if str(exc) in ('OWNER_CONFLICT','IDEMPOTENCY_CONFLICT') else 400
+ @app.get('/tasks')
+ def list_tasks(): return jsonify(tasks=rt.cell_db.list())
+ @app.get('/tasks/<task_id>')
+ def get_task(task_id):
+  found=next((x for x in rt.cell_db.list() if x['task_id']==task_id),None)
+  return (jsonify(found),200) if found else (jsonify(error='not found'),404)
+ @app.post('/tasks/<task_id>/confirm')
+ def confirm_task(task_id):
+  try:return jsonify(rt.cell.confirm(task_id,request.get_json(silent=True))),202
+  except ValueError as exc:return jsonify(error=str(exc)),400 if str(exc)=='INVALID_INPUT' else 409
+ @app.post('/tasks/<task_id>/cancel')
+ def cancel_task(task_id):
+  if not rt.cell.current or rt.cell.current.task_id!=task_id: return jsonify(error='not found'),404
+  data=request.get_json(silent=True) or {}
+  if not isinstance(data,dict) or type(data.get('version')) is not int:return jsonify(error='INVALID_INPUT'),400
+  code=rt.cell.request_stop('cancel',version=data['version']); return jsonify(rt.cell.snapshot()),code
+ @app.post('/cell/estop')
+ @app.post('/estop')
+ def estop():
+  code=rt.cell.request_stop('estop'); return jsonify(rt.cell.snapshot()),code
+ @app.post('/cell/reset-stop')
+ @app.post('/reset-stop')
+ def reset_stop():
+  body,code=rt.recover_stop(request.get_json(silent=True) or {}); return jsonify(body),code
  @app.get("/")
  def index():return render_template("index.html",width=WIDTH,height=HEIGHT)
  def overlay(show_gt=False):
@@ -375,12 +507,13 @@ def create_app():
   paused=st.get("phase","idle")!="idle" or bool(st.get("held_object"))
   if selected and est is not None and not paused and selected in st.get("objects",{}):
    gt=np.asarray(st["objects"][selected]["T_cam_obj"]);pose={"estimate":est.tolist(),"error_mm":float(np.linalg.norm(est[:3,3]-gt[:3,3])*1000),"error_deg":_rerr(est,gt),"timing_ms":ms,**rt.metrics}
+  st["cell"]=rt.cell.snapshot()
   st["perception_warmup"]={"state":getattr(rt.perception,"warmup_state","idle"),"error":getattr(rt.perception,"warmup_error",None),"seconds":getattr(rt.perception,"warmup_seconds",None),"g1_cpu_nice":getattr(rt.perception,"warmup_g1_nice_applied",None),"priority_error":getattr(rt.perception,"warmup_priority_error",None)}
   st.update({"tracking_state":"paused" if (selected and paused) else rt.metrics.get("tracking_state","idle" if not selected else "tracking"),"selected_object":selected,"pose":pose,"perception":rt.perception.mode,"perception_warning":rt.perception.warning,"gpu":rt.gpu(),"logs":logs});return st
  @app.get("/status")
  def status():return jsonify(status_payload())
  from .realtime import register_realtime
- app.extensions["realtime_sock"]=register_realtime(app,status_payload,teleop_bp,humanoid_bp)
+ app.extensions["realtime_sock"]=register_realtime(app,status_payload,teleop_bp,humanoid_bp,cell_status=rt.cell.snapshot,owner_check=lambda: not (rt.cell.snapshot()["owner"] or rt.cell.snapshot()["stop_latched"]))
  return app
 
 def close_app(app, deadline=None):

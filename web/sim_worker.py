@@ -6,16 +6,22 @@ import numpy as np
 from .process_lifecycle import exit_if_parent_changed
 
 
+class StopRequested(RuntimeError): pass
+class RejectedCommand(StopRequested): pass
+
 class ControlAdapter:
     """Small compatibility boundary around sim.control.Controller."""
-    def __init__(self, env, phase_cb):
+    def __init__(self, env, phase_cb, checkpoint=None):
         from sim.control import Controller
         self.env, self.phase_cb = env, phase_cb
+        self.checkpoint = checkpoint
         self.controller = Controller(env, step_hook=self._step_hook)
+        self.controller.checkpoint_hook = checkpoint
         self.render_hook, self._steps = None, 0
         self._wall0, self._sim0 = time.monotonic(), float(env.data.time)
 
     def _step_hook(self, _controller):
+        if self.checkpoint: self.checkpoint("physics")
         self._steps += 1
         if self.render_hook and self._steps % 35 == 0: self.render_hook()
         delay = self._wall0 + (float(self.env.data.time) - self._sim0) - time.monotonic()
@@ -48,7 +54,7 @@ def render_period(status, now):
     return 1 / 30 if active else .5
 
 
-def run_worker(cfg, shm_names, lock, command_q, status, parent_pid=None, stop_event=None):
+def run_worker(cfg, shm_names, lock, command_q, status, parent_pid=None, stop_event=None, safety=None, command_results=None):
     exit_if_parent_changed(parent_pid)
     shms=[]
     try:
@@ -66,9 +72,62 @@ def run_worker(cfg, shm_names, lock, command_q, status, parent_pid=None, stop_ev
         current_cam=cfg.get("cam","front"); last_render=0.0; frame_count=0; fps_t0=time.monotonic()
 
         def set_phase(p):
+            checkpoint("phase")
             status["phase"]=p; status["state"]="busy" if p not in ("idle","ready") else "ready"
 
-        adapter=ControlAdapter(env,set_phase)
+        active = {}
+        stop_ack_seq=None
+        recovery_samples=[]
+        def recovery_snapshot():
+            c=adapter.controller
+            return {"q_hold":env.data.ctrl[:7].tolist(),"qpos":env.data.qpos[c.qadr].tolist(),"max_arm_velocity":float(np.max(np.abs(env.data.qvel[c.dofs]))),"gripper_width":float(np.sum(env.data.qpos[c.fadr])),"gripper_ctrl":env.data.ctrl[7:].tolist(),"contact_count":int(env.data.ncon),"finger_contact_body":c._finger_contact_body(),"at":time.monotonic()}
+        def checkpoint(boundary='physics'):
+            nonlocal stop_ack_seq, recovery_samples
+            if safety is None: return
+            if boundary=='ik.before': safety['boundary'].value=2
+            elif boundary.startswith('physics'): safety['boundary'].value=1
+            elif boundary=='ik.after': safety['boundary'].value=0
+            now=time.monotonic()
+            stopped=safety['stop'].is_set() or (stop_event is not None and stop_event.is_set())
+            stale=bool(active) and active.get('epoch', safety['epoch'].value)!=safety['epoch'].value
+            expired=bool(active) and now>=active.get('deadline', float('inf'))
+            if stopped or stale or expired:
+                ctrl=adapter.controller
+                seq=safety["requested_at"].value
+                if stop_ack_seq!=seq:
+                    env.data.ctrl[:7]=env.data.qpos[ctrl.qadr]
+                    env.data.qvel[ctrl.dofs]=0
+                status['teleop_enabled']=False
+                seq=safety['requested_at'].value
+                if stop_ack_seq!=seq:
+                    recovery_samples=[]
+                    status['stop_baseline']={**recovery_snapshot(),'request_at':seq,'epoch':safety['epoch'].value}
+                    status['stop_ack']={'boundary':boundary,'at':now,'request_at':seq,'latency_ms':max(0.,(now-seq)*1000),'epoch':safety['epoch'].value}
+                    stop_ack_seq=seq
+                obs=recovery_snapshot(); base=status.get('stop_baseline',obs)
+                obs['request_at']=seq
+                obs['q_hold']=base['q_hold']; obs['elapsed_s']=now-base['at']
+                obs['max_hold_error']=float(np.max(np.abs(np.asarray(obs['qpos'])-np.asarray(base['q_hold']))))
+                obs['gripper_width_delta']=abs(obs['gripper_width']-base['gripper_width'])
+                obs['gripper_ctrl_unchanged']=obs['gripper_ctrl']==base['gripper_ctrl']
+                obs.update(recovery_window())
+                status['recovery_observation']=obs
+                raise StopRequested('expired' if expired else 'stale_epoch' if stale and boundary=='dequeue' else 'stopped')
+
+        def sample_recovery():
+            if safety is None or not safety['stop'].is_set() or stop_ack_seq is None: return
+            c=adapter.controller; base=status.get('stop_baseline')
+            if not base: return
+            now=time.monotonic()
+            recovery_samples.append((now,float(np.max(np.abs(env.data.qvel[c.dofs]))),abs(float(np.sum(env.data.qpos[c.fadr]))-base['gripper_width']),float(np.max(np.abs(env.data.qpos[c.qadr]-np.asarray(base['q_hold'])))),env.data.ctrl[7:].tolist()==base['gripper_ctrl'],c._finger_contact_body()))
+            # Retain a continuous >=0.5s window, including the sample before its edge.
+            while len(recovery_samples)>1 and recovery_samples[1][0]<now-.5: recovery_samples.pop(0)
+        def recovery_window():
+            rows=recovery_samples
+            if not rows: return {'window_s':0.,'window_samples':0}
+            return {'window_s':rows[-1][0]-rows[0][0],'window_samples':len(rows),'window_max_velocity':max(x[1] for x in rows),'window_max_width_delta':max(x[2] for x in rows),'window_max_hold_error':max(x[3] for x in rows),'window_ctrl_unchanged':all(x[4] for x in rows),'window_contact_unchanged':all(x[5]==rows[0][5] for x in rows),'contact_body':rows[-1][5]}
+
+        adapter=ControlAdapter(env,set_phase,checkpoint)
         from sim.teleop import TeleopServo
         teleop=TeleopServo(env,status)
         humanoid_render_paused=False  # mode-on only; physics and C commands continue
@@ -124,11 +183,21 @@ def run_worker(cfg, shm_names, lock, command_q, status, parent_pid=None, stop_ev
             if parent_pid is not None and time.monotonic() >= parent_check:
                 if os.getppid() != parent_pid: break
                 parent_check = time.monotonic() + .25
+            if safety is not None and safety["stop"].is_set():
+                try: checkpoint("idle")
+                except StopRequested: pass
             try: cmd=command_q.get_nowait()
             except queue.Empty: cmd=None
             if cmd:
                 cid,op=cmd.get("id"),cmd.get("op")
                 try:
+                    active=cmd
+                    if command_results is not None: command_results[cid]={"id":cid,"epoch":cmd.get("epoch"),"status":"accepted","ok":False}
+                    if cmd.get("epoch",safety["epoch"].value if safety else 0)!=(safety["epoch"].value if safety else cmd.get("epoch")):
+                        raise RejectedCommand("STALE_EPOCH")
+                    if time.monotonic()>=cmd.get("deadline",float("inf")): raise RejectedCommand("DEADLINE_EXCEEDED")
+                    checkpoint("dequeue")
+                    if command_results is not None: command_results[cid]={"id":cid,"epoch":cmd.get("epoch"),"status":"running","ok":False}
                     status["active_command"]=cid
                     if op not in ("refresh","set_view"): status["teleop_enabled"]=False
                     if op=="shutdown": running=False
@@ -138,9 +207,9 @@ def run_worker(cfg, shm_names, lock, command_q, status, parent_pid=None, stop_ev
                         status["humanoid_render_paused"]=humanoid_render_paused
                         frame_count=0; fps_t0=time.monotonic(); last_render=0.
                     elif op=="reset":
-                        set_phase("reset"); env.reset(seed=cmd.get("seed"),randomize=cmd.get("randomize",False)); adapter=ControlAdapter(env,set_phase); adapter.render_hook=publish; status["held_object"]=None
+                        set_phase("reset"); env.reset(seed=cmd.get("seed"),randomize=cmd.get("randomize",False)); adapter=ControlAdapter(env,set_phase,checkpoint); adapter.render_hook=publish; status["held_object"]=None
                     elif op=="randomize":
-                        set_phase("randomize"); env.reset(seed=cmd.get("seed"),randomize=True); adapter=ControlAdapter(env,set_phase); adapter.render_hook=publish; status["held_object"]=None
+                        set_phase("randomize"); env.reset(seed=cmd.get("seed"),randomize=True); adapter=ControlAdapter(env,set_phase,checkpoint); adapter.render_hook=publish; status["held_object"]=None
                     elif op=="set_view": current_cam=cmd.get("camera","front"); status["camera"]=current_cam
                     elif op=="pick":
                         name=cmd["name"]; raw=cmd.get("T_cam_obj");
@@ -152,7 +221,7 @@ def run_worker(cfg, shm_names, lock, command_q, status, parent_pid=None, stop_ev
                         res=adapter.controller.pick_object(Two,env.registry[name].bounds,phase_cb=set_phase,object_pose_fn=lambda:env.T_world_obj(name))
                         status["gripper_width"]=res["width"]; status["grasp_mode"]=res["mode"]; status["last_pick"]={"ok":bool(res["ok"]),"gt_lift_ok":res.get("gt_lift_ok"),"lifted_m":res.get("lifted")}
                         if not res["ok"]:
-                            adapter.controller.open_gripper(); raise RuntimeError(f"집기 실패: 물체가 들리지 않았습니다 (들린 높이 {100*(res['lifted'] or 0):.1f}cm)")
+                            checkpoint("pick.fail_open"); adapter.controller.open_gripper(); raise RuntimeError(f"집기 실패: 물체가 들리지 않았습니다 (들린 높이 {100*(res['lifted'] or 0):.1f}cm)")
                         status["held_object"]=name
                     elif op=="place":
                         name=status.get("held_object")
@@ -163,28 +232,39 @@ def run_worker(cfg, shm_names, lock, command_q, status, parent_pid=None, stop_ev
                         status["held_object"]=None; status["last_place"]={"err_mm":round(res["err_mm"],1),"upright":round(res["upright"],3)}
                         set_phase("home")
                         try:
+                            checkpoint("home.before")
                             status["last_home"]=adapter.controller.return_home(lambda:env.T_world_obj(name)); status["home_warning"]=None
+                        except StopRequested: raise
                         except RuntimeError as exc:
                             status["last_home"]={"ok":False,"error":str(exc)}; status["home_warning"]=str(exc)
                     elif op=="add_object":
-                        set_phase("cad.add"); env.add_object_from_mesh(cmd["name"],cmd["visual_obj"],cmd["collision_objs"],mass=cmd.get("mass",.1),rgba=cmd.get("rgba")); env.reset(randomize=False); adapter=ControlAdapter(env,set_phase); adapter.render_hook=publish
+                        set_phase("cad.add"); env.add_object_from_mesh(cmd["name"],cmd["visual_obj"],cmd["collision_objs"],mass=cmd.get("mass",.1),rgba=cmd.get("rgba")); env.reset(randomize=False); adapter=ControlAdapter(env,set_phase,checkpoint); adapter.render_hook=publish
                     else: raise ValueError(f"unknown command: {op}")
                     publish(True); status["last_command"]={"id":cid,"op":op,"ok":True,"time":time.time()}; status["error"]=None
                 except Exception as exc:
+                    if isinstance(exc,StopRequested) and not isinstance(exc,RejectedCommand) and op in ("pick","place"):
+                        status["held_object_uncertain"]=True
+                        status["held_object_candidate"]=cmd.get("name") or status.get("held_object")
                     status["error"]=f"{type(exc).__name__}: {exc}"; status["last_traceback"]=traceback.format_exc(); status["last_command"]={"id":cid,"op":op,"ok":False,"error":status["error"],"time":time.time()}
                 finally:
-                    if status["last_command"]["ok"]: set_phase("idle")
+                    result=dict(status['last_command']); result['epoch']=cmd.get('epoch'); result['status']=('completed' if result['ok'] else ('stale_epoch' if 'STALE_EPOCH' in result.get('error','') else 'expired' if 'DEADLINE_EXCEEDED' in result.get('error','') or 'expired' in result.get('error','') else 'stale_epoch' if 'stale_epoch' in result.get('error','') else 'stopped' if isinstance(locals().get('exc'),StopRequested) or 'StopRequested' in result.get('error','') else 'failed'))
+                    result['error_code']={'stale_epoch':'STALE_EPOCH','expired':'DEADLINE_EXCEEDED','stopped':'CANCELLED'}.get(result['status'])
+                    if command_results is not None: command_results[cid]=result
+                    active={}
+                    if status["last_command"]["ok"]: status["phase"]="idle"; status["state"]="ready"
                     else: status["phase"]="error"; status["state"]="error"
                     status["active_command"]=None
             now=time.monotonic(); steps=0
             while now>=next_step and steps<100:
-                try: teleop.tick()
+                try:
+                    if safety is not None and safety["stop"].is_set(): status["teleop_enabled"]=False
+                    teleop.tick()
                 except Exception as exc:
                     status["teleop_enabled"]=False
                     status["teleop_error"]=f"{type(exc).__name__}: {exc}"
                     # Isolate tracker faults: ordinary simulation/commands keep running.
                     teleop.was=False
-                env.step(1); next_step += env.model.opt.timestep; steps += 1
+                env.step(1); sample_recovery(); next_step += env.model.opt.timestep; steps += 1
             if steps==100 and now>=next_step: next_step=now+env.model.opt.timestep
             if time.monotonic()-rtf_wall>=1:
                 status["rtf"]=(float(env.data.time)-rtf_sim)/(time.monotonic()-rtf_wall)

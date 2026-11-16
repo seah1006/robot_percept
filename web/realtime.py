@@ -36,7 +36,7 @@ class ConnectionLimiter:
         with self.lock: self.count=max(0,self.count-1)
 
 
-def handle_tracker_message(message, teleop, humanoid):
+def handle_tracker_message(message, teleop, humanoid, owner_check=None):
     """Handle one WS message and return the JSON reply without closing on errors."""
     if isinstance(message, bytes):
         if len(message) > TRACKER_PREVIEW_LIMIT:
@@ -56,6 +56,8 @@ def handle_tracker_message(message, teleop, humanoid):
     route = envelope.get('route')
     data = envelope['data']
     payload_size = len(json.dumps(data, separators=(',', ':')).encode('utf-8'))
+    if route in ('/humanoid/update','/teleop/update') and owner_check and not owner_check():
+        return {'ok':False,'status':409,'route':route,'error':'OWNER_CONFLICT'}
     if route == '/humanoid/update':
         if payload_size > 65536: return {'ok': False, 'status': 413, 'route': route, 'error': 'payload too large'}
         body, status = humanoid.accept_update(data)
@@ -69,10 +71,11 @@ def handle_tracker_message(message, teleop, humanoid):
 
 class StatusSchedule:
     """Per-connection monotonic schedule; inactive modes fall back to 1 Hz."""
-    def __init__(self, now=None):
+    def __init__(self, now=None, include_cell=False):
         now = time.monotonic() if now is None else now
         self.next = {'robot': now, 'teleop': now, 'humanoid': now}
         self.active = {'teleop': False, 'humanoid': False}
+        if include_cell: self.next['cell']=now
 
     def due(self, now):
         return [name for name, deadline in self.next.items() if now >= deadline]
@@ -80,11 +83,11 @@ class StatusSchedule:
     def sent(self, name, now, payload):
         if name == 'teleop': self.active[name] = bool(payload.get('enabled'))
         if name == 'humanoid': self.active[name] = bool(payload.get('mode'))
-        interval = 1/3 if name == 'robot' else (.1 if self.active[name] else 1.)
+        interval = 1/3 if name in ('robot','cell') else (.1 if self.active[name] else 1.)
         self.next[name] = now + interval
 
 
-def register_realtime(app, robot_status, teleop, humanoid):
+def register_realtime(app, robot_status, teleop, humanoid, cell_status=None, owner_check=None):
     app.config.setdefault('SOCK_SERVER_OPTIONS', {'ping_interval': 25, 'max_message_size': TRACKER_MESSAGE_LIMIT})
     sock = Sock(app)
     status_connections = ConnectionLimiter(MAX_STATUS_CONNECTIONS)
@@ -97,7 +100,7 @@ def register_realtime(app, robot_status, teleop, humanoid):
             try: message = ws.receive()
             except (ConnectionClosed, OSError): return
             if message is None: return
-            reply = handle_tracker_message(message, teleop, humanoid)
+            reply = handle_tracker_message(message, teleop, humanoid, owner_check=owner_check)
             try: ws.send(json.dumps(reply, separators=(',', ':')))
             except (ConnectionClosed, OSError): return
 
@@ -108,8 +111,9 @@ def register_realtime(app, robot_status, teleop, humanoid):
         if not status_connections.acquire():
             ws.close(reason=1013, message='too many status connections'); return
         try:
-            schedule = StatusSchedule()
+            schedule = StatusSchedule(include_cell=cell_status is not None)
             builders = {'robot': robot_status, 'teleop': teleop.status_payload, 'humanoid': humanoid.status_payload}
+            if cell_status is not None: builders['cell']=cell_status
             while True:
                 now = time.monotonic()
                 for name in schedule.due(now):

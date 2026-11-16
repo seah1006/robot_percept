@@ -110,7 +110,7 @@ def _neighbor_checker(model, data, qadr, T_world_obj):
     return hits
 
 
-def choose_grasp(model, data, T_world_obj, bounds, tcp="tcp"):
+def choose_grasp(model, data, T_world_obj, bounds, tcp="tcp", checkpoint=None):
     """Pick a feasible grasp, preferring a quick near-current solution."""
     from .ik import solve_ik, arm_indices, HOME
     qadr, _, lim = arm_indices(model)
@@ -126,10 +126,14 @@ def choose_grasp(model, data, T_world_obj, bounds, tcp="tcp"):
     seeds += [rng.uniform(lim[:, 0] * .8, lim[:, 1] * .8) for _ in range(6)]
     def solve_pair(G, P, seed, fast):
         kw = dict(tcp=tcp, max_iters=16, restarts=1) if fast else dict(tcp=tcp)
+        if checkpoint is not None: checkpoint("ik.before")
         qp, ok = solve_ik(model, data, P, q_init=seed, **kw)
+        if checkpoint is not None: checkpoint("ik.after")
         if not (ok or _close(model, data, qadr, qp, P, tcp)) or hits(qp):
             return None
+        if checkpoint is not None: checkpoint("ik.before")
         qg, ok = solve_ik(model, data, G, q_init=qp, **kw)
+        if checkpoint is not None: checkpoint("ik.after")
         if not (ok or _close(model, data, qadr, qg, G, tcp)) or hits(qg):
             return None
         return qp, qg
@@ -144,12 +148,16 @@ def choose_grasp(model, data, T_world_obj, bounds, tcp="tcp"):
     # multiplying ten internal random restarts by eleven external seed poses.
     for seed in seeds[:5]:
         for mode, G, P, r in cands:
+            if checkpoint is not None: checkpoint("ik.before")
             qp, ok = solve_ik(model, data, P, q_init=seed, tcp=tcp,
                               max_iters=45, restarts=2)
+            if checkpoint is not None: checkpoint("ik.after")
             if not (ok or _close(model, data, qadr, qp, P, tcp)) or hits(qp):
                 continue
+            if checkpoint is not None: checkpoint("ik.before")
             qg, ok = solve_ik(model, data, G, q_init=qp, tcp=tcp,
                               max_iters=45, restarts=2)
+            if checkpoint is not None: checkpoint("ik.after")
             if (ok or _close(model, data, qadr, qg, G, tcp)) and not hits(qg):
                 return dict(mode=mode, grasp=G, pre=P, retreat=r, q_pre=qp, q_grasp=qg)
     raise RuntimeError("잡을 수 있는 자세가 없습니다 (IK 실패 또는 물체가 너무 넓음/주변 물체 충돌)")

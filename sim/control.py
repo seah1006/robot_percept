@@ -69,7 +69,12 @@ class Controller:
         mujoco.mj_forward(self.model, self.data)
         return tcp_pose(self.model, self.data, self.tcp)
 
+    def _checkpoint(self, boundary):
+        hook=getattr(self,"checkpoint_hook",None)
+        if hook is not None: hook(boundary)
+
     def _step(self):
+        self._checkpoint("physics")
         if self.env is not None:
             self.env.step(1)
         else:
@@ -107,7 +112,9 @@ class Controller:
             T = np.eye(4)
             T[:3, 3] = T0[:3, 3] * (1 - u) + np.asarray(T_target)[:3, 3] * u
             T[:3, :3] = _slerp(T0[:3, :3], np.asarray(T_target)[:3, :3], u)
+            self._checkpoint("ik.before")
             q, ok = solve_ik(self.model, self.data, T, q_init=q, tcp=self.tcp)
+            self._checkpoint("ik.after")
             if not ok:
                 # 중간 경유점은 근사해(best q)를 허용, 마지막 점만 오차 검사
                 if k == n_waypoints and not self._close_enough(q, T):
@@ -139,6 +146,7 @@ class Controller:
         return float(np.sum(self.data.qpos[self.fadr]))
 
     def open_gripper(self, width=.08, timeout=1.5):
+        self._checkpoint("gripper.open")
         if hasattr(self, "detach"): self.detach()
         return self._gripper(width, timeout)
 
@@ -201,7 +209,7 @@ class Controller:
     def pick_object(self, T_world_obj, bounds, lift=.15, phase_cb=None, object_pose_fn=None):
         from .grasp import choose_grasp
         cb = phase_cb or (lambda p: None)
-        plan = choose_grasp(self.model, self.data, T_world_obj, bounds, tcp=self.tcp)
+        plan = choose_grasp(self.model, self.data, T_world_obj, bounds, tcp=self.tcp, checkpoint=getattr(self,"checkpoint_hook",None))
         self._estimated_ee_obj = np.linalg.inv(plan["grasp"]) @ np.asarray(T_world_obj, float)
         self._estimated_obj_pose = np.asarray(T_world_obj, float).copy()
         z0 = object_pose_fn()[2, 3] if object_pose_fn else None
@@ -257,7 +265,9 @@ class Controller:
 
     def move_to_pose_joint(self, T_target, max_vel=0.8, min_duration=1.0, q_init=None):
         """멀리 이동할 때: IK 한 번 풀고 관절공간에서 부드럽게 이동 (Cartesian 경로의 IK 점프 방지)"""
+        self._checkpoint("ik.before")
         q, ok = solve_ik(self.model, self.data, T_target, q_init=self.data.qpos[self.qadr].copy() if q_init is None else q_init, tcp=self.tcp)
+        self._checkpoint("ik.after")
         if not ok and not self._close_enough(q, T_target):
             raise RuntimeError("목표 자세 IK 실패")
         dq = np.abs(q - self.data.qpos[self.qadr]).max()
@@ -298,10 +308,14 @@ class Controller:
             desired[0, 3], desired[1, 3], desired[2, 3] = target_xy[0], target_xy[1], z0
             G = desired @ np.linalg.inv(rel); G[2, 3] += release_gap
             pre = G.copy(); pre[2, 3] += 0.10
+            self._checkpoint("ik.before")
             qp, ok1 = solve_ik(self.model, self.data, pre, q_init=self.data.qpos[self.qadr].copy(), tcp=self.tcp)
+            self._checkpoint("ik.after")
             if not (ok1 or self._close_enough(qp, pre)): continue
             d2 = mujoco.MjData(self.model); d2.qpos[:] = self.data.qpos; d2.qpos[self.qadr] = qp
+            self._checkpoint("ik.before")
             qg, ok2 = solve_ik(self.model, d2, G, q_init=qp, tcp=self.tcp)
+            self._checkpoint("ik.after")
             if (ok2 or self._close_enough(qg, G)) and not self._arm_hits_env(qg) and not self._arm_hits_env(qp):
                 found = (desired, G, pre); break
         if found is None:
@@ -427,6 +441,7 @@ class Controller:
         return True
 
     def detach(self):
+        self._checkpoint("detach")
         m, d = self.model, self.data
         for e in range(m.neq):
             nm = mujoco.mj_id2name(m, mujoco.mjtObj.mjOBJ_EQUALITY, e) or ""
