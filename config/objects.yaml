@@ -1,0 +1,367 @@
+{
+  "schema_version": 1,
+  "unit": "m",
+  "objects": {
+    "mug": {
+      "dimensions_m": [
+        0.064,
+        0.064,
+        0.06
+      ],
+      "height_m": 0.06,
+      "footprint_m2": 0.0032169908772759484,
+      "symmetry": "none",
+      "rgba": [
+        0.85,
+        0.16,
+        0.12,
+        1
+      ],
+      "grasp_policy": "strict_top",
+      "visual": "assets/objects/cell_r5/mug.obj",
+      "collision": [
+        "assets/objects/cell_r5/mug.obj"
+      ],
+      "mass_kg": 0.08,
+      "origin": "bottom_center",
+      "shape": "cylinder",
+      "license": "project-original",
+      "bounds_m": [
+        [
+          -0.032,
+          -0.032,
+          0
+        ],
+        [
+          0.032,
+          0.032,
+          0.06
+        ]
+      ]
+    },
+    "small_box": {
+      "dimensions_m": [
+        0.06,
+        0.04,
+        0.04
+      ],
+      "height_m": 0.04,
+      "footprint_m2": 0.0024,
+      "symmetry": "pi",
+      "rgba": [
+        0.12,
+        0.7,
+        0.2,
+        1
+      ],
+      "grasp_policy": "strict_top",
+      "visual": "assets/objects/cell_r5/small_box.obj",
+      "collision": [
+        "assets/objects/cell_r5/small_box.obj"
+      ],
+      "mass_kg": 0.08,
+      "origin": "bottom_center",
+      "shape": "box",
+      "license": "project-original",
+      "bounds_m": [
+        [
+          -0.03,
+          -0.02,
+          0
+        ],
+        [
+          0.03,
+          0.02,
+          0.04
+        ]
+      ]
+    },
+    "can": {
+      "dimensions_m": [
+        0.046,
+        0.046,
+        0.07
+      ],
+      "height_m": 0.07,
+      "footprint_m2": 0.0016619025137490006,
+      "symmetry": "continuous",
+      "rgba": [
+        0.95,
+        0.16,
+        0.02,
+        1
+      ],
+      "grasp_policy": "strict_top",
+      "visual": "assets/objects/cell_r5/can.obj",
+      "collision": [
+        "assets/objects/cell_r5/can.obj"
+      ],
+      "mass_kg": 0.08,
+      "origin": "bottom_center",
+      "shape": "cylinder",
+      "license": "project-original",
+      "bounds_m": [
+        [
+          -0.023,
+          -0.023,
+          0
+        ],
+        [
+          0.023,
+          0.023,
+          0.07
+        ]
+      ]
+    },
+    "ball": {
+      "dimensions_m": [
+        0.05,
+        0.05,
+        0.05
+      ],
+      "height_m": 0.05,
+      "footprint_m2": 0.001963495408493621,
+      "symmetry": "continuous",
+      "rgba": [
+        0.6,
+        0.16,
+        0.8,
+        1
+      ],
+      "grasp_policy": "strict_top",
+      "visual": "assets/objects/cell_r5/ball.obj",
+      "collision": [
+        "assets/objects/cell_r5/ball.obj"
+      ],
+      "mass_kg": 0.08,
+      "origin": "bottom_center",
+      "shape": "sphere",
+      "license": "project-original",
+      "bounds_m": [
+        [
+          -0.025,
+          -0.025,
+          0
+        ],
+        [
+          0.025,
+          0.025,
+          0.05
+        ]
+      ],
+      "contact_policy": {
+        "condim": 6,
+        "sliding_friction": 0.8,
+        "torsional_friction_m": 0.01,
+        "rolling_friction_m": 0.002,
+        "material": "matte_rubber_surrogate",
+        "rationale": "physical rolling resistance; no joint fixing or velocity reset"
+      }
+    },
+    "block": {
+      "dimensions_m": [
+        0.045,
+        0.045,
+        0.045
+      ],
+      "height_m": 0.045,
+      "footprint_m2": 0.002025,
+      "symmetry": "pi/2",
+      "rgba": [
+        0.12,
+        0.7,
+        0.8,
+        1
+      ],
+      "grasp_policy": "strict_top",
+      "visual": "assets/objects/cell_r5/block.obj",
+      "collision": [
+        "assets/objects/cell_r5/block.obj"
+      ],
+      "mass_kg": 0.08,
+      "origin": "bottom_center",
+      "shape": "box",
+      "license": "project-original",
+      "bounds_m": [
+        [
+          -0.0225,
+          -0.0225,
+          0
+        ],
+        [
+          0.0225,
+          0.0225,
+          0.045
+        ]
+      ]
+    },
+    "bottle": {
+      "dimensions_m": [
+        0.035,
+        0.035,
+        0.065
+      ],
+      "height_m": 0.065,
+      "footprint_m2": 0.0009621127501618743,
+      "symmetry": "continuous",
+      "rgba": [
+        0.9,
+        0.35,
+        0.65,
+        1
+      ],
+      "grasp_policy": "strict_top",
+      "visual": "assets/objects/cell_r5/bottle.obj",
+      "collision": [
+        "assets/objects/cell_r5/bottle.obj"
+      ],
+      "mass_kg": 0.08,
+      "origin": "bottom_center",
+      "shape": "cylinder",
+      "license": "project-original",
+      "bounds_m": [
+        [
+          -0.0175,
+          -0.0175,
+          0
+        ],
+        [
+          0.0175,
+          0.0175,
+          0.065
+        ]
+      ]
+    },
+    "mustard": {
+      "dimensions_m": [
+        0.097151,
+        0.066619,
+        0.19140800000000002
+      ],
+      "height_m": 0.19140800000000002,
+      "footprint_m2": 0.006472102469,
+      "bounds_m": [
+        [
+          -0.049815,
+          -0.035766,
+          -0.083861
+        ],
+        [
+          0.047336,
+          0.030853,
+          0.107547
+        ]
+      ],
+      "symmetry": "none",
+      "rgba": [
+        0.85,
+        0.65,
+        0.12,
+        1
+      ],
+      "grasp_policy": "side_preferred",
+      "visual": "downloads/demo_data/mustard0/mesh/textured_simple.obj",
+      "collision": [
+        "assets/objects/mustard/collision_hull.obj"
+      ],
+      "mass_kg": 0.1,
+      "origin": "source_mesh_frame",
+      "license": "CC-BY-4.0",
+      "texture": "downloads/demo_data/mustard0/mesh/texture_map.png"
+    },
+    "box": {
+      "dimensions_m": [
+        0.05,
+        0.03,
+        0.02
+      ],
+      "height_m": 0.02,
+      "footprint_m2": 0.0015,
+      "bounds_m": [
+        [
+          -0.025,
+          -0.015,
+          -0.01
+        ],
+        [
+          0.025,
+          0.015,
+          0.01
+        ]
+      ],
+      "symmetry": "none",
+      "rgba": [
+        0.12,
+        0.3,
+        0.85,
+        1
+      ],
+      "grasp_policy": "strict_top",
+      "visual": "cad_uploads/converted/box_fillet_50x30x20mm/box_fillet_50x30x20mm.obj",
+      "collision": [
+        "cad_uploads/converted/box_fillet_50x30x20mm/box_fillet_50x30x20mm_collision_coacd_00.obj"
+      ],
+      "mass_kg": 0.1,
+      "origin": "source_mesh_frame",
+      "license": "existing-project-CAD"
+    },
+    "cup": {
+      "dimensions_m": [
+        0.07,
+        0.07,
+        0.06
+      ],
+      "height_m": 0.06,
+      "footprint_m2": 0.004900000000000001,
+      "bounds_m": [
+        [
+          -0.035,
+          -0.035,
+          -0.03
+        ],
+        [
+          0.035,
+          0.035,
+          0.03
+        ]
+      ],
+      "symmetry": "continuous",
+      "rgba": [
+        0.15,
+        0.6,
+        0.9,
+        1
+      ],
+      "grasp_policy": "strict_top",
+      "visual": "cad_uploads/converted/cup_d70_h60mm/cup_d70_h60mm.obj",
+      "collision": [
+        "cad_uploads/converted/cup_d70_h60mm/cup_d70_h60mm_collision_coacd_13.obj",
+        "cad_uploads/converted/cup_d70_h60mm/cup_d70_h60mm_collision_coacd_02.obj",
+        "cad_uploads/converted/cup_d70_h60mm/cup_d70_h60mm_collision_coacd_15.obj",
+        "cad_uploads/converted/cup_d70_h60mm/cup_d70_h60mm_collision_coacd_08.obj",
+        "cad_uploads/converted/cup_d70_h60mm/cup_d70_h60mm_collision_coacd_09.obj",
+        "cad_uploads/converted/cup_d70_h60mm/cup_d70_h60mm_collision_coacd_05.obj",
+        "cad_uploads/converted/cup_d70_h60mm/cup_d70_h60mm_collision_coacd_06.obj",
+        "cad_uploads/converted/cup_d70_h60mm/cup_d70_h60mm_collision_coacd_11.obj",
+        "cad_uploads/converted/cup_d70_h60mm/cup_d70_h60mm_collision_coacd_12.obj",
+        "cad_uploads/converted/cup_d70_h60mm/cup_d70_h60mm_collision_coacd_10.obj",
+        "cad_uploads/converted/cup_d70_h60mm/cup_d70_h60mm_collision_coacd_04.obj",
+        "cad_uploads/converted/cup_d70_h60mm/cup_d70_h60mm_collision_coacd_00.obj",
+        "cad_uploads/converted/cup_d70_h60mm/cup_d70_h60mm_collision_coacd_01.obj",
+        "cad_uploads/converted/cup_d70_h60mm/cup_d70_h60mm_collision_coacd_03.obj",
+        "cad_uploads/converted/cup_d70_h60mm/cup_d70_h60mm_collision_coacd_14.obj",
+        "cad_uploads/converted/cup_d70_h60mm/cup_d70_h60mm_collision_coacd_07.obj"
+      ],
+      "mass_kg": 0.1,
+      "origin": "source_mesh_frame",
+      "license": "existing-project-CAD"
+    }
+  },
+  "cell_surface": {
+    "material": "matte_rubber_tabletop",
+    "condim": 6,
+    "sliding_friction": 0.8,
+    "torsional_friction_m": 0.01,
+    "rolling_friction_m": 0.002
+  }
+}

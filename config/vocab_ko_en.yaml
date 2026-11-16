@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "aliases": {
+    "머그컵": "mug",
+    "머그": "mug",
+    "작은 박스": "small_box",
+    "캔": "can",
+    "공": "ball",
+    "블록": "block",
+    "병": "bottle",
+    "머스타드": "mustard",
+    "박스": "box",
+    "컵": "cup"
+  },
+  "phrases": {
+    "mug": "red mug",
+    "small_box": "green small box",
+    "can": "yellow can",
+    "ball": "purple ball",
+    "block": "cyan block",
+    "bottle": "pink bottle",
+    "mustard": "mustard bottle",
+    "box": "blue box",
+    "cup": "blue cup"
+  }
+}

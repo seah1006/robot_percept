@@ -1,0 +1,3 @@
+100000 {'interobject_contacts': 0, 'interobject_penetrations': 0, 'max_bottom_gap_m': 0.00010467630866051181, 'max_speed': 0.274220231810084}
+100001 {'interobject_contacts': 0, 'interobject_penetrations': 0, 'max_bottom_gap_m': 0.00010467630866084487, 'max_speed': 2.2883958593486386e-05}
+100002 {'interobject_contacts': 0, 'interobject_penetrations': 0, 'max_bottom_gap_m': 4.155832978008922e-05, 'max_speed': 1.6708836785505864e-07}

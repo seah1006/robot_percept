@@ -1,0 +1,285 @@
+............F........F......FF..F..F.FFFF..FF....F.FF.F.....F...         [100%]
+=================================== FAILURES ===================================
+_____________________________ test_settled[100000] _____________________________
+
+seed = 100000
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+>           assert d['max_bottom_gap_m']<.002
+E           assert 0.004704387854741976 < 0.002
+
+tests/test_cell_scene_r5.py:42: AssertionError
+_____________________________ test_settled[100009] _____________________________
+
+seed = 100009
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+>           assert d['max_bottom_gap_m']<.002
+E           assert 0.0035179325098525505 < 0.002
+
+tests/test_cell_scene_r5.py:42: AssertionError
+_____________________________ test_settled[100016] _____________________________
+
+seed = 100016
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+>           assert d['max_bottom_gap_m']<.002
+E           assert 0.0038573154701663226 < 0.002
+
+tests/test_cell_scene_r5.py:42: AssertionError
+_____________________________ test_settled[100017] _____________________________
+
+seed = 100017
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+>           assert d['max_bottom_gap_m']<.002
+E           assert 0.004713084406842649 < 0.002
+
+tests/test_cell_scene_r5.py:42: AssertionError
+_____________________________ test_settled[100020] _____________________________
+
+seed = 100020
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+>           assert d['max_bottom_gap_m']<.002
+E           assert 0.004531028063923137 < 0.002
+
+tests/test_cell_scene_r5.py:42: AssertionError
+_____________________________ test_settled[100023] _____________________________
+
+seed = 100023
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+>           assert d['max_bottom_gap_m']<.002
+E           assert 0.004569745642553025 < 0.002
+
+tests/test_cell_scene_r5.py:42: AssertionError
+_____________________________ test_settled[100025] _____________________________
+
+seed = 100025
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+>           assert d['max_bottom_gap_m']<.002
+E           assert 0.004103037434720125 < 0.002
+
+tests/test_cell_scene_r5.py:42: AssertionError
+_____________________________ test_settled[100026] _____________________________
+
+seed = 100026
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+>           assert d['max_bottom_gap_m']<.002
+E           assert 0.003483539536332847 < 0.002
+
+tests/test_cell_scene_r5.py:42: AssertionError
+_____________________________ test_settled[100027] _____________________________
+
+seed = 100027
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+>           assert d['max_bottom_gap_m']<.002
+E           assert 0.004396963199383486 < 0.002
+
+tests/test_cell_scene_r5.py:42: AssertionError
+_____________________________ test_settled[100028] _____________________________
+
+seed = 100028
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+>           assert d['max_bottom_gap_m']<.002
+E           assert 0.004124977321919188 < 0.002
+
+tests/test_cell_scene_r5.py:42: AssertionError
+_____________________________ test_settled[100031] _____________________________
+
+seed = 100031
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+>           assert d['max_bottom_gap_m']<.002
+E           assert 0.003392993680554679 < 0.002
+
+tests/test_cell_scene_r5.py:42: AssertionError
+_____________________________ test_settled[100032] _____________________________
+
+seed = 100032
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+>           assert d['max_bottom_gap_m']<.002
+E           assert 0.004746426192078157 < 0.002
+
+tests/test_cell_scene_r5.py:42: AssertionError
+_____________________________ test_settled[100037] _____________________________
+
+seed = 100037
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+>           assert d['max_bottom_gap_m']<.002
+E           assert 0.0045471980817293756 < 0.002
+
+tests/test_cell_scene_r5.py:42: AssertionError
+_____________________________ test_settled[100039] _____________________________
+
+seed = 100039
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+>           assert d['max_bottom_gap_m']<.002
+E           assert 0.004788299498419635 < 0.002
+
+tests/test_cell_scene_r5.py:42: AssertionError
+_____________________________ test_settled[100040] _____________________________
+
+seed = 100040
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+>           assert d['max_bottom_gap_m']<.002
+E           assert 0.004684517128084598 < 0.002
+
+tests/test_cell_scene_r5.py:42: AssertionError
+_____________________________ test_settled[100042] _____________________________
+
+seed = 100042
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+>           assert d['max_bottom_gap_m']<.002
+E           assert 0.00476419489608404 < 0.002
+
+tests/test_cell_scene_r5.py:42: AssertionError
+_____________________________ test_settled[100048] _____________________________
+
+seed = 100048
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+>           assert d['max_bottom_gap_m']<.002
+E           assert 0.004192695233879662 < 0.002
+
+tests/test_cell_scene_r5.py:42: AssertionError
+=============================== warnings summary ===============================
+../../anaconda3/envs/robot_percept/lib/python3.12/site-packages/dash/testing/plugin.py:104
+  /home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/dash/testing/plugin.py:104: PytestRemovedIn10Warning: The hookimpl pytest_addhooks uses old-style configuration options (marks or attributes).
+  Please use the pytest.hookimpl(tryfirst=True) decorator instead
+   to configure the hooks.
+   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
+    @pytest.mark.tryfirst
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_cell_scene_r5.py::test_settled[100000] - assert 0.004704387...
+FAILED tests/test_cell_scene_r5.py::test_settled[100009] - assert 0.003517932...
+FAILED tests/test_cell_scene_r5.py::test_settled[100016] - assert 0.003857315...
+FAILED tests/test_cell_scene_r5.py::test_settled[100017] - assert 0.004713084...
+FAILED tests/test_cell_scene_r5.py::test_settled[100020] - assert 0.004531028...
+FAILED tests/test_cell_scene_r5.py::test_settled[100023] - assert 0.004569745...
+FAILED tests/test_cell_scene_r5.py::test_settled[100025] - assert 0.004103037...
+FAILED tests/test_cell_scene_r5.py::test_settled[100026] - assert 0.003483539...
+FAILED tests/test_cell_scene_r5.py::test_settled[100027] - assert 0.004396963...
+FAILED tests/test_cell_scene_r5.py::test_settled[100028] - assert 0.004124977...
+FAILED tests/test_cell_scene_r5.py::test_settled[100031] - assert 0.003392993...
+FAILED tests/test_cell_scene_r5.py::test_settled[100032] - assert 0.004746426...
+FAILED tests/test_cell_scene_r5.py::test_settled[100037] - assert 0.004547198...
+FAILED tests/test_cell_scene_r5.py::test_settled[100039] - assert 0.004788299...
+FAILED tests/test_cell_scene_r5.py::test_settled[100040] - assert 0.004684517...
+FAILED tests/test_cell_scene_r5.py::test_settled[100042] - assert 0.004764194...
+FAILED tests/test_cell_scene_r5.py::test_settled[100048] - assert 0.004192695...
+17 failed, 47 passed, 1 warning in 11.16s

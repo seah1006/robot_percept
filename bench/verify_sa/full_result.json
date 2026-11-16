@@ -1,0 +1,60 @@
+  "block": 27,
+  "mug": 31,
+  "mustard": 33,
+  "small_box": 39
+ },
+ "eval_same_class_scenes": 20,
+ "eval_obj_counts": {
+  "3": 34,
+  "4": 33,
+  "2": 33
+ },
+ "settle_n": 70,
+ "settle_disp_mm_max": 0.031189916137729902,
+ "settle_tilt_deg_max": 3.9489241335124,
+ "settle_gap_mm_max": 0.10467630874183564,
+ "settle_maxpen_mm_max": 0.0,
+ "settle_speed_max": 0.043516667509402154,
+ "obj_contact_steps_total": 0,
+ "robot_contact_steps_total": 0,
+ "aabb_overlap_scenes": 0,
+ "outside_tray_scenes": 0,
+ "worst": [
+  {
+   "seed": 100023,
+   "disp_mm": 0.031189916137729902,
+   "tilt_deg": 0.3336472779563271,
+   "gap_mm": 0.05516826904955474,
+   "obj_contacts": 0,
+   "maxpen_mm": 0.0,
+   "robot_contacts": 0,
+   "aabb_overlap": 0,
+   "inside_tray": true,
+   "speed": 0.02502995308760045
+  },
+  {
+   "seed": 100025,
+   "disp_mm": 0.02538299842634703,
+   "tilt_deg": 0.04344235528964494,
+   "gap_mm": 0.06875689481361524,
+   "obj_contacts": 0,
+   "maxpen_mm": 0.0,
+   "robot_contacts": 0,
+   "aabb_overlap": 0,
+   "inside_tray": true,
+   "speed": 0.014488183110547326
+  },
+  {
+   "seed": 1014,
+   "disp_mm": 0.02522470224927615,
+   "tilt_deg": 2.5261010702617654,
+   "gap_mm": 0.05511649681344544,
+   "obj_contacts": 0,
+   "maxpen_mm": 0.0,
+   "robot_contacts": 0,
+   "aabb_overlap": 0,
+   "inside_tray": true,
+   "speed": 0.043516667509402154
+  }
+ ]
+}

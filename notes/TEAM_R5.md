@@ -25,6 +25,13 @@
 
 - (11-16 12:27) PowerShell 큰따옴표/히어스트링 안의 `$PWD`는 Windows 경로(/mnt/c/Users/USER/.aside/u/0)로 먼저 확장될 수 있음 → WSL 명령은 `export PYTHONPATH=/home/user/work/robot_percept` 절대경로 사용. (이번 full pytest 16 FAIL은 이것이 원인 아님: 전부 SA 신규 test_settled.)
 
+## Gemini 분석가 (G-*, 11-16~, 부모만 호출)
+- 호출: `pwsh -NoProfile -File C:\Users\USER\tools\gemini\gemini-ask.ps1 -Name <작업> -Model <ID> -Lines 30 -TimeoutSec <초> -Prompt "..."`. 결과 전체는 `C:\Users\USER\tools\gemini\out\`에 저장, 첫 줄 GEMINI_OK 확인. 읽기 전용(plan 모드).
+- 역할: 로그 1차 분류, 저장소 영향 범위·계약 위반 후보 조사, 외부 문서·파라미터 조사, 계획·diff 3번째 의견. **금지**: 파일 수정·커밋·측정/GPU 락·카메라·PASS 판정(결과는 참고 자료, 검증자가 직접 재현해야 근거).
+- 모델 규칙: 로그 분류·요약·grep = hydrogen-low/medium · 일반 조사·diff 리뷰 = hydrogen-high(기본) · 어려운 원인 분석·계획 리뷰 = hydrogen-xhigh(yield_ms 백그라운드) · 교차 확인만 argon-high · 형식 변환 = 3.8-flash. carbon 사용 불가.
+- 호출 기록(작업 / 모델 / 결과 파일 / 채택 여부):
+  - 11-16 12:32 ct-contract-scan / Gemini 4 Argon(당시 스크립트 기본, -Model 옵션 추가 전) / out\ct-contract-scan-1116-123237.md / 후보 10 중 5 재현 확인(V-CT), G3 실결함 1건 신규 발견
+
 ## 협업
 - 구현↔검증은 message_agent로 직접 루프. 검증 기본 판정 NEEDS WORK, 직접 재현 원자료만 PASS.
 - 부모에게는 이정표·PASS/FAIL·결정 필요 사항만.

@@ -1,0 +1,293 @@
+...F...F..F..F....F..F...F.......FF.......FF.FF..F                       [100%]
+=================================== FAILURES ===================================
+_____________________________ test_settled[100003] _____________________________
+
+seed = 100003
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+            assert d['max_bottom_gap_m']<.002
+            assert d['max_speed']<.01
+            assert d['max_linear_speed_m_s']<.01
+            assert d['max_angular_speed_rad_s']<.01
+>           assert d['settle_converged']
+E           assert False
+
+tests/test_cell_scene_r5.py:46: AssertionError
+_____________________________ test_settled[100007] _____________________________
+
+seed = 100007
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+            assert d['max_bottom_gap_m']<.002
+            assert d['max_speed']<.01
+            assert d['max_linear_speed_m_s']<.01
+            assert d['max_angular_speed_rad_s']<.01
+>           assert d['settle_converged']
+E           assert False
+
+tests/test_cell_scene_r5.py:46: AssertionError
+_____________________________ test_settled[100010] _____________________________
+
+seed = 100010
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+            assert d['max_bottom_gap_m']<.002
+            assert d['max_speed']<.01
+            assert d['max_linear_speed_m_s']<.01
+            assert d['max_angular_speed_rad_s']<.01
+>           assert d['settle_converged']
+E           assert False
+
+tests/test_cell_scene_r5.py:46: AssertionError
+_____________________________ test_settled[100013] _____________________________
+
+seed = 100013
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+            assert d['max_bottom_gap_m']<.002
+            assert d['max_speed']<.01
+            assert d['max_linear_speed_m_s']<.01
+            assert d['max_angular_speed_rad_s']<.01
+>           assert d['settle_converged']
+E           assert False
+
+tests/test_cell_scene_r5.py:46: AssertionError
+_____________________________ test_settled[100018] _____________________________
+
+seed = 100018
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+            assert d['max_bottom_gap_m']<.002
+            assert d['max_speed']<.01
+            assert d['max_linear_speed_m_s']<.01
+            assert d['max_angular_speed_rad_s']<.01
+>           assert d['settle_converged']
+E           assert False
+
+tests/test_cell_scene_r5.py:46: AssertionError
+_____________________________ test_settled[100021] _____________________________
+
+seed = 100021
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+            assert d['max_bottom_gap_m']<.002
+            assert d['max_speed']<.01
+            assert d['max_linear_speed_m_s']<.01
+            assert d['max_angular_speed_rad_s']<.01
+>           assert d['settle_converged']
+E           assert False
+
+tests/test_cell_scene_r5.py:46: AssertionError
+_____________________________ test_settled[100025] _____________________________
+
+seed = 100025
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+            assert d['max_bottom_gap_m']<.002
+            assert d['max_speed']<.01
+            assert d['max_linear_speed_m_s']<.01
+            assert d['max_angular_speed_rad_s']<.01
+>           assert d['settle_converged']
+E           assert False
+
+tests/test_cell_scene_r5.py:46: AssertionError
+_____________________________ test_settled[100033] _____________________________
+
+seed = 100033
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+            assert d['max_bottom_gap_m']<.002
+            assert d['max_speed']<.01
+            assert d['max_linear_speed_m_s']<.01
+            assert d['max_angular_speed_rad_s']<.01
+>           assert d['settle_converged']
+E           assert False
+
+tests/test_cell_scene_r5.py:46: AssertionError
+_____________________________ test_settled[100034] _____________________________
+
+seed = 100034
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+            assert d['max_bottom_gap_m']<.002
+            assert d['max_speed']<.01
+            assert d['max_linear_speed_m_s']<.01
+            assert d['max_angular_speed_rad_s']<.01
+>           assert d['settle_converged']
+E           assert False
+
+tests/test_cell_scene_r5.py:46: AssertionError
+_____________________________ test_settled[100042] _____________________________
+
+seed = 100042
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+            assert d['max_bottom_gap_m']<.002
+            assert d['max_speed']<.01
+            assert d['max_linear_speed_m_s']<.01
+            assert d['max_angular_speed_rad_s']<.01
+>           assert d['settle_converged']
+E           assert False
+
+tests/test_cell_scene_r5.py:46: AssertionError
+_____________________________ test_settled[100043] _____________________________
+
+seed = 100043
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+            assert d['max_bottom_gap_m']<.002
+            assert d['max_speed']<.01
+            assert d['max_linear_speed_m_s']<.01
+            assert d['max_angular_speed_rad_s']<.01
+>           assert d['settle_converged']
+E           assert False
+
+tests/test_cell_scene_r5.py:46: AssertionError
+_____________________________ test_settled[100045] _____________________________
+
+seed = 100045
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+            assert d['max_bottom_gap_m']<.002
+            assert d['max_speed']<.01
+            assert d['max_linear_speed_m_s']<.01
+            assert d['max_angular_speed_rad_s']<.01
+>           assert d['settle_converged']
+E           assert False
+
+tests/test_cell_scene_r5.py:46: AssertionError
+_____________________________ test_settled[100046] _____________________________
+
+seed = 100046
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+            assert d['max_bottom_gap_m']<.002
+            assert d['max_speed']<.01
+            assert d['max_linear_speed_m_s']<.01
+            assert d['max_angular_speed_rad_s']<.01
+>           assert d['settle_converged']
+E           assert False
+
+tests/test_cell_scene_r5.py:46: AssertionError
+_____________________________ test_settled[100049] _____________________________
+
+seed = 100049
+
+    @pytest.mark.parametrize('seed',range(100000,100050))
+    def test_settled(seed):
+        e=open_evaluation_scene(seed)
+        try:
+            d=e.diagnostics()
+            assert d['interobject_penetrations']==0
+            assert d['interobject_contacts']==0
+            assert d['max_bottom_gap_m']<.002
+            assert d['max_speed']<.01
+            assert d['max_linear_speed_m_s']<.01
+            assert d['max_angular_speed_rad_s']<.01
+>           assert d['settle_converged']
+E           assert False
+
+tests/test_cell_scene_r5.py:46: AssertionError
+=============================== warnings summary ===============================
+../../anaconda3/envs/robot_percept/lib/python3.12/site-packages/dash/testing/plugin.py:104
+  /home/user/anaconda3/envs/robot_percept/lib/python3.12/site-packages/dash/testing/plugin.py:104: PytestRemovedIn10Warning: The hookimpl pytest_addhooks uses old-style configuration options (marks or attributes).
+  Please use the pytest.hookimpl(tryfirst=True) decorator instead
+   to configure the hooks.
+   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
+    @pytest.mark.tryfirst
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_cell_scene_r5.py::test_settled[100003] - assert False
+FAILED tests/test_cell_scene_r5.py::test_settled[100007] - assert False
+FAILED tests/test_cell_scene_r5.py::test_settled[100010] - assert False
+FAILED tests/test_cell_scene_r5.py::test_settled[100013] - assert False
+FAILED tests/test_cell_scene_r5.py::test_settled[100018] - assert False
+FAILED tests/test_cell_scene_r5.py::test_settled[100021] - assert False
+FAILED tests/test_cell_scene_r5.py::test_settled[100025] - assert False
+FAILED tests/test_cell_scene_r5.py::test_settled[100033] - assert False
+FAILED tests/test_cell_scene_r5.py::test_settled[100034] - assert False
+FAILED tests/test_cell_scene_r5.py::test_settled[100042] - assert False
+FAILED tests/test_cell_scene_r5.py::test_settled[100043] - assert False
+FAILED tests/test_cell_scene_r5.py::test_settled[100045] - assert False
+FAILED tests/test_cell_scene_r5.py::test_settled[100046] - assert False
+FAILED tests/test_cell_scene_r5.py::test_settled[100049] - assert False
+14 failed, 36 passed, 14 deselected, 1 warning in 25.20s
