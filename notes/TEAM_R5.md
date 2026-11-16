@@ -9,6 +9,8 @@
 - 셸은 PowerShell 7. WSL 명령은 LF .sh + `wsl -d Ubuntu-24.04 -- bash /mnt/c/...` 또는 `wsl -d Ubuntu-24.04 --exec bash -lc '...'`.
 - 서버는 Bash yield_ms 장기 실행, 종료는 `ss -ltnp | grep :<포트>` 자기 PID만(pkill -f 금지). 5080은 사용자 서버 예약(켜지 말 것).
 
+- (11-16 12:55 부모 결정) r5 서버·인식(Grounding DINO) 실행 env = **robot_percept_g0c**(원본 복제 + transformers 4.57.6, torch/numpy 줄 불변 확인). 원본 env robot_percept에는 transformers 설치 금지. 기존 r3 측정·회귀는 원본 env 유지.
+
 ## 페어·포트
 | 페어 | 구현(Codex) | 검증(Claude) | 포트 |
 |-|-|-|-|

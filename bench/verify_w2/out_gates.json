@@ -1,0 +1,14 @@
+{
+ "good_diverse_rot0.5": "ACCEPT rms=0.046",
+ "near_identical_poses": "REJECT ValueError('calibration quality: insufficient viewpoint diversity')",
+ "small_rot_0.05rad(~3deg)": "REJECT ValueError('calibration quality: insufficient viewpoint diversity')",
+ "rot_0.12rad": "ACCEPT rms=0.022",
+ "heavy_noise_sigma25_blur3": "ACCEPT rms=0.139",
+ "too_few_5": "REJECT ValueError('at least 6 diverse checkerboard views required')",
+ "incidence_8.0deg(range 7.1m)": "INVALID_INPUT",
+ "incidence_9.5deg(range 6.0m)": "INVALID_INPUT",
+ "incidence_10.5deg(range 5.4m)": "INVALID_INPUT",
+ "incidence_12.0deg(range 4.7m)": "INVALID_INPUT",
+ "range_target_2.9": "OK x=2.32",
+ "range_target_3.1": "OK x=2.48"
+}

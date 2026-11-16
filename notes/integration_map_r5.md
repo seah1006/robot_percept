@@ -1,0 +1,30 @@
+# r5 G1·K 통합 지도 (참고 자료)
+
+> Gemini 4 hydrogen-high 읽기 전용 조사 (2026-11-16 12:43, HEAD a297220). **검증 근거 아님**: 구현자·검증자가 직접 확인할 것. 줄 번호는 a297220 기준.
+
+**결론**: 현재 코드에는 `G1`(Grounding DINO·모드 독립 RPC·GT 격리)과 `K`(Arbiter·Executor·SQLite·공유 epoch/stop 슬롯·checkpoint)의 핵심 연결 계층이 빠져 있으며, 두 작업은 `web/app.py`·`web/perception_stub.py`·`web/sim_worker.py`의 동일 함수에서 직접 충돌한다.
+
+### (A) G1 변경 지점 및 위험
+- **RPC 디스패치**: `_worker`의 `op` 분기([web/perception_stub.py:38-73](web/perception_stub.py#L38-L73))에 `ground`/`segment_box`/`capabilities` 추가 필요. `PerceptionBackend.call`이 `mode!='fp'`를 거부([:93-94](web/perception_stub.py#L93-L94))하고 `proc is None` 예외를 `drop`만 허용([:99-100](web/perception_stub.py#L99-L100))해 모드 독립·box-only 호출 차단 위험.
+- **모델 로드·워밍업·취소**: 워커 시작 시 `torch`/FP/SAM2 즉시 import([web/perception_stub.py:19,26-29](web/perception_stub.py#L19)), SAM2 `cuda` 고정([:42-44](web/perception_stub.py#L42-L44)) 수정 필요. `warmup_loop`([web/app.py:43-74](web/app.py#L43-L74))·`warmup_async`([web/perception_stub.py:131-196](web/perception_stub.py#L131-L196))가 `fp`+`segment`/`register`/`drop`+`depth`+`flock`에 묶여 box-only 시 불필요 FP 워밍업·VRAM 점유 위험. 취소는 `is_warmup`만 `warmup_cancel`을 보고([:110](web/perception_stub.py#L110)) `defer_warmup_for_g1`·`suspend_worker`·`prioritize_humanoid`([:198-258](web/perception_stub.py#L198-L258), [web/app.py:75-100](web/app.py#L75-L100))가 `proc.terminate()`를 써서 활성 추론 유실 위험, 고정 `180`s 대기([:108](web/perception_stub.py#L108))가 warm `30`s와 불일치.
+- **GPU 메모리 해제**: `segment` 정상 끝에만 `reset_predictor`/`to('cpu')`/`empty_cache()`([web/perception_stub.py:58](web/perception_stub.py#L58)), `register`/`track`([:59-71](web/perception_stub.py#L59-L71))과 `finally` 부재로 예외·OOM·취소 시 VRAM 누수 위험. `:40`의 `default_tensor_type` 전환과 `:74-75`의 무조건 `cuda.synchronize`/`max_memory_allocated`는 CPU/ROCm 분기 시 오류 위험.
+- **기존 클릭 경로 GT 사용**: [web/app.py:283](web/app.py#L283) `seg`/`objects` 수집, `:299` GT mask, `:300-303` GT `overlaps` 최대 이름 선택, `:305` GT mesh, `:307,129` `estimate_pose`([web/perception_stub.py:8-11](web/perception_stub.py#L8-L11) GT+seed 7 jitter), `:309,316` GT 평가, `:318-330` `reacquire_after`, `:337` 및 [web/sim_worker.py:149,151-152,161-162](web/sim_worker.py#L149-L162)의 `gt_assist=True`·`registry`·`object_pose_fn`. `gt_assist=False`만으로는 GT identity 누출 차단 불가.
+
+### (B) K 변경 지점 및 위험
+- **명령 꺼내기·동기 실행**: `Runtime.send`([web/app.py:156-157](web/app.py#L156-L157))가 `uuid[:10]`로 epoch/deadline 없이 enqueue하고, `run_worker`([web/sim_worker.py:127-130](web/sim_worker.py#L127-L130))가 FIFO 즉시 실행. `pick`/`place` 동기 실행([:145-168](web/sim_worker.py#L145-L168)), `place` 내 `return_home`([:164-168](web/sim_worker.py#L164-L168)), 소유 검사 없는 `reset`/`randomize`([:141,143](web/sim_worker.py#L141-L143)) 및 HTTP 라우트([web/app.py:288-290,331-352,366](web/app.py#L288-L366)) 연결 필요. 위험: 만료 명령 지연 실행, `place`/`home` step 분리 불가.
+- **stop 신호 확인**: `run_worker` 루프 첫 줄 `stop_event` 검사만 존재([web/sim_worker.py:122-123](web/sim_worker.py#L122-L123)). 동기 `pick`/`place`·`_step_hook`([:18-22](web/sim_worker.py#L18-L22)) 내부 확인 부재로 정지 지연 및 `break` 시 hold/ACK 누락 위험.
+- **`last_command` 저장·대기**: `sim_worker`가 단일 슬롯 덮어쓰기 및 `finally`에서 무조건 `active_command=None`([web/sim_worker.py:132,172-178](web/sim_worker.py#L132)). `Runtime.wait`([web/app.py:158-164](web/app.py#L158-L164), 호출 `:153,320,366`)는 timeout 시 문자열 반환만 하고 `expire()` 호출이 없어 ACK 유실·stale 명령 실행 위험.
+- **스텝·IK 정지 checkpoint**: 스텝은 `Controller._step`→`step_hook`([sim/control.py:72-81](sim/control.py#L72-L81), [web/sim_worker.py:18-22](web/sim_worker.py#L18-L22)) 및 메인 루프([web/sim_worker.py:180-188](web/sim_worker.py#L180-L188)). IK 호출 지점은 `solve_ik`([sim/ik.py:57-102](sim/ik.py#L57-L102), hook 없음)를 부르는 [sim/control.py:110](sim/control.py#L110)(경유점), [:260](sim/control.py#L260), [:301,304](sim/control.py#L301)와 [sim/grasp.py:129,132,147,151](sim/grasp.py#L129-L151). 정지 경로 호출 금지 지점: `detach`가 있는 `open_gripper`([sim/control.py:141-143](sim/control.py#L141-L143)), `pick` 실패 자동 open([web/sim_worker.py:154-155](web/sim_worker.py#L154-L155), [sim/control.py:208,228](sim/control.py#L208)), `place` release/home([sim/control.py:320](sim/control.py#L320), [web/sim_worker.py:164-168](web/sim_worker.py#L164-L168)). 위험: checkpoint 누락 시 정지 지연 >385 ms, 정지 중 open 시 낙하·충돌.
+- **`/status`·`/status/ws` push**: `status_payload`([web/app.py:371-381](web/app.py#L371-L381))에 `cell` 키 추가, `StatusSchedule.next`/`active`([web/realtime.py:74-75,80-84](web/realtime.py#L74-L84))와 `status_ws` `builders`([:112](web/realtime.py#L112))에 `'cell'` 추가 필요. 3종 고정 구조 누락 시 WS 미전송, WS tick DB/lock 접근 시 지연 위험.
+- **서버 종료 시 worker 정리**: `run_server` signal→`close_app`→`Runtime.close`([web/app.py:175-191,386-410](web/app.py#L175-L191)), `sim_worker` `env.close`/`shm.close`([web/sim_worker.py:194-198](web/sim_worker.py#L194-L198)), `PerceptionBackend.close`([web/perception_stub.py:260-270](web/perception_stub.py#L260-L270)). 동기 `pick`/`place` 블로킹 시 5 s 내 종료 실패로 `CellState.restart`/DB 마감 누락 위험.
+
+### G1·K 공유 파일·함수 충돌 목록
+- `web/app.py`: `Runtime.__init__`(:30-39), `warmup_loop`(:43-74), `drop`(:103-105), `track_loop`(:106-147), `click`/`select_at`/`reacquire_after`(:279-330), `/robot/pick`·`/robot/place`(:331-346), `status_payload`(:371-379), `Runtime.close`(:175-191).
+- `web/perception_stub.py`: `PerceptionBackend.call`(:88-130, lock·deadline·모드 분기), `warmup_async`·`defer_warmup_for_g1`·`suspend_worker`·`close`(:131-270).
+- `web/sim_worker.py`: `run_worker` 내 `pick`/`place`·`gt_assist`·`object_pose_fn` 경로(:145-168).
+
+### `notes/contract_r5.md` 4장 대비 빠진 연결점
+1. **Arbiter·Executor·SQLite 부재**: [web/cell_state.py:19-143](web/cell_state.py#L19-L143)은 순수 인메모리 정책이며 4.1·4.2·6장의 `ControlArbiter` mutex, 단일 `CellExecutor`, SQLite writer/스키마, `boot_id` 재시작 마감(`4.8`) 연결이 없음.
+2. **FIFO 밖 슬롯·DTO 부재**: `4.2`·`4.3`의 `mp.Value` 공유 epoch 및 stop/cancel 슬롯, `Command`/`Ack` DTO, `cid`별 ACK 저장소와 `expire()` 호출 경로가 `web/app.py`·`web/sim_worker.py`에 없음.
+3. **watchdog·복구 데이터 경로 부재**: `4.6-4`의 PID 검증·재생성, `4.6-5`의 `draining` 5 s 대기 후 perception 종료, `4.7`의 `q_hold`·속도·그리퍼 폭·접촉 재판정 공급 경로 미연결.
+4. **전역 소유권 통합 부재**: `web/app.py` 라우트·`track_loop`와 `teleop`·`humanoid`의 arbiter 배제 및 `held_object != None` 시 `/tasks` 409(`4.4`) 검사 미연결.

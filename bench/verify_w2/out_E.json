@@ -1,0 +1,7 @@
+{
+ "center": "INVALID_INPUT",
+ "top": "INVALID_INPUT",
+ "bottom_row": "INVALID_INPUT",
+ "straight_down": "[1.307, 0.0, 0.3]",
+ "zero_plane": "CALIBRATION_MISMATCH"
+}

@@ -1,0 +1,8 @@
+{
+ "incidence_8.0deg slant=2.16m": "INVALID_INPUT",
+ "incidence_9.5deg slant=1.82m": "INVALID_INPUT",
+ "incidence_10.5deg slant=1.65m": "OK x=1.619",
+ "incidence_12.0deg slant=1.44m": "OK x=1.411",
+ "slant_2.9m (incidence 20deg)": "OK x=2.722",
+ "slant_3.1m (incidence 19deg)": "INVALID_INPUT"
+}

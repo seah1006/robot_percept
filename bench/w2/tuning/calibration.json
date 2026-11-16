@@ -1,0 +1,12 @@
+{
+  "rms_px": 0.053499228325401986,
+  "accepted_views": 14,
+  "extrinsics_reference": "first_accepted_board",
+  "independent_validation": "not_performed",
+  "quality_gates": "passed",
+  "view_normal_span_deg": 56.83264478333315,
+  "normalized_center_span": 0.18306258165260833,
+  "max_K_error_px": 3.611823711734246,
+  "camera_center_error_mm": 2.7767386246841226,
+  "source": "[\uc2dc\ubbacGT] cell K, synthetic raster checkerboard"
+}

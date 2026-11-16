@@ -1,0 +1,215 @@
+{
+ "nodist_bottom_roundtrip_mm": {
+  "n": 3000,
+  "p50": 3.4394802926312276e-13,
+  "p95": 5.41767222637744e-13,
+  "max": 7.468261590855957e-13,
+  "mean": 3.519443804968026e-13
+ },
+ "nodist_bottom_int_pixel_rounding_mm": {
+  "n": 3000,
+  "p50": 0.5630262359280657,
+  "p95": 0.9973752724436739,
+  "max": 1.3129102350140898,
+  "mean": 0.5729738395979381
+ },
+ "nodist_top_mug": {
+  "ON_err_mm": {
+   "n": 600,
+   "p50": 4.695944831791984e-13,
+   "p95": 7.021666937153402e-13,
+   "max": 8.688869536365456e-13,
+   "mean": 4.662052139482143e-13
+  },
+  "OFF_vs_independent_hit_mm": {
+   "n": 600,
+   "p50": 0.0,
+   "p95": 0.0,
+   "max": 0.0,
+   "mean": 0.0
+  },
+  "OFF_true_bias_mm": {
+   "n": 600,
+   "p50": 83.22534868176012,
+   "p95": 98.40560981113723,
+   "max": 104.08075768394725,
+   "mean": 82.51933454051961
+  }
+ },
+ "nodist_top_mustard": {
+  "ON_err_mm": {
+   "n": 600,
+   "p50": 3.8046668422678987e-13,
+   "p95": 6.087272963323594e-13,
+   "max": 7.327682229021407e-13,
+   "mean": 3.890116046812341e-13
+  },
+  "OFF_vs_independent_hit_mm": {
+   "n": 600,
+   "p50": 0.0,
+   "p95": 0.0,
+   "max": 0.0,
+   "mean": 0.0
+  },
+  "OFF_true_bias_mm": {
+   "n": 600,
+   "p50": 341.5780820744866,
+   "p95": 403.88174993642724,
+   "max": 427.1740059207914,
+   "mean": 338.68041976243643
+  }
+ },
+ "nodist_top_block": {
+  "ON_err_mm": {
+   "n": 600,
+   "p50": 4.012640352176723e-13,
+   "p95": 6.335327934766281e-13,
+   "max": 8.527784864785346e-13,
+   "mean": 4.209240712563783e-13
+  },
+  "OFF_vs_independent_hit_mm": {
+   "n": 600,
+   "p50": 0.0,
+   "p95": 0.0,
+   "max": 0.0,
+   "mean": 0.0
+  },
+  "OFF_true_bias_mm": {
+   "n": 600,
+   "p50": 60.871432713518814,
+   "p95": 71.97435097756745,
+   "max": 76.12518227296972,
+   "mean": 60.35505046971889
+  }
+ },
+ "dist_bottom_roundtrip_mm": {
+  "n": 3000,
+  "p50": 7.629121612070398e-11,
+  "p95": 1.0180322793962744e-07,
+  "max": 1.0474089405569538e-06,
+  "mean": 2.1798527935739135e-08
+ },
+ "dist_bottom_int_pixel_rounding_mm": {
+  "n": 3000,
+  "p50": 0.5623814908906362,
+  "p95": 1.0058688295243086,
+  "max": 1.363695895929671,
+  "mean": 0.5714590782338558
+ },
+ "dist_top_mug": {
+  "ON_err_mm": {
+   "n": 600,
+   "p50": 1.3270762256423725e-10,
+   "p95": 1.510304875510293e-07,
+   "max": 9.29654713782935e-07,
+   "mean": 3.030534434875899e-08
+  },
+  "OFF_vs_independent_hit_mm": {
+   "n": 600,
+   "p50": 0.0,
+   "p95": 0.0,
+   "max": 0.0,
+   "mean": 0.0
+  },
+  "OFF_true_bias_mm": {
+   "n": 600,
+   "p50": 82.4314919550346,
+   "p95": 98.80634013553455,
+   "max": 103.90622548563975,
+   "mean": 82.22799280284187
+  }
+ },
+ "dist_top_mustard": {
+  "ON_err_mm": {
+   "n": 600,
+   "p50": 1.8670013427617114e-08,
+   "p95": 1.6626331937241282e-06,
+   "max": 4.499151313733303e-06,
+   "mean": 3.19087415957339e-07
+  },
+  "OFF_vs_independent_hit_mm": {
+   "n": 600,
+   "p50": 0.0,
+   "p95": 0.0,
+   "max": 0.0,
+   "mean": 0.0
+  },
+  "OFF_true_bias_mm": {
+   "n": 600,
+   "p50": 338.3198909526774,
+   "p95": 405.52644857129843,
+   "max": 426.45767830259933,
+   "mean": 337.48467854027217
+  }
+ },
+ "dist_top_block": {
+  "ON_err_mm": {
+   "n": 600,
+   "p50": 9.563650601076625e-11,
+   "p95": 1.3866146445124255e-07,
+   "max": 8.873725746172312e-07,
+   "mean": 2.7083439020028457e-08
+  },
+  "OFF_vs_independent_hit_mm": {
+   "n": 600,
+   "p50": 0.0,
+   "p95": 0.0,
+   "max": 0.0,
+   "mean": 0.0
+  },
+  "OFF_true_bias_mm": {
+   "n": 600,
+   "p50": 60.290801967388134,
+   "p95": 72.26744712539734,
+   "max": 75.99752856300833,
+   "mean": 60.14196167900256
+  }
+ },
+ "base_transform_err_mm": 0.0,
+ "tilted_plane_mm": {
+  "n": 300,
+  "p50": 6.029172520918071e-13,
+  "p95": 8.42750864442052e-13,
+  "max": 9.69147405474863e-13,
+  "mean": 5.955510069122292e-13
+ },
+ "codes": {
+  "ok": "OK flags=yaw_unobserved,height_prior,bbox_contact_approximation",
+  "cal_id_mismatch": "CALIBRATION_MISMATCH",
+  "size_mismatch": "CALIBRATION_MISMATCH",
+  "mirrored": "INVALID_INPUT",
+  "overlay": "INVALID_INPUT",
+  "det_error_NO_DETECTION": "NO_DETECTION",
+  "unknown_class": "INVALID_INPUT",
+  "anchor_outside": "INVALID_INPUT",
+  "anchor_nan": "INVALID_INPUT",
+  "top_center_no_anchor": "INVALID_INPUT",
+  "bad_anchor_kind": "INVALID_INPUT",
+  "above_horizon": "OK flags=yaw_unobserved,height_prior,bbox_contact_approximation",
+  "capture_at_none": "OK flags=yaw_unobserved,height_prior,received_timestamp_only,bbox_contact_approximation",
+  "anchor_on_edge_1280": "INVALID_INPUT",
+  "anchor_just_inside": "OK flags=yaw_unobserved,height_prior,bbox_contact_approximation"
+ },
+ "dto_fields": {
+  "xyz_m": [
+   0.5491317070612206,
+   -0.0006291055118870376,
+   0.30000000000000004
+  ],
+  "yaw_rad": null,
+  "calibration_id": "cal_v",
+  "height_m": 0.06,
+  "method": "table_plane_bottom_contact",
+  "quality_flags": [
+   "yaw_unobserved",
+   "height_prior",
+   "bbox_contact_approximation"
+  ],
+  "gt_assist": false,
+  "coordinate_frame": "world",
+  "unit": "m",
+  "error": null,
+  "schema_version": 1
+ },
+ "gt_assist": false
+}
