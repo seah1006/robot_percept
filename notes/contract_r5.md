@@ -1,9 +1,10 @@
-# r5 계약 v1.1 (2026-11-10)
+# r5 계약 v1.2 (2026-11-16)
 
-> **v1.1: Claude 설계 대행(D-CT), Codex(I-CT) 확인 대기.** v1(I-CT 작성) 본문을 유지하고 V-CT 지적 C1~C6, 현재 코드 근거 표, 사용자 확정(2026-11-10), G0 측정을 반영했다. 이 문서는 설계 문서이며 코드(perception/interfaces.py·상태 머신·tests)는 I-CT 몫으로 남긴다. I-CT 확인 전까지 v1.1의 신규 숫자·규칙은 "제안"이다.
+> **v1.2: I-CT 구현 확인 및 V-CT 합의 완료(11-16), v1.1 제안 값 내용 변경 없음.** v1(I-CT 작성) 본문을 유지하고 V-CT 지적 C1~C6, 현재 코드 근거 표, 사용자 확정(2026-11-10), G0 측정을 반영했다. 이 문서는 설계 문서이며 코드(perception/interfaces.py·상태 머신·tests)는 I-CT 몫으로 남긴다. I-CT가 11-16 warm 30 s, stop_ack 3 s, accepted ACK 2 s, 셀 home 분리, 추가 오류 3종·SQLite 컬럼을 수용했다. IK ≤500 ms/physics ≤100 ms는 회사 통합 실측 전 잠정 상한이며, 내부 solve_ik 콜백은 이번 운영코드 미변경 범위에서 보류한다.
 
 | 버전 | 일시(KST) | 작성 | 내용 |
 |-|-|-|-|
+| v1.2 | 11-16 | I-CT(Codex)·V-CT(Claude) | 4절 제안값 전부 확정(값 변경 없음). IK 500ms/physics 100ms는 잠정·회사 PC 통합 재측정 필요. 순수 DTO/정책 구현 검증이며 worker·DB 통합 PASS 아님 |
 | v1 | 11-10 21:59 | I-CT(Codex) | 1~7장 초안, 현재 근거 표 미완성 |
 | v1.1 | 11-10 | D-CT(Claude, 대행) | C1(4.2) C2(4.4) C3(3.1) C4(4.3) C5(4.6) C6(4.7) 반영, 4.9 현재 근거 표 완성(파일:라인), 2.3 G0 결과로 device·perceiving deadline 조정, 5.3·7장 사용자 확정 반영, 오류 코드 3종 추가(STALE_EPOCH, OWNER_CONFLICT, RECOVERY_CHECK_FAILED) |
 | v1.1 재검토1 | 11-10 | D-CT(Claude, 대행) | V-CT 재검토 V1(4.6-4 watchdog 상한·종료 실패), V2(4.6-5 draining owner 5 s), V3(4.7 outstanding·재생성 q_hold·DB 영구 실패), V4(4.4 held_object 시 /tasks 409) 반영 |

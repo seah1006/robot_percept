@@ -56,3 +56,37 @@ D-CT 회신 후 V1~V4 반영 확인 -> 문서 판정 확정. Codex 복귀 후: i
 V1(4.6-4: SIGTERM2s->SIGKILL2s, 실패 시 aborted(worker_unkillable)+recovery owner, 재시작만 복구), V2(4.6-5 draining owner, 5s 상한), V3(4.7 respawn q_hold, DB 영구실패 503, outstanding 집합), V4(4.4 held_object 시 POST /tasks 409) 모두 반영 확인. 문서 판정: PASS(설계 문서 한정). 코드/테스트/pytest/뮤테이션: 미실시, Codex 복귀 후.
 ## 재개 지점 (최종 갱신)
 Codex(11-12 13:50경) 복귀 후 interfaces.py/상태머신/tests 대조(특히 draining/recovery owner, outstanding drain, STALE_EPOCH, 4.6 조합 테스트가 가짜 시계로 존재하는지), 측정 락 안 전체 pytest(104+신규), 뮤테이션 1~2개.
+
+## G. 회사 PC 재개 (11-16 12:14 KST, V-CT)
+- 상태: perception/interfaces.py, 상태머신, tests/test_contracts_r5.py, bench/verify_ct/ 모두 없음. git status = notes/TEAM_R5.md untracked뿐. I-CT(T16CQ64zo2CxUgoM)에 파일 경로·API·4절 이견 회신 요청함.
+- 판정: NEEDS WORK (구현 묶음 미도착, 코드·pytest·뮤테이션 0건 실시). 문서 PASS(v1.1)는 유지.
+- 환경: nproc 8, loadavg 2.14/0.66/0.23.
+## 재개 지점 (G)
+I-CT 묶음 도착 시: (1) interfaces.py 필드·오류 14종·schema_version·stdlib import 대조 (2) bench/verify_ct/ 전이표 전수 스크립트(가짜 시계) (3) 뮤테이션 (4) flock 안 전체 pytest(기준 104 passed) (5) git diff 운영 파일 4개 + 공유 파일 무변경 확인 (6) 4절 이견 합의 -> v1.2.
+
+## H. 구현 묶음 검증 (11-16 V-CT, 직접 재현)
+- 대상: perception/interfaces.py(220줄), web/cell_state.py(129줄+), tests/test_contracts_r5.py. 환경: 측정 락 안, load 1.16, GPU 사용 894 MiB(시뮬 무관), PYTHONPATH 절대경로.
+- (1) 계약 일치: 오류 코드 14종 정확, schema_version=1 강제, interfaces/cell_state stdlib만. DTO 필드·좌표 규칙 읽기 대조 OK.
+- (2) 독립 전이표 bench/verify_ct/verify_state.py: 1차 144 check 140 PASS/4 FAIL (F1 restart owner=recovery로 reset-stop 영구 불가, F2 watchdog terminated=True도 recovery owner, F3 estop 후 cancel이 epoch/version/event 증가, F4 이중 estop 비멱등). I-CT 수정 후 2차 149/149 PASS.
+- (3) 뮤테이션 mutate.py: 36개(동치 2 제외 34). verify_state 34/34 kill. I-CT tests 15/34 kill -> 19개 미검출(약한 테스트).
+- (4) 전체 pytest: 261 passed, 16 failed. 16개 전부 tests/test_cell_scene_r5.py::test_settled (SA 소유, max_speed<.01 위반). CT·기존 0 실패.
+- (5) git diff: web/app.py, sim_worker.py, realtime.py, perception_stub.py, sim/*, teleop 무변경(diff 0). 타 소유 변경: THIRD_PARTY_NOTICES.md, tools/g0/* (G0/SA 몫).
+- 판정: NEEDS WORK (구현 동작 PASS, 테스트 강도 미달: 뮤테이션 15/34).
+## 재개 지점 (H)
+I-CT가 19개 반례 테스트 추가 -> bash bench/verify_ct/run_mut.sh 로 34/34 확인 -> PASS. 이후 v1.2는 4절 값 변경 없이 확정(이견 없음).
+
+## I. Gemini 후보 직접 재현 (bench/verify_ct/gemini_cands.py)
+- G1 warm 30 하드코딩: override=10에서 warm deadline 30.0 (확인). G2 validate_frame(Frame) AttributeError, FrameMeta만 동작 (확인). G3 terminal+commit된 cid expire가 epoch 2->3, event+1 (실결함). G4 executing 180s pytest 파라미터 없음 (테스트 갭, verify_state D3는 PASS). G5 submit 거부가 ValueError 문자열, state!=executing/latch 거부는 오류코드 없음 (부분 확인).
+- I-CT에 전달, 수정+19 뮤테이션 반례 후 재검증. v1.2 버전 갱신은 I-CT 소유(부모 지시).
+
+## J. 최종 묶음 재검증 (11-16 V-CT, 락 안, load 0.94, PYTHONPATH 절대경로)
+- 해시(sha1): interfaces 5e9a3498, cell_state c07bea2b, tests 4cde378a (I-CT가 이후 더 수정했다면 재실행 필요).
+- verify_state.py 166/166 PASS (G1~G6 Gemini/G 항목 포함). 전체 pytest 323 passed / 0 failed. 계약 pytest 161 passed. 운영·공유 파일 diff 0.
+- 뮤테이션 48(동치 3 제외 45): verify_state 45/45, I-CT pytest 42/45. 미검출 3: begin_rpc 가드, watchdog(terminated=True) outstanding 정리, 알 수 없는 deadline 키.
+- G1~G5 모두 수정 확인(perceiving_warm 키, validate_frame Frame/Meta, expire no-op, ContractError.code, executing 180 반례). 판정: PASS(순수 로직·DTO 한정, 직접 재현), 단 테스트 갭 3건 반례 추가 대기.
+- 한계: worker 중단·DB·프로세스 종료 통합 미검증, IK 500ms/physics 100ms는 집 PC 잠정, 회사 재측정 필요.
+
+## K. 최종 (11-16 V-CT) 판정: PASS (CT 순수 로직·DTO, 직접 재현)
+- 해시(sha1) interfaces 5e9a3498, cell_state c07bea2b(둘 다 3차와 동일), tests 0a25329b(테스트 4케이스만 추가). 락 안 load 0.50.
+- verify_state 166/166, 계약 pytest 165 passed, 뮤테이션 48(동치 3 제외 45) 양쪽 45/45 kill, 운영·공유 파일 diff 0. 전체 pytest 323 passed(테스트 4케이스 추가 전 실행, state/interfaces 불변).
+- 남은 한계: worker·DB·프로세스 통합 미검증, IK 500ms/physics 100ms 집 PC 잠정(회사 재측정), v1.2 문서 갱신은 I-CT.
