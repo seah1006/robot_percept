@@ -3,6 +3,29 @@
 이 문서가 최신. 이전 기록은 notes/HANDOFF_HOME.md(11-05~11-07). 공통 규칙은 notes/TEAM_R3.md + HANDOFF_HOME 4장.
 브랜치: `wip/r2`(이 커밋 포함, 작업 브랜치). `master`는 3cf1b19 그대로(오늘 새로 master에 올린 것 없음).
 
+## 11-16 회사 PC 세션 (최신, 이 절부터 읽을 것)
+규칙: notes/TEAM_R5.md(측정 락, PYTHONPATH 절대경로, 전체 pytest는 검증자 1회, Gemini 분석가 규칙). r5 실행 env = robot_percept_g0c(원본 env에는 transformers 설치 금지).
+
+| 항목 | 판정 | 커밋 | 핵심 수치 |
+|-|-|-|-|
+| G0c 회사 GPU | 조건부 PASS | 6dc43bc | DINO tiny 1280 p50 327~346ms, 640 134~183ms(범위), VRAM 1280 3.4GB·SAM2+FP 상주 2.8GB / 7168MiB(장치 기준). ROCm 실행 [blocked] |
+| SA 셀 장면 | 조건부 PASS | f446c64 | 물체 9종, tune20/eval100 분리, 안착 이동≤0.053mm, 가림 미측정 |
+| CT 계약 v1.2 | PASS(순수 로직) | a297220 | 전이 166/166, 뮤테이션 45/45 |
+| W2 투영·보정 | 조건부 PASS [시뮬GT] | 9e8c58c | bbox 중간높이 보정 p95 0.16~10.6mm(OFF 9.8~43), 게이트(3m·10°·보정 품질). ArUco·실물 [blocked: 실카메라] |
+| G1 인식 | 조건부 PASS [시뮬인식] | 53d2ba0 | 선택 정책 v2r(다중 span-min .35, 면적 4%): eval100 선택 60.0%(Wilson 54.4~65.4), 대상 없음 거절 89.2%, 지시당 p50 169ms. 사전 동결 v1 69.3%/거절 37.3% |
+| K 실행부 | 조건부 PASS(안전 경로) [시뮬GT] | 57e59cf | stop physics p95 9.3ms, IK 최악 p95 400~480ms(계획 지연, 팔 정지), estop→reset-stop 복구, /tasks 멱등·owner 409, 종료<5s, 전체 pytest 387 |
+
+**새로 발견한 결함 (중요)**: sim/env.py segmentation 렌더가 MSAA4(offsamples 기본 4)로 GT 마스크에 먼 오염 픽셀 → GT bbox 부풀림(작은 물체 82×72 → 실제 29×20). G1 채점은 offsamples=0 재렌더로 교정. **r1~r3의 SAM2 mask_iou(eval/run_benchmark.py)·클릭 좌표·웹 클릭 overlap·depth 경계 마스킹도 영향 가능**(Gemini 조사 notes/integration_map 외 out/msaa-seg-usage, 미검증).
+
+**남은 일 (우선순위)**
+1. E2E 시뮬: K executor에 G1 v2r 인식 어댑터 + W2 localize 연결 → 문장→선택→집기, GT 보조 OFF 주결과(N≥100, Wilson CI), 단계별 시간, 오인식 갤러리.
+2. MSAA 영향 재평가: seg 렌더 offsamples=0 분리 후 r1~r3 mask_iou 재계산(기존 결과 대비 표), 운영 클릭 경로 영향.
+3. D 대시보드 1화면(/tasks 상태·이력·출처 배지).
+4. G1 잔여: FP ground→FP 회귀, SAM2+FP 공존 워밍업, sam2 반복 잔류(+48MiB), 색 오분류 FP, 4% 상한 일반화.
+5. K 잔여: DB 정규화(steps/cell/commands), watchdog 실서버, restart latch, 접촉 기반 held, 실행 전 cancel이 stop_latched 남기는 동작(계약 4.6-5와 차이, 보수적).
+6. 회사 PC 실카메라: W2 ArUco 외부값·독립 격자점, 실물 선택 정확도, IK 정지 재측정.
+7. r3 잔여(E 평가 330회 재개, T final_hand·1h)는 그대로.
+
 ## 11-10 집 PC 세션 (최신, 이 절부터 읽을 것)
 환경: 집 PC(RX 7600, WSL Ubuntu-24.04), wip/r2 pull 후 전체 pytest **104 passed**(65s, 측정 락). 부모가 HOME_PROMPT 진행.
 
