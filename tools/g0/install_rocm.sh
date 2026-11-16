@@ -11,6 +11,7 @@ fi
 conda activate robot_percept_rocm
 [[ "$CONDA_DEFAULT_ENV" == robot_percept_rocm ]]
 export HSA_ENABLE_DXG_DETECTION=1
+export LD_LIBRARY_PATH="$CONDA_PREFIX/lib:${LD_LIBRARY_PATH:-}"
 flock -w 900 /tmp/rp_measure.lock timeout 280 python -m pip install --index-url https://stable.repo.amd.com/rocm/whl-next/ -c notes/constraints/rocm.txt 'torch[device-gfx1102]==2.14.0+rocm10.1.0' > bench/g0/install_rocm.log 2>&1
 (( $(date +%s)-START < 7200 )) || exit 124
 flock -w 900 /tmp/rp_measure.lock flock -w 900 /tmp/rp_gpu.lock timeout 60 python tools/g0/probe_gpu.py > bench/g0/gpu_probe.log 2>&1

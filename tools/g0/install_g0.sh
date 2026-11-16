@@ -1,23 +1,34 @@
 #!/usr/bin/env bash
 set -euo pipefail
-cd "$(dirname "$0")/../.."
-source ~/miniforge3/etc/profile.d/conda.sh
-mkdir -p bench/g0
-if [[ ! -x ~/miniforge3/envs/robot_percept_g0/bin/python ]]; then
- flock -w 900 /tmp/rp_measure.lock timeout 280 conda create -y -n robot_percept_g0 --clone robot_percept
+cd /home/user/work/robot_percept
+set +u
+source /home/user/anaconda3/etc/profile.d/conda.sh
+set -u
+mkdir -p bench/g0/company
+/home/user/anaconda3/envs/robot_percept/bin/python -m pip freeze > bench/g0/company/original_before.txt
+if [[ -d /home/user/anaconda3/envs/robot_percept_g0c && ! -x /home/user/anaconda3/envs/robot_percept_g0c/bin/python ]]; then
+ echo 'Partial clone prefix: inspect /home/user/anaconda3/envs/robot_percept_g0c; do not overwrite or delete automatically' >&2
+ exit 3
 fi
-conda activate robot_percept_g0
-[[ "$CONDA_DEFAULT_ENV" == robot_percept_g0 ]]
-python -m pip freeze > bench/g0/clone_before.txt
-for v in 4.57.6 4.45.2; do
- if flock -w 900 /tmp/rp_measure.lock timeout 280 python -m pip install -c notes/constraints/cu130.txt "transformers==$v" > bench/g0/install_transformers_$v.log 2>&1; then break; fi
-done
-python -m pip freeze > bench/g0/clone_after.txt
-diff -u bench/g0/clone_before.txt bench/g0/clone_after.txt > bench/g0/freeze.diff || true
+if [[ ! -x /home/user/anaconda3/envs/robot_percept_g0c/bin/python ]]; then
+ flock -w 900 /tmp/rp_measure.lock timeout 280 conda create -y -n robot_percept_g0c --clone robot_percept
+fi
+set +u
+conda activate robot_percept_g0c
+set -u
+export LD_LIBRARY_PATH="$CONDA_PREFIX/lib:${LD_LIBRARY_PATH:-}"
+export HSA_ENABLE_DXG_DETECTION=1
+python -m pip freeze > bench/g0/company/clone_before.txt
+flock -w 900 /tmp/rp_measure.lock timeout 280 python -m pip install -c notes/constraints/common.txt -c notes/constraints/cu130.txt transformers==4.57.6
+python -m pip freeze > bench/g0/company/clone_after.txt
+/home/user/anaconda3/envs/robot_percept/bin/python -m pip freeze > bench/g0/company/original_after.txt
+cmp bench/g0/company/original_before.txt bench/g0/company/original_after.txt
+sha256sum bench/g0/company/original_*.txt
 python - <<'PY'
-import importlib.metadata as m,json
-before=dict(x.strip().split('==',1) for x in open('bench/g0/clone_before.txt') if '==' in x)
-after=dict(x.strip().split('==',1) for x in open('bench/g0/clone_after.txt') if '==' in x)
-for n in ['torch','numpy','torchvision']: assert after.get(n)==before.get(n),(n,after.get(n),before.get(n))
-print(json.dumps({n:after.get(n) for n in ['torch','numpy','torchvision','transformers']}))
+from pathlib import Path
+for name in ('torch','torchvision','numpy'):
+ before=sorted(x for x in Path('bench/g0/company/clone_before.txt').read_text().splitlines() if x.lower().startswith(name+'=='))
+ after=sorted(x for x in Path('bench/g0/company/clone_after.txt').read_text().splitlines() if x.lower().startswith(name+'=='))
+ assert before==after,(name,before,after)
+print('clone torch/torchvision/numpy freeze unchanged')
 PY

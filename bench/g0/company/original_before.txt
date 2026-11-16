@@ -1,0 +1,149 @@
+absl-py==2.5.1
+annotated-types==0.8.0
+antlr4-python3-runtime==4.9.3
+asttokens==3.0.2
+attrs==26.1.0
+blinker==1.9.0
+certifi==2026.10.23
+charset-normalizer==3.5.2
+click==8.5.0
+cloudpickle==3.1.2
+comm==0.2.3
+ConfigArgParse==1.8.0
+contourpy @ file:///home/task_178965172053155/croot/contourpy_1789651752225/work
+cuda-bindings==13.3.1
+cuda-pathfinder==1.6.0
+cuda-toolkit==13.0.3.0
+cycler @ file:///home/task_176606792107398/croot/cycler_1766067942240/work
+dash==4.4.1
+etils==1.14.0
+executing==2.3.0
+fastjsonschema==2.22.2
+filelock==3.32.3
+Flask==3.1.3
+flask-sock==0.7.0
+fonttools @ file:///home/task_178107555440112/croot/fonttools_1781075598507/work
+freetype-py==2.5.1
+fsspec==2026.7.0
+glfw==2.11.0
+h11==0.16.0
+h5py==3.16.0
+hydra-core==1.3.7
+idna==3.20
+ImageIO @ file:///home/task_SvAf8Xz5QV6Ej_0/croot/imageio_1785928396806/work
+importlib_metadata==10.1.0
+iniconfig==2.3.1
+iopath==0.1.10
+ipython==9.17.1
+ipython_pygments_lexers==1.1.1
+ipywidgets==8.1.9
+itsdangerous==2.2.0
+janus==2.0.0
+jedi==0.20.1
+Jinja2==3.1.6
+joblib==1.6.0
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
+jupyter_core==5.9.1
+jupyterlab_widgets==3.0.17
+kiwisolver @ file:///home/task_VLvFl9x7S4uit_0/croot/kiwisolver_1786023343135/work
+kornia==0.9.0
+kornia_rs==0.2.0
+lazy-loader @ file:///home/task_177375491448458/croot/lazy_loader_1773754942696/work
+MarkupSafe==3.0.3
+matplotlib==3.11.2
+matplotlib-inline==0.2.2
+mkl-service==2.7.2
+mkl_fft @ file:///home/task_178939306644773/croot/mkl_fft_1789393094305/work
+mkl_random @ file:///home/task_178236941593284/croot/mkl_random_1782369457867/work
+mpmath==1.3.0
+mujoco==3.17.0
+narwhals==2.27.1
+nbformat==5.11.1
+nest-asyncio==1.6.0
+networkx @ file:///home/task_176537855201373/conda-bld/networkx_1765378627621/work
+numpy @ file:///home/task_179007480898341/croot/numpy_and_numpy_base_1790074837382/work/dist/numpy-2.5.3-cp312-cp312-linux_x86_64.whl#sha256=b7ab49dc3f3d461872e22af0716af8af3834bb8bdc783434169c0b37d80133ba
+nvdiffrast @ file:///home/user/work/robot_percept/nvdiffrast
+nvidia-cublas==13.1.1.3
+nvidia-cuda-cupti==13.0.85
+nvidia-cuda-nvrtc==13.0.88
+nvidia-cuda-runtime==13.0.96
+nvidia-cudnn-cu13==9.24.0.43
+nvidia-cufft==12.0.0.61
+nvidia-cufile==1.15.1.6
+nvidia-curand==10.4.0.35
+nvidia-cusolver==12.0.4.66
+nvidia-cusparse==12.6.3.3
+nvidia-cusparselt-cu13==0.8.1
+nvidia-nccl-cu13==2.30.7
+nvidia-nvjitlink==13.3.33
+nvidia-nvshmem-cu13==3.4.5
+nvidia-nvtx==13.0.85
+omegaconf==2.3.1
+open3d==0.20.0
+opencv-python==5.0.0.93
+packaging==26.3
+pandas==3.0.6
+parso==0.8.7
+pexpect==4.9.0
+pillow @ file:///home/task_177797437278537/croot/pillow_1777974413389/work
+platformdirs==4.13.5
+plotly==7.1.0
+pluggy==1.7.0
+portalocker==4.4.1
+prompt_toolkit==3.0.53
+psutil==7.2.2
+ptyprocess==0.7.0
+pure_eval==0.2.4
+pybind11 @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_pybind11_1786200320/work
+pybind11-global @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_pybind11-global_1786200320/work
+pydantic==2.14.1
+pydantic_core==2.50.1
+pyglet==2.1.19
+Pygments==2.21.0
+PyOpenGL==3.1.10
+PyOpenGL-accelerate==3.1.10
+pyparsing @ file:///home/task_178652812760807/croot/pyparsing_1786528157497/work
+pyrender==0.1.45
+PySide6==6.11.0
+pytest==9.2.0
+python-dateutil @ file:///croot/python-dateutil_1716495738603/work
+pytorch3d @ file:///home/user/work/robot_percept/pytorch3d-cxx20
+PyYAML==6.0.3
+referencing==0.37.0
+requests==2.34.2
+retrying==1.4.2
+rpds-py==2026.9.1
+rtree @ file:///mnt/c/Users/USER/.aside/u/0/sessions/2026-11-03_pin9ta9lgwPK2eve/tmp/rtree-1.4.1-py3-none-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl#sha256=12de4578f1b3381a93a655846900be4e3d5f4cd5e306b8b00aa77c1121dc7e8c
+ruamel.yaml==0.19.1
+-e git+https://github.com/facebookresearch/sam2.git@2b90b9f5ceec907a1c18123530e92e794ad901a4#egg=SAM_2
+scikit-image @ file:///home/task_176838586725851/croot/scikit-image_1768385930811/work
+scikit-learn==1.9.1
+scipy @ file:///home/task_178904585279660/croot/scipy_1789045890544/work/dist/scipy-1.18.1-cp312-cp312-linux_x86_64.whl#sha256=f78028b4ba171b3b4e52bd04e81344234c88551c4aa97f6b9cd62fa29ba5ad32
+setuptools==83.0.0
+shiboken6==6.11.0
+simple-websocket==1.1.0
+six @ file:///croot/six_1744271502820/work
+stack-data==0.6.3
+sympy==1.14.0
+threadpoolctl==3.7.0
+tifffile @ file:///home/task_178645279756910/croot/tifffile_1786452825016/work
+torch==2.14.0+cu130
+torchvision==0.29.0+cu130
+tornado @ file:///home/task_178853358369265/croot/tornado_1788533610532/work
+tqdm==4.70.1
+traitlets==5.16.1
+transformations==2026.8.8
+trimesh==5.2.0
+triton==3.8.0
+typing-inspection==0.4.4
+typing_extensions==4.16.0
+urllib3==2.8.0
+warp-lang==1.18.0
+wcwidth==0.9.4
+websockets==17.4
+Werkzeug==3.1.9
+wheel==0.47.0
+widgetsnbextension==4.0.16
+wsproto==1.3.2
+zipp==4.1.2

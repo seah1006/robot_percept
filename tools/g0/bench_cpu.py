@@ -1,4 +1,10 @@
 import argparse,hashlib,json,os,platform,time
+import sys
+os.environ.setdefault('HSA_ENABLE_DXG_DETECTION','1')
+lib=os.environ.get('CONDA_PREFIX',sys.prefix)+'/lib'
+if lib not in os.environ.get('LD_LIBRARY_PATH','').split(':'):
+ os.environ['LD_LIBRARY_PATH']=lib+':'+os.environ.get('LD_LIBRARY_PATH','')
+ os.execv(sys.executable,[sys.executable]+sys.argv)
 from pathlib import Path
 import numpy as np
 import torch

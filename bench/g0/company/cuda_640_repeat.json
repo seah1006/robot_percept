@@ -1,0 +1,82 @@
+{
+  "source": "[시뮬인식]",
+  "gt_assisted": false,
+  "revision": "a2bb814dd30d776dcf7e30523b00659f4f141c71",
+  "backend": "cuda",
+  "torch": "2.14.0+cu130",
+  "numpy": "2.5.3",
+  "device": "NVIDIA GeForce RTX 2080 SUPER",
+  "width": 640,
+  "height": 360,
+  "n": 20,
+  "warmup": 2,
+  "load_seconds": 3.3097887840001476,
+  "first_inference_ms": 1532.461968000007,
+  "samples_ms": [
+    200.3546319999714,
+    162.80085199991845,
+    187.18282200006797,
+    201.12278600004174,
+    170.65624399992885,
+    236.83719399991787,
+    188.6257650000971,
+    185.62147500006176,
+    170.99083799985237,
+    196.38558099995862,
+    208.38419999995494,
+    142.42987900001935,
+    143.6470639998788,
+    147.35198399989713,
+    165.90318699991258,
+    171.59442399997715,
+    199.0046569999322,
+    168.4287799998856,
+    164.6688710000035,
+    161.4493219999531
+  ],
+  "p50_ms": 171.29263099991476,
+  "p95_ms": 209.80684969995312,
+  "loadavg_start": [
+    1.32958984375,
+    1.24169921875,
+    0.97900390625
+  ],
+  "loadavg_end": [
+    1.5068359375,
+    1.283203125,
+    0.99609375
+  ],
+  "device_used_before_mib": 1088.5625,
+  "device_used_peak_sampled_mib": 2208.5625,
+  "process_max_allocated_mib": 993.01953125,
+  "process_max_reserved_mib": 1090.0,
+  "coexist": "none",
+  "coexist_errors": [],
+  "coexist_scope": "model resident only; no SAM2/FP inference warmup",
+  "vram_limit_mib": 7168,
+  "vram_note": "7.0GiB device-wide sampled used incl Windows; process allocated reported separately; sample is not true instantaneous peak",
+  "image": "sim_test/results/egl_d3d12/rgb.png",
+  "image_sha256": "e400121e499b309cfc080c3afe9ba5a2be0eb53f2a15dca6d48e99e5dd128916",
+  "detections": [
+    {
+      "label": "a red cube",
+      "score": 0.7140111327171326,
+      "box": [
+        326.87860107421875,
+        153.00111389160156,
+        357.258544921875,
+        186.8492431640625
+      ]
+    },
+    {
+      "label": "a blue cube",
+      "score": 0.4944463074207306,
+      "box": [
+        112.63174438476562,
+        135.1859130859375,
+        528.4008178710938,
+        305.3292541503906
+      ]
+    }
+  ]
+}
