@@ -10,23 +10,42 @@ def estimate_pose(rgb, depth, K, info, object_name):
     T[:3,3]+=np.random.default_rng(7).normal(0,.0015,3)
     return T
 
+def _dispatch_new(op,a,detector=None,segmenter=None):
+    from perception.interfaces import Frame,FrameMeta
+    from perception.grounding import REVISION
+    if op=='capabilities':
+        import torch,importlib.util
+        gpu=torch.cuda.is_available()
+        device='rocm' if gpu and torch.version.hip else 'cuda' if gpu else 'cpu'
+        available=importlib.util.find_spec('transformers') is not None
+        sam_available=importlib.util.find_spec('sam2') is not None
+        return dict(schema_version=1,ops=['ground','segment_box'],device=device,device_name=torch.cuda.get_device_name(0) if gpu else 'cpu',torch_version=torch.__version__,accel_version=torch.version.hip or torch.version.cuda,models={'grounding_dino':dict(revision=REVISION,available=available,loaded=detector is not None and detector.model is not None,reason=None if available else 'MODEL_UNAVAILABLE'),'sam2':dict(revision='sam2.1_hiera_small',available=sam_available,loaded=segmenter is not None and segmenter.predictor is not None,reason=None if sam_available else 'MODEL_UNAVAILABLE')},segmenter=segmenter.mode if segmenter else 'off',localizer='plane',fp_available=False)
+    if a.get('schema_version',1)!=1: raise ValueError('INVALID_INPUT: schema_version')
+    def check():
+        token=a.get('cancel_token')
+        if token is True or (hasattr(token,'is_set') and token.is_set()): raise RuntimeError('CANCELLED')
+        if a.get('deadline',float('inf'))<=time.monotonic(): raise TimeoutError('DEADLINE_EXCEEDED')
+    check()
+    meta=a['frame'] if isinstance(a['frame'],FrameMeta) else FrameMeta.from_dict(a['frame'])
+    rgb=a['rgb']; rgb=rgb.tobytes() if hasattr(rgb,'tobytes') else rgb
+    frame=Frame(meta,rgb)
+    if op=='ground':
+        detector.table_mask=a.get('table_mask')
+        detections=detector.detect(frame,a['queries'],a.get('box_threshold',.35),a.get('text_threshold',.25),a.get('filtering',True),check,a.get('mapping'))
+        result=dict(frame=meta.to_dict(),detections=[d.to_dict() for d in detections],rejections=detector.rejections,error=None if detections else 'NO_DETECTION',model_revision=REVISION,device=detector.backend)
+    elif op=='segment_box':
+        result=dict(mask=segmenter.segment(frame,a['box_xyxy']).to_dict(),error=None,model_revision='sam2.1_hiera_small' if segmenter.mode=='sam2' else 'box-only-v1',device=segmenter.device)
+    else: raise ValueError('UNSUPPORTED_OP')
+    if a.get('deadline',float('inf'))<=time.monotonic(): raise TimeoutError('DEADLINE_EXCEEDED')
+    return result
 def _worker(req,res,parent_pid=None):
     start_parent_pid_watch(parent_pid)
     import os
     target_nice = max(0, min(19, int(os.environ.get('RP_PERCEPTION_NICE', '10'))))
     try: os.nice(max(0, target_nice - os.nice(0)))
     except OSError: pass
-    import torch
-    cpu_threads = int(os.environ.get('RP_PERCEPTION_CPU_THREADS', '0'))
-    if cpu_threads > 0:
-        torch.set_num_threads(cpu_threads)
-        try: torch.set_num_interop_threads(1)
-        except RuntimeError: pass
-    from pathlib import Path
-    from perception.fp_runner import FPRunner
-    from perception.sam_runner import select_candidate
-    from sam2.build_sam import build_sam2
-    from sam2.sam2_image_predictor import SAM2ImagePredictor
+    import sys
+    torch=None; detector=None; box_segmenter=None; threads_configured=False
     runners={}; predictor=None; active=None
     res.put(('ready',True,None))
     while True:
@@ -35,7 +54,32 @@ def _worker(req,res,parent_pid=None):
         ident,op,a=item
         try:
             t=time.perf_counter()
-            if op=='segment':
+            torch=sys.modules.get('torch')
+            if torch is not None and torch.cuda.is_available():
+                torch.cuda.synchronize(); torch.cuda.reset_peak_memory_stats()
+            if op!='drop' and not threads_configured:
+                import torch
+                cpu_threads=int(os.environ.get('RP_PERCEPTION_CPU_THREADS','0'))
+                if cpu_threads>0:
+                    torch.set_num_threads(cpu_threads)
+                    try: torch.set_num_interop_threads(1)
+                    except RuntimeError: pass
+                threads_configured=True
+            if op in ('ground','segment_box','capabilities'):
+                if op=='ground' and detector is None:
+                    from perception.grounding import Detector
+                    detector=Detector()
+                if op=='segment_box':
+                    from perception.segment import Segmenter
+                    mode=a.get('segmenter','off')
+                    if box_segmenter is None or box_segmenter.mode!=mode: box_segmenter=Segmenter(mode)
+                result=_dispatch_new(op,a,detector,box_segmenter)
+                torch=sys.modules.get('torch')
+            elif op=='segment':
+                import torch
+                from perception.sam_runner import select_candidate
+                from sam2.build_sam import build_sam2
+                from sam2.sam2_image_predictor import SAM2ImagePredictor
                 # FP changes default tensor type. SAM expects CPU prompt tensors.
                 torch.set_default_tensor_type(torch.FloatTensor)
                 if predictor is None:
@@ -57,6 +101,8 @@ def _worker(req,res,parent_pid=None):
                 result={'mask':mask.astype(bool),'sam_score':float(scores[selected]),'sam_selected':selected,'sam_raw_area':raw_area}
                 predictor.reset_predictor(); predictor.model.to('cpu'); torch.cuda.empty_cache()
             elif op=='register':
+                import torch
+                from perception.fp_runner import FPRunner
                 name=a['name']; mesh=a['mesh']
                 if name not in runners:
                     # Share the heavyweight neural networks between per-mesh estimators.
@@ -70,11 +116,29 @@ def _worker(req,res,parent_pid=None):
                 if active!=a['name']:raise RuntimeError('Tracker is not registered for selected object')
                 result={'pose':np.asarray(runners[active].track(a['rgb'],a['depth'],a['K'])).tolist()}
             elif op=='drop': active=None; result={}
-            else:raise ValueError(op)
-            torch.cuda.synchronize();result['ms']=(time.perf_counter()-t)*1000
-            result['peak_mb']=torch.cuda.max_memory_allocated()/1024**2
+            else:
+                res.put((ident,True,dict(error='UNSUPPORTED_OP',ms=(time.perf_counter()-t)*1000,peak_mb=None)))
+                continue
+            if torch is not None and torch.cuda.is_available(): torch.cuda.synchronize()
+            result['ms']=(time.perf_counter()-t)*1000
+            result['peak_mb']=torch.cuda.max_memory_allocated()/1024**2 if torch is not None and torch.cuda.is_available() else None
             res.put((ident,True,result))
-        except Exception:res.put((ident,False,traceback.format_exc()))
+        except Exception as exc:
+            if op in ('ground','segment_box','capabilities'):
+                message=str(exc)
+                code='OUT_OF_MEMORY' if 'out of memory' in message.lower() else 'DEADLINE_EXCEEDED' if isinstance(exc,TimeoutError) else 'MODEL_UNAVAILABLE' if isinstance(exc,(ImportError,OSError)) else 'CANCELLED' if 'CANCELLED' in message else 'INVALID_INPUT' if isinstance(exc,(ValueError,KeyError,TypeError)) else 'INTERNAL_ERROR'
+                res.put((ident,True,dict(error=code,ms=(time.perf_counter()-t)*1000,peak_mb=None)))
+            else: res.put((ident,False,traceback.format_exc()))
+        finally:
+            # Keep active FP tracking resident. Only temporary SAM/ground tensors offload.
+            if detector is not None: detector.release()
+            if box_segmenter is not None: box_segmenter.release()
+            if predictor is not None:
+                predictor.reset_predictor(); predictor.model.to('cpu')
+            torch=sys.modules.get('torch')
+            if torch is not None and op in ('ground','segment_box','segment'):
+                torch.set_default_tensor_type(torch.FloatTensor)
+                if torch.cuda.is_available(): torch.cuda.empty_cache()
 
 class PerceptionBackend:
     def __init__(self,mode='fp'):
@@ -90,7 +154,7 @@ class PerceptionBackend:
             with self.lifecycle_lock:
                 if self.closed:
                     raise RuntimeError('Perception backend is closed')
-                if self.mode != 'fp':
+                if self.mode != 'fp' and op not in ('ground','segment_box','capabilities'):
                     raise RuntimeError('FP RPC requires fp mode')
                 is_warmup = threading.current_thread() is getattr(self, 'warmup_thread', None)
                 if self.suspending or (is_warmup and self.warmup_cancel.is_set()):

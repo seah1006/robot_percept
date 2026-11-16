@@ -26,3 +26,6 @@ bench/*/out/pl/
 
 # r3 V-S 500Hz raw (122MB, company PC only)
 bench/verify_s/r3raw/
+
+# r5 cell runtime DB
+cell_runtime.sqlite3*

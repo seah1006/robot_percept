@@ -1,0 +1,750 @@
+{
+  "source": "[시뮬인식]",
+  "split": "tuning",
+  "gt_assist": false,
+  "setting": "640x480/color multi, 20 seeds, diagnostic>=.10 acceptance>=.35",
+  "groups": [
+    {
+      "dimension": "class_id",
+      "category": "ball",
+      "n": 8,
+      "geometry_hit": 3,
+      "exact_hit": 3,
+      "score_low": 3,
+      "localization_missing": 2,
+      "class_label_loss": 0
+    },
+    {
+      "dimension": "class_id",
+      "category": "block",
+      "n": 7,
+      "geometry_hit": 5,
+      "exact_hit": 0,
+      "score_low": 0,
+      "localization_missing": 2,
+      "class_label_loss": 5
+    },
+    {
+      "dimension": "class_id",
+      "category": "bottle",
+      "n": 7,
+      "geometry_hit": 2,
+      "exact_hit": 1,
+      "score_low": 2,
+      "localization_missing": 3,
+      "class_label_loss": 1
+    },
+    {
+      "dimension": "class_id",
+      "category": "box",
+      "n": 4,
+      "geometry_hit": 0,
+      "exact_hit": 0,
+      "score_low": 3,
+      "localization_missing": 1,
+      "class_label_loss": 0
+    },
+    {
+      "dimension": "class_id",
+      "category": "can",
+      "n": 7,
+      "geometry_hit": 5,
+      "exact_hit": 0,
+      "score_low": 1,
+      "localization_missing": 1,
+      "class_label_loss": 5
+    },
+    {
+      "dimension": "class_id",
+      "category": "cup",
+      "n": 7,
+      "geometry_hit": 2,
+      "exact_hit": 2,
+      "score_low": 0,
+      "localization_missing": 5,
+      "class_label_loss": 0
+    },
+    {
+      "dimension": "class_id",
+      "category": "mug",
+      "n": 8,
+      "geometry_hit": 0,
+      "exact_hit": 0,
+      "score_low": 6,
+      "localization_missing": 2,
+      "class_label_loss": 0
+    },
+    {
+      "dimension": "class_id",
+      "category": "mustard",
+      "n": 3,
+      "geometry_hit": 1,
+      "exact_hit": 1,
+      "score_low": 2,
+      "localization_missing": 0,
+      "class_label_loss": 0
+    },
+    {
+      "dimension": "class_id",
+      "category": "small_box",
+      "n": 10,
+      "geometry_hit": 2,
+      "exact_hit": 2,
+      "score_low": 2,
+      "localization_missing": 6,
+      "class_label_loss": 0
+    },
+    {
+      "dimension": "pixel_bin",
+      "category": "<16",
+      "n": 2,
+      "geometry_hit": 1,
+      "exact_hit": 1,
+      "score_low": 1,
+      "localization_missing": 0,
+      "class_label_loss": 0
+    },
+    {
+      "dimension": "pixel_bin",
+      "category": "16-31",
+      "n": 17,
+      "geometry_hit": 17,
+      "exact_hit": 6,
+      "score_low": 0,
+      "localization_missing": 0,
+      "class_label_loss": 11
+    },
+    {
+      "dimension": "pixel_bin",
+      "category": "32-63",
+      "n": 22,
+      "geometry_hit": 2,
+      "exact_hit": 2,
+      "score_low": 4,
+      "localization_missing": 16,
+      "class_label_loss": 0
+    },
+    {
+      "dimension": "pixel_bin",
+      "category": "64+",
+      "n": 20,
+      "geometry_hit": 0,
+      "exact_hit": 0,
+      "score_low": 14,
+      "localization_missing": 6,
+      "class_label_loss": 0
+    }
+  ],
+  "instances": [
+    {
+      "seed": 1000,
+      "class_id": "small_box",
+      "short_side_px": 72,
+      "pixel_bin": "64+",
+      "reason": "score_below_.35",
+      "best_iou": 0.5036977541264817,
+      "best_score": 0.10716301947832108,
+      "best_label": ""
+    },
+    {
+      "seed": 1000,
+      "class_id": "small_box",
+      "short_side_px": 41,
+      "pixel_bin": "32-63",
+      "reason": "no_iou50_at_score_ge_.10",
+      "best_iou": 0.3748314393318332,
+      "best_score": null,
+      "best_label": ""
+    },
+    {
+      "seed": 1000,
+      "class_id": "block",
+      "short_side_px": 24,
+      "pixel_bin": "16-31",
+      "reason": "class_or_decoded_label_loss",
+      "best_iou": 0.5681853820907555,
+      "best_score": 0.3756910264492035,
+      "best_label": ""
+    },
+    {
+      "seed": 1001,
+      "class_id": "mug",
+      "short_side_px": 110,
+      "pixel_bin": "64+",
+      "reason": "no_iou50_at_score_ge_.10",
+      "best_iou": 0.48510864313501595,
+      "best_score": null,
+      "best_label": "cyan block"
+    },
+    {
+      "seed": 1001,
+      "class_id": "block",
+      "short_side_px": 107,
+      "pixel_bin": "64+",
+      "reason": "no_iou50_at_score_ge_.10",
+      "best_iou": 0.4737863108857399,
+      "best_score": null,
+      "best_label": "cyan block"
+    },
+    {
+      "seed": 1001,
+      "class_id": "bottle",
+      "short_side_px": 70,
+      "pixel_bin": "64+",
+      "reason": "no_iou50_at_score_ge_.10",
+      "best_iou": 0.2909938104162287,
+      "best_score": null,
+      "best_label": ""
+    },
+    {
+      "seed": 1001,
+      "class_id": "mustard",
+      "short_side_px": 42,
+      "pixel_bin": "32-63",
+      "reason": "exact_hit",
+      "best_iou": 0.918533113174132,
+      "best_score": 0.6496623754501343,
+      "best_label": "yellow"
+    },
+    {
+      "seed": 1002,
+      "class_id": "block",
+      "short_side_px": 35,
+      "pixel_bin": "32-63",
+      "reason": "no_iou50_at_score_ge_.10",
+      "best_iou": 0.4005770218043669,
+      "best_score": null,
+      "best_label": ""
+    },
+    {
+      "seed": 1002,
+      "class_id": "ball",
+      "short_side_px": 20,
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "best_iou": 0.6785476968301356,
+      "best_score": 0.6024565696716309,
+      "best_label": ""
+    },
+    {
+      "seed": 1003,
+      "class_id": "small_box",
+      "short_side_px": 60,
+      "pixel_bin": "32-63",
+      "reason": "score_below_.35",
+      "best_iou": 0.6709803030508845,
+      "best_score": 0.10569538176059723,
+      "best_label": ""
+    },
+    {
+      "seed": 1003,
+      "class_id": "bottle",
+      "short_side_px": 58,
+      "pixel_bin": "32-63",
+      "reason": "score_below_.35",
+      "best_iou": 0.7909988684256276,
+      "best_score": 0.10569538176059723,
+      "best_label": ""
+    },
+    {
+      "seed": 1003,
+      "class_id": "can",
+      "short_side_px": 22,
+      "pixel_bin": "16-31",
+      "reason": "class_or_decoded_label_loss",
+      "best_iou": 0.8057563267184138,
+      "best_score": 0.531956672668457,
+      "best_label": ""
+    },
+    {
+      "seed": 1004,
+      "class_id": "box",
+      "short_side_px": 91,
+      "pixel_bin": "64+",
+      "reason": "score_below_.35",
+      "best_iou": 0.7227759975078706,
+      "best_score": 0.10407286137342453,
+      "best_label": ""
+    },
+    {
+      "seed": 1004,
+      "class_id": "mug",
+      "short_side_px": 89,
+      "pixel_bin": "64+",
+      "reason": "score_below_.35",
+      "best_iou": 0.6873040483284778,
+      "best_score": 0.10407286137342453,
+      "best_label": ""
+    },
+    {
+      "seed": 1004,
+      "class_id": "small_box",
+      "short_side_px": 83,
+      "pixel_bin": "64+",
+      "reason": "no_iou50_at_score_ge_.10",
+      "best_iou": 0.4910904807546131,
+      "best_score": null,
+      "best_label": ""
+    },
+    {
+      "seed": 1004,
+      "class_id": "block",
+      "short_side_px": 25,
+      "pixel_bin": "16-31",
+      "reason": "class_or_decoded_label_loss",
+      "best_iou": 0.5645556220200285,
+      "best_score": 0.41030609607696533,
+      "best_label": ""
+    },
+    {
+      "seed": 1005,
+      "class_id": "ball",
+      "short_side_px": 70,
+      "pixel_bin": "64+",
+      "reason": "no_iou50_at_score_ge_.10",
+      "best_iou": 0.40449099085765,
+      "best_score": null,
+      "best_label": ""
+    },
+    {
+      "seed": 1005,
+      "class_id": "ball",
+      "short_side_px": 23,
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "best_iou": 0.7232469865130543,
+      "best_score": 0.48764535784721375,
+      "best_label": ""
+    },
+    {
+      "seed": 1006,
+      "class_id": "ball",
+      "short_side_px": 62,
+      "pixel_bin": "32-63",
+      "reason": "no_iou50_at_score_ge_.10",
+      "best_iou": 0.41488392889326303,
+      "best_score": null,
+      "best_label": ""
+    },
+    {
+      "seed": 1006,
+      "class_id": "small_box",
+      "short_side_px": 53,
+      "pixel_bin": "32-63",
+      "reason": "no_iou50_at_score_ge_.10",
+      "best_iou": 0.35017520677134256,
+      "best_score": null,
+      "best_label": ""
+    },
+    {
+      "seed": 1006,
+      "class_id": "can",
+      "short_side_px": 24,
+      "pixel_bin": "16-31",
+      "reason": "class_or_decoded_label_loss",
+      "best_iou": 0.7837001308278023,
+      "best_score": 0.5061246156692505,
+      "best_label": "red pink bottle blue"
+    },
+    {
+      "seed": 1007,
+      "class_id": "box",
+      "short_side_px": 82,
+      "pixel_bin": "64+",
+      "reason": "score_below_.35",
+      "best_iou": 0.9002860385804305,
+      "best_score": 0.25754043459892273,
+      "best_label": ""
+    },
+    {
+      "seed": 1007,
+      "class_id": "mug",
+      "short_side_px": 82,
+      "pixel_bin": "64+",
+      "reason": "score_below_.35",
+      "best_iou": 0.8155399181610116,
+      "best_score": 0.25754043459892273,
+      "best_label": ""
+    },
+    {
+      "seed": 1007,
+      "class_id": "mustard",
+      "short_side_px": 82,
+      "pixel_bin": "64+",
+      "reason": "score_below_.35",
+      "best_iou": 0.7214391583732025,
+      "best_score": 0.12850046157836914,
+      "best_label": ""
+    },
+    {
+      "seed": 1007,
+      "class_id": "bottle",
+      "short_side_px": 16,
+      "pixel_bin": "16-31",
+      "reason": "class_or_decoded_label_loss",
+      "best_iou": 0.7440507146395535,
+      "best_score": 0.4512805640697479,
+      "best_label": ""
+    },
+    {
+      "seed": 1008,
+      "class_id": "small_box",
+      "short_side_px": 70,
+      "pixel_bin": "64+",
+      "reason": "no_iou50_at_score_ge_.10",
+      "best_iou": 0.3701016501577453,
+      "best_score": null,
+      "best_label": "cyan block"
+    },
+    {
+      "seed": 1008,
+      "class_id": "can",
+      "short_side_px": 21,
+      "pixel_bin": "16-31",
+      "reason": "class_or_decoded_label_loss",
+      "best_iou": 0.7614953739298529,
+      "best_score": 0.45427069067955017,
+      "best_label": ""
+    },
+    {
+      "seed": 1009,
+      "class_id": "mug",
+      "short_side_px": 55,
+      "pixel_bin": "32-63",
+      "reason": "score_below_.35",
+      "best_iou": 0.6445357700159964,
+      "best_score": 0.10137473791837692,
+      "best_label": ""
+    },
+    {
+      "seed": 1009,
+      "class_id": "cup",
+      "short_side_px": 55,
+      "pixel_bin": "32-63",
+      "reason": "no_iou50_at_score_ge_.10",
+      "best_iou": 0.42911952551097826,
+      "best_score": null,
+      "best_label": "blue cup"
+    },
+    {
+      "seed": 1009,
+      "class_id": "bottle",
+      "short_side_px": 15,
+      "pixel_bin": "<16",
+      "reason": "exact_hit",
+      "best_iou": 0.7178767111286612,
+      "best_score": 0.42126184701919556,
+      "best_label": ""
+    },
+    {
+      "seed": 1010,
+      "class_id": "mug",
+      "short_side_px": 81,
+      "pixel_bin": "64+",
+      "reason": "score_below_.35",
+      "best_iou": 0.5492277407580026,
+      "best_score": 0.2771911025047302,
+      "best_label": ""
+    },
+    {
+      "seed": 1010,
+      "class_id": "mug",
+      "short_side_px": 60,
+      "pixel_bin": "32-63",
+      "reason": "no_iou50_at_score_ge_.10",
+      "best_iou": 0.40844195914151293,
+      "best_score": null,
+      "best_label": ""
+    },
+    {
+      "seed": 1010,
+      "class_id": "bottle",
+      "short_side_px": 36,
+      "pixel_bin": "32-63",
+      "reason": "no_iou50_at_score_ge_.10",
+      "best_iou": 0.22571859513965836,
+      "best_score": null,
+      "best_label": ""
+    },
+    {
+      "seed": 1010,
+      "class_id": "block",
+      "short_side_px": 22,
+      "pixel_bin": "16-31",
+      "reason": "class_or_decoded_label_loss",
+      "best_iou": 0.6611333722695961,
+      "best_score": 0.5739231109619141,
+      "best_label": "yellow"
+    },
+    {
+      "seed": 1011,
+      "class_id": "cup",
+      "short_side_px": 44,
+      "pixel_bin": "32-63",
+      "reason": "no_iou50_at_score_ge_.10",
+      "best_iou": 0.403543434734634,
+      "best_score": null,
+      "best_label": ""
+    },
+    {
+      "seed": 1011,
+      "class_id": "can",
+      "short_side_px": 19,
+      "pixel_bin": "16-31",
+      "reason": "class_or_decoded_label_loss",
+      "best_iou": 0.7479868989997444,
+      "best_score": 0.41644349694252014,
+      "best_label": ""
+    },
+    {
+      "seed": 1012,
+      "class_id": "can",
+      "short_side_px": 55,
+      "pixel_bin": "32-63",
+      "reason": "no_iou50_at_score_ge_.10",
+      "best_iou": 0.3371285143388882,
+      "best_score": null,
+      "best_label": "cyan block"
+    },
+    {
+      "seed": 1012,
+      "class_id": "bottle",
+      "short_side_px": 36,
+      "pixel_bin": "32-63",
+      "reason": "no_iou50_at_score_ge_.10",
+      "best_iou": 0.22454817298089003,
+      "best_score": null,
+      "best_label": ""
+    },
+    {
+      "seed": 1012,
+      "class_id": "small_box",
+      "short_side_px": 21,
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "best_iou": 0.7737535618424738,
+      "best_score": 0.5101851224899292,
+      "best_label": ""
+    },
+    {
+      "seed": 1013,
+      "class_id": "mug",
+      "short_side_px": 94,
+      "pixel_bin": "64+",
+      "reason": "score_below_.35",
+      "best_iou": 0.864019760805185,
+      "best_score": 0.11326829344034195,
+      "best_label": ""
+    },
+    {
+      "seed": 1013,
+      "class_id": "bottle",
+      "short_side_px": 92,
+      "pixel_bin": "64+",
+      "reason": "score_below_.35",
+      "best_iou": 0.8316589011161567,
+      "best_score": 0.11326829344034195,
+      "best_label": ""
+    },
+    {
+      "seed": 1013,
+      "class_id": "ball",
+      "short_side_px": 92,
+      "pixel_bin": "64+",
+      "reason": "score_below_.35",
+      "best_iou": 0.817681440593196,
+      "best_score": 0.11326829344034195,
+      "best_label": ""
+    },
+    {
+      "seed": 1013,
+      "class_id": "cup",
+      "short_side_px": 29,
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "best_iou": 0.7810100214005858,
+      "best_score": 0.6673830151557922,
+      "best_label": "blue cup"
+    },
+    {
+      "seed": 1014,
+      "class_id": "ball",
+      "short_side_px": 61,
+      "pixel_bin": "32-63",
+      "reason": "score_below_.35",
+      "best_iou": 0.6214034023190509,
+      "best_score": 0.12749198079109192,
+      "best_label": ""
+    },
+    {
+      "seed": 1014,
+      "class_id": "block",
+      "short_side_px": 20,
+      "pixel_bin": "16-31",
+      "reason": "class_or_decoded_label_loss",
+      "best_iou": 0.5993671900324898,
+      "best_score": 0.3619524836540222,
+      "best_label": ""
+    },
+    {
+      "seed": 1015,
+      "class_id": "cup",
+      "short_side_px": 53,
+      "pixel_bin": "32-63",
+      "reason": "no_iou50_at_score_ge_.10",
+      "best_iou": 0.3421484630541891,
+      "best_score": null,
+      "best_label": ""
+    },
+    {
+      "seed": 1015,
+      "class_id": "cup",
+      "short_side_px": 52,
+      "pixel_bin": "32-63",
+      "reason": "no_iou50_at_score_ge_.10",
+      "best_iou": 0.43715984641382155,
+      "best_score": null,
+      "best_label": ""
+    },
+    {
+      "seed": 1015,
+      "class_id": "can",
+      "short_side_px": 21,
+      "pixel_bin": "16-31",
+      "reason": "class_or_decoded_label_loss",
+      "best_iou": 0.7509018220473912,
+      "best_score": 0.5778840780258179,
+      "best_label": ""
+    },
+    {
+      "seed": 1016,
+      "class_id": "box",
+      "short_side_px": 60,
+      "pixel_bin": "32-63",
+      "reason": "no_iou50_at_score_ge_.10",
+      "best_iou": 0.4772956770512064,
+      "best_score": null,
+      "best_label": ""
+    },
+    {
+      "seed": 1016,
+      "class_id": "cup",
+      "short_side_px": 59,
+      "pixel_bin": "32-63",
+      "reason": "no_iou50_at_score_ge_.10",
+      "best_iou": 0.4630408732735026,
+      "best_score": null,
+      "best_label": ""
+    },
+    {
+      "seed": 1016,
+      "class_id": "small_box",
+      "short_side_px": 59,
+      "pixel_bin": "32-63",
+      "reason": "no_iou50_at_score_ge_.10",
+      "best_iou": 0.36539279795732177,
+      "best_score": null,
+      "best_label": ""
+    },
+    {
+      "seed": 1016,
+      "class_id": "ball",
+      "short_side_px": 23,
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "best_iou": 0.7816692697426041,
+      "best_score": 0.6056579351425171,
+      "best_label": ""
+    },
+    {
+      "seed": 1017,
+      "class_id": "cup",
+      "short_side_px": 34,
+      "pixel_bin": "32-63",
+      "reason": "exact_hit",
+      "best_iou": 0.8699847771930516,
+      "best_score": 0.43348225951194763,
+      "best_label": ""
+    },
+    {
+      "seed": 1017,
+      "class_id": "box",
+      "short_side_px": 15,
+      "pixel_bin": "<16",
+      "reason": "score_below_.35",
+      "best_iou": 0.6884664169082413,
+      "best_score": 0.21357187628746033,
+      "best_label": ""
+    },
+    {
+      "seed": 1018,
+      "class_id": "mustard",
+      "short_side_px": 84,
+      "pixel_bin": "64+",
+      "reason": "score_below_.35",
+      "best_iou": 0.5698679795150535,
+      "best_score": 0.13871462643146515,
+      "best_label": ""
+    },
+    {
+      "seed": 1018,
+      "class_id": "small_box",
+      "short_side_px": 44,
+      "pixel_bin": "32-63",
+      "reason": "no_iou50_at_score_ge_.10",
+      "best_iou": 0.3827662133409698,
+      "best_score": null,
+      "best_label": ""
+    },
+    {
+      "seed": 1018,
+      "class_id": "block",
+      "short_side_px": 24,
+      "pixel_bin": "16-31",
+      "reason": "class_or_decoded_label_loss",
+      "best_iou": 0.7444043832276453,
+      "best_score": 0.4752739369869232,
+      "best_label": ""
+    },
+    {
+      "seed": 1019,
+      "class_id": "can",
+      "short_side_px": 82,
+      "pixel_bin": "64+",
+      "reason": "score_below_.35",
+      "best_iou": 0.5825150798574834,
+      "best_score": 0.2659680247306824,
+      "best_label": "cyan block"
+    },
+    {
+      "seed": 1019,
+      "class_id": "mug",
+      "short_side_px": 82,
+      "pixel_bin": "64+",
+      "reason": "score_below_.35",
+      "best_iou": 0.5825150798574834,
+      "best_score": 0.2659680247306824,
+      "best_label": "cyan block"
+    },
+    {
+      "seed": 1019,
+      "class_id": "ball",
+      "short_side_px": 81,
+      "pixel_bin": "64+",
+      "reason": "score_below_.35",
+      "best_iou": 0.5833143769181381,
+      "best_score": 0.2659680247306824,
+      "best_label": "cyan block"
+    },
+    {
+      "seed": 1019,
+      "class_id": "small_box",
+      "short_side_px": 22,
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "best_iou": 0.6194526471075997,
+      "best_score": 0.5881063342094421,
+      "best_label": ""
+    }
+  ]
+}

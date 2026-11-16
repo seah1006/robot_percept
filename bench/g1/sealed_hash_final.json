@@ -1,0 +1,28 @@
+{
+  "hashed_at": 1794803331.5378695,
+  "v1_sha256": "b4d7150b8728a0e34c7190506ceeead8418bcd07a4a9574897e04c6738844f52",
+  "v2r_sha256": "66b2a23c573c22793e6df563edb3731a7c693b20dd8cdb52216b8a26d4506628",
+  "v2r_frozen_at": 1794803212.2228746,
+  "files": [
+    {
+      "file": "selection_eval_part0.json",
+      "bytes": 260862,
+      "sha256": "ff6300ff95c609b04fe2769e2567456bda5c87902addb8e5e7c9acae1c9d2045"
+    },
+    {
+      "file": "selection_eval_part1.json",
+      "bytes": 262947,
+      "sha256": "fd9e96777b4446994e110f7991f380cff96e66d92a5e6e614d1f221e9e920928"
+    },
+    {
+      "file": "selection_eval_part2.json",
+      "bytes": 267659,
+      "sha256": "3106ce261c905446e6dbf7e8f54292a006437395d93ba42a562cfe164ae5f8b0"
+    },
+    {
+      "file": "selection_eval_part3.json",
+      "bytes": 250158,
+      "sha256": "3e86535c706e81f3d8a1398f4765c83cf820eff5885a4a1a16c9e4f630a008ab"
+    }
+  ]
+}

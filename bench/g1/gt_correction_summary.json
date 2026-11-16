@@ -1,0 +1,2995 @@
+{
+  "source": "[\uc2dc\ubbac\uc778\uc2dd]",
+  "gt_assist": false,
+  "split": "tuning",
+  "inference_changed": false,
+  "mask_offsamples": 0,
+  "normal_box_area_max": 0.012278645833333334,
+  "margin_factor": 3,
+  "cell_area_cap": 0.04,
+  "elapsed_s": 74.31419132099973,
+  "targets": [
+    {
+      "seed": 1000,
+      "width": 320,
+      "height": 240,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "small_box",
+          "box": [
+            155,
+            102,
+            170,
+            113
+          ],
+          "visible_pixels": 97,
+          "pixel_width": 15,
+          "pixel_height": 11,
+          "area_ratio": 0.0021484375
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "small_box",
+          "box": [
+            175,
+            104,
+            188,
+            116
+          ],
+          "visible_pixels": 87,
+          "pixel_width": 13,
+          "pixel_height": 12,
+          "area_ratio": 0.00203125
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "block",
+          "box": [
+            184,
+            124,
+            196,
+            137
+          ],
+          "visible_pixels": 86,
+          "pixel_width": 12,
+          "pixel_height": 13,
+          "area_ratio": 0.00203125
+        }
+      ]
+    },
+    {
+      "seed": 1000,
+      "width": 640,
+      "height": 480,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "small_box",
+          "box": [
+            310,
+            204,
+            339,
+            224
+          ],
+          "visible_pixels": 377,
+          "pixel_width": 29,
+          "pixel_height": 20,
+          "area_ratio": 0.0018880208333333333
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "small_box",
+          "box": [
+            350,
+            207,
+            376,
+            234
+          ],
+          "visible_pixels": 343,
+          "pixel_width": 26,
+          "pixel_height": 27,
+          "area_ratio": 0.00228515625
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "block",
+          "box": [
+            367,
+            247,
+            391,
+            276
+          ],
+          "visible_pixels": 394,
+          "pixel_width": 24,
+          "pixel_height": 29,
+          "area_ratio": 0.002265625
+        }
+      ]
+    },
+    {
+      "seed": 1000,
+      "width": 1280,
+      "height": 720,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "small_box",
+          "box": [
+            625,
+            306,
+            669,
+            338
+          ],
+          "visible_pixels": 838,
+          "pixel_width": 44,
+          "pixel_height": 32,
+          "area_ratio": 0.0015277777777777779
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "small_box",
+          "box": [
+            685,
+            311,
+            724,
+            351
+          ],
+          "visible_pixels": 768,
+          "pixel_width": 39,
+          "pixel_height": 40,
+          "area_ratio": 0.0016927083333333334
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "block",
+          "box": [
+            710,
+            371,
+            747,
+            412
+          ],
+          "visible_pixels": 855,
+          "pixel_width": 37,
+          "pixel_height": 41,
+          "area_ratio": 0.0016460503472222221
+        }
+      ]
+    },
+    {
+      "seed": 1001,
+      "width": 320,
+      "height": 240,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "mug",
+          "box": [
+            130,
+            96,
+            143,
+            113
+          ],
+          "visible_pixels": 176,
+          "pixel_width": 13,
+          "pixel_height": 17,
+          "area_ratio": 0.0028776041666666668
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "block",
+          "box": [
+            180,
+            128,
+            193,
+            142
+          ],
+          "visible_pixels": 103,
+          "pixel_width": 13,
+          "pixel_height": 14,
+          "area_ratio": 0.0023697916666666667
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "bottle",
+          "box": [
+            129,
+            108,
+            137,
+            123
+          ],
+          "visible_pixels": 109,
+          "pixel_width": 8,
+          "pixel_height": 15,
+          "area_ratio": 0.0015625
+        },
+        {
+          "instance_id": "cell_instance_3",
+          "class_id": "mustard",
+          "box": [
+            179,
+            76,
+            200,
+            115
+          ],
+          "visible_pixels": 585,
+          "pixel_width": 21,
+          "pixel_height": 39,
+          "area_ratio": 0.0106640625
+        }
+      ]
+    },
+    {
+      "seed": 1001,
+      "width": 640,
+      "height": 480,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "mug",
+          "box": [
+            259,
+            191,
+            287,
+            226
+          ],
+          "visible_pixels": 705,
+          "pixel_width": 28,
+          "pixel_height": 35,
+          "area_ratio": 0.0031901041666666666
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "block",
+          "box": [
+            360,
+            257,
+            385,
+            287
+          ],
+          "visible_pixels": 388,
+          "pixel_width": 25,
+          "pixel_height": 30,
+          "area_ratio": 0.00244140625
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "bottle",
+          "box": [
+            258,
+            215,
+            275,
+            247
+          ],
+          "visible_pixels": 447,
+          "pixel_width": 17,
+          "pixel_height": 32,
+          "area_ratio": 0.0017708333333333332
+        },
+        {
+          "instance_id": "cell_instance_3",
+          "class_id": "mustard",
+          "box": [
+            358,
+            152,
+            400,
+            230
+          ],
+          "visible_pixels": 2332,
+          "pixel_width": 42,
+          "pixel_height": 78,
+          "area_ratio": 0.0106640625
+        }
+      ]
+    },
+    {
+      "seed": 1001,
+      "width": 1280,
+      "height": 720,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "mug",
+          "box": [
+            549,
+            287,
+            590,
+            339
+          ],
+          "visible_pixels": 1585,
+          "pixel_width": 41,
+          "pixel_height": 52,
+          "area_ratio": 0.0023133680555555555
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "block",
+          "box": [
+            700,
+            385,
+            738,
+            428
+          ],
+          "visible_pixels": 896,
+          "pixel_width": 38,
+          "pixel_height": 43,
+          "area_ratio": 0.0017730034722222223
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "bottle",
+          "box": [
+            546,
+            323,
+            572,
+            370
+          ],
+          "visible_pixels": 1006,
+          "pixel_width": 26,
+          "pixel_height": 47,
+          "area_ratio": 0.001325954861111111
+        },
+        {
+          "instance_id": "cell_instance_3",
+          "class_id": "mustard",
+          "box": [
+            696,
+            229,
+            760,
+            344
+          ],
+          "visible_pixels": 5238,
+          "pixel_width": 64,
+          "pixel_height": 115,
+          "area_ratio": 0.00798611111111111
+        }
+      ]
+    },
+    {
+      "seed": 1002,
+      "width": 320,
+      "height": 240,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "block",
+          "box": [
+            143,
+            118,
+            157,
+            131
+          ],
+          "visible_pixels": 107,
+          "pixel_width": 14,
+          "pixel_height": 13,
+          "area_ratio": 0.0023697916666666667
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "ball",
+          "box": [
+            127,
+            114,
+            138,
+            124
+          ],
+          "visible_pixels": 90,
+          "pixel_width": 11,
+          "pixel_height": 10,
+          "area_ratio": 0.0014322916666666666
+        }
+      ]
+    },
+    {
+      "seed": 1002,
+      "width": 640,
+      "height": 480,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "block",
+          "box": [
+            285,
+            237,
+            313,
+            262
+          ],
+          "visible_pixels": 423,
+          "pixel_width": 28,
+          "pixel_height": 25,
+          "area_ratio": 0.0022786458333333335
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "ball",
+          "box": [
+            254,
+            227,
+            275,
+            249
+          ],
+          "visible_pixels": 368,
+          "pixel_width": 21,
+          "pixel_height": 22,
+          "area_ratio": 0.00150390625
+        }
+      ]
+    },
+    {
+      "seed": 1002,
+      "width": 1280,
+      "height": 720,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "block",
+          "box": [
+            588,
+            355,
+            630,
+            394
+          ],
+          "visible_pixels": 959,
+          "pixel_width": 42,
+          "pixel_height": 39,
+          "area_ratio": 0.00177734375
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "ball",
+          "box": [
+            540,
+            341,
+            573,
+            373
+          ],
+          "visible_pixels": 833,
+          "pixel_width": 33,
+          "pixel_height": 32,
+          "area_ratio": 0.0011458333333333333
+        }
+      ]
+    },
+    {
+      "seed": 1003,
+      "width": 320,
+      "height": 240,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "small_box",
+          "box": [
+            175,
+            117,
+            190,
+            129
+          ],
+          "visible_pixels": 93,
+          "pixel_width": 15,
+          "pixel_height": 12,
+          "area_ratio": 0.00234375
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "bottle",
+          "box": [
+            165,
+            103,
+            173,
+            118
+          ],
+          "visible_pixels": 106,
+          "pixel_width": 8,
+          "pixel_height": 15,
+          "area_ratio": 0.0015625
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "can",
+          "box": [
+            128,
+            113,
+            139,
+            132
+          ],
+          "visible_pixels": 180,
+          "pixel_width": 11,
+          "pixel_height": 19,
+          "area_ratio": 0.0027213541666666666
+        }
+      ]
+    },
+    {
+      "seed": 1003,
+      "width": 640,
+      "height": 480,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "small_box",
+          "box": [
+            351,
+            233,
+            380,
+            254
+          ],
+          "visible_pixels": 374,
+          "pixel_width": 29,
+          "pixel_height": 21,
+          "area_ratio": 0.001982421875
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "bottle",
+          "box": [
+            330,
+            205,
+            345,
+            236
+          ],
+          "visible_pixels": 425,
+          "pixel_width": 15,
+          "pixel_height": 31,
+          "area_ratio": 0.001513671875
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "can",
+          "box": [
+            255,
+            227,
+            278,
+            264
+          ],
+          "visible_pixels": 723,
+          "pixel_width": 23,
+          "pixel_height": 37,
+          "area_ratio": 0.0027701822916666665
+        }
+      ]
+    },
+    {
+      "seed": 1003,
+      "width": 1280,
+      "height": 720,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "small_box",
+          "box": [
+            686,
+            350,
+            730,
+            386
+          ],
+          "visible_pixels": 841,
+          "pixel_width": 44,
+          "pixel_height": 36,
+          "area_ratio": 0.00171875
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "bottle",
+          "box": [
+            655,
+            308,
+            678,
+            354
+          ],
+          "visible_pixels": 945,
+          "pixel_width": 23,
+          "pixel_height": 46,
+          "area_ratio": 0.0011480034722222221
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "can",
+          "box": [
+            543,
+            340,
+            578,
+            396
+          ],
+          "visible_pixels": 1627,
+          "pixel_width": 35,
+          "pixel_height": 56,
+          "area_ratio": 0.002126736111111111
+        }
+      ]
+    },
+    {
+      "seed": 1004,
+      "width": 320,
+      "height": 240,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "box",
+          "box": [
+            185,
+            119,
+            197,
+            129
+          ],
+          "visible_pixels": 83,
+          "pixel_width": 12,
+          "pixel_height": 10,
+          "area_ratio": 0.0015625
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "mug",
+          "box": [
+            133,
+            109,
+            148,
+            128
+          ],
+          "visible_pixels": 241,
+          "pixel_width": 15,
+          "pixel_height": 19,
+          "area_ratio": 0.0037109375
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "small_box",
+          "box": [
+            152,
+            97,
+            166,
+            107
+          ],
+          "visible_pixels": 92,
+          "pixel_width": 14,
+          "pixel_height": 10,
+          "area_ratio": 0.0018229166666666667
+        },
+        {
+          "instance_id": "cell_instance_3",
+          "class_id": "block",
+          "box": [
+            181,
+            128,
+            194,
+            140
+          ],
+          "visible_pixels": 93,
+          "pixel_width": 13,
+          "pixel_height": 12,
+          "area_ratio": 0.00203125
+        }
+      ]
+    },
+    {
+      "seed": 1004,
+      "width": 640,
+      "height": 480,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "box",
+          "box": [
+            370,
+            237,
+            395,
+            259
+          ],
+          "visible_pixels": 334,
+          "pixel_width": 25,
+          "pixel_height": 22,
+          "area_ratio": 0.0017903645833333333
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "mug",
+          "box": [
+            267,
+            218,
+            296,
+            255
+          ],
+          "visible_pixels": 944,
+          "pixel_width": 29,
+          "pixel_height": 37,
+          "area_ratio": 0.0034928385416666667
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "small_box",
+          "box": [
+            304,
+            195,
+            333,
+            215
+          ],
+          "visible_pixels": 366,
+          "pixel_width": 29,
+          "pixel_height": 20,
+          "area_ratio": 0.0018880208333333333
+        },
+        {
+          "instance_id": "cell_instance_3",
+          "class_id": "block",
+          "box": [
+            363,
+            255,
+            388,
+            283
+          ],
+          "visible_pixels": 409,
+          "pixel_width": 25,
+          "pixel_height": 28,
+          "area_ratio": 0.0022786458333333335
+        }
+      ]
+    },
+    {
+      "seed": 1004,
+      "width": 1280,
+      "height": 720,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "box",
+          "box": [
+            714,
+            356,
+            752,
+            389
+          ],
+          "visible_pixels": 757,
+          "pixel_width": 38,
+          "pixel_height": 33,
+          "area_ratio": 0.0013606770833333333
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "mug",
+          "box": [
+            560,
+            326,
+            604,
+            383
+          ],
+          "visible_pixels": 2138,
+          "pixel_width": 44,
+          "pixel_height": 57,
+          "area_ratio": 0.0027213541666666666
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "small_box",
+          "box": [
+            617,
+            292,
+            659,
+            323
+          ],
+          "visible_pixels": 819,
+          "pixel_width": 42,
+          "pixel_height": 31,
+          "area_ratio": 0.0014127604166666668
+        },
+        {
+          "instance_id": "cell_instance_3",
+          "class_id": "block",
+          "box": [
+            704,
+            382,
+            743,
+            427
+          ],
+          "visible_pixels": 903,
+          "pixel_width": 39,
+          "pixel_height": 45,
+          "area_ratio": 0.001904296875
+        }
+      ]
+    },
+    {
+      "seed": 1005,
+      "width": 320,
+      "height": 240,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "ball",
+          "box": [
+            167,
+            105,
+            177,
+            115
+          ],
+          "visible_pixels": 81,
+          "pixel_width": 10,
+          "pixel_height": 10,
+          "area_ratio": 0.0013020833333333333
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "ball",
+          "box": [
+            121,
+            129,
+            133,
+            141
+          ],
+          "visible_pixels": 111,
+          "pixel_width": 12,
+          "pixel_height": 12,
+          "area_ratio": 0.001875
+        }
+      ]
+    },
+    {
+      "seed": 1005,
+      "width": 640,
+      "height": 480,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "ball",
+          "box": [
+            333,
+            210,
+            354,
+            231
+          ],
+          "visible_pixels": 332,
+          "pixel_width": 21,
+          "pixel_height": 21,
+          "area_ratio": 0.001435546875
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "ball",
+          "box": [
+            243,
+            257,
+            266,
+            281
+          ],
+          "visible_pixels": 435,
+          "pixel_width": 23,
+          "pixel_height": 24,
+          "area_ratio": 0.001796875
+        }
+      ]
+    },
+    {
+      "seed": 1005,
+      "width": 1280,
+      "height": 720,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "ball",
+          "box": [
+            660,
+            316,
+            691,
+            347
+          ],
+          "visible_pixels": 742,
+          "pixel_width": 31,
+          "pixel_height": 31,
+          "area_ratio": 0.001042751736111111
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "ball",
+          "box": [
+            524,
+            386,
+            560,
+            422
+          ],
+          "visible_pixels": 994,
+          "pixel_width": 36,
+          "pixel_height": 36,
+          "area_ratio": 0.00140625
+        }
+      ]
+    },
+    {
+      "seed": 1006,
+      "width": 320,
+      "height": 240,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "ball",
+          "box": [
+            180,
+            104,
+            190,
+            114
+          ],
+          "visible_pixels": 82,
+          "pixel_width": 10,
+          "pixel_height": 10,
+          "area_ratio": 0.0013020833333333333
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "small_box",
+          "box": [
+            140,
+            108,
+            155,
+            119
+          ],
+          "visible_pixels": 101,
+          "pixel_width": 15,
+          "pixel_height": 11,
+          "area_ratio": 0.0021484375
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "can",
+          "box": [
+            114,
+            116,
+            126,
+            135
+          ],
+          "visible_pixels": 187,
+          "pixel_width": 12,
+          "pixel_height": 19,
+          "area_ratio": 0.00296875
+        }
+      ]
+    },
+    {
+      "seed": 1006,
+      "width": 640,
+      "height": 480,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "ball",
+          "box": [
+            360,
+            208,
+            380,
+            228
+          ],
+          "visible_pixels": 322,
+          "pixel_width": 20,
+          "pixel_height": 20,
+          "area_ratio": 0.0013020833333333333
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "small_box",
+          "box": [
+            280,
+            215,
+            311,
+            237
+          ],
+          "visible_pixels": 406,
+          "pixel_width": 31,
+          "pixel_height": 22,
+          "area_ratio": 0.0022200520833333334
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "can",
+          "box": [
+            228,
+            231,
+            253,
+            269
+          ],
+          "visible_pixels": 749,
+          "pixel_width": 25,
+          "pixel_height": 38,
+          "area_ratio": 0.0030924479166666665
+        }
+      ]
+    },
+    {
+      "seed": 1006,
+      "width": 1280,
+      "height": 720,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "ball",
+          "box": [
+            700,
+            311,
+            731,
+            342
+          ],
+          "visible_pixels": 738,
+          "pixel_width": 31,
+          "pixel_height": 31,
+          "area_ratio": 0.001042751736111111
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "small_box",
+          "box": [
+            579,
+            323,
+            626,
+            356
+          ],
+          "visible_pixels": 920,
+          "pixel_width": 47,
+          "pixel_height": 33,
+          "area_ratio": 0.0016829427083333334
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "can",
+          "box": [
+            502,
+            347,
+            539,
+            404
+          ],
+          "visible_pixels": 1687,
+          "pixel_width": 37,
+          "pixel_height": 57,
+          "area_ratio": 0.0022884114583333333
+        }
+      ]
+    },
+    {
+      "seed": 1007,
+      "width": 320,
+      "height": 240,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "box",
+          "box": [
+            192,
+            117,
+            200,
+            128
+          ],
+          "visible_pixels": 69,
+          "pixel_width": 8,
+          "pixel_height": 11,
+          "area_ratio": 0.0011458333333333333
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "mug",
+          "box": [
+            142,
+            99,
+            154,
+            116
+          ],
+          "visible_pixels": 108,
+          "pixel_width": 12,
+          "pixel_height": 17,
+          "area_ratio": 0.00265625
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "mustard",
+          "box": [
+            147,
+            93,
+            170,
+            134
+          ],
+          "visible_pixels": 729,
+          "pixel_width": 23,
+          "pixel_height": 41,
+          "area_ratio": 0.012278645833333334
+        },
+        {
+          "instance_id": "cell_instance_3",
+          "class_id": "bottle",
+          "box": [
+            185,
+            99,
+            194,
+            114
+          ],
+          "visible_pixels": 102,
+          "pixel_width": 9,
+          "pixel_height": 15,
+          "area_ratio": 0.0017578125
+        }
+      ]
+    },
+    {
+      "seed": 1007,
+      "width": 640,
+      "height": 480,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "box",
+          "box": [
+            384,
+            235,
+            401,
+            257
+          ],
+          "visible_pixels": 282,
+          "pixel_width": 17,
+          "pixel_height": 22,
+          "area_ratio": 0.0012174479166666666
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "mug",
+          "box": [
+            284,
+            198,
+            307,
+            233
+          ],
+          "visible_pixels": 432,
+          "pixel_width": 23,
+          "pixel_height": 35,
+          "area_ratio": 0.002620442708333333
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "mustard",
+          "box": [
+            294,
+            186,
+            340,
+            268
+          ],
+          "visible_pixels": 2908,
+          "pixel_width": 46,
+          "pixel_height": 82,
+          "area_ratio": 0.012278645833333334
+        },
+        {
+          "instance_id": "cell_instance_3",
+          "class_id": "bottle",
+          "box": [
+            371,
+            198,
+            387,
+            228
+          ],
+          "visible_pixels": 404,
+          "pixel_width": 16,
+          "pixel_height": 30,
+          "area_ratio": 0.0015625
+        }
+      ]
+    },
+    {
+      "seed": 1007,
+      "width": 1280,
+      "height": 720,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "box",
+          "box": [
+            735,
+            352,
+            761,
+            385
+          ],
+          "visible_pixels": 628,
+          "pixel_width": 26,
+          "pixel_height": 33,
+          "area_ratio": 0.0009309895833333334
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "mug",
+          "box": [
+            585,
+            296,
+            621,
+            349
+          ],
+          "visible_pixels": 978,
+          "pixel_width": 36,
+          "pixel_height": 53,
+          "area_ratio": 0.0020703125
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "mustard",
+          "box": [
+            602,
+            279,
+            671,
+            402
+          ],
+          "visible_pixels": 6549,
+          "pixel_width": 69,
+          "pixel_height": 123,
+          "area_ratio": 0.009208984375
+        },
+        {
+          "instance_id": "cell_instance_3",
+          "class_id": "bottle",
+          "box": [
+            716,
+            297,
+            741,
+            342
+          ],
+          "visible_pixels": 911,
+          "pixel_width": 25,
+          "pixel_height": 45,
+          "area_ratio": 0.001220703125
+        }
+      ]
+    },
+    {
+      "seed": 1008,
+      "width": 320,
+      "height": 240,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "small_box",
+          "box": [
+            195,
+            102,
+            205,
+            113
+          ],
+          "visible_pixels": 67,
+          "pixel_width": 10,
+          "pixel_height": 11,
+          "area_ratio": 0.0014322916666666666
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "can",
+          "box": [
+            145,
+            118,
+            156,
+            138
+          ],
+          "visible_pixels": 190,
+          "pixel_width": 11,
+          "pixel_height": 20,
+          "area_ratio": 0.002864583333333333
+        }
+      ]
+    },
+    {
+      "seed": 1008,
+      "width": 640,
+      "height": 480,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "small_box",
+          "box": [
+            391,
+            204,
+            410,
+            230
+          ],
+          "visible_pixels": 258,
+          "pixel_width": 19,
+          "pixel_height": 26,
+          "area_ratio": 0.0016080729166666667
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "can",
+          "box": [
+            289,
+            237,
+            311,
+            275
+          ],
+          "visible_pixels": 753,
+          "pixel_width": 22,
+          "pixel_height": 38,
+          "area_ratio": 0.0027213541666666666
+        }
+      ]
+    },
+    {
+      "seed": 1008,
+      "width": 1280,
+      "height": 720,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "small_box",
+          "box": [
+            746,
+            306,
+            775,
+            346
+          ],
+          "visible_pixels": 577,
+          "pixel_width": 29,
+          "pixel_height": 40,
+          "area_ratio": 0.0012586805555555556
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "can",
+          "box": [
+            594,
+            355,
+            627,
+            413
+          ],
+          "visible_pixels": 1703,
+          "pixel_width": 33,
+          "pixel_height": 58,
+          "area_ratio": 0.0020768229166666665
+        }
+      ]
+    },
+    {
+      "seed": 1009,
+      "width": 320,
+      "height": 240,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "mug",
+          "box": [
+            179,
+            101,
+            194,
+            119
+          ],
+          "visible_pixels": 216,
+          "pixel_width": 15,
+          "pixel_height": 18,
+          "area_ratio": 0.003515625
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "cup",
+          "box": [
+            152,
+            108,
+            168,
+            128
+          ],
+          "visible_pixels": 272,
+          "pixel_width": 16,
+          "pixel_height": 20,
+          "area_ratio": 0.004166666666666667
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "bottle",
+          "box": [
+            136,
+            101,
+            144,
+            116
+          ],
+          "visible_pixels": 101,
+          "pixel_width": 8,
+          "pixel_height": 15,
+          "area_ratio": 0.0015625
+        }
+      ]
+    },
+    {
+      "seed": 1009,
+      "width": 640,
+      "height": 480,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "mug",
+          "box": [
+            359,
+            202,
+            387,
+            238
+          ],
+          "visible_pixels": 864,
+          "pixel_width": 28,
+          "pixel_height": 36,
+          "area_ratio": 0.00328125
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "cup",
+          "box": [
+            304,
+            217,
+            335,
+            256
+          ],
+          "visible_pixels": 1083,
+          "pixel_width": 31,
+          "pixel_height": 39,
+          "area_ratio": 0.003935546875
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "bottle",
+          "box": [
+            273,
+            201,
+            288,
+            231
+          ],
+          "visible_pixels": 408,
+          "pixel_width": 15,
+          "pixel_height": 30,
+          "area_ratio": 0.00146484375
+        }
+      ]
+    },
+    {
+      "seed": 1009,
+      "width": 1280,
+      "height": 720,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "mug",
+          "box": [
+            698,
+            303,
+            741,
+            357
+          ],
+          "visible_pixels": 1947,
+          "pixel_width": 43,
+          "pixel_height": 54,
+          "area_ratio": 0.00251953125
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "cup",
+          "box": [
+            616,
+            325,
+            663,
+            384
+          ],
+          "visible_pixels": 2430,
+          "pixel_width": 47,
+          "pixel_height": 59,
+          "area_ratio": 0.0030088975694444442
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "bottle",
+          "box": [
+            569,
+            301,
+            593,
+            347
+          ],
+          "visible_pixels": 922,
+          "pixel_width": 24,
+          "pixel_height": 46,
+          "area_ratio": 0.0011979166666666666
+        }
+      ]
+    },
+    {
+      "seed": 1010,
+      "width": 320,
+      "height": 240,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "mug",
+          "box": [
+            174,
+            118,
+            190,
+            138
+          ],
+          "visible_pixels": 264,
+          "pixel_width": 16,
+          "pixel_height": 20,
+          "area_ratio": 0.004166666666666667
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "mug",
+          "box": [
+            117,
+            109,
+            132,
+            128
+          ],
+          "visible_pixels": 242,
+          "pixel_width": 15,
+          "pixel_height": 19,
+          "area_ratio": 0.0037109375
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "bottle",
+          "box": [
+            189,
+            100,
+            197,
+            115
+          ],
+          "visible_pixels": 103,
+          "pixel_width": 8,
+          "pixel_height": 15,
+          "area_ratio": 0.0015625
+        },
+        {
+          "instance_id": "cell_instance_3",
+          "class_id": "block",
+          "box": [
+            121,
+            97,
+            135,
+            109
+          ],
+          "visible_pixels": 96,
+          "pixel_width": 14,
+          "pixel_height": 12,
+          "area_ratio": 0.0021875
+        }
+      ]
+    },
+    {
+      "seed": 1010,
+      "width": 640,
+      "height": 480,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "mug",
+          "box": [
+            349,
+            235,
+            380,
+            276
+          ],
+          "visible_pixels": 1055,
+          "pixel_width": 31,
+          "pixel_height": 41,
+          "area_ratio": 0.004137369791666666
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "mug",
+          "box": [
+            234,
+            218,
+            264,
+            256
+          ],
+          "visible_pixels": 961,
+          "pixel_width": 30,
+          "pixel_height": 38,
+          "area_ratio": 0.0037109375
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "bottle",
+          "box": [
+            378,
+            200,
+            395,
+            230
+          ],
+          "visible_pixels": 412,
+          "pixel_width": 17,
+          "pixel_height": 30,
+          "area_ratio": 0.00166015625
+        },
+        {
+          "instance_id": "cell_instance_3",
+          "class_id": "block",
+          "box": [
+            243,
+            194,
+            270,
+            217
+          ],
+          "visible_pixels": 376,
+          "pixel_width": 27,
+          "pixel_height": 23,
+          "area_ratio": 0.002021484375
+        }
+      ]
+    },
+    {
+      "seed": 1010,
+      "width": 1280,
+      "height": 720,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "mug",
+          "box": [
+            683,
+            353,
+            730,
+            413
+          ],
+          "visible_pixels": 2378,
+          "pixel_width": 47,
+          "pixel_height": 60,
+          "area_ratio": 0.0030598958333333333
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "mug",
+          "box": [
+            510,
+            327,
+            557,
+            384
+          ],
+          "visible_pixels": 2159,
+          "pixel_width": 47,
+          "pixel_height": 57,
+          "area_ratio": 0.0029069010416666666
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "bottle",
+          "box": [
+            727,
+            300,
+            752,
+            346
+          ],
+          "visible_pixels": 925,
+          "pixel_width": 25,
+          "pixel_height": 46,
+          "area_ratio": 0.001247829861111111
+        },
+        {
+          "instance_id": "cell_instance_3",
+          "class_id": "block",
+          "box": [
+            524,
+            291,
+            564,
+            326
+          ],
+          "visible_pixels": 842,
+          "pixel_width": 40,
+          "pixel_height": 35,
+          "area_ratio": 0.0015190972222222222
+        }
+      ]
+    },
+    {
+      "seed": 1011,
+      "width": 320,
+      "height": 240,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "cup",
+          "box": [
+            119,
+            99,
+            135,
+            118
+          ],
+          "visible_pixels": 242,
+          "pixel_width": 16,
+          "pixel_height": 19,
+          "area_ratio": 0.003958333333333334
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "can",
+          "box": [
+            148,
+            103,
+            158,
+            121
+          ],
+          "visible_pixels": 164,
+          "pixel_width": 10,
+          "pixel_height": 18,
+          "area_ratio": 0.00234375
+        }
+      ]
+    },
+    {
+      "seed": 1011,
+      "width": 640,
+      "height": 480,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "cup",
+          "box": [
+            239,
+            198,
+            270,
+            235
+          ],
+          "visible_pixels": 971,
+          "pixel_width": 31,
+          "pixel_height": 37,
+          "area_ratio": 0.0037337239583333333
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "can",
+          "box": [
+            296,
+            206,
+            316,
+            242
+          ],
+          "visible_pixels": 632,
+          "pixel_width": 20,
+          "pixel_height": 36,
+          "area_ratio": 0.00234375
+        }
+      ]
+    },
+    {
+      "seed": 1011,
+      "width": 1280,
+      "height": 720,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "cup",
+          "box": [
+            518,
+            297,
+            565,
+            353
+          ],
+          "visible_pixels": 2180,
+          "pixel_width": 47,
+          "pixel_height": 56,
+          "area_ratio": 0.002855902777777778
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "can",
+          "box": [
+            603,
+            310,
+            633,
+            363
+          ],
+          "visible_pixels": 1432,
+          "pixel_width": 30,
+          "pixel_height": 53,
+          "area_ratio": 0.0017252604166666666
+        }
+      ]
+    },
+    {
+      "seed": 1012,
+      "width": 320,
+      "height": 240,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "can",
+          "box": [
+            154,
+            119,
+            165,
+            138
+          ],
+          "visible_pixels": 195,
+          "pixel_width": 11,
+          "pixel_height": 19,
+          "area_ratio": 0.0027213541666666666
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "bottle",
+          "box": [
+            121,
+            111,
+            130,
+            127
+          ],
+          "visible_pixels": 116,
+          "pixel_width": 9,
+          "pixel_height": 16,
+          "area_ratio": 0.001875
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "small_box",
+          "box": [
+            173,
+            118,
+            189,
+            130
+          ],
+          "visible_pixels": 99,
+          "pixel_width": 16,
+          "pixel_height": 12,
+          "area_ratio": 0.0025
+        }
+      ]
+    },
+    {
+      "seed": 1012,
+      "width": 640,
+      "height": 480,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "can",
+          "box": [
+            308,
+            238,
+            330,
+            276
+          ],
+          "visible_pixels": 760,
+          "pixel_width": 22,
+          "pixel_height": 38,
+          "area_ratio": 0.0027213541666666666
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "bottle",
+          "box": [
+            241,
+            221,
+            259,
+            253
+          ],
+          "visible_pixels": 462,
+          "pixel_width": 18,
+          "pixel_height": 32,
+          "area_ratio": 0.001875
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "small_box",
+          "box": [
+            347,
+            235,
+            378,
+            258
+          ],
+          "visible_pixels": 399,
+          "pixel_width": 31,
+          "pixel_height": 23,
+          "area_ratio": 0.0023209635416666665
+        }
+      ]
+    },
+    {
+      "seed": 1012,
+      "width": 1280,
+      "height": 720,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "can",
+          "box": [
+            622,
+            357,
+            655,
+            415
+          ],
+          "visible_pixels": 1709,
+          "pixel_width": 33,
+          "pixel_height": 58,
+          "area_ratio": 0.0020768229166666665
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "bottle",
+          "box": [
+            522,
+            332,
+            549,
+            380
+          ],
+          "visible_pixels": 1045,
+          "pixel_width": 27,
+          "pixel_height": 48,
+          "area_ratio": 0.00140625
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "small_box",
+          "box": [
+            680,
+            353,
+            727,
+            389
+          ],
+          "visible_pixels": 899,
+          "pixel_width": 47,
+          "pixel_height": 36,
+          "area_ratio": 0.0018359375
+        }
+      ]
+    },
+    {
+      "seed": 1013,
+      "width": 320,
+      "height": 240,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "mug",
+          "box": [
+            129,
+            113,
+            145,
+            133
+          ],
+          "visible_pixels": 253,
+          "pixel_width": 16,
+          "pixel_height": 20,
+          "area_ratio": 0.004166666666666667
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "bottle",
+          "box": [
+            181,
+            110,
+            189,
+            126
+          ],
+          "visible_pixels": 113,
+          "pixel_width": 8,
+          "pixel_height": 16,
+          "area_ratio": 0.0016666666666666668
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "ball",
+          "box": [
+            178,
+            129,
+            190,
+            141
+          ],
+          "visible_pixels": 112,
+          "pixel_width": 12,
+          "pixel_height": 12,
+          "area_ratio": 0.001875
+        },
+        {
+          "instance_id": "cell_instance_3",
+          "class_id": "cup",
+          "box": [
+            131,
+            95,
+            145,
+            113
+          ],
+          "visible_pixels": 226,
+          "pixel_width": 14,
+          "pixel_height": 18,
+          "area_ratio": 0.00328125
+        }
+      ]
+    },
+    {
+      "seed": 1013,
+      "width": 640,
+      "height": 480,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "mug",
+          "box": [
+            259,
+            227,
+            289,
+            266
+          ],
+          "visible_pixels": 1007,
+          "pixel_width": 30,
+          "pixel_height": 39,
+          "area_ratio": 0.00380859375
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "bottle",
+          "box": [
+            361,
+            221,
+            379,
+            253
+          ],
+          "visible_pixels": 461,
+          "pixel_width": 18,
+          "pixel_height": 32,
+          "area_ratio": 0.001875
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "ball",
+          "box": [
+            356,
+            259,
+            380,
+            282
+          ],
+          "visible_pixels": 436,
+          "pixel_width": 24,
+          "pixel_height": 23,
+          "area_ratio": 0.001796875
+        },
+        {
+          "instance_id": "cell_instance_3",
+          "class_id": "cup",
+          "box": [
+            261,
+            190,
+            291,
+            226
+          ],
+          "visible_pixels": 911,
+          "pixel_width": 30,
+          "pixel_height": 36,
+          "area_ratio": 0.003515625
+        }
+      ]
+    },
+    {
+      "seed": 1013,
+      "width": 1280,
+      "height": 720,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "mug",
+          "box": [
+            548,
+            340,
+            594,
+            399
+          ],
+          "visible_pixels": 2268,
+          "pixel_width": 46,
+          "pixel_height": 59,
+          "area_ratio": 0.0029448784722222224
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "bottle",
+          "box": [
+            702,
+            331,
+            728,
+            379
+          ],
+          "visible_pixels": 1034,
+          "pixel_width": 26,
+          "pixel_height": 48,
+          "area_ratio": 0.0013541666666666667
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "ball",
+          "box": [
+            694,
+            388,
+            730,
+            423
+          ],
+          "visible_pixels": 985,
+          "pixel_width": 36,
+          "pixel_height": 35,
+          "area_ratio": 0.0013671875
+        },
+        {
+          "instance_id": "cell_instance_3",
+          "class_id": "cup",
+          "box": [
+            552,
+            285,
+            596,
+            338
+          ],
+          "visible_pixels": 2042,
+          "pixel_width": 44,
+          "pixel_height": 53,
+          "area_ratio": 0.0025303819444444445
+        }
+      ]
+    },
+    {
+      "seed": 1014,
+      "width": 320,
+      "height": 240,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "ball",
+          "box": [
+            201,
+            126,
+            213,
+            137
+          ],
+          "visible_pixels": 107,
+          "pixel_width": 12,
+          "pixel_height": 11,
+          "area_ratio": 0.00171875
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "block",
+          "box": [
+            183,
+            102,
+            196,
+            112
+          ],
+          "visible_pixels": 92,
+          "pixel_width": 13,
+          "pixel_height": 10,
+          "area_ratio": 0.0016927083333333334
+        }
+      ]
+    },
+    {
+      "seed": 1014,
+      "width": 640,
+      "height": 480,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "ball",
+          "box": [
+            402,
+            251,
+            426,
+            275
+          ],
+          "visible_pixels": 434,
+          "pixel_width": 24,
+          "pixel_height": 24,
+          "area_ratio": 0.001875
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "block",
+          "box": [
+            365,
+            203,
+            392,
+            226
+          ],
+          "visible_pixels": 373,
+          "pixel_width": 27,
+          "pixel_height": 23,
+          "area_ratio": 0.002021484375
+        }
+      ]
+    },
+    {
+      "seed": 1014,
+      "width": 1280,
+      "height": 720,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "ball",
+          "box": [
+            763,
+            377,
+            799,
+            412
+          ],
+          "visible_pixels": 971,
+          "pixel_width": 36,
+          "pixel_height": 35,
+          "area_ratio": 0.0013671875
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "block",
+          "box": [
+            708,
+            305,
+            748,
+            338
+          ],
+          "visible_pixels": 840,
+          "pixel_width": 40,
+          "pixel_height": 33,
+          "area_ratio": 0.0014322916666666666
+        }
+      ]
+    },
+    {
+      "seed": 1015,
+      "width": 320,
+      "height": 240,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "cup",
+          "box": [
+            116,
+            96,
+            132,
+            114
+          ],
+          "visible_pixels": 235,
+          "pixel_width": 16,
+          "pixel_height": 18,
+          "area_ratio": 0.00375
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "cup",
+          "box": [
+            168,
+            103,
+            183,
+            122
+          ],
+          "visible_pixels": 253,
+          "pixel_width": 15,
+          "pixel_height": 19,
+          "area_ratio": 0.0037109375
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "can",
+          "box": [
+            192,
+            95,
+            203,
+            112
+          ],
+          "visible_pixels": 148,
+          "pixel_width": 11,
+          "pixel_height": 17,
+          "area_ratio": 0.002434895833333333
+        }
+      ]
+    },
+    {
+      "seed": 1015,
+      "width": 640,
+      "height": 480,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "cup",
+          "box": [
+            232,
+            192,
+            263,
+            228
+          ],
+          "visible_pixels": 934,
+          "pixel_width": 31,
+          "pixel_height": 36,
+          "area_ratio": 0.0036328125
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "cup",
+          "box": [
+            336,
+            205,
+            367,
+            243
+          ],
+          "visible_pixels": 1009,
+          "pixel_width": 31,
+          "pixel_height": 38,
+          "area_ratio": 0.0038346354166666667
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "can",
+          "box": [
+            383,
+            191,
+            405,
+            224
+          ],
+          "visible_pixels": 588,
+          "pixel_width": 22,
+          "pixel_height": 33,
+          "area_ratio": 0.00236328125
+        }
+      ]
+    },
+    {
+      "seed": 1015,
+      "width": 1280,
+      "height": 720,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "cup",
+          "box": [
+            508,
+            289,
+            555,
+            343
+          ],
+          "visible_pixels": 2096,
+          "pixel_width": 47,
+          "pixel_height": 54,
+          "area_ratio": 0.00275390625
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "cup",
+          "box": [
+            664,
+            308,
+            710,
+            365
+          ],
+          "visible_pixels": 2272,
+          "pixel_width": 46,
+          "pixel_height": 57,
+          "area_ratio": 0.0028450520833333335
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "can",
+          "box": [
+            735,
+            286,
+            768,
+            337
+          ],
+          "visible_pixels": 1331,
+          "pixel_width": 33,
+          "pixel_height": 51,
+          "area_ratio": 0.001826171875
+        }
+      ]
+    },
+    {
+      "seed": 1016,
+      "width": 320,
+      "height": 240,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "box",
+          "box": [
+            154,
+            112,
+            163,
+            122
+          ],
+          "visible_pixels": 70,
+          "pixel_width": 9,
+          "pixel_height": 10,
+          "area_ratio": 0.001171875
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "cup",
+          "box": [
+            169,
+            109,
+            185,
+            129
+          ],
+          "visible_pixels": 272,
+          "pixel_width": 16,
+          "pixel_height": 20,
+          "area_ratio": 0.004166666666666667
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "small_box",
+          "box": [
+            111,
+            107,
+            126,
+            117
+          ],
+          "visible_pixels": 98,
+          "pixel_width": 15,
+          "pixel_height": 10,
+          "area_ratio": 0.001953125
+        },
+        {
+          "instance_id": "cell_instance_3",
+          "class_id": "ball",
+          "box": [
+            158,
+            125,
+            169,
+            137
+          ],
+          "visible_pixels": 105,
+          "pixel_width": 11,
+          "pixel_height": 12,
+          "area_ratio": 0.00171875
+        }
+      ]
+    },
+    {
+      "seed": 1016,
+      "width": 640,
+      "height": 480,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "box",
+          "box": [
+            308,
+            223,
+            327,
+            244
+          ],
+          "visible_pixels": 288,
+          "pixel_width": 19,
+          "pixel_height": 21,
+          "area_ratio": 0.001298828125
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "cup",
+          "box": [
+            338,
+            218,
+            370,
+            257
+          ],
+          "visible_pixels": 1084,
+          "pixel_width": 32,
+          "pixel_height": 39,
+          "area_ratio": 0.0040625
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "small_box",
+          "box": [
+            221,
+            214,
+            252,
+            236
+          ],
+          "visible_pixels": 396,
+          "pixel_width": 31,
+          "pixel_height": 22,
+          "area_ratio": 0.0022200520833333334
+        },
+        {
+          "instance_id": "cell_instance_3",
+          "class_id": "ball",
+          "box": [
+            315,
+            251,
+            338,
+            274
+          ],
+          "visible_pixels": 423,
+          "pixel_width": 23,
+          "pixel_height": 23,
+          "area_ratio": 0.0017220052083333334
+        }
+      ]
+    },
+    {
+      "seed": 1016,
+      "width": 1280,
+      "height": 720,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "box",
+          "box": [
+            621,
+            335,
+            650,
+            366
+          ],
+          "visible_pixels": 650,
+          "pixel_width": 29,
+          "pixel_height": 31,
+          "area_ratio": 0.0009754774305555556
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "cup",
+          "box": [
+            666,
+            327,
+            714,
+            386
+          ],
+          "visible_pixels": 2446,
+          "pixel_width": 48,
+          "pixel_height": 59,
+          "area_ratio": 0.0030729166666666665
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "small_box",
+          "box": [
+            492,
+            322,
+            538,
+            356
+          ],
+          "visible_pixels": 897,
+          "pixel_width": 46,
+          "pixel_height": 34,
+          "area_ratio": 0.0016970486111111112
+        },
+        {
+          "instance_id": "cell_instance_3",
+          "class_id": "ball",
+          "box": [
+            633,
+            376,
+            667,
+            411
+          ],
+          "visible_pixels": 940,
+          "pixel_width": 34,
+          "pixel_height": 35,
+          "area_ratio": 0.0012912326388888889
+        }
+      ]
+    },
+    {
+      "seed": 1017,
+      "width": 320,
+      "height": 240,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "cup",
+          "box": [
+            161,
+            121,
+            177,
+            142
+          ],
+          "visible_pixels": 307,
+          "pixel_width": 16,
+          "pixel_height": 21,
+          "area_ratio": 0.004375
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "box",
+          "box": [
+            166,
+            112,
+            174,
+            121
+          ],
+          "visible_pixels": 63,
+          "pixel_width": 8,
+          "pixel_height": 9,
+          "area_ratio": 0.0009375
+        }
+      ]
+    },
+    {
+      "seed": 1017,
+      "width": 640,
+      "height": 480,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "cup",
+          "box": [
+            321,
+            242,
+            355,
+            285
+          ],
+          "visible_pixels": 1269,
+          "pixel_width": 34,
+          "pixel_height": 43,
+          "area_ratio": 0.004759114583333333
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "box",
+          "box": [
+            332,
+            224,
+            348,
+            243
+          ],
+          "visible_pixels": 241,
+          "pixel_width": 16,
+          "pixel_height": 19,
+          "area_ratio": 0.0009895833333333334
+        }
+      ]
+    },
+    {
+      "seed": 1017,
+      "width": 1280,
+      "height": 720,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "cup",
+          "box": [
+            642,
+            362,
+            692,
+            427
+          ],
+          "visible_pixels": 2828,
+          "pixel_width": 50,
+          "pixel_height": 65,
+          "area_ratio": 0.0035264756944444445
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "box",
+          "box": [
+            658,
+            335,
+            681,
+            364
+          ],
+          "visible_pixels": 547,
+          "pixel_width": 23,
+          "pixel_height": 29,
+          "area_ratio": 0.0007237413194444445
+        }
+      ]
+    },
+    {
+      "seed": 1018,
+      "width": 320,
+      "height": 240,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "mustard",
+          "box": [
+            153,
+            93,
+            172,
+            136
+          ],
+          "visible_pixels": 651,
+          "pixel_width": 19,
+          "pixel_height": 43,
+          "area_ratio": 0.010638020833333333
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "small_box",
+          "box": [
+            171,
+            105,
+            173,
+            111
+          ],
+          "visible_pixels": 8,
+          "pixel_width": 2,
+          "pixel_height": 6,
+          "area_ratio": 0.00015625
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "block",
+          "box": [
+            181,
+            115,
+            195,
+            128
+          ],
+          "visible_pixels": 100,
+          "pixel_width": 14,
+          "pixel_height": 13,
+          "area_ratio": 0.0023697916666666667
+        }
+      ]
+    },
+    {
+      "seed": 1018,
+      "width": 640,
+      "height": 480,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "mustard",
+          "box": [
+            306,
+            186,
+            345,
+            272
+          ],
+          "visible_pixels": 2610,
+          "pixel_width": 39,
+          "pixel_height": 86,
+          "area_ratio": 0.01091796875
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "small_box",
+          "box": [
+            341,
+            209,
+            346,
+            222
+          ],
+          "visible_pixels": 33,
+          "pixel_width": 5,
+          "pixel_height": 13,
+          "area_ratio": 0.00021158854166666667
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "block",
+          "box": [
+            362,
+            230,
+            390,
+            256
+          ],
+          "visible_pixels": 387,
+          "pixel_width": 28,
+          "pixel_height": 26,
+          "area_ratio": 0.0023697916666666667
+        }
+      ]
+    },
+    {
+      "seed": 1018,
+      "width": 1280,
+      "height": 720,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "mustard",
+          "box": [
+            619,
+            279,
+            677,
+            409
+          ],
+          "visible_pixels": 5853,
+          "pixel_width": 58,
+          "pixel_height": 130,
+          "area_ratio": 0.008181423611111112
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "small_box",
+          "box": [
+            672,
+            314,
+            679,
+            333
+          ],
+          "visible_pixels": 66,
+          "pixel_width": 7,
+          "pixel_height": 19,
+          "area_ratio": 0.00014431423611111112
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "block",
+          "box": [
+            704,
+            345,
+            745,
+            383
+          ],
+          "visible_pixels": 876,
+          "pixel_width": 41,
+          "pixel_height": 38,
+          "area_ratio": 0.0016905381944444444
+        }
+      ]
+    },
+    {
+      "seed": 1019,
+      "width": 320,
+      "height": 240,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "can",
+          "box": [
+            172,
+            98,
+            183,
+            115
+          ],
+          "visible_pixels": 149,
+          "pixel_width": 11,
+          "pixel_height": 17,
+          "area_ratio": 0.002434895833333333
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "mug",
+          "box": [
+            135,
+            106,
+            149,
+            125
+          ],
+          "visible_pixels": 229,
+          "pixel_width": 14,
+          "pixel_height": 19,
+          "area_ratio": 0.003463541666666667
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "ball",
+          "box": [
+            117,
+            127,
+            128,
+            138
+          ],
+          "visible_pixels": 105,
+          "pixel_width": 11,
+          "pixel_height": 11,
+          "area_ratio": 0.0015755208333333333
+        },
+        {
+          "instance_id": "cell_instance_3",
+          "class_id": "small_box",
+          "box": [
+            188,
+            98,
+            202,
+            109
+          ],
+          "visible_pixels": 84,
+          "pixel_width": 14,
+          "pixel_height": 11,
+          "area_ratio": 0.0020052083333333332
+        }
+      ]
+    },
+    {
+      "seed": 1019,
+      "width": 640,
+      "height": 480,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "can",
+          "box": [
+            345,
+            195,
+            365,
+            230
+          ],
+          "visible_pixels": 604,
+          "pixel_width": 20,
+          "pixel_height": 35,
+          "area_ratio": 0.0022786458333333335
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "mug",
+          "box": [
+            270,
+            212,
+            299,
+            249
+          ],
+          "visible_pixels": 921,
+          "pixel_width": 29,
+          "pixel_height": 37,
+          "area_ratio": 0.0034928385416666667
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "ball",
+          "box": [
+            233,
+            254,
+            257,
+            277
+          ],
+          "visible_pixels": 433,
+          "pixel_width": 24,
+          "pixel_height": 23,
+          "area_ratio": 0.001796875
+        },
+        {
+          "instance_id": "cell_instance_3",
+          "class_id": "small_box",
+          "box": [
+            376,
+            195,
+            404,
+            218
+          ],
+          "visible_pixels": 339,
+          "pixel_width": 28,
+          "pixel_height": 23,
+          "area_ratio": 0.0020963541666666665
+        }
+      ]
+    },
+    {
+      "seed": 1019,
+      "width": 1280,
+      "height": 720,
+      "targets": [
+        {
+          "instance_id": "cell_instance_0",
+          "class_id": "can",
+          "box": [
+            677,
+            293,
+            708,
+            344
+          ],
+          "visible_pixels": 1357,
+          "pixel_width": 31,
+          "pixel_height": 51,
+          "area_ratio": 0.0017154947916666666
+        },
+        {
+          "instance_id": "cell_instance_1",
+          "class_id": "mug",
+          "box": [
+            565,
+            318,
+            608,
+            374
+          ],
+          "visible_pixels": 2067,
+          "pixel_width": 43,
+          "pixel_height": 56,
+          "area_ratio": 0.002612847222222222
+        },
+        {
+          "instance_id": "cell_instance_2",
+          "class_id": "ball",
+          "box": [
+            510,
+            380,
+            545,
+            416
+          ],
+          "visible_pixels": 977,
+          "pixel_width": 35,
+          "pixel_height": 36,
+          "area_ratio": 0.0013671875
+        },
+        {
+          "instance_id": "cell_instance_3",
+          "class_id": "small_box",
+          "box": [
+            724,
+            293,
+            766,
+            327
+          ],
+          "visible_pixels": 758,
+          "pixel_width": 42,
+          "pixel_height": 34,
+          "area_ratio": 0.0015494791666666667
+        }
+      ]
+    }
+  ]
+}

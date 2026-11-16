@@ -1,0 +1,72 @@
+{
+  "4": [
+    {
+      "instance_id": "cell_instance_0",
+      "class_id": "small_box",
+      "box": [
+        310,
+        204,
+        392,
+        276
+      ],
+      "pixels": 456
+    },
+    {
+      "instance_id": "cell_instance_1",
+      "class_id": "small_box",
+      "box": [
+        350,
+        208,
+        391,
+        275
+      ],
+      "pixels": 350
+    },
+    {
+      "instance_id": "cell_instance_2",
+      "class_id": "block",
+      "box": [
+        367,
+        248,
+        391,
+        273
+      ],
+      "pixels": 333
+    }
+  ],
+  "0": [
+    {
+      "instance_id": "cell_instance_0",
+      "class_id": "small_box",
+      "box": [
+        310,
+        204,
+        339,
+        224
+      ],
+      "pixels": 377
+    },
+    {
+      "instance_id": "cell_instance_1",
+      "class_id": "small_box",
+      "box": [
+        350,
+        207,
+        376,
+        234
+      ],
+      "pixels": 343
+    },
+    {
+      "instance_id": "cell_instance_2",
+      "class_id": "block",
+      "box": [
+        367,
+        247,
+        391,
+        276
+      ],
+      "pixels": 394
+    }
+  ]
+}

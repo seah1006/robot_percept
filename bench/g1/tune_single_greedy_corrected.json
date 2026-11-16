@@ -1,0 +1,38 @@
+[
+  {
+    "style": "color",
+    "filter": false,
+    "gt": 61,
+    "tp": 47,
+    "fp": 280,
+    "recall": 0.7704918032786885,
+    "precision": 0.1437308868501529
+  },
+  {
+    "style": "color",
+    "filter": true,
+    "gt": 61,
+    "tp": 47,
+    "fp": 157,
+    "recall": 0.7704918032786885,
+    "precision": 0.23039215686274508
+  },
+  {
+    "style": "noun",
+    "filter": false,
+    "gt": 61,
+    "tp": 35,
+    "fp": 232,
+    "recall": 0.5737704918032787,
+    "precision": 0.13108614232209737
+  },
+  {
+    "style": "noun",
+    "filter": true,
+    "gt": 61,
+    "tp": 35,
+    "fp": 127,
+    "recall": 0.5737704918032787,
+    "precision": 0.21604938271604937
+  }
+]

@@ -1,0 +1,618 @@
+{
+  "source": "[시뮬인식]",
+  "gt_assist": false,
+  "gt_mask_offsamples": 0,
+  "split": "tuning",
+  "groups": [
+    {
+      "dimension": "class_id",
+      "category": "ball",
+      "n": 8,
+      "geometry_hit": 8,
+      "exact_hit": 8,
+      "score_low": 0,
+      "localization_missing": 0,
+      "class_label_loss": 0
+    },
+    {
+      "dimension": "class_id",
+      "category": "block",
+      "n": 7,
+      "geometry_hit": 7,
+      "exact_hit": 0,
+      "score_low": 0,
+      "localization_missing": 0,
+      "class_label_loss": 7
+    },
+    {
+      "dimension": "class_id",
+      "category": "bottle",
+      "n": 7,
+      "geometry_hit": 6,
+      "exact_hit": 1,
+      "score_low": 1,
+      "localization_missing": 0,
+      "class_label_loss": 5
+    },
+    {
+      "dimension": "class_id",
+      "category": "box",
+      "n": 4,
+      "geometry_hit": 2,
+      "exact_hit": 0,
+      "score_low": 2,
+      "localization_missing": 0,
+      "class_label_loss": 2
+    },
+    {
+      "dimension": "class_id",
+      "category": "can",
+      "n": 7,
+      "geometry_hit": 7,
+      "exact_hit": 0,
+      "score_low": 0,
+      "localization_missing": 0,
+      "class_label_loss": 7
+    },
+    {
+      "dimension": "class_id",
+      "category": "cup",
+      "n": 7,
+      "geometry_hit": 7,
+      "exact_hit": 6,
+      "score_low": 0,
+      "localization_missing": 0,
+      "class_label_loss": 1
+    },
+    {
+      "dimension": "class_id",
+      "category": "mug",
+      "n": 8,
+      "geometry_hit": 7,
+      "exact_hit": 6,
+      "score_low": 1,
+      "localization_missing": 0,
+      "class_label_loss": 1
+    },
+    {
+      "dimension": "class_id",
+      "category": "mustard",
+      "n": 3,
+      "geometry_hit": 3,
+      "exact_hit": 3,
+      "score_low": 0,
+      "localization_missing": 0,
+      "class_label_loss": 0
+    },
+    {
+      "dimension": "class_id",
+      "category": "small_box",
+      "n": 10,
+      "geometry_hit": 7,
+      "exact_hit": 7,
+      "score_low": 2,
+      "localization_missing": 1,
+      "class_label_loss": 0
+    },
+    {
+      "dimension": "pixel_bin",
+      "category": "<16",
+      "n": 3,
+      "geometry_hit": 2,
+      "exact_hit": 1,
+      "score_low": 0,
+      "localization_missing": 1,
+      "class_label_loss": 1
+    },
+    {
+      "dimension": "pixel_bin",
+      "category": "16-31",
+      "n": 53,
+      "geometry_hit": 47,
+      "exact_hit": 25,
+      "score_low": 6,
+      "localization_missing": 0,
+      "class_label_loss": 22
+    },
+    {
+      "dimension": "pixel_bin",
+      "category": "32-63",
+      "n": 5,
+      "geometry_hit": 5,
+      "exact_hit": 5,
+      "score_low": 0,
+      "localization_missing": 0,
+      "class_label_loss": 0
+    }
+  ],
+  "instances": [
+    {
+      "class_id": "small_box",
+      "pixel_bin": "16-31",
+      "reason": "score_low",
+      "seed": 1000,
+      "best_score": 0.3054724633693695,
+      "short_side_px": 20
+    },
+    {
+      "class_id": "small_box",
+      "pixel_bin": "16-31",
+      "reason": "score_low",
+      "seed": 1000,
+      "best_score": 0.21051964163780212,
+      "short_side_px": 26
+    },
+    {
+      "class_id": "block",
+      "pixel_bin": "16-31",
+      "reason": "class_label_loss",
+      "seed": 1000,
+      "best_score": 0.3756910264492035,
+      "short_side_px": 24
+    },
+    {
+      "class_id": "mug",
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "seed": 1001,
+      "best_score": 0.5952826142311096,
+      "short_side_px": 28
+    },
+    {
+      "class_id": "block",
+      "pixel_bin": "16-31",
+      "reason": "class_label_loss",
+      "seed": 1001,
+      "best_score": 0.354898065328598,
+      "short_side_px": 25
+    },
+    {
+      "class_id": "bottle",
+      "pixel_bin": "16-31",
+      "reason": "class_label_loss",
+      "seed": 1001,
+      "best_score": 0.38067150115966797,
+      "short_side_px": 17
+    },
+    {
+      "class_id": "mustard",
+      "pixel_bin": "32-63",
+      "reason": "exact_hit",
+      "seed": 1001,
+      "best_score": 0.6496623754501343,
+      "short_side_px": 42
+    },
+    {
+      "class_id": "block",
+      "pixel_bin": "16-31",
+      "reason": "class_label_loss",
+      "seed": 1002,
+      "best_score": 0.37086009979248047,
+      "short_side_px": 25
+    },
+    {
+      "class_id": "ball",
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "seed": 1002,
+      "best_score": 0.6024565696716309,
+      "short_side_px": 21
+    },
+    {
+      "class_id": "small_box",
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "seed": 1003,
+      "best_score": 0.524234414100647,
+      "short_side_px": 21
+    },
+    {
+      "class_id": "bottle",
+      "pixel_bin": "<16",
+      "reason": "class_label_loss",
+      "seed": 1003,
+      "best_score": 0.35438069701194763,
+      "short_side_px": 15
+    },
+    {
+      "class_id": "can",
+      "pixel_bin": "16-31",
+      "reason": "class_label_loss",
+      "seed": 1003,
+      "best_score": 0.531956672668457,
+      "short_side_px": 23
+    },
+    {
+      "class_id": "box",
+      "pixel_bin": "16-31",
+      "reason": "class_label_loss",
+      "seed": 1004,
+      "best_score": 0.4020639657974243,
+      "short_side_px": 22
+    },
+    {
+      "class_id": "mug",
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "seed": 1004,
+      "best_score": 0.5490735173225403,
+      "short_side_px": 29
+    },
+    {
+      "class_id": "small_box",
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "seed": 1004,
+      "best_score": 0.4155137538909912,
+      "short_side_px": 20
+    },
+    {
+      "class_id": "block",
+      "pixel_bin": "16-31",
+      "reason": "class_label_loss",
+      "seed": 1004,
+      "best_score": 0.41030609607696533,
+      "short_side_px": 25
+    },
+    {
+      "class_id": "ball",
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "seed": 1005,
+      "best_score": 0.4792763292789459,
+      "short_side_px": 21
+    },
+    {
+      "class_id": "ball",
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "seed": 1005,
+      "best_score": 0.48764535784721375,
+      "short_side_px": 23
+    },
+    {
+      "class_id": "ball",
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "seed": 1006,
+      "best_score": 0.6030181050300598,
+      "short_side_px": 20
+    },
+    {
+      "class_id": "small_box",
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "seed": 1006,
+      "best_score": 0.4704120457172394,
+      "short_side_px": 22
+    },
+    {
+      "class_id": "can",
+      "pixel_bin": "16-31",
+      "reason": "class_label_loss",
+      "seed": 1006,
+      "best_score": 0.5061246156692505,
+      "short_side_px": 25
+    },
+    {
+      "class_id": "box",
+      "pixel_bin": "16-31",
+      "reason": "class_label_loss",
+      "seed": 1007,
+      "best_score": 0.41582804918289185,
+      "short_side_px": 17
+    },
+    {
+      "class_id": "mug",
+      "pixel_bin": "16-31",
+      "reason": "score_low",
+      "seed": 1007,
+      "best_score": 0.3071751892566681,
+      "short_side_px": 23
+    },
+    {
+      "class_id": "mustard",
+      "pixel_bin": "32-63",
+      "reason": "exact_hit",
+      "seed": 1007,
+      "best_score": 0.609914243221283,
+      "short_side_px": 46
+    },
+    {
+      "class_id": "bottle",
+      "pixel_bin": "16-31",
+      "reason": "class_label_loss",
+      "seed": 1007,
+      "best_score": 0.4512805640697479,
+      "short_side_px": 16
+    },
+    {
+      "class_id": "small_box",
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "seed": 1008,
+      "best_score": 0.4494453966617584,
+      "short_side_px": 19
+    },
+    {
+      "class_id": "can",
+      "pixel_bin": "16-31",
+      "reason": "class_label_loss",
+      "seed": 1008,
+      "best_score": 0.45427069067955017,
+      "short_side_px": 22
+    },
+    {
+      "class_id": "mug",
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "seed": 1009,
+      "best_score": 0.6193686723709106,
+      "short_side_px": 28
+    },
+    {
+      "class_id": "cup",
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "seed": 1009,
+      "best_score": 0.6019192337989807,
+      "short_side_px": 31
+    },
+    {
+      "class_id": "bottle",
+      "pixel_bin": "<16",
+      "reason": "exact_hit",
+      "seed": 1009,
+      "best_score": 0.42126184701919556,
+      "short_side_px": 15
+    },
+    {
+      "class_id": "mug",
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "seed": 1010,
+      "best_score": 0.49668675661087036,
+      "short_side_px": 31
+    },
+    {
+      "class_id": "mug",
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "seed": 1010,
+      "best_score": 0.47727108001708984,
+      "short_side_px": 30
+    },
+    {
+      "class_id": "bottle",
+      "pixel_bin": "16-31",
+      "reason": "class_label_loss",
+      "seed": 1010,
+      "best_score": 0.36453330516815186,
+      "short_side_px": 17
+    },
+    {
+      "class_id": "block",
+      "pixel_bin": "16-31",
+      "reason": "class_label_loss",
+      "seed": 1010,
+      "best_score": 0.5739231109619141,
+      "short_side_px": 23
+    },
+    {
+      "class_id": "cup",
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "seed": 1011,
+      "best_score": 0.5381742715835571,
+      "short_side_px": 31
+    },
+    {
+      "class_id": "can",
+      "pixel_bin": "16-31",
+      "reason": "class_label_loss",
+      "seed": 1011,
+      "best_score": 0.41644349694252014,
+      "short_side_px": 20
+    },
+    {
+      "class_id": "can",
+      "pixel_bin": "16-31",
+      "reason": "class_label_loss",
+      "seed": 1012,
+      "best_score": 0.444224089384079,
+      "short_side_px": 22
+    },
+    {
+      "class_id": "bottle",
+      "pixel_bin": "16-31",
+      "reason": "class_label_loss",
+      "seed": 1012,
+      "best_score": 0.3843933045864105,
+      "short_side_px": 18
+    },
+    {
+      "class_id": "small_box",
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "seed": 1012,
+      "best_score": 0.5101851224899292,
+      "short_side_px": 23
+    },
+    {
+      "class_id": "mug",
+      "pixel_bin": "16-31",
+      "reason": "class_label_loss",
+      "seed": 1013,
+      "best_score": 0.5350027680397034,
+      "short_side_px": 30
+    },
+    {
+      "class_id": "bottle",
+      "pixel_bin": "16-31",
+      "reason": "score_low",
+      "seed": 1013,
+      "best_score": 0.30323660373687744,
+      "short_side_px": 18
+    },
+    {
+      "class_id": "ball",
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "seed": 1013,
+      "best_score": 0.575553297996521,
+      "short_side_px": 23
+    },
+    {
+      "class_id": "cup",
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "seed": 1013,
+      "best_score": 0.6673830151557922,
+      "short_side_px": 30
+    },
+    {
+      "class_id": "ball",
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "seed": 1014,
+      "best_score": 0.6053469181060791,
+      "short_side_px": 24
+    },
+    {
+      "class_id": "block",
+      "pixel_bin": "16-31",
+      "reason": "class_label_loss",
+      "seed": 1014,
+      "best_score": 0.3619524836540222,
+      "short_side_px": 23
+    },
+    {
+      "class_id": "cup",
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "seed": 1015,
+      "best_score": 0.473725289106369,
+      "short_side_px": 31
+    },
+    {
+      "class_id": "cup",
+      "pixel_bin": "16-31",
+      "reason": "class_label_loss",
+      "seed": 1015,
+      "best_score": 0.47942250967025757,
+      "short_side_px": 31
+    },
+    {
+      "class_id": "can",
+      "pixel_bin": "16-31",
+      "reason": "class_label_loss",
+      "seed": 1015,
+      "best_score": 0.5778840780258179,
+      "short_side_px": 22
+    },
+    {
+      "class_id": "box",
+      "pixel_bin": "16-31",
+      "reason": "score_low",
+      "seed": 1016,
+      "best_score": 0.30288827419281006,
+      "short_side_px": 19
+    },
+    {
+      "class_id": "cup",
+      "pixel_bin": "32-63",
+      "reason": "exact_hit",
+      "seed": 1016,
+      "best_score": 0.5619445443153381,
+      "short_side_px": 32
+    },
+    {
+      "class_id": "small_box",
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "seed": 1016,
+      "best_score": 0.4929591417312622,
+      "short_side_px": 22
+    },
+    {
+      "class_id": "ball",
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "seed": 1016,
+      "best_score": 0.6056579351425171,
+      "short_side_px": 23
+    },
+    {
+      "class_id": "cup",
+      "pixel_bin": "32-63",
+      "reason": "exact_hit",
+      "seed": 1017,
+      "best_score": 0.43348225951194763,
+      "short_side_px": 34
+    },
+    {
+      "class_id": "box",
+      "pixel_bin": "16-31",
+      "reason": "score_low",
+      "seed": 1017,
+      "best_score": 0.21357187628746033,
+      "short_side_px": 16
+    },
+    {
+      "class_id": "mustard",
+      "pixel_bin": "32-63",
+      "reason": "exact_hit",
+      "seed": 1018,
+      "best_score": 0.5120750069618225,
+      "short_side_px": 39
+    },
+    {
+      "class_id": "small_box",
+      "pixel_bin": "<16",
+      "reason": "localization_missing",
+      "seed": 1018,
+      "best_score": null,
+      "short_side_px": 5
+    },
+    {
+      "class_id": "block",
+      "pixel_bin": "16-31",
+      "reason": "class_label_loss",
+      "seed": 1018,
+      "best_score": 0.4752739369869232,
+      "short_side_px": 26
+    },
+    {
+      "class_id": "can",
+      "pixel_bin": "16-31",
+      "reason": "class_label_loss",
+      "seed": 1019,
+      "best_score": 0.5091541409492493,
+      "short_side_px": 20
+    },
+    {
+      "class_id": "mug",
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "seed": 1019,
+      "best_score": 0.5023009181022644,
+      "short_side_px": 29
+    },
+    {
+      "class_id": "ball",
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "seed": 1019,
+      "best_score": 0.6138613224029541,
+      "short_side_px": 23
+    },
+    {
+      "class_id": "small_box",
+      "pixel_bin": "16-31",
+      "reason": "exact_hit",
+      "seed": 1019,
+      "best_score": 0.5881063342094421,
+      "short_side_px": 23
+    }
+  ]
+}

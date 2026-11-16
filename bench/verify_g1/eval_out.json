@@ -1,0 +1,533 @@
+{
+ "source": "[시뮬인식]",
+ "gt_assist": false,
+ "identity_assist": false,
+ "queries": "9 vocab phrases (GT 장면 구성 무관, 고정 사전)",
+ "scenes": [
+  {
+   "seed": 100000,
+   "gt": {
+    "cell_instance_0": "ball",
+    "cell_instance_1": "ball",
+    "cell_instance_2": "box"
+   },
+   "gt_area_px": {
+    "cell_instance_0": 473,
+    "cell_instance_1": 320,
+    "cell_instance_2": 383
+   },
+   "filter_True": {
+    "ms": 9892.444433000037,
+    "tp": 0,
+    "fp": 3,
+    "ndet": 3,
+    "rej": []
+   },
+   "filter_False": {
+    "ms": 830.7559859999856,
+    "tp": 0,
+    "fp": 3,
+    "ndet": 3,
+    "rej": []
+   }
+  },
+  {
+   "seed": 100001,
+   "gt": {
+    "cell_instance_0": "box",
+    "cell_instance_1": "bottle",
+    "cell_instance_2": "can",
+    "cell_instance_3": "cup"
+   },
+   "gt_area_px": {
+    "cell_instance_0": 328,
+    "cell_instance_1": 460,
+    "cell_instance_2": 739,
+    "cell_instance_3": 1212
+   },
+   "filter_True": {
+    "ms": 824.9138010000934,
+    "tp": 1,
+    "fp": 4,
+    "ndet": 5,
+    "rej": [
+     "UNKNOWN_OR_AMBIGUOUS_LABEL",
+     "UNKNOWN_OR_AMBIGUOUS_LABEL"
+    ]
+   },
+   "filter_False": {
+    "ms": 800.9738179998749,
+    "tp": 1,
+    "fp": 4,
+    "ndet": 5,
+    "rej": [
+     "UNKNOWN_OR_AMBIGUOUS_LABEL",
+     "UNKNOWN_OR_AMBIGUOUS_LABEL"
+    ]
+   }
+  },
+  {
+   "seed": 100002,
+   "gt": {
+    "cell_instance_0": "cup",
+    "cell_instance_1": "block"
+   },
+   "gt_area_px": {
+    "cell_instance_0": 1123,
+    "cell_instance_1": 337
+   },
+   "filter_True": {
+    "ms": 882.5369760002104,
+    "tp": 0,
+    "fp": 2,
+    "ndet": 2,
+    "rej": [
+     "BOX_AREA_EXCEEDED",
+     "BOX_AREA_EXCEEDED",
+     "UNKNOWN_OR_AMBIGUOUS_LABEL"
+    ]
+   },
+   "filter_False": {
+    "ms": 937.671754999883,
+    "tp": 0,
+    "fp": 4,
+    "ndet": 4,
+    "rej": [
+     "UNKNOWN_OR_AMBIGUOUS_LABEL"
+    ]
+   }
+  },
+  {
+   "seed": 100003,
+   "gt": {
+    "cell_instance_0": "can",
+    "cell_instance_1": "mug",
+    "cell_instance_2": "mustard"
+   },
+   "gt_area_px": {
+    "cell_instance_0": 792,
+    "cell_instance_1": 1031,
+    "cell_instance_2": 2417
+   },
+   "filter_True": {
+    "ms": 1087.2303259998262,
+    "tp": 1,
+    "fp": 2,
+    "ndet": 3,
+    "rej": [
+     "UNKNOWN_OR_AMBIGUOUS_LABEL",
+     "UNKNOWN_OR_AMBIGUOUS_LABEL"
+    ]
+   },
+   "filter_False": {
+    "ms": 773.1058149997807,
+    "tp": 1,
+    "fp": 2,
+    "ndet": 3,
+    "rej": [
+     "UNKNOWN_OR_AMBIGUOUS_LABEL",
+     "UNKNOWN_OR_AMBIGUOUS_LABEL"
+    ]
+   }
+  },
+  {
+   "seed": 100004,
+   "gt": {
+    "cell_instance_0": "mug",
+    "cell_instance_1": "can",
+    "cell_instance_2": "block",
+    "cell_instance_3": "bottle"
+   },
+   "gt_area_px": {
+    "cell_instance_0": 945,
+    "cell_instance_1": 656,
+    "cell_instance_2": 324,
+    "cell_instance_3": 450
+   },
+   "filter_True": {
+    "ms": 864.2199549999532,
+    "tp": 0,
+    "fp": 4,
+    "ndet": 4,
+    "rej": [
+     "BOX_AREA_EXCEEDED"
+    ]
+   },
+   "filter_False": {
+    "ms": 779.8516150000978,
+    "tp": 0,
+    "fp": 5,
+    "ndet": 5,
+    "rej": []
+   }
+  },
+  {
+   "seed": 100005,
+   "gt": {
+    "cell_instance_0": "block",
+    "cell_instance_1": "block"
+   },
+   "gt_area_px": {
+    "cell_instance_0": 354,
+    "cell_instance_1": 385
+   },
+   "filter_True": {
+    "ms": 867.1460159998787,
+    "tp": 0,
+    "fp": 1,
+    "ndet": 1,
+    "rej": []
+   },
+   "filter_False": {
+    "ms": 786.1603669998658,
+    "tp": 0,
+    "fp": 1,
+    "ndet": 1,
+    "rej": []
+   }
+  },
+  {
+   "seed": 100006,
+   "gt": {
+    "cell_instance_0": "can",
+    "cell_instance_1": "mug",
+    "cell_instance_2": "bottle"
+   },
+   "gt_area_px": {
+    "cell_instance_0": 816,
+    "cell_instance_1": 919,
+    "cell_instance_2": 351
+   },
+   "filter_True": {
+    "ms": 933.2487329998003,
+    "tp": 1,
+    "fp": 3,
+    "ndet": 4,
+    "rej": [
+     "UNKNOWN_OR_AMBIGUOUS_LABEL"
+    ]
+   },
+   "filter_False": {
+    "ms": 739.5350430001599,
+    "tp": 1,
+    "fp": 3,
+    "ndet": 4,
+    "rej": [
+     "UNKNOWN_OR_AMBIGUOUS_LABEL"
+    ]
+   }
+  },
+  {
+   "seed": 100007,
+   "gt": {
+    "cell_instance_0": "mustard",
+    "cell_instance_1": "bottle",
+    "cell_instance_2": "small_box",
+    "cell_instance_3": "cup"
+   },
+   "gt_area_px": {
+    "cell_instance_0": 1600,
+    "cell_instance_1": 536,
+    "cell_instance_2": 244,
+    "cell_instance_3": 991
+   },
+   "filter_True": {
+    "ms": 755.0334229999862,
+    "tp": 1,
+    "fp": 4,
+    "ndet": 5,
+    "rej": [
+     "UNKNOWN_OR_AMBIGUOUS_LABEL",
+     "BOX_AREA_EXCEEDED"
+    ]
+   },
+   "filter_False": {
+    "ms": 771.6263259999323,
+    "tp": 1,
+    "fp": 5,
+    "ndet": 6,
+    "rej": [
+     "UNKNOWN_OR_AMBIGUOUS_LABEL"
+    ]
+   }
+  },
+  {
+   "seed": 100008,
+   "gt": {
+    "cell_instance_0": "cup",
+    "cell_instance_1": "box"
+   },
+   "gt_area_px": {
+    "cell_instance_0": 1027,
+    "cell_instance_1": 251
+   },
+   "filter_True": {
+    "ms": 794.9489929997071,
+    "tp": 0,
+    "fp": 3,
+    "ndet": 3,
+    "rej": [
+     "UNKNOWN_OR_AMBIGUOUS_LABEL",
+     "BOX_AREA_EXCEEDED",
+     "UNKNOWN_OR_AMBIGUOUS_LABEL",
+     "UNKNOWN_OR_AMBIGUOUS_LABEL"
+    ]
+   },
+   "filter_False": {
+    "ms": 748.5544380001556,
+    "tp": 0,
+    "fp": 4,
+    "ndet": 4,
+    "rej": [
+     "UNKNOWN_OR_AMBIGUOUS_LABEL",
+     "UNKNOWN_OR_AMBIGUOUS_LABEL",
+     "UNKNOWN_OR_AMBIGUOUS_LABEL"
+    ]
+   }
+  },
+  {
+   "seed": 100009,
+   "gt": {
+    "cell_instance_0": "can",
+    "cell_instance_1": "ball",
+    "cell_instance_2": "box"
+   },
+   "gt_area_px": {
+    "cell_instance_0": 643,
+    "cell_instance_1": 334,
+    "cell_instance_2": 326
+   },
+   "filter_True": {
+    "ms": 782.3527470000045,
+    "tp": 0,
+    "fp": 4,
+    "ndet": 4,
+    "rej": [
+     "BOX_AREA_EXCEEDED"
+    ]
+   },
+   "filter_False": {
+    "ms": 813.425382999867,
+    "tp": 0,
+    "fp": 5,
+    "ndet": 5,
+    "rej": []
+   }
+  }
+ ],
+ "load_start": [
+  1.28466796875,
+  0.97998046875,
+  0.9384765625
+ ],
+ "filter_True": {
+  "gt": 30,
+  "tp": 4,
+  "fp": 30,
+  "recall": 0.13333333333333333,
+  "precision": 0.11764705882352941
+ },
+ "filter_False": {
+  "gt": 30,
+  "tp": 4,
+  "fp": 36,
+  "recall": 0.13333333333333333,
+  "precision": 0.1
+ },
+ "latency_ms_filtered": {
+  "all": [
+   9892.444433000037,
+   824.9138010000934,
+   882.5369760002104,
+   1087.2303259998262,
+   864.2199549999532,
+   867.1460159998787,
+   933.2487329998003,
+   755.0334229999862,
+   794.9489929997071,
+   782.3527470000045
+  ],
+  "warm_p50": 864.2199549999532,
+  "first": 9892.444433000037
+ },
+ "n_scenes": 10,
+ "device_used_peak_sampled_mib": 2327,
+ "load_end": [
+  1.095703125,
+  0.9697265625,
+  0.9365234375
+ ],
+ "proc_max_alloc_mib": 1068.84814453125,
+ "blue_case": {
+  "red+blue/filter=True": {
+   "size": [
+    640,
+    480
+   ],
+   "dets": [
+    [
+     "red",
+     0.745,
+     [
+      326.7,
+      204.5,
+      357.3,
+      248.6
+     ],
+     0.004
+    ],
+    [
+     "blue",
+     0.51,
+     [
+      111.7,
+      180.3,
+      528.8,
+      407.3
+     ],
+     0.308
+    ]
+   ],
+   "rej": [
+    {
+     "reason": "BOX_AREA_EXCEEDED",
+     "box_xyxy": [
+      1.9675254821777344,
+      1.1624336242675781,
+      637.8369750976562,
+      478.1712951660156
+     ],
+     "score": 0.381699800491333,
+     "query_id": "b"
+    }
+   ]
+  },
+  "red+blue/filter=False": {
+   "size": [
+    640,
+    480
+   ],
+   "dets": [
+    [
+     "red",
+     0.745,
+     [
+      326.7,
+      204.5,
+      357.3,
+      248.6
+     ],
+     0.004
+    ],
+    [
+     "blue",
+     0.51,
+     [
+      111.7,
+      180.3,
+      528.8,
+      407.3
+     ],
+     0.308
+    ],
+    [
+     "blue",
+     0.382,
+     [
+      2.0,
+      1.2,
+      637.8,
+      478.2
+     ],
+     0.987
+    ]
+   ],
+   "rej": []
+  },
+  "blue_only/filter=True": {
+   "size": [
+    640,
+    480
+   ],
+   "dets": [
+    [
+     "blue",
+     0.479,
+     [
+      111.8,
+      181.5,
+      528.2,
+      406.2
+     ],
+     0.305
+    ],
+    [
+     "blue",
+     0.36,
+     [
+      327.5,
+      205.1,
+      356.8,
+      248.2
+     ],
+     0.004
+    ]
+   ],
+   "rej": [
+    {
+     "reason": "BOX_AREA_EXCEEDED",
+     "box_xyxy": [
+      1.1683082580566406,
+      0.6312274932861328,
+      638.6548461914062,
+      478.981201171875
+     ],
+     "score": 0.3926345407962799,
+     "query_id": "b"
+    }
+   ]
+  },
+  "blue_only/filter=False": {
+   "size": [
+    640,
+    480
+   ],
+   "dets": [
+    [
+     "blue",
+     0.479,
+     [
+      111.8,
+      181.5,
+      528.2,
+      406.2
+     ],
+     0.305
+    ],
+    [
+     "blue",
+     0.393,
+     [
+      1.2,
+      0.6,
+      638.7,
+      479.0
+     ],
+     0.993
+    ],
+    [
+     "blue",
+     0.36,
+     [
+      327.5,
+      205.1,
+      356.8,
+      248.2
+     ],
+     0.004
+    ]
+   ],
+   "rej": []
+  }
+ }
+}

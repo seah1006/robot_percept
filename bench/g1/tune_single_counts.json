@@ -1,0 +1,20 @@
+[
+  {
+    "style": "color",
+    "records": 180,
+    "gt": 61,
+    "geometry_hit": 15,
+    "exact_hit": 15,
+    "sum_ms": 33409.48895799602,
+    "mean_nine_queries_per_scene_ms": 1670.4744478998011
+  },
+  {
+    "style": "noun",
+    "records": 180,
+    "gt": 61,
+    "geometry_hit": 11,
+    "exact_hit": 11,
+    "sum_ms": 31846.811080999032,
+    "mean_nine_queries_per_scene_ms": 1592.3405540499516
+  }
+]

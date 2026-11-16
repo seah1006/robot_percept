@@ -1,0 +1,241 @@
+{
+ "hash_final_vs_now": {
+  "selection_eval_part0.json": {
+   "bytes": 260862,
+   "sha_ok": true,
+   "size_ok": true,
+   "mtime": 1794802960.139518
+  },
+  "selection_eval_part1.json": {
+   "bytes": 262947,
+   "sha_ok": true,
+   "size_ok": true,
+   "mtime": 1794803077.5073879
+  },
+  "selection_eval_part2.json": {
+   "bytes": 267659,
+   "sha_ok": true,
+   "size_ok": true,
+   "mtime": 1794803204.0747018
+  },
+  "selection_eval_part3.json": {
+   "bytes": 250158,
+   "sha_ok": true,
+   "size_ok": true,
+   "mtime": 1794803322.591032
+  }
+ },
+ "initial_part0_match": true,
+ "mtimes": {
+  "selection_freeze.json": 1794802799.607627,
+  "selection_freeze_v2.json": 1794803080.383926,
+  "selection_freeze_v2r.json": 1794803212.2192395,
+  "selection_eval_v2r_summary.json": 1794803331.600321,
+  "sealed_hash_final.json": 1794803331.5400324
+ },
+ "v2r_frozen_at": 1794803212.2228746,
+ "hashed_at": 1794803331.5378695,
+ "first_parse_at": 1794803331.5422907,
+ "order_ok": true,
+ "parts_mtime_before_v2r_freeze": {
+  "selection_eval_part0.json": true,
+  "selection_eval_part1.json": true,
+  "selection_eval_part2.json": true,
+  "selection_eval_part3.json": false
+ },
+ "part_meta": [
+  {
+   "part": 0,
+   "n": 25,
+   "peak_mib": 2649.83984375,
+   "proc_max_alloc": 1068.84814453125,
+   "elapsed_s": 97.8660505529997,
+   "load": [
+    [
+     1.76806640625,
+     1.5625,
+     1.42236328125
+    ],
+    [
+     1.17333984375,
+     1.40673828125,
+     1.37646484375
+    ]
+   ]
+  },
+  {
+   "part": 1,
+   "n": 25,
+   "peak_mib": 2649.71484375,
+   "proc_max_alloc": 1068.84814453125,
+   "elapsed_s": 95.73433796999961,
+   "load": [
+    [
+     1.19091796875,
+     1.396484375,
+     1.37255859375
+    ],
+    [
+     1.1376953125,
+     1.32177734375,
+     1.3466796875
+    ]
+   ]
+  },
+  {
+   "part": 2,
+   "n": 25,
+   "peak_mib": 2650.83984375,
+   "proc_max_alloc": 1068.84814453125,
+   "elapsed_s": 97.587399559,
+   "load": [
+    [
+     1.08935546875,
+     1.294921875,
+     1.3369140625
+    ],
+    [
+     1.01416015625,
+     1.20654296875,
+     1.2978515625
+    ]
+   ]
+  },
+  {
+   "part": 3,
+   "n": 25,
+   "peak_mib": 2564.46484375,
+   "proc_max_alloc": 1068.84814453125,
+   "elapsed_s": 99.4368596559998,
+   "load": [
+    [
+     1.3837890625,
+     1.287109375,
+     1.32275390625
+    ],
+    [
+     1.337890625,
+     1.27978515625,
+     1.3125
+    ]
+   ]
+  }
+ ],
+ "score": {
+  "include_all_100": {
+   "v1_a_single_.35": {
+    "correct": 208,
+    "n": 300,
+    "acc": 0.6933,
+    "wilson": [
+     0.639,
+     0.7428
+    ],
+    "no_det": 50,
+    "wrong_present": 42,
+    "absent": "231/620",
+    "absent_spec": 0.3726,
+    "absent_wilson": [
+     0.3354,
+     0.4113
+    ],
+    "task_ms_mean": 177.0,
+    "task_ms_p50": 154.3
+   },
+   "v2r_b_span_min_.35": {
+    "correct": 180,
+    "n": 300,
+    "acc": 0.6,
+    "wilson": [
+     0.5436,
+     0.6538
+    ],
+    "no_det": 97,
+    "wrong_present": 23,
+    "absent": "553/620",
+    "absent_spec": 0.8919,
+    "absent_wilson": [
+     0.865,
+     0.914
+    ],
+    "task_ms_mean": 174.0,
+    "task_ms_p50": 169.0
+   },
+   "summary_says": {
+    "v1_a_pre_collection": [
+     208,
+     300,
+     231,
+     620
+    ],
+    "v2r_result_blind_freeze": [
+     180,
+     300,
+     553,
+     620
+    ]
+   }
+  },
+  "exclude_preseen_10": {
+   "v1_a_single_.35": {
+    "correct": 190,
+    "n": 270,
+    "acc": 0.7037,
+    "wilson": [
+     0.6467,
+     0.755
+    ],
+    "no_det": 42,
+    "wrong_present": 38,
+    "absent": "201/558",
+    "absent_spec": 0.3602,
+    "absent_wilson": [
+     0.3215,
+     0.4009
+    ],
+    "task_ms_mean": 177.9,
+    "task_ms_p50": 154.5
+   },
+   "v2r_b_span_min_.35": {
+    "correct": 166,
+    "n": 270,
+    "acc": 0.6148,
+    "wilson": [
+     0.5555,
+     0.6709
+    ],
+    "no_det": 83,
+    "wrong_present": 21,
+    "absent": "501/558",
+    "absent_spec": 0.8978,
+    "absent_wilson": [
+     0.8699,
+     0.9203
+    ],
+    "task_ms_mean": 174.5,
+    "task_ms_p50": 169.0
+   },
+   "summary_says": {
+    "v1_a_pre_collection": [
+     190,
+     270,
+     201,
+     558
+    ],
+    "v2r_result_blind_freeze": [
+     166,
+     270,
+     501,
+     558
+    ]
+   }
+  }
+ },
+ "target_box_none": 1,
+ "duplicate_targets": 40,
+ "gt_recheck": {
+  "checked": 300,
+  "mismatches_gt1px": 0,
+  "max_abs_diff_px": 0
+ }
+}

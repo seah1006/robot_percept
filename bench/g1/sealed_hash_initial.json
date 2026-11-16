@@ -1,0 +1,20 @@
+{
+  "observed_at": "2026-11-16T13:23:20.2004457+09:00",
+  "inspection": "hash/size only; no result content opened",
+  "files": [
+    {
+      "file": "selection_eval_part0.json",
+      "bytes": 260862,
+      "sha256": "ff6300ff95c609b04fe2769e2567456bda5c87902addb8e5e7c9acae1c9d2045",
+      "observed_at": "2026-11-16T13:23:20.2004457+09:00",
+      "state": "sealed, contents not inspected; active file may grow"
+    },
+    {
+      "file": "selection_eval_part1.json",
+      "bytes": 44837,
+      "sha256": "ec70426735d10f2a5cc49575c874d10219518c7509f76b075011c114980243ec",
+      "observed_at": "2026-11-16T13:23:20.2004457+09:00",
+      "state": "sealed, contents not inspected; active file may grow"
+    }
+  ]
+}

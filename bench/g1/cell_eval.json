@@ -1,0 +1,678 @@
+{
+  "source": "[시뮬인식]",
+  "gt_assist": false,
+  "scoring": "visible segmentation bbox IoU>=0.5, same class, greedy confidence",
+  "records": [
+    {
+      "seed": 100000,
+      "ms": 10483.892120999826,
+      "raw": [
+        {
+          "detection_id": "0",
+          "query_id": "ball",
+          "canonical_class": "ball",
+          "score": 0.47064483165740967,
+          "box_xyxy": [
+            214.68130493164062,
+            243.11563110351562,
+            241.3260040283203,
+            270.18988037109375
+          ],
+          "frame": {
+            "frame_id": "100000",
+            "generation": 0,
+            "source": "sim_perception",
+            "capture_at": null,
+            "received_at": 2235.536277003,
+            "mirrored": false,
+            "calibration_id": null,
+            "width": 640,
+            "height": 480,
+            "overlay_present": false,
+            "image_origin": "top_left",
+            "coordinate_frame": "image",
+            "unit": "px",
+            "schema_version": 1
+          },
+          "error": null,
+          "schema_version": 1
+        },
+        {
+          "detection_id": "1",
+          "query_id": "ball",
+          "canonical_class": "ball",
+          "score": 0.4192541539669037,
+          "box_xyxy": [
+            258.05792236328125,
+            203.2523956298828,
+            282.4476013183594,
+            227.9849395751953
+          ],
+          "frame": {
+            "frame_id": "100000",
+            "generation": 0,
+            "source": "sim_perception",
+            "capture_at": null,
+            "received_at": 2235.536277003,
+            "mirrored": false,
+            "calibration_id": null,
+            "width": 640,
+            "height": 480,
+            "overlay_present": false,
+            "image_origin": "top_left",
+            "coordinate_frame": "image",
+            "unit": "px",
+            "schema_version": 1
+          },
+          "error": null,
+          "schema_version": 1
+        },
+        {
+          "detection_id": "2",
+          "query_id": "bottle",
+          "canonical_class": "bottle",
+          "score": 0.42320436239242554,
+          "box_xyxy": [
+            274.04669189453125,
+            0.8518052101135254,
+            390.66168212890625,
+            175.31004333496094
+          ],
+          "frame": {
+            "frame_id": "100000",
+            "generation": 0,
+            "source": "sim_perception",
+            "capture_at": null,
+            "received_at": 2235.536277003,
+            "mirrored": false,
+            "calibration_id": null,
+            "width": 640,
+            "height": 480,
+            "overlay_present": false,
+            "image_origin": "top_left",
+            "coordinate_frame": "image",
+            "unit": "px",
+            "schema_version": 1
+          },
+          "error": null,
+          "schema_version": 1
+        }
+      ],
+      "targets": [
+        {
+          "class_id": "ball",
+          "box": [
+            217,
+            206,
+            433,
+            285
+          ]
+        },
+        {
+          "class_id": "ball",
+          "box": [
+            261,
+            206,
+            432,
+            284
+          ]
+        },
+        {
+          "class_id": "box",
+          "box": [
+            405,
+            261,
+            432,
+            285
+          ]
+        }
+      ],
+      "modes": {
+        "False": {
+          "counts": {
+            "ball": {
+              "gt": 2,
+              "tp": 0,
+              "fp": 2
+            },
+            "box": {
+              "gt": 1,
+              "tp": 0,
+              "fp": 0
+            },
+            "bottle": {
+              "gt": 0,
+              "tp": 0,
+              "fp": 1
+            }
+          },
+          "rejections": []
+        },
+        "True": {
+          "counts": {
+            "ball": {
+              "gt": 2,
+              "tp": 0,
+              "fp": 2
+            },
+            "box": {
+              "gt": 1,
+              "tp": 0,
+              "fp": 0
+            },
+            "bottle": {
+              "gt": 0,
+              "tp": 0,
+              "fp": 1
+            }
+          },
+          "rejections": []
+        }
+      }
+    },
+    {
+      "seed": 100001,
+      "ms": 1784.9095520000446,
+      "raw": [
+        {
+          "detection_id": "0",
+          "query_id": "cup",
+          "canonical_class": "cup",
+          "score": 0.6014540195465088,
+          "box_xyxy": [
+            383.072021484375,
+            236.77471923828125,
+            422.4307556152344,
+            283.5352783203125
+          ],
+          "frame": {
+            "frame_id": "100001",
+            "generation": 0,
+            "source": "sim_perception",
+            "capture_at": null,
+            "received_at": 2247.959083841,
+            "mirrored": false,
+            "calibration_id": null,
+            "width": 640,
+            "height": 480,
+            "overlay_present": false,
+            "image_origin": "top_left",
+            "coordinate_frame": "image",
+            "unit": "px",
+            "schema_version": 1
+          },
+          "error": null,
+          "schema_version": 1
+        },
+        {
+          "detection_id": "1",
+          "query_id": "mug",
+          "canonical_class": "mug",
+          "score": 0.5608816742897034,
+          "box_xyxy": [
+            226.77108764648438,
+            228.32745361328125,
+            255.1854705810547,
+            269.7164306640625
+          ],
+          "frame": {
+            "frame_id": "100001",
+            "generation": 0,
+            "source": "sim_perception",
+            "capture_at": null,
+            "received_at": 2247.959083841,
+            "mirrored": false,
+            "calibration_id": null,
+            "width": 640,
+            "height": 480,
+            "overlay_present": false,
+            "image_origin": "top_left",
+            "coordinate_frame": "image",
+            "unit": "px",
+            "schema_version": 1
+          },
+          "error": null,
+          "schema_version": 1
+        },
+        {
+          "detection_id": "2",
+          "query_id": "bottle",
+          "canonical_class": "bottle",
+          "score": 0.42071112990379333,
+          "box_xyxy": [
+            332.86090087890625,
+            208.49913024902344,
+            351.9552307128906,
+            243.25045776367188
+          ],
+          "frame": {
+            "frame_id": "100001",
+            "generation": 0,
+            "source": "sim_perception",
+            "capture_at": null,
+            "received_at": 2247.959083841,
+            "mirrored": false,
+            "calibration_id": null,
+            "width": 640,
+            "height": 480,
+            "overlay_present": false,
+            "image_origin": "top_left",
+            "coordinate_frame": "image",
+            "unit": "px",
+            "schema_version": 1
+          },
+          "error": null,
+          "schema_version": 1
+        },
+        {
+          "detection_id": "3",
+          "query_id": "ball",
+          "canonical_class": "ball",
+          "score": 0.359171986579895,
+          "box_xyxy": [
+            383.21112060546875,
+            236.75997924804688,
+            422.3526611328125,
+            283.28741455078125
+          ],
+          "frame": {
+            "frame_id": "100001",
+            "generation": 0,
+            "source": "sim_perception",
+            "capture_at": null,
+            "received_at": 2247.959083841,
+            "mirrored": false,
+            "calibration_id": null,
+            "width": 640,
+            "height": 480,
+            "overlay_present": false,
+            "image_origin": "top_left",
+            "coordinate_frame": "image",
+            "unit": "px",
+            "schema_version": 1
+          },
+          "error": null,
+          "schema_version": 1
+        },
+        {
+          "detection_id": "4",
+          "query_id": "bottle",
+          "canonical_class": "bottle",
+          "score": 0.3544069826602936,
+          "box_xyxy": [
+            328.3798522949219,
+            204.68211364746094,
+            356.7526550292969,
+            246.28909301757812
+          ],
+          "frame": {
+            "frame_id": "100001",
+            "generation": 0,
+            "source": "sim_perception",
+            "capture_at": null,
+            "received_at": 2247.959083841,
+            "mirrored": false,
+            "calibration_id": null,
+            "width": 640,
+            "height": 480,
+            "overlay_present": false,
+            "image_origin": "top_left",
+            "coordinate_frame": "image",
+            "unit": "px",
+            "schema_version": 1
+          },
+          "error": null,
+          "schema_version": 1
+        }
+      ],
+      "targets": [
+        {
+          "class_id": "box",
+          "box": [
+            229,
+            211,
+            421,
+            282
+          ]
+        },
+        {
+          "class_id": "bottle",
+          "box": [
+            229,
+            211,
+            421,
+            282
+          ]
+        },
+        {
+          "class_id": "can",
+          "box": [
+            229,
+            231,
+            421,
+            282
+          ]
+        },
+        {
+          "class_id": "cup",
+          "box": [
+            385,
+            239,
+            421,
+            281
+          ]
+        }
+      ],
+      "modes": {
+        "False": {
+          "counts": {
+            "box": {
+              "gt": 1,
+              "tp": 0,
+              "fp": 0
+            },
+            "bottle": {
+              "gt": 1,
+              "tp": 0,
+              "fp": 2
+            },
+            "can": {
+              "gt": 1,
+              "tp": 0,
+              "fp": 0
+            },
+            "cup": {
+              "gt": 1,
+              "tp": 1,
+              "fp": 0
+            },
+            "mug": {
+              "gt": 0,
+              "tp": 0,
+              "fp": 1
+            },
+            "ball": {
+              "gt": 0,
+              "tp": 0,
+              "fp": 1
+            }
+          },
+          "rejections": []
+        },
+        "True": {
+          "counts": {
+            "box": {
+              "gt": 1,
+              "tp": 0,
+              "fp": 0
+            },
+            "bottle": {
+              "gt": 1,
+              "tp": 0,
+              "fp": 2
+            },
+            "can": {
+              "gt": 1,
+              "tp": 0,
+              "fp": 0
+            },
+            "cup": {
+              "gt": 1,
+              "tp": 1,
+              "fp": 0
+            },
+            "mug": {
+              "gt": 0,
+              "tp": 0,
+              "fp": 1
+            },
+            "ball": {
+              "gt": 0,
+              "tp": 0,
+              "fp": 1
+            }
+          },
+          "rejections": []
+        }
+      }
+    },
+    {
+      "seed": 100002,
+      "ms": 1206.7226539998046,
+      "raw": [
+        {
+          "detection_id": "0",
+          "query_id": "cup",
+          "canonical_class": "cup",
+          "score": 0.4724311828613281,
+          "box_xyxy": [
+            286.1221008300781,
+            218.61102294921875,
+            321.474609375,
+            261.64630126953125
+          ],
+          "frame": {
+            "frame_id": "100002",
+            "generation": 0,
+            "source": "sim_perception",
+            "capture_at": null,
+            "received_at": 2250.82912041,
+            "mirrored": false,
+            "calibration_id": null,
+            "width": 640,
+            "height": 480,
+            "overlay_present": false,
+            "image_origin": "top_left",
+            "coordinate_frame": "image",
+            "unit": "px",
+            "schema_version": 1
+          },
+          "error": null,
+          "schema_version": 1
+        },
+        {
+          "detection_id": "1",
+          "query_id": "bottle",
+          "canonical_class": "bottle",
+          "score": 0.4171622097492218,
+          "box_xyxy": [
+            274.05596923828125,
+            0.9435153007507324,
+            390.7028503417969,
+            175.1173553466797
+          ],
+          "frame": {
+            "frame_id": "100002",
+            "generation": 0,
+            "source": "sim_perception",
+            "capture_at": null,
+            "received_at": 2250.82912041,
+            "mirrored": false,
+            "calibration_id": null,
+            "width": 640,
+            "height": 480,
+            "overlay_present": false,
+            "image_origin": "top_left",
+            "coordinate_frame": "image",
+            "unit": "px",
+            "schema_version": 1
+          },
+          "error": null,
+          "schema_version": 1
+        },
+        {
+          "detection_id": "2",
+          "query_id": "small_box",
+          "canonical_class": "small_box",
+          "score": 0.35590362548828125,
+          "box_xyxy": [
+            70.2175521850586,
+            170.9932098388672,
+            569.9783935546875,
+            426.6662902832031
+          ],
+          "frame": {
+            "frame_id": "100002",
+            "generation": 0,
+            "source": "sim_perception",
+            "capture_at": null,
+            "received_at": 2250.82912041,
+            "mirrored": false,
+            "calibration_id": null,
+            "width": 640,
+            "height": 480,
+            "overlay_present": false,
+            "image_origin": "top_left",
+            "coordinate_frame": "image",
+            "unit": "px",
+            "schema_version": 1
+          },
+          "error": null,
+          "schema_version": 1
+        },
+        {
+          "detection_id": "3",
+          "query_id": "box",
+          "canonical_class": "box",
+          "score": 0.3532835841178894,
+          "box_xyxy": [
+            69.32508850097656,
+            170.81436157226562,
+            570.950439453125,
+            427.184814453125
+          ],
+          "frame": {
+            "frame_id": "100002",
+            "generation": 0,
+            "source": "sim_perception",
+            "capture_at": null,
+            "received_at": 2250.82912041,
+            "mirrored": false,
+            "calibration_id": null,
+            "width": 640,
+            "height": 480,
+            "overlay_present": false,
+            "image_origin": "top_left",
+            "coordinate_frame": "image",
+            "unit": "px",
+            "schema_version": 1
+          },
+          "error": null,
+          "schema_version": 1
+        }
+      ],
+      "targets": [
+        {
+          "class_id": "cup",
+          "box": [
+            268,
+            206,
+            319,
+            260
+          ]
+        },
+        {
+          "class_id": "block",
+          "box": [
+            268,
+            207,
+            294,
+            227
+          ]
+        }
+      ],
+      "modes": {
+        "False": {
+          "counts": {
+            "cup": {
+              "gt": 1,
+              "tp": 0,
+              "fp": 1
+            },
+            "block": {
+              "gt": 1,
+              "tp": 0,
+              "fp": 0
+            },
+            "bottle": {
+              "gt": 0,
+              "tp": 0,
+              "fp": 1
+            },
+            "small_box": {
+              "gt": 0,
+              "tp": 0,
+              "fp": 1
+            },
+            "box": {
+              "gt": 0,
+              "tp": 0,
+              "fp": 1
+            }
+          },
+          "rejections": []
+        },
+        "True": {
+          "counts": {
+            "cup": {
+              "gt": 1,
+              "tp": 0,
+              "fp": 1
+            },
+            "block": {
+              "gt": 1,
+              "tp": 0,
+              "fp": 0
+            },
+            "bottle": {
+              "gt": 0,
+              "tp": 0,
+              "fp": 1
+            }
+          },
+          "rejections": [
+            {
+              "reason": "BOX_AREA_EXCEEDED",
+              "box_xyxy": [
+                70.2175521850586,
+                170.9932098388672,
+                569.9783935546875,
+                426.6662902832031
+              ],
+              "score": 0.35590362548828125,
+              "query_id": "small_box"
+            },
+            {
+              "reason": "BOX_AREA_EXCEEDED",
+              "box_xyxy": [
+                69.32508850097656,
+                170.81436157226562,
+                570.950439453125,
+                427.184814453125
+              ],
+              "score": 0.3532835841178894,
+              "query_id": "box"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "load_start": [
+    1.15673828125,
+    0.89599609375,
+    0.9072265625
+  ],
+  "load_end": [
+    1.0439453125,
+    0.88671875,
+    0.9052734375
+  ],
+  "device_used_peak_sampled_mib": 2558.08984375,
+  "sample_interval_ms": 20,
+  "process_max_allocated_mib": 1068.84814453125,
+  "process_max_reserved_mib": 1220.0,
+  "nvidia_smi": "Mon Nov 16 12:49:35 2026       \n+-----------------------------------------------------------------------------------------+\n| NVIDIA-SMI 610.57.01              KMD Version: 610.88        CUDA UMD Version: 13.3     |\n+-----------------------------------------+------------------------+----------------------+\n| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n|                                         |                        |               MIG M. |\n|=========================================+========================+======================|\n|   0  NVIDIA GeForce RTX 2080 ...    On  |   00000000:65:00.0  On |                  N/A |\n| 29%   37C    P2             59W /  250W |    1191MiB /   8192MiB |     31%      Default |\n|                                         |                        |                  N/A |\n+-----------------------------------------+------------------------+----------------------+\n\n+-----------------------------------------------------------------------------------------+\n| Processes:                                                                              |\n|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n|        ID   ID                                                               Usage      |\n|=========================================================================================|\n|    0   N/A  N/A           42055    C+G   /python3.12                           N/A      |\n+-----------------------------------------------------------------------------------------+",
+  "concurrency": "your 131072x1 screen size is bogus. expect trouble\n  41990 bash            bash -lc cd /home/user/work/robot_percept && source sim_test/gl_env.sh && export PYTHONPATH=/home/user/work/robot_percept LD_LIBRARY_PATH=/home/user/anaconda3/envs/robot_percept_g0c/lib && flock -w 120 /tmp/rp_measure.lock /home/user/anaconda3/envs/robot_percept_g0c/bin/python -m pytest tests/test_grounding_r5.py -q && flock -w 120 /tmp/rp_measure.lock flock -w 120 /tmp/rp_gpu.lock timeout 285 /home/user/anaconda3/envs/robot_percept_g0c/bin/python tests/test_grounding_r5.py > /tmp/g1_eval_final.log 2>&1 && tail -c 500 /tmp/g1_eval_final.log\n  42590 sh              /bin/sh -c ps -eo pid,comm,args | grep -E \"pytest|bench_gpu\"\n  42592 grep            grep -E pytest|bench_gpu",
+  "revision": "a2bb814dd30d776dcf7e30523b00659f4f141c71"
+}
