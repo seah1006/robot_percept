@@ -1,0 +1,17 @@
+{
+  "approach_height": 0.16,
+  "descend_offset": 0.05,
+  "close_seconds": 1.0,
+  "approach_seconds": 2.0,
+  "descend_seconds": 2.0,
+  "lift_seconds": 1.0,
+  "lift_height": 0.1,
+  "hold_seconds": 2.0,
+  "sample_dt": 0.02,
+  "stage_timeout": 15.0,
+  "waypoint_x": 0.13,
+  "waypoint_height": 0.16,
+  "waypoint_seconds": 2.0,
+  "yaw_offset": 0.0,
+  "close_settle_seconds": 1.0
+}

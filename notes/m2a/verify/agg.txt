@@ -1,0 +1,32 @@
+rows 120
+| mode | obj | spec3 (V-GA) | Wilson95 | GA2 judge | bench raw | disagree seeds | V-GA fail codes |
+| gate | block | 13/20 | 0.433-0.819 | 13/20 | 13/20 | [] | {'no_contact': 6, 'incomplete:ik_fail': 1} |
+| gate | board | 11/20 | 0.342-0.742 | 2/20 | 2/20 | [1000, 1001, 1003, 1006, 1008, 1009, 1012, 1016, 1019] | {'no_contact': 7, 'incomplete:ik_fail': 2} |
+| gate | dowel | 0/20 | 0.000-0.161 | 0/20 | 0/20 | [] | {'no_contact': 18, 'incomplete:ik_fail': 2} |
+| phys | block | 13/20 | 0.433-0.819 | 13/20 | 13/20 | [] | {'no_contact': 6, 'incomplete:ik_fail': 1} |
+| phys | board | 1/20 | 0.009-0.236 | 1/20 | 1/20 | [] | {'no_contact': 17, 'incomplete:ik_fail': 2} |
+| phys | dowel | 0/20 | 0.000-0.161 | 0/20 | 0/20 | [] | {'no_contact': 18, 'incomplete:ik_fail': 2} |
+max hand-obj pen (trial) 0.004148187330834989
+max hand-table pen 0.004866228060957727
+min arm-table clearance (0.041760280871994813, 'gate', 'board', 1008, 'robot:right_wrist_pitch_link')
+robot nonhand contacts 0
+qfrc/xfrc on object max 0.0 0.0
+nonfinite []
+min hold rate hz 499.99999999983305 hold span 1.9999999999997802
+edge violations 0 weld in phys 0
+weld-on edges 24 obj_in_palm x range 0.0092 0.0711 y range 0.067 0.0927 dist max 0.11540501733467662
+release tests 24 weld off after open 24 max dz after -0.05697141823192797
+objects fell through floor (non-colliding floor) [('gate', 'block', 1002, -311.7), ('gate', 'block', 1013, -76.5), ('gate', 'block', 1017, -46.3), ('gate', 'board', 1013, -20.4), ('gate', 'board', 1017, -45.3), ('gate', 'dowel', 1010, -295.3), ('gate', 'dowel', 1014, -220.5), ('gate', 'dowel', 1015, -327.9), ('gate', 'dowel', 1017, -45.7), ('gate', 'dowel', 1018, -303.8), ('phys', 'block', 1002, -311.7), ('phys', 'block', 1013, -76.5), ('phys', 'block', 1017, -46.3), ('phys', 'board', 1000, -25.9), ('phys', 'board', 1003, -27.9), ('phys', 'board', 1006, -27.1), ('phys', 'board', 1008, -27.4), ('phys', 'board', 1009, -25.9), ('phys', 'board', 1012, -27.3), ('phys', 'board', 1013, -20.4), ('phys', 'board', 1016, -25.2), ('phys', 'board', 1017, -45.3), ('phys', 'board', 1019, -26.0), ('phys', 'dowel', 1010, -295.3), ('phys', 'dowel', 1014, -220.5), ('phys', 'dowel', 1015, -327.9), ('phys', 'dowel', 1017, -45.7), ('phys', 'dowel', 1018, -303.8)]
+bench vs rerun field diffs (excluding wall) []
+state() mismatches 0 []
+gate/board disagree 1000 mindz 0.0547 drift 0.00023 tablecontact 0 weld_frac 1.0 claim fingers ['middle'] edge [(8.496, ['index', 'middle', 'thumb'])]
+gate/board disagree 1001 mindz 0.0552 drift 0.00024 tablecontact 0 weld_frac 1.0 claim fingers [] edge [(8.492, ['index', 'middle', 'thumb'])]
+gate/board disagree 1003 mindz 0.0539 drift 0.00022 tablecontact 0 weld_frac 1.0 claim fingers ['middle'] edge [(8.506, ['middle', 'thumb'])]
+gate/board disagree 1006 mindz 0.0542 drift 0.00027 tablecontact 0 weld_frac 1.0 claim fingers [] edge [(8.508, ['index', 'middle', 'thumb'])]
+gate/board disagree 1008 mindz 0.0543 drift 0.00029 tablecontact 0 weld_frac 1.0 claim fingers [] edge [(8.498, ['index', 'middle', 'thumb'])]
+gate/board disagree 1009 mindz 0.0542 drift 0.00032 tablecontact 0 weld_frac 1.0 claim fingers ['middle'] edge [(8.506, ['index', 'middle', 'thumb'])]
+gate/board disagree 1012 mindz 0.0544 drift 0.00028 tablecontact 0 weld_frac 1.0 claim fingers [] edge [(8.498, ['index', 'middle', 'thumb'])]
+gate/board disagree 1016 mindz 0.0547 drift 0.00025 tablecontact 0 weld_frac 1.0 claim fingers [] edge [(8.496, ['index', 'middle', 'thumb'])]
+gate/board disagree 1019 mindz 0.0541 drift 0.00024 tablecontact 0 weld_frac 1.0 claim fingers ['middle'] edge [(8.508, ['index', 'middle', 'thumb'])]
+{"compared": 5, "differ": 0, "detail": []}
+{"compared": 5, "differ": 0, "detail": []}
