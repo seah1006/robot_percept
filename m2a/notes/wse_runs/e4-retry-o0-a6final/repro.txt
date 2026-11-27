@@ -1,0 +1,2 @@
+commit=ada408b645d48bddec27f4677946f8560e54908d dirty_files=12 skill_label=A6
+cmd=nice -n 10 python -m m2a.run.batch --workers 3 --skill-label A6 --configs B1 B4 B4r --retry-R 6 --perception O0 --run-id e4-retry-o0-a6final

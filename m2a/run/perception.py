@@ -11,6 +11,7 @@ class Observation:
     held: dict = field(default_factory=dict)  # arm -> oid
     poses: dict = field(default_factory=dict)  # predicted oid -> {xyz, yaw, size}
     meta: dict = field(default_factory=dict)  # evaluation-only data (never read by planner/skills)
+    candidates: dict = field(default_factory=dict)  # uncertain Top-3 for pre-planning confirmation
 
 
 class Perception(Protocol):
@@ -31,7 +32,11 @@ class OraclePerception:
     def observe(self, env, layout, parts):
         gt = env.get_gt_objects()
         held = held_from_env(env, gt)
-        return Observation(symbolic_from_gt(gt, layout, parts), held)
+        catalog = parts.get("parts", parts)
+        poses = {oid: dict(xyz=o["xyz"], yaw=o["yaw"], part_id=o["part_id"],
+                           shape=catalog[o["part_id"]]["shape"], size=catalog[o["part_id"]]["size"])
+                 for oid, o in gt.items()}
+        return Observation(symbolic_from_gt(gt, layout, parts), held, poses)
 
     def refine_target(self, call, observation):
         return call.target  # O0 skills already read current GT poses.

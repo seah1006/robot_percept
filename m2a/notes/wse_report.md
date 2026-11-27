@@ -171,3 +171,55 @@ cd ~/work/rp_m2a_e3 && WORKERS=4 bash m2a/run/repro_batch.sh all a4mid3 "A4 중�
 - 무엇: 헤드 RGB-D 예측 인식을 계획 루프에 연결하되, 키프레임마다 바뀌는 예측 id를 part_id+위치 헝가리안 매칭으로 안정 id에 묶고, 스킬엔 자세(obj_pose_T)만 전달, 평가용으로만 GT 매칭해 MISID를 센다.
 - 왜: B4의 불일치 감지가 oid 기준이라 id가 흔들리면 매 관측이 오탐 재계획이 된다(2라운드에서 MISID 9/10 실측).
 - 대안 대비: 트래커 없이 인식기에 id 안정성을 요구하는 방식보다 어댑터에 두는 편이 인식기와 분리돼 간단하지만, 임계(3 cm 등)가 임의 지정이고 가림·분류 뒤집힘에서 새 id가 생기는 한계가 있다.
+---
+
+# 작업자 E (4라운드): G3 O3 연결, 부재 재관측, 판재 배정, B4r
+
+기준: `~/work/rp_m2a_e4` (`m2a/ws-e-4`, A5/G3 `5e34255`에서 시작, A6 API 병합 `ada408b`로 fast-forward), 커밋 없음. **O3=시뮬 렌더 예측 인식(무질감)**, **P-gate(GT 보조 weld 파지 근사)**. dev만 실행, 봉인 test seed 미사용.
+
+## 변경 파일
+
+- `m2a/run/o3_config.py`, `embed_server.py`, `batch.py`: G3 head-v2 train-only 갤러리와 `DinoSmall(crop_size=112)`를 중앙 설정으로 연결. NPZ에 카메라 버전 필드가 없어 G3 파일 SHA-256을 고정하고 train seed 0–199 및 crop 112도 확인한다. 다른 내용의 파일은 fail-closed. 재생성한 별도 갤러리의 변경은 검증 및 지문 갱신이 필요하다. 배치 config에 갤러리 경로·버전·해시·crop을 기록한다.
+- `o3_policy.py`, `o3_perception.py`, `perception.py`, `episode.py`: 재관측 및 후보 보존, 판재 배정과 전후 비교용 로그. GT 매칭은 판정/로그에만 쓰고 후보·배정은 RGB-D 예측만 사용한다.
+- `retry.py`, `dispatcher.py`, `episode.py`, `batch.py`: B4와 별개인 B4r. `e4_analyze.py`, `repro_batch.sh`: 통계 및 원자료 보존. `tests/m2a/test_e_round4.py`: 정책 회귀 테스트.
+
+## 부재 및 P01/P02 정책
+
+1. 계획 직전 목표 수량보다 현재 기호 인벤토리가 부족하면 `perception_pose` 키프레임을 한 번 더 요청한다. 여전히 부족하고 `uncertain` 예측의 Top-3에 부족한 타입이 있으면 해당 안정 oid/타입을 확인 목록에 남겨 한 번 더 관측한다(최대 2회, 임의 지정). 후보를 발견 목록으로 승격시키지는 않는다. 마지막 관측에서 계속 부족하면 기존 플래너가 `missing`을 결정한다. 파킹을 시도할 수 없거나 훅이 실패하면 제자리 관측으로 폴백하며 `scene_graph.jsonl`의 `posed`로 구별한다.
+2. 장면 내에서 Top-1이 P01/P02인 예측의 윗면 관측 장축을 정렬한다. 전체 BOM이 허용하는 최대 수량(설명서 P01 2·P02 2) 내에서 짧은 쪽을 P02, 긴 쪽을 P01로 배정한다. 일부만 검출되면 관측 수량을 가능한 유지하고, 1개뿐이거나 BOM 초과 또는 경계 길이 동률이면 원래 라벨을 유지한다(보수 정책, 임의 지정). 원본 그래프/Top-3/예측 자세는 보존하고 어댑터 기호 단계에서만 배정한다. L1 효과는 B1의 초기 동일 프레임에서 위치 매칭된 GT P01/P02에 대한 배정 전/후 정답 수와 혼동쌍을 비교한다. 미검출 물체는 이 비교의 분모 밖이다.
+3. 재관측 전/후는 동일 장면 B1에서 재관측만 끈 배치(`--no-reobserve-missing`)를 대조군으로 둔다. 판재 배정은 두 조건 모두 동일하게 활성화. 거짓 완료는 judge, 잘못된 missing은 `missing_report_mismatch`. `PERCEPT_MISS`는 실행 이벤트 분류 수, `MISID`는 잘못 집은 물체(평가 GT 기준) 수를 별도 집계하고 최종 `fail_code`와 혼동하지 않는다.
+
+## B4r (재시도 허용)
+
+- 기존 B4(R=3)를 바꾸지 않았다. B4r은 GRASP_SLIP/IK_FAIL로 실패한 물체를 재관측하고, 물체당 최대 2회·dev L1/L2 R=6(둘 다 임의 지정). 이동(1 cm 이상, 임의 지정) 시 갱신 위치를 사용한다. 다른 팔로 바꾼 pick/place 묶음은 전체 계획 검증을 통과한 경우만 허용한다. B4의 전역 reach 차단은 B4r에는 적용하지 않는다.
+- A6에서 직전 실제 접근각을 읽을 수 있으면 같은 팔 첫 재시도에서 그 각의 반대(π), 두 번째에서 대체 팔이 불가하면 직전 각에서 −π/2(임의 지정). 물체 yaw 값은 바꾸지 않는다. 명시 접근각을 O0은 reach에만 주어 GT oid 경로를 보존하고, O3는 lift에서 재계획하므로 두 스킬에 준다. A5처럼 API가 없는 경우 갱신 위치·검증된 대체 팔만 쓴다. 재시도 상한 소진 시 사람 호출로 종료한다.
+- A5 호환 비교(접근각 지정 없음)는 B1 2/60, B4 3/60, B4r 3/60. B4r−B4 성공 Δ 0.000 [0.000, 0.000], 평균 진행 +0.027 [+0.004, +0.057]. 원자료 `m2a/notes/wse_runs/{e3-main-o0,e4-retry-o0}-a5final/result.json`, 상세 [A5 호환 표](wse_tables/e4_a5final.md). 접근각을 명시한 A6 수치로 인용하면 안 된다.
+
+## A6 dev 측정 및 원자료
+
+- [A6 결과 표](wse_tables/e4_a6final.md): O0 dev60 B1/B4/B4r, O3 L0 20 및 dev60 B1/B1c/B4, 성공 Wilson 95% CI·엄격 성공·평균 진행·거짓 완료·wrong missing·fail_code·인식 사건. 성공/엄격/진행 차이는 같은 seed·level·상황으로 짝지어 10,000회 percentile 부트스트랩한 95% CI(임의 지정).
+- O0/O3 병목은 `O0 성공 ∧ O3 실패`로 계산하고 역전·양쪽 성공·양쪽 실패도 표에 남긴다. A5 메인 앵커와 A6 동일 버전 앵커는 분리한다. L0 O0 B4는 교란 조건이라 무교란 O3와 직접 짝지을 수 없다. dev60의 O0 B1c는 별도 실행하지 않아 O0 B1을 대조군으로 표기한다(두 구성의 GT 자세 경로는 동일).
+- 완료된 실행은 `m2a/notes/wse_runs/e4-*-a6final/{config.json,result.json,repro.txt,*.jsonl.gz}`, 진행 중인 원자료는 `runs/e4-*-a6final/`. 작업 인계 시에는 `/tmp/rp_e4_a6.log` 및 `/tmp/rp_e4_a6_driver.pid` 참고. [A6 결과 표](wse_tables/e4_a6final.md)는 순차 배치 종료 후 자동 재생성한다.
+
+## 재현 및 검증
+
+```bash
+cd ~/work/rp_m2a_e4
+export PATH="$HOME/miniforge3/envs/robot_percept/bin:$PATH"
+source /home/my/work/robot_percept/sim_test/gl_env.sh
+WORKERS=3 bash m2a/run/repro_batch.sh e4-all a6final A6
+python -m pytest tests/m2a -q
+```
+
+산출물마다 새 TAG를 지정하거나 단계별(`e4-retry-o0`, `e4-l0`, `e4-dev`, `e4-baseline`, `e4-tables`)로 실행. 별도 TAG로 실험해도 메인의 O0 앵커는 기본 `O0_TAG=a5final`에서 읽는다. 테스트: **183 passed, 1 skipped** (기존 Dash 경고 1건). 원자료 `m2a/notes/wse_pytest_e4.txt`.
+
+## 남은 문제
+
+- 같은 고정 시점 재관측이 구조적 가림을 풀어주지는 않는다. 확인 목록은 불확실성을 보존하지만 추가 카메라 시점/능동 자세 선택은 하지 않는다.
+- 길이 순위는 부분 가림으로 순위가 역전될 수 있다. 불확실한 판재, P03으로 잘못 분류된 판재는 이 정책으로 복구한다고 가정하지 않는다. B4r도 대체 팔 계획이 불가능하거나 실제 접근 Yaw가 나오기 전에 실패하면 새 위치/재관측만 사용할 수 있다.
+- 이 결과는 무질감 시뮬, dev, GT 보조 파지 근사 범위에 한정된다.
+
+면접에서 이렇게 설명하면 됨:
+1. 목표 파트가 부족하면 바로 부재로 단정하지 않고 재관측했으며 불확실한 Top-3 후보는 끝까지 추적했습니다.
+2. P01/P02는 예측 원본을 보존한 채 장면 내 길이 순서와 BOM 상한으로 계획 라벨만 정리했습니다.
+3. 재시도 정책과 인식 개선을 같은 장면의 쌍체 비교로 보고, O0에서도 막히는 실행 실패와 O3에서만 잃은 성공을 분리했습니다.
