@@ -12,6 +12,14 @@ from .grasp_profiles import grasp_profile, hand_command
 HAND_BIT, OBJECT_BIT, FIXTURE_BIT = 1, 2, 4
 TRAY_FLOOR, TRAY_WALL = .004, .006
 WELD_CONTACT_GRACE_S = .200  # Imposed continuous contact-loss threshold.
+# Contact-gated weld rules (GT-assisted weld grasp approximation, not friction grasping).
+# attach: closed hand + >= attach_min distinct fingertips (+ thumb if required) + centre in palm.
+# release: fewer than hold_min fingertip contacts for WELD_CONTACT_GRACE_S continuously.
+GATE_RULES = {
+    'P-gate': dict(attach_min=2, require_thumb=False, hold_min=1),         # proposal definition
+    'P-gate-strict': dict(attach_min=2, require_thumb=True, hold_min=2),   # thumb-opposed variant
+}
+DEFAULT_GATE_MODE = 'P-gate'
 ARMS = ('left', 'right')
 CAMERAS = {'head': (640, 480), 'front': (640, 480), 'wrist_l': (256, 256), 'wrist_r': (256, 256)}
 
@@ -123,6 +131,13 @@ class G1ManipEnv:
     def __init__(self, layout=None):
         self.layout = load_layout() if layout is None else layout
         self._renderers = {}
+        self.gate_mode = DEFAULT_GATE_MODE
+
+    def set_gate_mode(self, mode):
+        """Select weld attach/release rule for env.attach (P-gate or P-gate-strict)."""
+        if mode not in GATE_RULES:
+            raise ValueError(mode)
+        self.gate_mode = mode
 
     def reset(self, spec):
         self.close()
@@ -140,6 +155,8 @@ class G1ManipEnv:
         self._ee_profile = dict.fromkeys(ARMS)
         self._grasp_target = dict.fromkeys(ARMS)
         self._gate_welds = {}
+        self.weld_info = dict.fromkeys(ARMS)
+        self.contact_watch = {}
         self.grasp_slips = dict.fromkeys(ARMS, 0)
         self.slip_events = []
         self.robot_nv = min((int(m.joint(f'm2a_free_{oid}').dofadr[0]) for oid in self.object_parts), default=m.nv)
@@ -193,12 +210,14 @@ class G1ManipEnv:
         for _ in range(n):
             d.qfrc_applied[:self.robot_nv] = d.qfrc_bias[:self.robot_nv]
             mj.mj_step(m, d)
+            hold_min = GATE_RULES[self.gate_mode]['hold_min']
+            seen = {}
             for arm, (oid, eq, missing) in tuple(self._gate_welds.items()):
                 if not d.eq_active[eq]:
                     del self._gate_welds[arm]
                     continue
-                fingers = self.contact_fingers(arm, oid)
-                missing = 0 if len(fingers) >= 2 else missing + 1
+                fingers = seen[arm, oid] = self.contact_fingers(arm, oid)
+                missing = 0 if len(fingers) >= hold_min else missing + 1
                 if missing * m.opt.timestep >= WELD_CONTACT_GRACE_S:
                     d.eq_active[eq] = False
                     del self._gate_welds[arm]
@@ -207,6 +226,10 @@ class G1ManipEnv:
                                                  fingers=sorted(fingers), reason_code='GRASP_SLIP'))
                 else:
                     self._gate_welds[arm] = (oid, eq, missing)
+            for arm, watch in self.contact_watch.items():
+                key = (arm, watch[0])
+                count = len(seen[key] if key in seen else self.contact_fingers(*key))
+                watch[1] = min(watch[1], count)
         if n:
             mj.mj_forward(m, d)
 
@@ -344,9 +367,11 @@ class G1ManipEnv:
     def attach(self, arm, oid, *, oracle=False):
         if self._held_oid(arm) is not None:
             return False
+        fingers = self.contact_fingers(arm, oid)
         if not oracle:
-            fingers = self.contact_fingers(arm, oid)
-            if not (self.closed[arm] and len(fingers) >= 2 and 'thumb' in fingers and self.in_palm(arm, oid)):
+            rule = GATE_RULES[self.gate_mode]
+            if not (self.closed[arm] and len(fingers) >= rule['attach_min'] and self.in_palm(arm, oid)
+                    and ('thumb' in fingers or not rule['require_thumb'])):
                 return False
         m, d = self.model, self.data
         if any(d.eq_active[m.equality(f'm2a_weld_{side}_{oid}').id] for side in ARMS):
@@ -360,9 +385,23 @@ class G1ManipEnv:
         mj.mju_negQuat(inverse, hand.xquat)
         mj.mju_mulQuat(m.eq_data[a, 6:10], inverse, obj.xquat)
         d.eq_active[a] = True
+        self.weld_info[arm] = dict(oid=oid, fingers=sorted(fingers), thumb_opposed='thumb' in fingers,
+                                   gate_mode='P-oracle' if oracle else self.gate_mode, sim_time=float(d.time))
         if not oracle:
             self._gate_welds[arm] = (oid, a, 0)
         return True
+
+    def watch_contacts(self, arm, oid):
+        """Start tracking the minimum fingertip-contact count on oid at every physics step."""
+        if oid is None:
+            self.contact_watch.pop(arm, None)
+            return
+        self.contact_watch[arm] = [oid, len(self.contact_fingers(arm, oid))]
+
+    def unwatch_contacts(self, arm):
+        """Stop tracking; return the minimum count seen (None if not tracking)."""
+        watch = self.contact_watch.pop(arm, None)
+        return None if watch is None else int(watch[1])
 
     def release(self, arm):
         self.closed[arm] = False
