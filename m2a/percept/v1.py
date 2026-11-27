@@ -72,7 +72,7 @@ def support_surface(x, y, layout):
     return base
 
 
-def depth_proposals(depth, cloud, layout):
+def depth_proposals(depth, cloud, layout, exclude=None):
     x, y, z = cloud.transpose(2, 0, 1)
     sx, sy = np.asarray(layout['table']['size_xy'])/2
     surface = support_surface(x, y, layout)
@@ -84,6 +84,8 @@ def depth_proposals(depth, cloud, layout):
         dx, dy = abs(x-tx), abs(y-ty)
         wall = (dx < w+dw) & (dy < h+dw) & ((dx >= w-.001) | (dy >= h-.001))
         valid &= ~(wall & (z <= t.get('floor_z', 0)+t['wall_h']+.002))
+    if exclude is not None:
+        valid &= ~exclude
     # Suppress robot pixels over the board by requiring a part-sized horizontal
     # top surface; use multiple peaks to resolve one-level supported stacks.
     for mask in components(valid):
@@ -205,9 +207,11 @@ def cut_pixels(labels, k, depth):
     return cut
 
 
-def plateau_proposals(depth, cloud, layout, min_px=20, nz_min=.95, roi=None):
+def plateau_proposals(depth, cloud, layout, min_px=20, nz_min=.95, roi=None, exclude=None):
     """Yield dict(mask, top, cut, ztop): mask = plateau + hanging side faces, top = flat top only."""
     valid, surface = foreground(depth, cloud, layout)
+    if exclude is not None:
+        valid &= ~exclude
     top = top_facing(cloud, valid, nz_min)
     if roi is not None:
         keep = np.zeros_like(top); keep[roi[1]:roi[3], roi[0]:roi[2]] = True
@@ -238,7 +242,7 @@ def dilate4(mask, n=1):
     return out
 
 
-def rescue_proposals(depth, cloud, layout, existing, boxes, min_score=.3):
+def rescue_proposals(depth, cloud, layout, existing, boxes, min_score=.3, exclude=None):
     """GDINO-guided recovery: for confident boxes that no depth proposal covers, re-run plateau
     segmentation inside the box with a looser flatness/size gate (nz>.85, 8 px; 임의 지정)."""
     taken = np.zeros(depth.shape, bool)
@@ -251,7 +255,7 @@ def rescue_proposals(depth, cloud, layout, existing, boxes, min_score=.3):
         x0, y0, x1, y1 = int(x0), int(y0), int(np.ceil(x1)), int(np.ceil(y1))
         if taken[y0:y1, x0:x1].sum()/max((x1-x0)*(y1-y0), 1) > .15:
             continue
-        for p in plateau_proposals(depth, cloud, layout, min_px=8, nz_min=.85, roi=(x0, y0, x1, y1)):
+        for p in plateau_proposals(depth, cloud, layout, min_px=8, nz_min=.85, exclude=exclude, roi=(x0, y0, x1, y1)):
             if (p['mask'] & taken).sum() < .3*p['mask'].sum():
                 p['source'] = 'gdino-rescue'
                 out.append(p); taken |= p['mask']

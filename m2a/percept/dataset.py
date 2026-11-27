@@ -5,33 +5,34 @@ from pathlib import Path
 
 import numpy as np
 
+from .robot_mask import render_ids, robot_geom_ids, segmentation_mask
+
 ROOT = Path.home() / 'm2a_data/percept'
 COUNTS = {'train': 200, 'dev': 100}  # 임의 지정
 
 
 def capture(env, spec, cam='head', pose='reset'):
-    import mujoco as mj
-
-    gt = env.reset(spec)
+    env.reset(spec)
     if pose == 'perception':
         env.perception_pose()
-        gt = env.get_gt_objects()
+    return capture_current(env, spec, cam)
+
+
+def capture_current(env, spec, cam='head'):
+    """Capture current physics state; evaluation GT is segregated from frame_input()."""
+    import mujoco as mj
+
+    gt = env.get_gt_objects()
     # Both RGB-D and labels share the same exact pixel centres and visibility.
     # Multisampled ID colours can decode as a different valid geometry.
     env.model.vis.quality.offsamples = 0
     rgb, depth = env.render(cam)
-    h, w = depth.shape
-    opt = mj.MjvOption()
-    opt.geomgroup[3:] = 0
-    opt.sitegroup[5] = 0
-    with mj.Renderer(env.model, height=h, width=w) as renderer:
-        renderer.enable_segmentation_rendering()
-        renderer.update_scene(env.data, camera=cam, scene_option=opt)
-        seg = renderer.render()
+    seg = render_ids(env._renderers[cam], env.data, cam)
+    robot_mask = segmentation_mask(seg, robot_geom_ids(env.model), mj.mjtObj.mjOBJ_GEOM)
     oids = list(gt)
     masks = np.stack([(seg[..., 0] == env.object_geoms[oid]) &
                       (seg[..., 1] == int(mj.mjtObj.mjOBJ_GEOM)) for oid in oids])
-    return dict(rgb=rgb, depth=depth, K=env.camera_K(cam), T_table_cam=env.T_table_cam(cam),
+    return dict(rgb=rgb, depth=depth, robot_mask=robot_mask, K=env.camera_K(cam), T_table_cam=env.T_table_cam(cam),
                 oids=np.asarray(oids), part_ids=np.asarray([gt[k]['part_id'] for k in oids]),
                 xyz=np.asarray([gt[k]['xyz'] for k in oids]), yaw=np.asarray([gt[k]['yaw'] for k in oids]),
                 masks=masks, gt_json=json.dumps(gt, default=lambda v: np.asarray(v).tolist()),
