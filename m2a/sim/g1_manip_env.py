@@ -7,9 +7,11 @@ import numpy as np
 from m2a.common import load_layout, load_parts
 from sim.humanoid_env import HAND, REST, URDF_EFFORT, _effort_key, build_g1_xml
 from sim.humanoid_ik import ArmIK
+from .grasp_profiles import grasp_profile, hand_command
 
 HAND_BIT, OBJECT_BIT, FIXTURE_BIT = 1, 2, 4
 TRAY_FLOOR, TRAY_WALL = .004, .006
+WELD_CONTACT_GRACE_S = .200  # Imposed continuous contact-loss threshold.
 ARMS = ('left', 'right')
 CAMERAS = {'head': (640, 480), 'front': (640, 480), 'wrist_l': (256, 256), 'wrist_r': (256, 256)}
 
@@ -135,6 +137,11 @@ class G1ManipEnv:
         self.object_bodies = {oid: m.body(f'm2a_obj_{oid}').id for oid in self.object_parts}
         self.object_geoms = {oid: m.geom(f'm2a_geom_{oid}').id for oid in self.object_parts}
         self.closed = dict.fromkeys(ARMS, False)
+        self._ee_profile = dict.fromkeys(ARMS)
+        self._grasp_target = dict.fromkeys(ARMS)
+        self._gate_welds = {}
+        self.grasp_slips = dict.fromkeys(ARMS, 0)
+        self.slip_events = []
         self.robot_nv = min((int(m.joint(f'm2a_free_{oid}').dofadr[0]) for oid in self.object_parts), default=m.nv)
         self.ik = {}; self.rest = {}; self.arm_act = {}; self.hand_act = {}; self.tip_geoms = {}; self.arm_geom = {}
         m.opt.integrator = mj.mjtIntegrator.mjINT_IMPLICITFAST
@@ -186,6 +193,20 @@ class G1ManipEnv:
         for _ in range(n):
             d.qfrc_applied[:self.robot_nv] = d.qfrc_bias[:self.robot_nv]
             mj.mj_step(m, d)
+            for arm, (oid, eq, missing) in tuple(self._gate_welds.items()):
+                if not d.eq_active[eq]:
+                    del self._gate_welds[arm]
+                    continue
+                fingers = self.contact_fingers(arm, oid)
+                missing = 0 if len(fingers) >= 2 else missing + 1
+                if missing * m.opt.timestep >= WELD_CONTACT_GRACE_S:
+                    d.eq_active[eq] = False
+                    del self._gate_welds[arm]
+                    self.grasp_slips[arm] += 1
+                    self.slip_events.append(dict(arm=arm, oid=oid, sim_time=float(d.time),
+                                                 fingers=sorted(fingers), reason_code='GRASP_SLIP'))
+                else:
+                    self._gate_welds[arm] = (oid, eq, missing)
         if n:
             mj.mj_forward(m, d)
 
@@ -214,6 +235,93 @@ class G1ManipEnv:
         diag['ok'] = diag['pos_err_mm'] <= 2.5 and diag['rot_err_deg'] <= 2.5
         return q, diag
 
+    def ee_pose(self, arm):
+        """Return copies of the grip-site xyz (m) and wxyz quaternion, both in T."""
+        site = self.data.site(f'{arm}_grip')
+        R = self.T_world_table[:3, :3].T @ site.xmat.reshape(3, 3)
+        quat = np.empty(4)
+        mj.mju_mat2Quat(quat, R.ravel())
+        return self.to_table(site.xpos), quat
+
+    def arm_q(self, arm):
+        """Measured seven joints in shoulder-through-wrist IK order (rad)."""
+        return self.data.qpos[self.ik[arm].qadr].copy()
+
+    def set_grasp_target(self, arm, oid):
+        """Select an explicit P-gate candidate/synergy; None means auto-selection."""
+        if arm not in ARMS:
+            raise ValueError(arm)
+        if oid is not None and oid not in self.object_parts:
+            raise KeyError(oid)
+        self._grasp_target[arm] = oid
+        self._ee_profile[arm] = None
+
+    def apply_ee_delta(self, arm, dpos_T, daxisangle, grip01, dt=0.1):
+        """Apply one T-frame increment (m, rotation vector in rad) and grip [0,1].
+
+        Uses GT only for choosing the nearby object's synergy and P-gate weld
+        candidate. Reports ok/reason_code/held_oid; an IK failure keeps the last
+        arm target but still applies the hand command and advances simulation.
+        """
+        dp, dr = (np.asarray(v, dtype=float) for v in (dpos_T, daxisangle))
+        grip, dt = float(grip01), float(dt)
+        if (dp.shape != (3,) or dr.shape != (3,) or not np.isfinite(np.r_[dp, dr, grip, dt]).all()
+                or not 0 <= grip <= 1 or dt <= 0):
+            raise ValueError('expected finite 3-vectors, grip in [0,1], dt > 0')
+        xyz, quat = self.ee_pose(arm)
+        angle = np.linalg.norm(dr)
+        if angle:
+            delta, result = np.empty(4), np.empty(4)
+            mj.mju_axisAngle2Quat(delta, dr / angle, angle)
+            mj.mju_mulQuat(result, delta, quat)
+            quat = result
+        R = np.empty(9)
+        mj.mju_quat2Mat(R, quat)
+        q, diag = self.solve_ik(arm, xyz + dp, R.reshape(3, 3), restarts=1)
+        if diag['ok']:
+            self.data.ctrl[self.arm_act[arm]] = q
+        if grip < .85:
+            self.release(arm)
+        if self._ee_profile[arm] is None:
+            nearest = self._grasp_target[arm] or min(self.object_parts, key=lambda oid: np.linalg.norm(
+                self.to_table(self.data.xpos[self.object_bodies[oid]]) - xyz), default=None)
+            profile = grasp_profile(self.object_parts.get(nearest))
+            if grip > 0:
+                self._ee_profile[arm] = profile
+        else:
+            profile = self._ee_profile[arm]
+        sign = 1 if arm == 'left' else -1
+        ctrl = hand_command(profile, grip, sign)
+        if not profile['close_from_open']:
+            ctrl += (1 - grip) * sign * np.asarray(profile['open'])
+        self.data.ctrl[self.hand_act[arm]] = ctrl
+        if grip == 0:
+            self._ee_profile[arm] = None
+        self.closed[arm] = grip >= .85
+        held = self._held_oid(arm)
+        slips = self.grasp_slips[arm]
+        target = self._grasp_target[arm]
+        candidates = (target,) if target is not None else self.object_parts
+        for _ in range(max(1, round(dt / self.model.opt.timestep))):
+            self.step()
+            if self.closed[arm] and held is None and slips == self.grasp_slips[arm]:
+                for oid in candidates:
+                    if self.attach(arm, oid):
+                        held = oid
+                        break
+        reason = ('GRASP_SLIP' if slips != self.grasp_slips[arm] else
+                  None if diag['ok'] else 'IK_FAIL')
+        attached = self._held_oid(arm)
+        contact_oid = attached or held or target
+        return dict(ok=reason is None, reason_code=reason, held_oid=attached,
+                    ik_ok=diag['ok'], pos_err_m=diag['pos_err_mm'] / 1000,
+                    attached_oid=attached, contact_fingers=sorted(self.contact_fingers(arm, contact_oid))
+                    if contact_oid is not None else [])
+
+    def _held_oid(self, arm):
+        return next((oid for oid in self.object_parts if self.data.eq_active[
+            self.model.equality(f'm2a_weld_{arm}_{oid}').id]), None)
+
     def contact_fingers(self, arm, oid):
         target = self.object_geoms[oid]; tips = self.tip_geoms[arm]
         out = set()
@@ -234,8 +342,12 @@ class G1ManipEnv:
         return .085 <= x <= .181 and -.09 <= y <= -.008 and abs(z) <= .043
 
     def attach(self, arm, oid, *, oracle=False):
-        if not oracle and not (self.closed[arm] and len(self.contact_fingers(arm, oid)) >= 2 and self.in_palm(arm, oid)):
+        if self._held_oid(arm) is not None:
             return False
+        if not oracle:
+            fingers = self.contact_fingers(arm, oid)
+            if not (self.closed[arm] and len(fingers) >= 2 and 'thumb' in fingers and self.in_palm(arm, oid)):
+                return False
         m, d = self.model, self.data
         if any(d.eq_active[m.equality(f'm2a_weld_{side}_{oid}').id] for side in ARMS):
             return False
@@ -248,10 +360,13 @@ class G1ManipEnv:
         mj.mju_negQuat(inverse, hand.xquat)
         mj.mju_mulQuat(m.eq_data[a, 6:10], inverse, obj.xquat)
         d.eq_active[a] = True
+        if not oracle:
+            self._gate_welds[arm] = (oid, a, 0)
         return True
 
     def release(self, arm):
         self.closed[arm] = False
+        self._gate_welds.pop(arm, None)
         for oid in self.object_parts:
             self.data.eq_active[self.model.equality(f'm2a_weld_{arm}_{oid}').id] = False
 
