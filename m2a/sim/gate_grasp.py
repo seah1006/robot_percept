@@ -9,7 +9,7 @@ from m2a.common import M2A, load_parts
 from .g1_manip_env import ARMS, CAMERAS, G1ManipEnv, half_height
 from .skills import SkillRunner, grasp_profile
 
-PART_IDS = ('P01', 'P04', 'P06')
+PART_IDS = ('P01', 'P04', 'P06', 'P02', 'P03', 'P05')  # round4 appended P02/P03/P05 (seeds 10045..10047)
 SEED = 10042
 
 
@@ -24,7 +24,8 @@ def candidates(part_id, part):
     for i in range(20):
         arm = ARMS[i % 2]; sign = 1 if arm == 'left' else -1
         x = float(rng.uniform(-.155, -.095)); y = float(rng.uniform(.338, .374)) * sign
-        yaw = float(rng.uniform(-.25, .25) + math.pi/2) if part_id != 'P04' else float(rng.uniform(-math.pi, math.pi))
+        yaw = (float(rng.uniform(-.25, .25) + math.pi/2) if part['shape'] == 'box'
+               else float(rng.uniform(-math.pi, math.pi)))
         yield arm, fixture([dict(oid='o0', part_id=part_id, xyz=[x, y, half_height(part)], yaw=yaw,
                                  region=f'{arm}_zone', in_tray=None, on=None)])
 
