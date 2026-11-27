@@ -5,10 +5,13 @@ import time
 import mujoco as mj
 import numpy as np
 from m2a.scene._geometry import contains, corners, geometric_tray, obb, overlaps, size_xyz, tray_box
-from .g1_manip_env import ARMS, FIXTURE_BIT, TRAY_FLOOR, half_height
+from .g1_manip_env import ARMS, FIXTURE_BIT, GATE_RULES, TRAY_FLOOR, half_height
 from .grasp_profiles import PROFILES, grasp_profile, hand_command
 
-MODES = ('P-phys', 'P-gate', 'P-oracle')
+# P-gate (default): GT-assisted weld grasp approximation, proposal definition (>=2 fingertips,
+# thumb optional; release after 200 ms with zero contacts). P-gate-strict: thumb required,
+# release after 200 ms with <=1 contact. P-phys: friction only. P-oracle: debug only.
+MODES = ('P-phys', 'P-gate', 'P-gate-strict', 'P-oracle')
 SKILLS = ('reach_pregrasp', 'grasp_lift', 'transport_place', 'put_aside')
 
 
@@ -27,6 +30,8 @@ class SkillRunner:
         if self._data is not self.env.data:
             self._data = self.env.data
             self.pre = {}; self.held = {}; self.events = {}
+        if self.mode in GATE_RULES:
+            self.env.set_gate_mode(self.mode)
         predicted = obj_pose_T is not None
         picking = skill in ('reach_pregrasp', 'grasp_lift')
         if predicted and not picking:
@@ -122,9 +127,14 @@ class SkillRunner:
         self.events.update(profile=profile['name'], stage='pregrasp', source_tray=source_tray)
         best = None
         viable_ik = False
-        for yaw in headings:
+        options = [(yaw, 0.) for yaw in headings]
+        if source_tray:
+            options += [(yaw, height) for height in (.012, .024) for yaw in headings]
+        for yaw, height in options:
+            if height and best is not None:
+                break
             R = e.topdown(arm, yaw)
-            at = nominal + R @ profile['offset_hand_m']
+            at = nominal + R @ profile['offset_hand_m'] + [0, 0, height]
             above = at + [0, 0, .072]
             q, diag = e.solve_ik(arm, above, R, restarts=2)
             if not diag['ok']:
@@ -138,7 +148,7 @@ class SkillRunner:
             viable_ik = True
             if source_tray and not self._fixture_free(arm, [q, *down, *lift]):
                 continue
-            score = np.linalg.norm(q-e.data.qpos[e.ik[arm].qadr])
+            score = np.linalg.norm(q-e.data.qpos[e.ik[arm].qadr]) + height * 50.
             if best is None or score < best[0]:
                 best = (score, above, at, R, q, down, lift)
         if best is None:
@@ -200,20 +210,29 @@ class SkillRunner:
                 attached = e.attach(arm, candidate, oracle=self.mode == 'P-oracle')
                 if attached:
                     selected = contacts
+        if self.mode == 'P-phys':
+            thumb = candidate is not None and 'thumb' in e.contact_fingers(arm, candidate)
+        else:
+            thumb = bool(attached and 'thumb' in selected)
         self.events.update(stage='closure', peak_fingers=peak, weld=attached, weld_fingers=selected,
+                           thumb_opposed=thumb, min_contacts_during_lift=None,
                            palm_relative=e.palm_relative(arm, candidate).tolist() if candidate is not None else None)
         if candidate is None or (self.mode != 'P-phys' and not attached):
             return 'GRASP_SLIP'
         if e.grasp_slips[arm] != slips:
             return 'GRASP_SLIP'
-        for q in lift:
-            result = self._move(arm, q, .24)
-            if e.grasp_slips[arm] != slips:
-                self.events['stage'] = 'lift'
-                return 'GRASP_SLIP'
-            if result:
-                self.events['stage'] = 'lift'
-                return result
+        e.watch_contacts(arm, candidate)
+        try:
+            for q in lift:
+                result = self._move(arm, q, .24)
+                if e.grasp_slips[arm] != slips:
+                    self.events['stage'] = 'lift'
+                    return 'GRASP_SLIP'
+                if result:
+                    self.events['stage'] = 'lift'
+                    return result
+        finally:
+            self.events['min_contacts_during_lift'] = e.unwatch_contacts(arm)
         self.events['stage'] = 'post_lift'
         oid = candidate
         if e.get_gt_objects()[oid]['xyz'][2] < at[2] + .055 or not self.is_attached(arm, oid):

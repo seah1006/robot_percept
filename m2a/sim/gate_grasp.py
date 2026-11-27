@@ -110,7 +110,9 @@ def run_batch(env, part_id, mode, start, end, job='gate'):
         after_lift = env.get_gt_objects()['o0']
         row = dict(trial=i, seed=(spec['seed'] if job=='general' else SEED+PART_IDS.index(part_id)),
                    mode=mode, part_id=part_id, arm=arm, profile=grasp_profile(part_id)['name'],
-                   spec=spec, skill=result, events=skills.events, after_lift=after_lift, initial_pose_rejections=discarded)
+                   spec=spec, skill=result, events=skills.events, after_lift=after_lift, initial_pose_rejections=discarded,
+                   thumb_opposed=skills.events.get('thumb_opposed'),
+                   min_contacts_during_lift=skills.events.get('min_contacts_during_lift'))
         if job == 'l0':
             tray = 'T1' if arm == 'left' else 'T3'
             place = skills.run('transport_place', arm, 'o0', tray) if result['ok'] else None
@@ -123,7 +125,9 @@ def run_batch(env, part_id, mode, start, end, job='gate'):
                       '+'.join(k for k,v in check.items() if not v))
             row.update(tray=tray, place_skill=place, judge=check, failure_stage=stage)
         else:
+            env.watch_contacts(arm, 'o0')
             env.step(math.ceil(2/env.model.opt.timestep))
+            row['min_contacts_during_hold'] = env.unwatch_contacts(arm)
             final = env.get_gt_objects()['o0']; attached = skills.is_attached(arm, 'o0')
             ok = result['ok'] and final['xyz'][2] >= .07 and attached
             reason = None if ok else result['reason_code'] or 'GRASP_SLIP'
@@ -151,7 +155,8 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('job', choices=('reach', 'gate', 'general', 'l0', 'capture'))
     p.add_argument('--part', choices=PART_IDS)
-    p.add_argument('--mode', choices=('P-phys', 'P-gate'))
+    p.add_argument('--mode', choices=('P-phys', 'P-gate', 'P-gate-strict'))
+    p.add_argument('--tag', default='round3', help='output file prefix tag')
     p.add_argument('--start', type=int, default=0)
     p.add_argument('--end', type=int)
     args = p.parse_args()
@@ -167,7 +172,7 @@ def main():
             end = args.end if args.end is not None else limit
             if not args.part or not args.mode or not 0 <= args.start < end <= limit:
                 p.error(f'{args.job} requires --part and --mode and 0 <= start < end <= {limit}')
-            name = f'{args.job}_round2_{args.part}_{args.mode}_{args.start:02d}-{end:02d}'
+            name = f'{args.job}_{args.tag}_{args.part}_{args.mode}_{args.start:02d}-{end:02d}'
             rows = run_batch(env, args.part, args.mode, args.start, end, args.job)
         with (out/f'{name}.jsonl').open('w', encoding='utf-8') as f:
             for row in rows:
