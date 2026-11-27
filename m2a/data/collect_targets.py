@@ -54,20 +54,41 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('source',type=Path);p.add_argument('dest',type=Path)
     p.add_argument('--part',required=True,choices=TASKS);p.add_argument('--grasp-mode',required=True,choices=GATE_MODES)
+    p.add_argument('--resume',action='store_true')
     p.add_argument('--count',type=int,default=100);p.add_argument('--commit',required=True)
     a=p.parse_args(); a.dest.mkdir(parents=True,exist_ok=True); env=G1ManipEnv(); counts=Counter()
+    done=set()
+    log_path=a.dest/f'attempts_{a.part}_targets.jsonl'
+    if a.resume:
+        for path in a.dest.glob('*.npz'):
+            meta,_=load_episode(path)
+            if meta.get('grasp_mode')!=a.grasp_mode or meta.get('task')!=TASKS[a.part]:
+                raise ValueError(f'incompatible resume episode: {path}')
+            done.add(meta['scene_seed'])
+        counts[None]=len(done)
+        # If the interruption left a partial log line, preserve it as a separate line.
+        if log_path.exists():
+            raw=log_path.read_bytes()
+            with log_path.open('ab') as f:
+                if raw and not raw.endswith(b'\n'): f.write(b'\n')
+            for line in raw.splitlines():
+                try: row=json.loads(line)
+                except json.JSONDecodeError: continue
+                if not row['ok']: done.add(row['seed'])
     try:
-        with (a.dest/f'attempts_{a.part}_targets.jsonl').open('x',buffering=1) as log:
+        if counts[None]>=a.count: return
+        with log_path.open('a' if a.resume else 'x',buffering=1) as log:
             old={r['seed']:r for f in sorted(a.source.glob(f'attempts_{a.part}_*.jsonl'))
                  for l in f.read_text().splitlines() if l.endswith('}') and (r:=json.loads(l))['ok']}
             def plans():
                 for seed in sorted(old):
+                    if seed in done: continue
                     path=a.source/f'{seed:05}.npz'; m,base=load_episode(path)
                     case=case_for(seed,'train',m['arm'])
                     if case[3]!=m['scene_digest']: raise ValueError('scene digest mismatch')
                     yield case,base
                 for seed in range(5000):
-                    if seed in old: continue
+                    if seed in old or seed in done: continue
                     try: case=case_for(seed,'train')
                     except ValueError: continue
                     if not case or case[4]!=a.part: continue
