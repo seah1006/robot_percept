@@ -81,7 +81,10 @@ def reach(env):
         targets = {}
         for name, (x0, x1, y0, y1) in env.layout['regions'].items():
             targets[name] = [(x,y) for x in np.linspace(x0, x1, 3) for y in np.linspace(y0, y1, 3)]
-        targets.update({k: [tuple(v['center'])] for k, v in env.layout['trays'].items()})
+        # Round 4: trays as 3x3 points on the inner rectangle inset by .03 m (imposed), not centre only.
+        for k, v in env.layout['trays'].items():
+            (cx, cy), (w, h) = v['center'], np.asarray(v['inner']) / 2 - .03
+            targets[k] = [(x, y) for x in np.linspace(cx-w, cx+w, 3) for y in np.linspace(cy-h, cy+h, 3)]
         for name, points in targets.items():
             for x, y in points:
                 z = .065 if name in env.layout['trays'] else .025
@@ -167,7 +170,7 @@ def main():
         if args.job == 'capture':
             capture(env, M2A/'notes'/'img_a'); return
         if args.job == 'reach':
-            name = 'reach'; rows = reach(env)
+            name = 'reach' if args.tag == 'round3' else f'reach_{args.tag}'; rows = reach(env)
         else:
             limit = 10 if args.job == 'l0' else 20
             end = args.end if args.end is not None else limit

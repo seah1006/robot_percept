@@ -198,3 +198,94 @@ GT 보조 스크립트로 단품 배치. 원래 부품 치수 유지. 시드 P01
 - 중앙 판재 heading 우선순위는 P01로만 측정했다. P02/P03 중앙은 측정하지 않았다.
 - center_zone 이동 후 `layout.reach` 표를 재측정하지 않았다. 계획층과 생성기(C)에 영역 변경을 반영해야 한다.
 - 팔 링크 충돌 off(V-A D4)는 그대로 남아 있다.
+
+
+---
+
+# 4라운드 (2026-11-27, 작업자 A4: 스킬 층)
+
+모든 성공 수치는 **P-gate(GT 보조 weld 파지 근사)**, O0(GT 자세)이다. 실물 마찰 파지 성능이 아니다. 원자료는 `m2a/notes/wsa_gate_raw/`. 중간분(skills v2, P05 프로파일, skill_bench, gate_grasp)은 메인이 bd3e123으로 병합했다. 아래 "중간 이후"는 그 위의 미커밋 변경이다.
+
+## 변경 파일
+- `m2a/sim/skill_bench.py`(신규): 스킬 단위 하니스. 부품 P01~P06 × 출발 {left_zone, right_zone, center_zone, 트레이(목적과 다른 트레이)} × 목적 {T1, T2, T3, put_aside→center_zone} × 주변 물체 {0, 3} × 반복 2 = 384회, 시드 `20400+…` 고정(생성기 split 밖, 임의 지정). 팔은 출발 쪽 팔, 중앙·T2는 교대, `layout.reach`에 둘 다 있는 팔만. 1회 = reach_pregrasp → grasp_lift → transport_place|put_aside → 1.5 s 정착 → 독립 GT 판정(트레이: 기존 judge 기준, put_aside: 중심이 center_zone 안 + 발자국 5 mm 이내 + 세워진 높이 ±5 mm + 정지; 모두 임의 지정). 주변 3개 = 출발 영역 1개, 목적 영역 1개(이미 담긴 부품처럼 벽에 붙임, 판재는 yaw ±3°), 아무 데나 1개. `--legacy`는 3라운드 스킬(손목 고정 놓기, 접근 경유점 없음, P05 프로파일 없음) 재현용.
+- `m2a/sim/skills.py`: 
+  - `transport_place`/`put_aside` v2(`_place_v2`, `_plan_place`): 놓을 때 손 yaw를 자유 변수로 탐색(판재는 최종 yaw를 트레이 장축 x(center_zone은 y) ± {0, .12, .25, .4} rad, 나머지는 30° 간격 12개, 손 회전량 작은 순). 각 yaw마다 빈 자리(다른 물체·트레이 벽 비겹침, 트레이는 벽 쪽부터 채움, 격자 17×27) 최대 3곳에 대해 IK(위 지점 + 4분할 하강) 확인, 하강 경로를 닫힌 손 미리보기로 테이블·트레이 충돌 검사. 릴리스 높이 후보 지지면 위 .006/.016 m, 안 되면 벽 위 .018 m. 하강은 .008 m 더 내려가되 물체가 지지면에 닿으면 멈추고 놓는다. 이송은 들어 올린 뒤 몸 쪽(x −.03, +.02 m) 경유점을 거친다. `layout.reach[arm]`에 목적이 없으면 움직이지 않고 `IK_FAIL`(`events.place_reject='reach_table'`). 어떤 yaw에서도 빈 자리가 없으면 `COLLISION`, 자리는 있으나 IK가 안 되면 `IK_FAIL`. 기존 동작은 `runner.legacy_place=True`로 재현(`_place_v1`).
+  - `reach_pregrasp`: pregrasp 위 .08 m 경유점을 먼저 거침(T2 트레이 집기 TIMEOUT 대책). 프로파일 `grasp_dz` 키(선택, 기본 0) 지원.
+  - 추가 events: `place_slot`, `place_delta_yaw`, `release_bottom`, `place_touched`, `place_candidates_tried`, `place_free_yaws`, `retreat_reason`. 반환 키·시그니처 변경 없음. `_empty_slot(oid, region)` 기존 호출 결과 동일(선택 인자만 추가).
+  - 상수(모두 임의 지정): `PREGRASP_RISE .08`, `PLACE_CLEAR .002`, `CARRY_BOTTOM .10`, `RELEASE_BOTTOMS (.006,.016,None)`, `RELEASE_PRESS .008`.
+- `m2a/sim/grasp_profiles.json`: P05 `three_finger_lateral`(3지 닫기 + 그립 프레임 측면 −.02 m 오프셋).
+- `m2a/sim/gate_grasp.py`: `PART_IDS`에 P02/P03/P05 추가(시드 10045~10047, 기존 부품 시드 불변), 원통은 yaw 균일. reach 작업은 트레이도 3×3점, `--tag`가 round3가 아니면 `reach_<tag>.jsonl`.
+- `m2a/sim/g1_manip_env.py`: head 카메라 위치·pitch(아래 절).
+- `m2a/config/layout.json`: `reach_note` 추가(표 자체는 변화 없음).
+- `tests/m2a/test_a_round4.py`(신규 4개), `m2a/notes/wsa_round4_profile_sweep.py`, `m2a/notes/wsa_round4_head_visibility.py`, `m2a/notes/img_a/round4_head_*.png`.
+
+## skill_bench: 기준선 vs 최종 (각 칸 n=32, 주변 0 / 주변 3)
+기준선 = `--legacy`(3라운드 스킬). 주변 0: `bench_base2.jsonl`(= 처음 측정한 `bench_base.jsonl`과 같은 47/192, 결정적 재현 확인), 최종 `bench_v6.jsonl`. 주변 3: 정의를 최종(벽 붙임) 기준으로 맞춘 `bench_base3.jsonl` vs `bench_v7.jsonl`.
+
+|부품|주변0 기준선|주변0 최종|주변3 기준선|주변3 최종|
+|---|---:|---:|---:|---:|
+|P01|8|14 (44%)|7|8|
+|P02|8|17 (53%)|4|6|
+|P03|12|19 (59%)|7|10|
+|P04|8|18 (56%)|9|15|
+|P05|0|18 (56%)|0|14|
+|P06|11|20 (63%)|10|22 (69%)|
+|합계|47/192 (24%)|**106/192 (55%)**|37/192 (19%)|**75/192 (39%)**|
+
+단계별 실패(합계):
+|단계/코드|주변0 기준선|주변0 최종|주변3 기준선|주변3 최종|
+|---|---:|---:|---:|---:|
+|reach_pregrasp TIMEOUT|11|0|9|1|
+|reach_pregrasp COLLISION|2|5|5|6|
+|grasp_lift GRASP_SLIP|55|33|66|53|
+|place IK_FAIL|51|17|50|7|
+|place COLLISION(빈 자리 없음 포함)|14|5|12|34 (그중 기하적으로 빈 자리 없음 33)|
+|place GRASP_SLIP|8|7|9|11|
+|place TIMEOUT|0|3|0|1|
+|judge(놓은 뒤 판정 탈락)|4|16|2|5|
+- 목적·출발별(`bench_v5_summary.json`, 주변0+주변3 합, 주변3은 벽 붙임 이전 정의): 목적 T1 46/96, T2 51/96, T3 47/96, put_aside 18/96. 출발 center 54/96, right 46/96, left 35/96, 트레이 27/96.
+- 주변3에서 "빈 자리 없음" 33회는 목적 트레이(또는 center_zone)에 이미 물체가 있어 판재가 들어갈 발자국이 기하적으로 없는 경우다(`place_free_yaws=0`). 이를 빼면 75/159(47%). 트레이 안쪽 폭 .13 m에 P01/P02 두 장(.12 m)을 넣으려면 먼저 놓인 판재가 벽에 붙고 yaw 1° 이내여야 한다(산수). center_zone(.08×.24)은 P01 하나만 들어간다.
+- **목표(임의 지정) 미달**: 주변0 ≥80%는 6부품 모두 미달(44~63%), 주변3 ≥60%는 P06(69%)만 통과.
+
+## 파지 게이트 (gate_grasp, 공식 방식, 측면 좁은 샘플, 좌우 10회씩)
+|부품|성공|Wilson 95%|weld 시 엄지|실패|원자료|
+|---|---:|---:|---:|---|---|
+|P01|17/20|64.0–94.8%|15|GRASP_SLIP(lift) 3|`gate_round4_P01_P-gate_00-20.jsonl`|
+|**P02**|17/20|64.0–94.8%|14|GRASP_SLIP(lift) 3|`gate_round4_P02_P-gate_00-20.jsonl`|
+|**P03**|20/20|83.9–100%|20|-|`gate_round4_P03_P-gate_00-20.jsonl`|
+|P04|19/20|76.4–99.1%|19|GRASP_SLIP(closure) 1|`gate_round4_P04_P-gate_00-20.jsonl`|
+|**P05**|20/20|83.9–100%|20|-|`gate_round4_P05_P-gate_00-20.jsonl`|
+|P06|20/20|83.9–100%|20|-|`gate_round4_P06_P-gate_00-20.jsonl`|
+- P02/P03은 P01과 같은 기본 3지 프로파일과 중앙 판재 heading 우선순위를 그대로 쓴다(새 프로파일 없음). P01/P04/P06은 pregrasp 경유점 추가 후 회귀 확인용 재측정(3라운드 18/17/20과 CI 겹침).
+- P05: 기본(중앙 정렬) 3지는 손이 테이블에 먼저 닿아 물체가 손가락 닫힘 영역 아래에 남고, 닫으면 손가락이 위로 지나가 weld 후 접촉 0 → SLIP(진단: palm 상대 y −.098, 허용 −.09). 스윕(`round4_sweep_P05.jsonl`, 12샘플씩): 기본 0/12, P04식 핀치 변형 18종 0~3/12, 3지 측면 오프셋 ±.02~.025에서 8~10/12 → −.02 채택(−.03은 1/12로 급락하므로 경계에서 떨어진 값, 임의 지정). P05 게이트의 lift 중 최소 접촉은 20회 모두 1개(weld가 붙잡는 상태)라 마찰 파지로 읽으면 안 된다.
+- 게이트는 측면 영역 좁은 샘플이다. 벤치에서 P05는 트레이 출발 집기가 약하다(주변0 GRASP_SLIP 8 중 다수가 트레이·중앙).
+
+## head 카메라 변경 (임의 지정, 실제 G1 헤드 카메라와 다름)
+- 전: torso 기준 pos `(.095,0,.37)`, 아래로 46°, fovy 83 → 월드 높이 1.207 m(테이블 위 .31 m). 후: pos `(.095,0,.55)`(월드 1.387 m), 아래로 75°, fovy 83 유지, 몸통 고정 유지, 렌더 480×640·API 불변.
+- 투영 확인(`cam.py` 방식, 결과 `round4_head_projection_after.txt`): 영역 3개·트레이 3개 꼭짓점 + 측면 영역 꼭짓점 6 cm 위까지 28개 점. 전: 8개 이미지 밖(측면 영역 바깥 y 쪽, 예 left_zone (−.20,.46) u=−169). 후: 0개 밖, 최소 여유 약 26 px. 탐색: 높이 .37/.45/.55/.65 × x 4값 × pitch 40~85° × fovy 83~130에서 fovy를 안 바꾸고 다 들어오는 가장 낮은 높이가 .55.
+- 가시성(`round4_head_visibility.jsonl`, dev 10000~10079, perception_pose 후 세그멘테이션 픽셀): 512물체 중 0픽셀 46→0, 50픽셀 미만 86→0. 대신 물체당 픽셀 중앙값 2740→1415(멀어진 만큼 해상도 손해). 이미지 아래쪽 약 1/3에 로봇 머리 윗면이 보인다(`img_a/round4_head_L2_10000*.png`). 기본 자세에서는 손이 측면 영역 일부를 가리므로 인식 키프레임은 perception_pose 사용 전제.
+- **G에 영향**: head 영상 기하가 바뀌었으므로 G의 DINOv2 kNN 갤러리·plateau 임계·지표는 재생성·재측정이 필요하다(추정). `tests/m2a` G 테스트는 통과.
+
+## reach 표 재측정 (`reach_round4.jsonl`, 영역 3×3, 트레이 내부 .03 안쪽 3×3, 16 yaw, 저점·10 cm 위 IK)
+|팔|left_zone|right_zone|center_zone|T1|T2|T3|
+|---|---:|---:|---:|---:|---:|---:|
+|left|9/9|3/9|9/9|9/9|9/9|7/9|
+|right|3/9|9/9|9/9|7/9|9/9|9/9|
+과반 규칙(임의 지정)으로는 기호 reach 표가 바뀌지 않는다(layout `reach`는 그대로, `reach_note`만 추가). 반대편 끝 트레이(left→T3, right→T1)는 점 2개가 정적 IK 불가라 개별 자세 `IK_FAIL`이 날 수 있다. 실행 시 거부는 표 기준으로만 한다.
+
+## 테스트
+`python -m pytest tests/m2a -q` → 152 passed, 1 skipped, 1 warning(Dash 플러그인). 신규 `test_a_round4.py`: head 투영 전 꼭짓점 이미지 안, 판재 놓기 yaw가 트레이 장축, 벤치 시행 결정성·팔 배정, reach 표 밖 트레이 거부 + T1 실제 배치 판정 통과.
+
+## 남은 문제 (층별)
+1. 파지(grasp_lift GRASP_SLIP, 최대 원인): 주변0 33, 주변3 53. weld 후 lift 중 손끝 접촉이 0개로 200 ms 이어져 해제되는 경우가 대부분. 트레이 안 판재(index+middle만 접촉)와 주변 물체가 손가락 옆에 있을 때 많다. 규칙(P-gate 정의)은 E·F와의 계약이라 바꾸지 않았다. 다음 후보: 트레이 안 판재 전용 접근(벽 쪽 대각), 닫힘 후 추가 조임, 주변 물체 있을 때 접근 heading에서 이웃 쪽 회피.
+2. 놓기 후 판정: P04 put_aside는 놓기까지 간 10회 중 9회 쓰러짐(`bench_v4.jsonl`, `upright`, 9회 모두 하강 중 지지면 접촉 감지 안 됨 = 다월이 손 안에서 기운 것으로 추정). 트레이는 높이 판정이 너그러워 통과. P06 put_aside는 놓은 뒤 2~8 cm 미끄러짐(발자국 판정 탈락).
+3. put_aside 공간: center_zone은 P01/P02 판재에 사실상 IK·기하 불가(폭 방향 손 yaw가 중앙에서 IK 실패, 판재 길이 때문에 yaw ±6° 밖은 안 들어감). E의 복구 순서(center → 그 팔 영역)를 유지해야 한다.
+4. 트레이 용량: 안쪽 .24×.13에 판재 두 장은 여유 1 cm. 이미 들어 있는 물체가 비뚤면 빈 자리가 없다(주변3 33회). 트레이 안쪽 y를 .15로 넓히는 것을 메인/C에 제안(계획·생성기·판정 영향 있음, 결정 필요).
+5. 트레이 출발 집기 27/96으로 가장 약함(GRASP_SLIP 35, pregrasp COLLISION 10). pregrasp TIMEOUT은 경유점으로 11→0이 됐으나 벽 충돌 거부가 남음.
+6. 팔 링크 충돌 off(V-A D4)는 그대로.
+7. 벤치 판정 상수·주변 물체 배치 규칙·시드는 임의 지정이고 n=32/칸이라 부품별 CI가 넓다(예: 18/32 → Wilson 약 39–71%).
+
+## 면접 설명 (3줄)
+- 무엇: 집기→놓기 1사이클을 부품×출발×목적×주변 물체로 고정 시드 384회 돌려 단계별 실패 코드를 세는 스킬 벤치를 만들고, 놓기를 "손 yaw·빈 자리·릴리스 높이"를 IK로 함께 탐색하는 방식으로 바꿨다.
+- 왜: 계획·디스패처가 맞아도 전체 성공 0/60이었는데 원인이 어느 스킬 단계인지 숫자로 보이지 않았고, 집을 때 손목 방향을 놓을 때도 고정한 것이 IK 실패의 주원인이었다(place IK_FAIL 51→17).
+- 대안 대비: 전체 에피소드 배치보다 빠르고 원인 분리가 명확하지만, 다물체 순서 효과·재계획은 보지 못한다. 탐색형 놓기는 IK 호출이 늘어(후보 최대 수십 회) 스킬 시간이 길어진다.

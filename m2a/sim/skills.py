@@ -15,9 +15,10 @@ MODES = ('P-phys', 'P-gate', 'P-gate-strict', 'P-oracle')
 SKILLS = ('reach_pregrasp', 'grasp_lift', 'transport_place', 'put_aside')
 PLATES = ('P01', 'P02', 'P03')
 PREGRASP_RISE = .08           # imposed extra height of the approach waypoint
-PLACE_CLEAR = .004            # imposed footprint clearance to tray inner walls
+PLACE_CLEAR = .002            # imposed footprint clearance to tray inner walls
 CARRY_BOTTOM = .10            # imposed object-bottom height above support while carrying
 RELEASE_BOTTOMS = (.006, .016, None)  # imposed release heights above support; None = over wall top
+RELEASE_PRESS = .008          # imposed guarded-descent overshoot below the release height
 
 
 class SkillRunner:
@@ -299,12 +300,19 @@ class SkillRunner:
             x, X, y, Y = rect = tray_rect(e.layout['trays'][tray])
             inner = inset(rect, PLACE_CLEAR); centre = inset(rect, e.layout['judge']['tray_margin'])
         middle = np.array([(x+X)/2, (y+Y)/2])
-        grid = [(a, b) for a in np.linspace(x, X, 13) for b in np.linspace(y, Y, 13)]
+        nx, ny = (13, 13) if tray is None else (17, 27)  # finer tray grid: 2xP01 side by side is .12 of .13
+        grid = [(a, b) for a in np.linspace(x, X, nx) for b in np.linspace(y, Y, ny)]
+        margin = .003 if tray is None else .002
+        if tray is None:
+            order = lambda xy: np.linalg.norm(xy - middle)
+        else:
+            # Round 4: pack against a long (y) wall first so the rest of the tray stays usable.
+            order = lambda xy: (round(min(xy[1] - y, Y - xy[1]), 4), abs(xy[0] - middle[0]))
         found = []
-        for pos in sorted(grid, key=lambda xy: np.linalg.norm(xy - middle)):
+        for pos in sorted(grid, key=order):
             box = obb(pos, size, yaw)
             if (contains(centre, pos) and all(contains(inner, v) for v in corners(box))
-                    and not any(overlaps(box, ob, .003) for ob in occupied)):
+                    and not any(overlaps(box, ob, margin) for ob in occupied)):
                 if limit == 1 and tray is None:
                     return pos
                 found.append(np.asarray(pos, float))
@@ -340,10 +348,11 @@ class SkillRunner:
         else:
             support = 0.; wall_top = 0.
         fixtures = {g for g in range(m.ngeom) if m.geom_contype[g] == FIXTURE_BIT}
-        best = None; tried = 0
+        best = None; tried = 0; free = 0
         for delta in self._place_yaws(pid, part, gt['yaw'], tray):
             final = gt['yaw'] + delta if part['shape'] == 'box' else 0.
             slots = self._empty_slot(oid, target, yaw=final, limit=3, tray=target if tray else None)
+            free += bool(slots)
             c, s = math.cos(delta), math.sin(delta)
             dr = np.array([c*d[0]-s*d[1], s*d[0]+c*d[1], d[2]])
             R = e.topdown(arm, h0 + delta)
@@ -362,6 +371,11 @@ class SkillRunner:
                         continue
                     if bottom is not None and not self._fixture_free(arm, down, fixtures):
                         continue
+                    if bottom is not None:
+                        # Guarded descent target slightly below contact; execution stops on touch.
+                        extra = self._segment(arm, at, at - [0, 0, RELEASE_PRESS], R, down[-1], count=1)
+                        if extra is not None:
+                            down = down + extra
                     score = .3*abs(delta) + np.linalg.norm(q - e.data.qpos[e.ik[arm].qadr]) + 5.*(bottom or .05)
                     if best is None or score < best[0]:
                         best = (score, dict(delta=delta, R=R, above=above, at=at, q=q, down=down,
@@ -371,8 +385,18 @@ class SkillRunner:
                     break
             if best is not None and tried >= 6:
                 break
-        self.events.update(place_candidates_tried=tried)
+        self.events.update(place_candidates_tried=tried, place_free_yaws=free)
         return None if best is None else best[1]
+
+    def _touching_support(self, oid):
+        e = self.env; g = e.object_geoms[oid]; m = e.model
+        for i in range(e.data.ncon):
+            c = e.data.contact[i]
+            if g in (c.geom1, c.geom2):
+                other = c.geom2 if c.geom1 == g else c.geom1
+                if m.geom_contype[other] == FIXTURE_BIT and c.dist < .001:
+                    return True
+        return False
 
     def _carry_waypoint(self, arm, start_xyz, above, h0, delta):
         """Pull toward the body between lift and target (imposed .03 m pull, +.02 m height)."""
@@ -404,9 +428,8 @@ class SkillRunner:
             return 'IK_FAIL'
         plan = self._plan_place(arm, oid, target, tray)
         if plan is None:
-            if not tray and not self._empty_slot(oid, target, limit=1, tray=None):
-                return 'COLLISION'
-            return 'IK_FAIL'
+            # No free footprint at any candidate yaw = no space (COLLISION); otherwise IK.
+            return 'COLLISION' if not self.events.get('place_free_yaws') else 'IK_FAIL'
         self.events.update(place_slot=plan['slot'], place_delta_yaw=float(plan['delta']),
                            release_bottom=plan['release_bottom'])
         _, R0 = self.held[arm]
@@ -415,13 +438,19 @@ class SkillRunner:
         way = self._carry_waypoint(arm, start, plan['above'], h0, plan['delta'])
         path = ([(way, .55)] if way is not None else []) + [(plan['q'], .7 if way is not None else .95)]
         path += [(p, .16) for p in plan['down']]
-        for waypoint, sec in path:
+        touched = False
+        for i, (waypoint, sec) in enumerate(path):
+            descending = i >= len(path) - len(plan['down'])
             reason = self._move(arm, waypoint, sec)
             if not self.is_attached(arm, oid):
                 self.held.pop(arm, None)
                 return 'GRASP_SLIP'
             if reason:
                 return reason
+            if descending and plan['release_bottom'] is not None and self._touching_support(oid):
+                touched = True
+                break
+        self.events.update(place_touched=touched)
         self._open(arm, grasp_profile(e.object_parts[oid]))
         self.held.pop(arm)
         e.step(math.ceil(.25/e.model.opt.timestep))
