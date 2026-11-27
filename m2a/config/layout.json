@@ -9,9 +9,9 @@
  },
  "regions_note": "[xmin, xmax, ymin, ymax]; center_zone은 치우기·테이블 경유 재파지용 공용 빈 영역. round3에서 x를 -0.015 이동(로봇 쪽, 임의 지정): 원래 위치에서 P04 중앙 집기 14/20·15/20, 이동 후 P01/P04/P06 양팔 모두 ≥16/20 (m2a/notes/wsa_gate_raw/round3c_center_*). 트레이 외벽 x=-0.136과 0.019 m 간격.",
  "trays": {
-  "T1": {"center": [-0.01,  0.16], "inner": [0.24, 0.13], "wall_h": 0.03, "floor_z": 0.004, "wall_thickness": 0.006},
-  "T2": {"center": [-0.01,  0.00], "inner": [0.24, 0.13], "wall_h": 0.03, "floor_z": 0.004, "wall_thickness": 0.006},
-  "T3": {"center": [-0.01, -0.16], "inner": [0.24, 0.13], "wall_h": 0.03, "floor_z": 0.004, "wall_thickness": 0.006}
+  "T1": {"center": [-0.01,  0.16], "inner": [0.24, 0.14], "wall_h": 0.03, "floor_z": 0.004, "wall_thickness": 0.006},
+  "T2": {"center": [-0.01,  0.00], "inner": [0.24, 0.14], "wall_h": 0.03, "floor_z": 0.004, "wall_thickness": 0.006},
+  "T3": {"center": [-0.01, -0.16], "inner": [0.24, 0.14], "wall_h": 0.03, "floor_z": 0.004, "wall_thickness": 0.006}
  },
  "reach_note": "round4 재측정(center_zone 이동 후, 트레이도 내부 .03 안쪽 3x3점, 16 yaw, 저점+10cm IK, m2a/notes/wsa_gate_raw/reach_round4.jsonl): left L9/R3/C9/T1 9/T2 9/T3 7 (of 9), right L3/R9/C9/T1 7/T2 9/T3 9. 과반(5/9) 규칙(임의 지정)으로 표는 변경 없음. 정적 IK이며 개별 자세는 IK_FAIL 가능.",
  "reach": {

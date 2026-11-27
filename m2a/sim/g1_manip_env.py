@@ -422,18 +422,85 @@ class G1ManipEnv:
         self.restore_perception_pose(targets, secs)
         return previous
 
+    def _perception_path(self, arm, goal):
+        """Plan with the open hand against actual fixtures/objects, without advancing physics."""
+        m = self.model
+        preview = mj.MjData(m)
+        preview.qpos[:] = self.data.qpos
+        ids = self.ik[arm].qadr
+        joints = m.jnt_qposadr[m.actuator_trnid[self.hand_act[arm], 0]]
+        preview.qpos[joints] = self.data.ctrl[self.hand_act[arm]]
+        hand = self.arm_geom[arm]
+        start = self.arm_q(arm)
+
+        def clear(a, b):
+            count = max(3, math.ceil(np.max(np.abs(b-a)) / .085))
+            for i in range(1, count+1):
+                preview.qpos[ids] = a + (b-a)*i/count
+                mj.mj_kinematics(m, preview)
+                mj.mj_comPos(m, preview)
+                mj.mj_collision(m, preview)
+                if any(c.dist < -.001 and (c.geom1 in hand or c.geom2 in hand)
+                       for c in preview.contact):
+                    return False
+            return True
+
+        if clear(start, goal):
+            return [goal]
+        # Imposed simulation-only elbow/shoulder waypoints, mirrored right/left.
+        sign = 1 if arm == 'left' else -1
+        mirror = np.array([1, sign, sign, 1, sign, 1, sign])
+        nodes = [start, goal]
+        for pitch, roll, elbow in ((.8,.4,1.25), (1.2,.25,1.2), (.32,.65,.22),
+                                   (-1.,.55,.3), (-.7,.8,1.2), (-1.35,.5,1.2),
+                                   (-.5,1.15,.6), (.2,1.45,1.3), (.25,1.65,.25)):
+            nodes.append(np.array([pitch,roll,0.,elbow,0.,0.,0.])*mirror)
+        # Pull both endpoints up in Cartesian space before a large wrist/shoulder turn.
+        for endpoint in (start, goal):
+            preview.qpos[ids] = endpoint
+            mj.mj_kinematics(m, preview)
+            site = preview.site(f'{arm}_grip')
+            xyz = self.to_table(site.xpos)
+            R = self.T_world_table[:3,:3].T @ site.xmat.reshape(3,3)
+            seed = endpoint
+            for rise in (.06,.12,.18):
+                q, diag = self.solve_ik(arm, xyz + [0,0,rise], R, q0=seed, restarts=0)
+                if diag['ok']:
+                    nodes.append(q)
+                    seed = q
+        pending = [(0, [])]
+        visited = {0}
+        for i, prefix in pending:
+            for j in sorted(set(range(1,len(nodes))) - visited,
+                            key=lambda k: (k != 1, np.linalg.norm(nodes[k]-nodes[i]))):
+                if clear(nodes[i], nodes[j]):
+                    path = [*prefix, nodes[j]]
+                    if j == 1:
+                        return path
+                    visited.add(j)
+                    pending.append((j, path))
+        return None
+
     def restore_perception_pose(self, token, secs=0.6):
-        """Interpolate to arm control targets from perception_pose; advances physics."""
+        """Move to the saved targets on collision-checked paths; advances physics."""
         if not np.isfinite(secs) or secs <= 0:
             raise ValueError('secs must be positive')
-        initial = {arm: self.data.ctrl[self.arm_act[arm]].copy() for arm in ARMS}
-        steps = max(1, round(secs / self.model.opt.timestep))
-        for i in range(0, steps, 4):
-            end = min(i+4, steps)
-            f = end / steps
-            for arm in ARMS:
-                self.data.ctrl[self.arm_act[arm]] = initial[arm] + f*f*(3-2*f)*(token[arm]-initial[arm])
-            self.step(end-i)
+        paths = {arm: self._perception_path(arm, np.asarray(token[arm])) for arm in ARMS}
+        if any(path is None for path in paths.values()):
+            raise RuntimeError('no collision-free perception arm path')
+        dt = self.model.opt.timestep
+        for index in range(max(map(len, paths.values()))):
+            initial = {arm: self.arm_q(arm) for arm in ARMS}
+            goals = {arm: path[min(index, len(path)-1)] for arm, path in paths.items()}
+            largest = max(np.max(np.abs(goals[a]-initial[a])) for a in ARMS)
+            steps = max(1, math.ceil(max(secs / max(map(len, paths.values())), largest / 3.) / dt))
+            for i in range(0, steps, 4):
+                end = min(i+4, steps)
+                f = end / steps
+                for arm in ARMS:
+                    self.data.ctrl[self.arm_act[arm]] = initial[arm] + f*f*(3-2*f)*(goals[arm]-initial[arm])
+                self.step(end-i)
+            self.step(math.ceil(.12 / dt))
 
     def camera_K(self, cam='head'):
         """Pinhole intrinsics in pixels (integer-indexed pixel centres)."""
