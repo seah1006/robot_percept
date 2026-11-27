@@ -90,3 +90,84 @@ B4가 두 조건 모두 +4건. CI는 겹치므로(n=20) 방향성 증거이지 �
 - 무엇: PDDL 계획의 각 액션을 스킬 호출로 풀어 실행하고, 매 스킬 뒤 관측과 기대 효과를 비교해 실패·이탈이면 B4가 상태를 다시 읽어 재계획하는 폐루프 러너와 배치 평가기.
 - 왜: 계획이 맞아도 실행이 어긋나므로, 이탈을 감지·복구하는 층(관측 비교, 재계획 상한 R=3, 같은 실패 반복 시 종료)이 있어야 성공 지표가 의미를 가진다.
 - 대안 대비: 스크립트 재생(B0)·무감시(B1)보다 복구가 가능하지만(L0 교란 +4건) 시간이 1.2~2배 들고, 스킬 층이 약하면 전체 성공률은 이 층에서 막힌다(본 배치 0/60이 그 증거).
+
+
+---
+
+# 작업자 E (3라운드): 실제 O3 연결 · B1c · 재현 스크립트
+
+기준: worktree `~/work/rp_m2a_e3`, 브랜치 `m2a/ws-e-3`, 베이스 main 182469d, 커밋 없음. 표기: O0 = GT 인식, O3 = 시뮬 렌더 예측 인식(실사 근거 아님), P-gate = GT 보조 weld 파지 근사. 모든 배치는 **스킬 A4 중간판(main 182469d 포함 bd3e123) 조건**이며 A4 최종 병합 전이다. dev seed 10000~10059만 사용. 원자료: `m2a/notes/wse_runs/<run-id>/{result.json,config.json,repro.txt}`, 표: `m2a/notes/wse_tables/*_a4mid3.md`.
+
+## 1. 변경 파일 (소유 경로만)
+- 신규: `m2a/run/o3_perception.py`(IdTracker, O3Perception), `m2a/run/embed_server.py`(DINOv2-S 별도 CPU 프로세스), `m2a/run/analyze.py`(표·층 귀속·쌍체 부트스트랩), `m2a/run/diag_missing.py`, `m2a/run/repro_batch.sh`, `tests/m2a/test_e_o3.py`, `m2a/notes/wse_tables/`.
+- 수정: `m2a/run/episode.py`(B1c, MISID 기록, fail_code 접기, 키프레임 정책), `m2a/run/perception.py`(Observation.meta, `held_from_env`), `m2a/run/batch.py`(`--perception {O0,fake-O3,O3-depth,O3-knn}`, `--skill-label`, 집계에 misid/원 reason 추가), `tests/m2a/test_e_run.py`(키프레임 수 단언 1줄), `m2a/notes/wse_pytest.txt`.
+
+## 2. O3 연결과 지속 oid
+- `O3Perception`(= `m2a.percept.o3.O3.perceive(env)`, 워커당 O3 1개 재사용)이 키프레임마다 `perception_pose` 훅 아래에서 헤드 RGB-D를 예측해 기호 상태를 만든다. 구성은 G 권장대로 **깊이 plateau + DINOv2-S kNN**(`O3-knn`; 갤러리 `~/m2a_data/percept/train_dinov2_gallery.npz`는 train 전용). DINOv2는 `robot_percept_rocm` env의 **별도 프로세스, device=cpu**(GPU 미사용, OMP 2스레드)로 돌려 EGL 렌더와 분리했다(`embed_server.py`). `O3-depth`(임베더 없음)도 선택 가능(Top-1 72.4% vs kNN 79.3%, wsg_report).
+- **지속 id(`IdTracker`, 임계는 임의 지정)**: ① part_id 일치 + xy ≤ 3 cm를 헝가리안(scipy)으로 재연결 → 안정 id q0,q1.. ② 계획이 방금 옮긴 물체(성공한 place/put-aside 직후)는 같은 part_id의 미매칭 예측에 거리 무관 재연결 ③ 그 외 미매칭 트랙(연속 3회까지)도 같은 part_id면 거리 무관 재연결(외부 이동 대비; 다른 part_id는 절대 안 이음 = 분류가 뒤집히면 disappeared+appeared) ④ 들고 있는 물체는 동결: 잡을 때 의도한 안정 id를 유지하고, 손(ee) 9 cm 안 예측은 제거. 트레이 안 물체는 일반 예측과 동일하게 추적(in_tray 술어).
+- 계획·스킬에는 안정 id와 `obj_pose_T`만 간다(`pose_only`, 스킬엔 oid=None). GT는 ① 손 보유 여부 센서 대용(GT 보조) ② 평가 전용 `Observation.meta`(안정 id↔GT 매칭 3 cm 헝가리안, missed_gt/false_pos/wrong_part)에만 쓴다.
+- **MISID 기록**: grasp_lift 성공 시 `grasped_oid`(GT, 평가 전용) ≠ 의도한 안정 id의 GT 매칭이면 `episodes.jsonl`의 `misid=true`, 에피소드 `percept.misid/misid_events`. 에피소드 fail_code는 "첫 이상 사건이 MISID"이고 실패일 때 MISID.
+- 추가한 완화책(원인은 5절): 모든 post_skill 읽기를 키프레임으로(양손 열림·비었을 때만 perception_pose, 아니면 제자리), pose 시간 1.6 s(임의 지정), 팔 자기모델 마스크(팔이 파킹 위치에서 5 cm 넘게 벗어난 동안 팔·손 링크 xy 8 cm 안 예측 삭제), 팔 뒤에 가려진 트랙은 18 cm 안이면 직전 상태 이월(`meta.occluded_carried`).
+
+## 3. B1c (폐루프 IK)
+각 pick(reach_pregrasp) 직전에 키프레임 재인식(`pre_pick`) → 대상 안정 id의 obj_pose_T를 갱신해 reach와 이어지는 grasp_lift에 사용. 다른 스킬은 재인식하지 않는다(이전 구현은 모든 스킬 전에 재인식했음 → 지시대로 pick 직전만). **O0에서는 스킬이 현재 GT 자세를 직접 읽으므로 B1c = B1**: L0 20장면에서 둘 다 14/20·progress 0.700·동일 fail_code(`e3-b1c-o0-a4mid3`), 단위 테스트로도 스킬 호출열 동일 확인.
+
+## 4. fail_code 접기 규칙 (P2)
+계약 §13 목록에 COLLISION이 없다. 규칙: **COLLISION → IK_FAIL**(충돌 없는 실행 가능한 운동을 못 만든 스킬 실패), 그 밖의 미지 코드 → PLAN_VIOLATION. 스킬 원 코드는 `episodes.jsonl`의 `reason_code`와 에피소드 결과 `raw_reason_code`(마지막 실패 스킬)에 그대로 남고, 배치 집계에 `raw_reason_codes`가 있다. (예: O3 dev60에서 마지막 실패 스킬이 COLLISION인 에피소드는 B1 2 / B1c 1 / B4 6건이고, 에피소드 fail_code가 스킬 실패 기원이면 IK_FAIL로 집계된다.)
+
+## 5. 스모크: O3(knn) + B1/B1c/B4, L0 standard 20장면 (`e3-smoke-o3knn-a4mid3`)
+| 구성 | 성공 (Wilson 95% CI) | 엄격 | progress | 거짓 완료 | MISID | fail_code(원인 층) |
+|---|---|---:|---:|---:|---|---|
+| B1 | 4/20 [8.1, 41.6%] | 4 | 0.200 | 10 | 1 | FALSE_COMPLETION 10, GRASP_SLIP 5, IK_FAIL 1 (인식 10 / 스킬 6) |
+| B1c | 7/20 [18.1, 56.7%] | 7 | 0.350 | 10 | 1 | FALSE_COMPLETION 10, GRASP_SLIP 2, IK_FAIL 1 (인식 10 / 스킬 3) |
+| B4 | 4/20 [8.1, 41.6%] | 4 | 0.200 | 9 | 1 | FALSE_COMPLETION 9, MISID 1, GRASP_SLIP 5, IK_FAIL 1 |
+쌍체(같은 20장면, 부트스트랩 10000회 95% CI, 임의 지정): B1c−B1 성공 +0.150 [0.000, +0.300], B4−B1 0.000 [0, 0].
+- 인식 분포(초기 관측, 20장면 GT 60개): GT 미검출 32(헤드 화각 밖이 대부분 추정), 거짓 양성 11, 맞게 매칭됐지만 part_id 오분류 5. **PERCEPT_MISS가 에피소드 코드로 남은 건 0**(B4 중 신규 appeared/disappeared 오탐은 중간 진단에서 제거됨, 5절 아래).
+- **FALSE_COMPLETION 10/20의 정체**: 스킬 0회, "필요 부품이 없다"고 보고(`missing_report_mismatch`). 목표 부품이 GT로는 있는데 인식이 놓쳐(미검출 7, 오분류 3; `m2a/run/diag_missing.py`, 대부분 |y|≈0.30~0.43 영역 가장자리) 계획기가 부재로 판단한 것이다. 판정기 정의상 FALSE_COMPLETION이지만 원인 층은 **인식**(analyze의 "실패 층" 열).
+
+## 6. 본 배치 (dev 10000~10059, 스킬 A4 중간판)
+### O0 (`e3-main-o0-a4mid3`, 상황 5종 × 12장면, L1 48 / L2 12)
+| 구성 | 성공 | 엄격 | progress | 거짓 완료 | fail_code | 평균 s |
+|---|---|---:|---:|---:|---|---:|
+| B0-script | 4/60 [2.6, 15.9%] | 4 | 0.237 | 2 | IK_FAIL 27, GRASP_SLIP 26, FALSE_COMPLETION 2, TIMEOUT 1 | 1.7 |
+| B1 | 2/60 [0.9, 11.4%] | 2 | 0.178 | 1 | IK_FAIL 30, GRASP_SLIP 27, FALSE_COMPLETION 1 | 1.9 |
+| B4 | 1/60 [0.3, 8.9%] | 1 | 0.157 | 0 | GRASP_SLIP 28, IK_FAIL 26, PLAN_VIOLATION 5 | 3.0 |
+(합계는 상황별 12장면 표를 더한 값이며 `analyze`를 `--by` 없이 실행해도 같다. 상황별 표(15칸)는 `m2a/notes/wse_tables/main_o0_a4mid3.md`.) 쌍체 B4−B1(60장면): 성공 −0.017 [−0.050, 0.000], progress −0.021 [−0.058, 0.000]. **스킬 층(GRASP_SLIP·IK_FAIL) 실패가 100%**라 구성 비교는 여전히 불가능하다.
+
+### O3-knn (`e3-main-o3knn-a4mid3`)
+세 구성 모두 **0/60 [0.0, 6.0%]**(엄격 0), progress B1 0.073 / B1c 0.081 / B4 0.059(상황별 표: `main_o3knn_a4mid3.md`). 거짓 완료 B1 3 / B1c 5 / B4 2, fail_code 합: B1 GRASP_SLIP 45·IK_FAIL 12·FALSE_COMPLETION 3, B1c GRASP_SLIP 40·IK_FAIL 10·PERCEPT_MISS 5·FALSE_COMPLETION 5, B4 GRASP_SLIP 35·IK_FAIL 7·PERCEPT_MISS 11·PLAN_VIOLATION 5·FALSE_COMPLETION 2. 마지막 실패 스킬의 원 reason_code 기준 COLLISION은 B1 2 / B1c 1 / B4 6건(에피소드 fail_code는 접힘 규칙대로 IK_FAIL 또는 다른 코드). 쌍체: B1c−B1 성공 0.000 [0,0], progress +0.008 [−0.015, +0.031]; B4−B1 성공 0.000, progress −0.014 [−0.033, +0.003]. 평균 에피소드 시간 5.3~11.4 s(O0의 3~5배; 인식 키프레임당 CPU DINOv2 포함).
+- 인식(B1 60장면, GT 317개): 초기 미검출 95(30%), 거짓 양성 19, 매칭된 것 중 오분류 50(약 22%), MISID 집기는 구성 합 2건(B1 0 / B1c 1 / B4 1).
+
+### L0 교란 (O0, `e3-l0pert-o0-a4mid3`, 20장면 alternate drop/teleport)
+B1 7/20 [18.1, 56.7%] progress 0.400 vs **B4 11/20 [34.2, 74.2%] progress 0.550**; 쌍체 B4−B1 성공 +0.200 [−0.050, +0.450](CI가 0을 포함 → 방향성). 같은 장면·교란 없는 O0 B1(L0 20장면)은 14/20.
+
+## 7. 층별 실패 분석
+- **스킬 층(A)**: 본 배치 실패의 압도적 다수. O0 dev60 3구성 모두 GRASP_SLIP+IK_FAIL이 사실상 전부, O3 dev60도 B1에서 에피소드 60 중 57이 첫 이상 사건이 스킬 실패. 부품 4~6개 전부를 맞춰야 하는 L1/L2 목표에서는 부품당 성공률이 낮아 합이 0%가 된다(스킬 단독 L0 14/20 → 곱셈 효과는 추정).
+- **인식 층(G)**: L0 O3의 실패 중 절반(10/20)이 위 "부재 오보고"(미검출·오분류)이고 O3에서만 생김. 헤드 화각(A4 수정 중)과 판재 가장자리 잘림이 원인으로 추정. MISID 집기는 드묾(2/…).
+- **계획 층(B)**: 계획·검증 자체의 실패는 B4의 PLAN_VIOLATION(O0 5, O3 5)뿐이며 대부분 B4 가지치기 후 도달 불가 판정(`reach` 상황). 계획기 오류는 아님.
+- **디스패처/관측 층(E)**: O3에서 PERCEPT_MISS 오탐이 크게 두 갈래였음(아래), 완화 후 B4 PERCEPT_MISS 11/60·B1c 5/60이 남음(잔여는 스킬 후 팔이 못 빠진 상태의 오검출·미검출로 추정).
+
+### 진단: 스킬 후 perception_pose가 팔을 시야 밖으로 못 옮김 (A4/sim 요청)
+재현 `tmp` 스크립트 요지: dev 10000 L2, 왼팔 reach_pregrasp 후 `env.perception_pose(secs)`가 secs 0.6/1.6/3.0 모두 ctrl은 파킹값인데 관절 q는 목표와 ~0.5 rad 어긋난 채 정지(손 z≈0.06, 헤드 영상에 손이 보임). 초기 키프레임(팔이 이미 파킹)에서는 정상. 그 결과 중간 실행(`e3-main-o3knn-a4mid`, a4mid2)에서 B4 PERCEPT_MISS가 상황당 4~9/12였고 대부분 팔·손이 phantom 물체(`region None`/트레이 위)로 appeared. 이 라운드의 마스크·이월은 우회책이다. **요청(A4/메인): perception_pose 복귀 신뢰성(충돌/정지 원인) 확인.** 원자료 비교: `e3-main-o3knn-a4mid`(완화 전) → `-a4mid2`(post_skill 키프레임) → `-a4mid3`(마스크·이월 포함 최종).
+
+## 8. 재현 (`m2a/run/repro_batch.sh`)
+```
+source ~/miniforge3/etc/profile.d/conda.sh && conda activate robot_percept && source /home/my/work/robot_percept/sim_test/gl_env.sh
+cd ~/work/rp_m2a_e3 && WORKERS=4 bash m2a/run/repro_batch.sh all a4mid3 "A4 중간판"   # 단계: smoke|main-o0|main-o3|l0pert|b1c-o0|tables|all
+```
+각 단계는 `runs/<id>/repro.txt`에 커밋 해시·dirty 파일 수·정확한 명령을 쓰고 `m2a/notes/wse_runs/<id>/`로 result.json·config.json·repro.txt를 복사한다. 표는 `python -m m2a.run.analyze --label X --by situation --pairs B4:B1 B1c:B1 --runs <dirs>`. 보고 표 ↔ run-id: 5절 `e3-smoke-o3knn-a4mid3`, 6절 `e3-main-o0-a4mid3`·`e3-main-o3knn-a4mid3`·`e3-l0pert-o0-a4mid3`, 3절 `e3-b1c-o0-a4mid3`. 임의 지정 옵션: workers 4, nice 10, 락 없음, seed 10000~10059(및 L0는 10000~10019). **주의**: 현재 변경은 커밋 전이라 repro.txt의 commit은 베이스 182469d + `dirty_files` 수로 읽어야 하며, 메인이 커밋하면 같은 명령이 그 해시에서 재현된다. 중간 진단 실행(`e3-t-*`, `e3-smoke-o3knn*`, `-a4mid`, `-a4mid2`)은 코드 변경 전·중 실행분이라 보고 표에는 쓰지 않았다(O0는 결정적이라 a4mid/2/3 결과 동일).
+
+## 9. 테스트
+`python -m pytest tests/m2a -q` → **160 passed, 1 skipped**(`m2a/notes/wse_pytest.txt`), test_e_*: 30 passed. 새 테스트 `tests/m2a/test_e_o3.py`: 가짜 인식으로 id 재연결(섞인 로컬 id, 같은 part 교환, 이동 후 재연결, 분류 뒤집힘=새 id, max_missing), B1c의 pick당 재인식 호출 수(`pre_pick` = pick 수, B1은 0), O0에서 B1c = B1, MISID 기록, COLLISION→IK_FAIL 접기와 원 reason 유지, 실제 O3(depth)+시뮬 통합.
+
+## 10. 남은 문제 · 요청
+1. **A4 최종 병합 알림 후 6번(본 배치 최종)을 `repro_batch.sh all <새 TAG> "A4 최종판"`으로 재실행**해야 한다(지금 표는 중간판). 약 20분.
+2. A4/sim: 스킬 후 `perception_pose`가 팔을 못 치우는 문제, 헤드 화각(좌우 가장자리 물체 미검출 30%).
+3. G: 오분류 22%(P01/P02 등)와 가장자리 잘림 → 부재 오보고. 플래너 쪽에서 "미검출 vs 정말 없음"을 구분하는 재관측(wrist 카메라/헤드 이동) 정책이 필요하다.
+4. B4가 O3에서 오히려 progress가 낮음(−0.014~−0.058): 잔여 PERCEPT_MISS 재계획 비용으로 추정, 미검증.
+5. test seed 미사용, 계약·타 소유 경로 수정 없음.
+
+## 11. 면접 설명 (3줄)
+- 무엇: 헤드 RGB-D 예측 인식을 계획 루프에 연결하되, 키프레임마다 바뀌는 예측 id를 part_id+위치 헝가리안 매칭으로 안정 id에 묶고, 스킬엔 자세(obj_pose_T)만 전달, 평가용으로만 GT 매칭해 MISID를 센다.
+- 왜: B4의 불일치 감지가 oid 기준이라 id가 흔들리면 매 관측이 오탐 재계획이 된다(2라운드에서 MISID 9/10 실측).
+- 대안 대비: 트래커 없이 인식기에 id 안정성을 요구하는 방식보다 어댑터에 두는 편이 인식기와 분리돼 간단하지만, 임계(3 cm 등)가 임의 지정이고 가림·분류 뒤집힘에서 새 id가 생기는 한계가 있다.

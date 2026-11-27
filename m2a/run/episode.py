@@ -17,6 +17,19 @@ SETTLE_S = 0.6  # 임의 지정: settle time after a failed skill before observi
 CONFIGS = ('B0-script', 'B1', 'B1c', 'B4')
 FAIL_CODES = frozenset(('PERCEPT_MISS', 'MISID', 'PLAN_VIOLATION', 'IK_FAIL', 'GRASP_SLIP',
                         'FALSE_COMPLETION', 'LANG_MISPARSE', 'TIMEOUT'))
+# The contract list (CONTRACT §13) has no COLLISION. Fold rule (E round 3): COLLISION -> IK_FAIL (the skill could not
+# produce a feasible collision-free motion); any other unknown skill code -> PLAN_VIOLATION. The raw skill code is
+# kept separately as `reason_code` (episodes.jsonl) and `raw_reason_code` (episode result).
+FOLD = {'COLLISION': 'IK_FAIL'}
+PERCEPTION_POSE_S = 1.6  # 임의 지정: 0.6 s default left the arm mid-motion in view after a far pose (arm seen as objects)
+
+
+def _secs_kw(env):
+    import inspect
+    try:
+        return {'secs': PERCEPTION_POSE_S} if 'secs' in inspect.signature(env.perception_pose).parameters else {}
+    except (TypeError, ValueError):
+        return {}
 
 
 def _delta(before, after, call, ok):
@@ -94,7 +107,10 @@ def _run(seed, split, level, situation, config, instr, arm_mode, grasp_mode, R,
     env.reset(spec)
     dispatcher = Dispatcher(runner_factory(env, grasp_mode=grasp_mode))
     skill_no = 0
-    last_fail = failure = missing = trigger = injected = None
+    last_fail = failure = missing = trigger = injected = raw_failure = None
+    percept = dict(misid=0, misid_events=[], initial_missed_gt=None, initial_false_pos=None, initial_wrong_part=None,
+                   percept_miss_skills=0, first_bad=None)
+    pick_pose = {}  # B1c: pose captured by the re-observation right before each pick
     allow_handover = True
     blocked = set()  # (arm, location) pairs whose skill failed; B4 prunes them from the reach table
     stop, internal_done = 'completed', False
@@ -107,35 +123,66 @@ def _run(seed, split, level, situation, config, instr, arm_mode, grasp_mode, R,
         can_pose = (pose_only and keyframe and (obs is None or not obs.held)
                     and hasattr(env, 'perception_pose') and hasattr(env, 'restore_perception_pose'))
         token = None
+        kw = _secs_kw(env) if can_pose else {}
         if can_pose:
             try:
-                token = env.perception_pose()
+                token = env.perception_pose(**kw)
             except RuntimeError:  # hands closed/occupied: observe in place instead (logged below)
                 can_pose = False
         if can_pose:
             try:
                 observation = deepcopy(perception.observe(env, layout, parts))
             finally:
-                env.restore_perception_pose(token)
+                env.restore_perception_pose(token, **kw)
         else:
             observation = deepcopy(perception.observe(env, layout, parts))
         log('scene_graph', stage=stage, skill_no=skill_no, state=observation.state, held=observation.held,
-            posed=bool(can_pose))
+            posed=bool(can_pose), eval=observation.meta or None)
+        if stage == 'initial' and 'missed_gt' in observation.meta:
+            percept.update(initial_missed_gt=observation.meta['missed_gt'], initial_false_pos=observation.meta['false_pos'],
+                           initial_wrong_part=observation.meta['wrong_part'])
         log('timing', stage=f'perception:{stage}', skill_no=skill_no, elapsed_ms=elapsed()-began)
         return observation
 
     def step(action, call, upcoming, recovery=False):
-        nonlocal obs, skill_no, injected
+        nonlocal obs, skill_no, injected, raw_failure
         skill_no += 1
-        before = observe('pre_skill', keyframe=call.skill == 'reach_pregrasp') if config == 'B1c' else obs
+        # B1c = closed-loop IK: re-perceive right before each pick (reach_pregrasp) and use that fresh pose. With O0
+        # (GT perception, skills read current GT) this only adds observation calls, so it equals B1.
+        refresh = config == 'B1c' and call.skill == 'reach_pregrasp'
+        if refresh:
+            obs = observe('pre_pick', keyframe=True)
+        before = obs
         target = perception.refine_target(call, before) if config == 'B1c' else None
-        pose_obs = before if config == 'B1c' else planned_obs
-        pose = (pose_obs.poses.get(call.oid) if pose_only and pose_obs is not None
-                and call.skill in ('reach_pregrasp', 'grasp_lift') else None)
+        pose_obs = before if refresh else planned_obs
+        if refresh and pose_only:
+            pick_pose[call.oid] = (before.poses.get(call.oid), before)
+        if config == 'B1c' and call.skill == 'grasp_lift' and call.oid in pick_pose:
+            pose, pose_obs = pick_pose[call.oid]
+        else:
+            pose = (pose_obs.poses.get(call.oid) if pose_only and pose_obs is not None
+                    and call.skill in ('reach_pregrasp', 'grasp_lift') else None)
         result = dispatcher.execute(call, elapsed, target=target, pose_only=pose_only, obj_pose_T=pose)
+        if hasattr(perception, 'note_skill'):
+            perception.note_skill(call, result)
+        misid = intended_gt = None
+        if pose_only and call.skill == 'grasp_lift' and result['ok']:
+            intended_gt = (pose_obs.meta.get('gt_of') or {}).get(call.oid) if pose_obs is not None else None
+            misid = result.get('grasped_oid') != intended_gt
+            if misid:
+                percept['misid'] += 1
+                percept['misid_events'].append(dict(skill_no=skill_no, oid=call.oid, intended_gt=intended_gt,
+                                                    grasped_gt=result.get('grasped_oid')))
+        if pose_only and result['reason_code'] == 'PERCEPT_MISS':
+            percept['percept_miss_skills'] += 1
+        if percept['first_bad'] is None and (misid or not result['ok']):
+            percept['first_bad'] = 'MISID' if misid else 'skill:' + str(result['reason_code'])
         if not result['ok'] and hasattr(env, 'model') and hasattr(env, 'step'):
             env.step(ceil(SETTLE_S/env.model.opt.timestep))  # let a dropped/perched object settle before observing
-        obs = observe('post_skill')
+        # Predictive perception: every post-skill read is a keyframe (arms out of the head view when both hands are
+        # open and empty; otherwise observed in place). Round-3 diagnosis: in-place reads next to the hovering arm
+        # produced spurious appeared/disappeared objects (PERCEPT_MISS) after reach_pregrasp.
+        obs = observe('post_skill', keyframe=pose_only)
         if (not pose_only and call.skill == 'transport_place' and not result['ok']
                 and obs.state['objects'].get(call.oid, {}).get('in_tray') == call.target
                 and not any(ev['oid'] == call.oid and ev['tray'] == call.target for ev in dispatcher.events)):
@@ -148,7 +195,7 @@ def _run(seed, split, level, situation, config, instr, arm_mode, grasp_mode, R,
         delta = _delta(before, obs, call, result['ok'])
         raw = result['reason_code']
         if not result['ok']:
-            code = raw if raw in FAIL_CODES else 'PLAN_VIOLATION'
+            code = raw if raw in FAIL_CODES else FOLD.get(raw, 'PLAN_VIOLATION')
         elif delta:
             if delta['appeared'] or delta['disappeared']:
                 code = 'PERCEPT_MISS'
@@ -160,11 +207,14 @@ def _run(seed, split, level, situation, config, instr, arm_mode, grasp_mode, R,
             code = None
         log('episodes', skill_no=skill_no, plan_no=len(logs['plan']), action=list(action),
             skill=call.skill, arm=call.arm, oid=call.oid, target=call.target, ok=result['ok'],
+            intended_gt=intended_gt, misid=misid,
             internal_done=result['internal_done'], fail_code=code, reason_code=raw, skill_ms=result['t_ms'],
             grasped_oid=result.get('grasped_oid') if pose_only else None,
             mismatch=delta, recovery=recovery,
             perturbation=injected if perturb and skill_no == perturb.after_skill else None)
         log('timing', stage='skill', skill_no=skill_no, elapsed_ms=result['t_ms'])
+        if not result['ok']:
+            raw_failure = raw
         return result, code, delta
 
     obs = observe('initial', keyframe=True)
@@ -273,11 +323,14 @@ def _run(seed, split, level, situation, config, instr, arm_mode, grasp_mode, R,
         failure = None  # a tolerated mid-episode failure (e.g. replan fixed it) is not an episode failure
     elif failure is None:
         failure = 'PLAN_VIOLATION'
+    if failure and not judged['success'] and percept['first_bad'] == 'MISID' and failure not in ('FALSE_COMPLETION', 'LANG_MISPARSE'):
+        failure = 'MISID'  # the first deviation was a wrong-object grasp (eval: GT-grasped != intended)
     duration = elapsed()
     if perturb and injected is None:
         injected = dict(kind=perturb.kind, after_skill=perturb.after_skill, applied=False, reason='skill_not_reached')
     log('timing', stage='episode', elapsed_ms=duration)
     return {**meta, 'goal': goal, 'judge': judged, 'events': dispatcher.events, 'fail_code': failure,
+            'raw_reason_code': raw_failure, 'percept': percept,
             'termination': stop, 'internal_done': internal_done, 'episode_ms': duration,
             'replans': sum(r['is_replan'] for r in logs['plan']), 'num_skills': skill_no,
             'perturbation': injected, 'logs': logs}
