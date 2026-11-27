@@ -1,5 +1,6 @@
 """Translate PDDL steps to the §7 skill API."""
 from dataclasses import dataclass
+from inspect import signature
 
 
 @dataclass(frozen=True)
@@ -32,16 +33,19 @@ class Dispatcher:
         self.events = []
         self._judge_held = {}  # Evaluation-only; never passed to a skill.
 
-    def execute(self, call, clock_ms, *, target=None, pose_only=False, obj_pose_T=None):
+    def supports_approach(self):
+        return 'approach' in signature(self.runner.run).parameters
+
+    def execute(self, call, clock_ms, *, target=None, pose_only=False, obj_pose_T=None, approach=None):
         if call.skill == 'handover':
             return dict(ok=False, reason_code='HANDOVER_UNSUPPORTED', internal_done=False, t_ms=0)
         destination = call.target if target is None else target
         if pose_only and call.skill in ('reach_pregrasp', 'grasp_lift') and obj_pose_T is None:
             return dict(ok=False, reason_code='PERCEPT_MISS', internal_done=False, t_ms=0)
-        if pose_only:
-            result = self.runner.run(call.skill, call.arm, None, destination, obj_pose_T=obj_pose_T)
-        else:
-            result = self.runner.run(call.skill, call.arm, call.oid, destination)
+        kwargs = {'obj_pose_T': obj_pose_T} if pose_only else {}
+        if approach is not None:
+            kwargs['approach'] = approach
+        result = self.runner.run(call.skill, call.arm, None if pose_only else call.oid, destination, **kwargs)
         if pose_only and result["ok"] and call.skill == "grasp_lift":
             self._judge_held[call.arm] = result.get("grasped_oid")
         if result["ok"] and call.skill in ("transport_place", "put_aside"):

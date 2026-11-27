@@ -3,6 +3,7 @@ import numpy as np
 
 from m2a.scene.symbolic import symbolic_from_gt
 
+from .o3_policy import assign_boards, BOARDS
 from .perception import Observation, held_from_env
 
 
@@ -78,9 +79,11 @@ class O3Perception:
     (which arm holds something; GT 보조) and (b) evaluation only: Observation.meta (never read by planner/skills)."""
     pose_only = True
 
-    def __init__(self, o3=None, link_xy=0.03, gt_xy=0.03, hand_radius=0.09, embedder=None, gallery=None):
+    def __init__(self, o3=None, link_xy=0.03, gt_xy=0.03, hand_radius=0.09, embedder=None, gallery=None, board_capacity=None, reobserve_missing=True):
         self.o3, self.gt_xy, self.hand_radius = o3, gt_xy, hand_radius  # 임의 지정: 3 cm GT match, 9 cm hand mask
         self.embedder, self.gallery = embedder, gallery
+        self.board_capacity = board_capacity or {}
+        self.reobserve_missing = reobserve_missing
         self.tracker = IdTracker(link_xy)
         self.intended = {}  # arm -> stable id the last grasp_lift targeted
         self.perceive_calls = 0
@@ -139,6 +142,9 @@ class O3Perception:
         for arm in held_gt:
             sid = self.intended.get(arm)
             held[arm] = sid if sid in self.tracker.tracks else f'held_{arm}'
+        changes = assign_boards(preds, self.board_capacity)
+        if changes:
+            preds = {k: (dict(v, part_id=changes[k]) if k in changes else v) for k, v in preds.items()}
         link = self.tracker.update(preds, frozen=set(held.values()))
         objects = {link[k]: dict(part_id=v['part_id'], xyz=v['xyz'], yaw=v['yaw']) for k, v in preds.items()}
         poses = {link[k]: dict(v['obj_pose_T']) for k, v in preds.items()}
@@ -158,7 +164,10 @@ class O3Perception:
                                          in_tray=None, on=None)
         meta = self._evaluate(gt, held_gt, objects, graph, link, preds)
         meta['occluded_carried'] = occluded
-        return Observation(state, held, poses, meta)
+        candidates = {link[k]: [x['part_id'] for x in v.get('top3', ())[:3]]
+                                        for k, v in preds.items() if v.get('uncertain')}
+        meta['board_assignment'] = {link[k]: changes[k] for k in changes}
+        return Observation(state, held, poses, meta, candidates)
 
     def _evaluate(self, gt, held_gt, objects, graph, link, preds):
         ids = [o for o in gt if o not in held_gt.values()]
@@ -172,6 +181,9 @@ class O3Perception:
         gt_of = {sids[i]: ids[j] for i, j in _assign(cost) if cost[i, j] < 1e6}
         return dict(gt_of=gt_of, missed_gt=sorted(set(ids)-set(gt_of.values())), false_pos=sorted(set(sids)-set(gt_of)),
                     wrong_part=sorted(s for s, g in gt_of.items() if objects[s]['part_id'] != gt[g]['part_id']),
+                    board_eval=[dict(raw=graph['objects'][k]['part_id'], assigned=preds[k]['part_id'],
+                                     truth=gt[gt_of[link[k]]]['part_id'])
+                                for k in preds if link[k] in gt_of and gt[gt_of[link[k]]]['part_id'] in BOARDS],
                     pose_unreliable=sorted(link[k] for k in preds if not graph['objects'][k].get('pose_reliable', True)))
 
     def refine_target(self, call, observation):

@@ -1,0 +1,3 @@
+commit=5e342550396806458317c7ee94affc38a532ea05
+skill_label=A5
+command=nice -n 10 python -m m2a.run.batch --workers 3 --skill-label A5 --retry-R 6 --start 10000 --end 10059 --configs B4r --perception O0 --run-id e4-retry-o0-a5final

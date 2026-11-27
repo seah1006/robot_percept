@@ -7,6 +7,7 @@ import pickle
 import struct
 import subprocess
 import sys
+from .o3_config import CROP_SIZE
 
 PYTHON = os.path.expanduser('~/miniforge3/envs/robot_percept_rocm/bin/python')
 
@@ -28,7 +29,7 @@ def serve(device='cpu'):
     out = os.fdopen(os.dup(1), 'wb')
     os.dup2(2, 1)  # library prints must not corrupt the protocol stream
     from m2a.percept.models import DinoSmall
-    model = DinoSmall(device)
+    model = DinoSmall(device, crop_size=CROP_SIZE)
     _write(out, 'ready')
     inp = sys.stdin.buffer
     while (images := _read(inp)) is not None:

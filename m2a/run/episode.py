@@ -1,5 +1,5 @@
 """Monitored kitting episode with serializable observations and skill logs."""
-from collections import deque
+from collections import Counter, deque
 from copy import deepcopy
 from math import ceil
 from time import perf_counter
@@ -10,11 +10,13 @@ from m2a.scene.generator import generate
 from m2a.scene.judge import judge
 
 from .dispatcher import Dispatcher, skill_calls
+from .o3_policy import confirm_absence
 from .perception import OraclePerception
 from .perturb import Perturbation
+from .retry import RETRY_CODES, RETRY_LIMIT, retry_plan
 
 SETTLE_S = 0.6  # 임의 지정: settle time after a failed skill before observing
-CONFIGS = ('B0-script', 'B1', 'B1c', 'B4')
+CONFIGS = ('B0-script', 'B1', 'B1c', 'B4', 'B4r')
 FAIL_CODES = frozenset(('PERCEPT_MISS', 'MISID', 'PLAN_VIOLATION', 'IK_FAIL', 'GRASP_SLIP',
                         'FALSE_COMPLETION', 'LANG_MISPARSE', 'TIMEOUT'))
 # The contract list (CONTRACT §13) has no COLLISION. Fold rule (E round 3): COLLISION -> IK_FAIL (the skill could not
@@ -109,13 +111,16 @@ def _run(seed, split, level, situation, config, instr, arm_mode, grasp_mode, R,
     skill_no = 0
     last_fail = failure = missing = trigger = injected = raw_failure = None
     percept = dict(misid=0, misid_events=[], initial_missed_gt=None, initial_false_pos=None, initial_wrong_part=None,
-                   percept_miss_skills=0, first_bad=None)
+                   percept_miss_skills=0, percept_miss_events=0, first_bad=None, absence_checks=[], initial_board_eval=[])
     pick_pose = {}  # B1c: pose captured by the re-observation right before each pick
     allow_handover = True
     blocked = set()  # (arm, location) pairs whose skill failed; B4 prunes them from the reach table
     stop, internal_done = 'completed', False
 
     obs = planned_obs = None
+    retry_counts = Counter()
+    approach_yaws = {}
+    pending_retry = active_retry = None
     pose_only = getattr(perception, 'pose_only', False)
 
     def observe(stage, *, keyframe=False):
@@ -144,7 +149,8 @@ def _run(seed, split, level, situation, config, instr, arm_mode, grasp_mode, R,
             posed=bool(can_pose), eval=observation.meta or None)
         if stage == 'initial' and 'missed_gt' in observation.meta:
             percept.update(initial_missed_gt=observation.meta['missed_gt'], initial_false_pos=observation.meta['false_pos'],
-                           initial_wrong_part=observation.meta['wrong_part'])
+                           initial_wrong_part=observation.meta['wrong_part'],
+                           initial_board_eval=observation.meta.get('board_eval', []))
         log('timing', stage=f'perception:{stage}', skill_no=skill_no, elapsed_ms=elapsed()-began)
         return observation
 
@@ -166,7 +172,12 @@ def _run(seed, split, level, situation, config, instr, arm_mode, grasp_mode, R,
         else:
             pose = (pose_obs.poses.get(call.oid) if pose_only and pose_obs is not None
                     and call.skill in ('reach_pregrasp', 'grasp_lift') else None)
-        result = dispatcher.execute(call, elapsed, target=target, pose_only=pose_only, obj_pose_T=pose)
+        approach = (active_retry['approach'] if active_retry and call.oid == active_retry['oid']
+                    and (call.skill == 'reach_pregrasp' or (pose_only and call.skill == 'grasp_lift')) else None)
+        result = dispatcher.execute(call, elapsed, target=target, pose_only=pose_only, obj_pose_T=pose, approach=approach)
+        if call.skill == 'reach_pregrasp':
+            approach_yaws[call.oid, call.arm] = result.get('approach_yaw',
+                getattr(dispatcher.runner, 'events', {}).get('approach_yaw') if result['ok'] else approach)
         if hasattr(perception, 'note_skill'):
             perception.note_skill(call, result)
         misid = intended_gt = None
@@ -209,6 +220,8 @@ def _run(seed, split, level, situation, config, instr, arm_mode, grasp_mode, R,
                 code = 'PLAN_VIOLATION'
         else:
             code = None
+        if pose_only and code == 'PERCEPT_MISS':
+            percept['percept_miss_events'] += 1
         log('episodes', skill_no=skill_no, plan_no=len(logs['plan']), action=list(action),
             skill=call.skill, arm=call.arm, oid=call.oid, target=call.target, ok=result['ok'],
             intended_gt=intended_gt, misid=misid,
@@ -248,6 +261,10 @@ def _run(seed, split, level, situation, config, instr, arm_mode, grasp_mode, R,
                     break
             if recovery_failed:
                 break
+        if getattr(perception, 'reobserve_missing', False):
+            obs, check = confirm_absence(obs, goal, observe)
+            if check is not None:
+                percept['absence_checks'].append(check)
         if config == 'B0-script':
             planned = b0_script.plan(obs.state, goal, layout, product=spec['product'])
             if (instr is not None or arm_mode != 'auto') and any(
@@ -260,12 +277,16 @@ def _run(seed, split, level, situation, config, instr, arm_mode, grasp_mode, R,
                 if loc_ in reach_.get(arm_, ()):
                     reach_[arm_] = [x for x in reach_[arm_] if x != loc_]
             planned = planner.plan(obs.state, goal, layout, allow_handover=allow_handover)
+        active_retry = None
+        if pending_retry and planned['ok']:
+            pending_retry['fresh_pose'] = obs.poses.get(pending_retry['oid'])
+            planned, active_retry = retry_plan(planned, obs.state, goal, layout, pending_retry, verifier.verify)
         planned_obs = obs
         audit = (verifier.verify(obs.state, goal, planned, layout)
                  if config != 'B0-script' and planned['ok'] else None)
         viable = planned['ok'] and (audit is None or audit['ok'])
         log('plan', plan_no=len(logs['plan'])+1, is_replan=trigger is not None, trigger=trigger,
-            allow_handover=allow_handover, plan=planned, verification=audit,
+            allow_handover=allow_handover, plan=planned, verification=audit, retry=active_retry,
             fail_code=None if viable else 'PLAN_VIOLATION')
         log('timing', stage='plan', plan_no=len(logs['plan']), elapsed_ms=planned['plan_ms'])
         missing = planned['missing'] if viable or missing is None else missing
@@ -280,7 +301,7 @@ def _run(seed, split, level, situation, config, instr, arm_mode, grasp_mode, R,
             while queue:
                 action, call = queue.popleft()
                 result, code, delta = step(action, call, [item[1] for item in queue])
-                if code is None or (result['ok'] and config != 'B4'):
+                if code is None or (result['ok'] and config not in ('B4', 'B4r')):
                     continue  # B1/B1c observe mismatches but do not replace the plan.
                 failure = code
                 raw = result['reason_code']
@@ -305,9 +326,22 @@ def _run(seed, split, level, situation, config, instr, arm_mode, grasp_mode, R,
                 internal_done = True
                 failure, stop = None, 'completed'
                 break
-        if config != 'B4':
+        if config not in ('B4', 'B4r'):
             break
-        if signature == last_fail and signature[1] is not None:
+        pending_retry = None
+        retryable = (config == 'B4r' and trigger['type'] == 'skill_failed' and
+                     trigger.get('reason_code') in RETRY_CODES and trigger['oid'] is not None)
+        if retryable:
+            oid = trigger['oid']
+            if retry_counts[oid] >= RETRY_LIMIT:
+                stop = 'human_required'
+                break
+            retry_counts[oid] += 1
+            pending_retry = dict(oid=oid, arm=call.arm, attempt=retry_counts[oid],
+                                 old_pose=planned_obs.poses.get(oid),
+                                 supports_approach=dispatcher.supports_approach(),
+                                 approach_yaw=approach_yaws.get((oid, call.arm)))
+        if not retryable and signature == last_fail and signature[1] is not None:
             stop = 'human_required'
             break
         last_fail = signature
@@ -335,6 +369,6 @@ def _run(seed, split, level, situation, config, instr, arm_mode, grasp_mode, R,
     log('timing', stage='episode', elapsed_ms=duration)
     return {**meta, 'goal': goal, 'judge': judged, 'events': dispatcher.events, 'fail_code': failure,
             'raw_reason_code': raw_failure, 'percept': percept,
-            'termination': stop, 'internal_done': internal_done, 'episode_ms': duration,
+            'retry_counts': dict(retry_counts), 'reported_missing': missing, 'termination': stop, 'internal_done': internal_done, 'episode_ms': duration,
             'replans': sum(r['is_replan'] for r in logs['plan']), 'num_skills': skill_no,
             'perturbation': injected, 'logs': logs}
