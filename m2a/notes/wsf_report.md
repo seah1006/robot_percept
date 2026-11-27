@@ -104,20 +104,23 @@ act: 전체 데이터 체크포인트 완료치 없음.
 
 P03은 10 Hz 절대 목표 서보로 다시 수집한다. 원래 IK 계획에서 목표열을 복원해 우선 그대로 재생하고, 실패 시 사전 고정한 그립 정착 시간 및 z 오프셋 변형(임의 지정)을 시도한다. 성공한 행동열과 그 실행 중 관측을 저장한 뒤, 새 reset에서 독립 개루프 재생한다. 나머지 부품은 복원한 목표를 사용한다. 혼합 데이터셋의 최종 재생 게이트에 모두 통과하기 전에는 학습하지 않는다. 이전 델타 파이프라인/보고 PID `8234`/`10515`와 확인된 직계 자식만 종료했고 네 원 수집기는 유지했다. 상단의 델타 스모크는 회귀 진단이며 본 실험의 모델 결과가 아니다.
 
+WSL 재시작 후 원본 시연 400개(P03 100/132, P04 100/112, P05 100/123, P06 100/107) 및 P03 절대 재수집본 44개를 확인했다. P03 재수집 시연의 초기 개루프 게이트는 10/10(`absolute/native_P03.summary.json`). 기존 시연은 보존하고 남은 수집을 `ecef5f9` 고정 워크트리에서 재개했으며, 신규 시연 메타에 전체 커밋 해시를 기록한다. 재개 원자료는 `absolute/driver_resume.log`, `absolute/recollect_P03.log`, 재현 드라이버는 `absolute/resume_pipeline.sh`.
+
 <!-- F3 ABS STATUS START -->
 ### 실측 (원자료 `~/m2a_data/f3/absolute/`)
 
 - `native_P03` 개루프 검증: P03 10/10 (통과).
+- `final_gate` 개루프 검증: P06 10/10 (통과), P03 10/10 (통과), P05 9/10 (통과), P04 10/10 (통과).
 - CPU 회귀 테스트 `153 passed, 1 skipped` (`tests.log`).
 
 | 부품 | 저장 / 시도 | 성공 필터율 | 저장 시연의 방해물 0/1/2 |
 |---|---:|---:|---|
-| P03 | 41 / 42 | 97.6% | 21/10/10 |
+| P03 | 100 / 104 | 96.2% | 48/29/23 |
 | P04 | 100 / 112 | 89.3% | 44/33/23 |
 | P05 | 100 / 123 | 81.3% | 42/43/15 |
 | P06 | 100 / 107 | 93.5% | 39/40/21 |
 
-전체 LeRobot 변환 아직 미완료.
+LeRobot v3.0: 400 에피소드, 31903 프레임, 10 Hz. `lerobot/meta/tasks.parquet`.
 
 smolvla: 전체 데이터 체크포인트 완료치 없음.
 
@@ -125,3 +128,20 @@ act: 전체 데이터 체크포인트 완료치 없음.
 
 전체 데이터 dev 평가(쌍체 성공, 실패 및 언어 분석·추론 지연) 아직 미실측.
 <!-- F3 ABS STATUS END -->
+
+### F4 메모리 격리 재개 (3라운드 절대 EE 데이터)
+
+- `m2a/data/frame_cache.py`: 에피소드 경계와 원본 Parquet 행·영상 프레임 정합을 검증하며 손목/마스크를 uint8 `.npy`에 스트리밍 저장한다. 행 그룹은 16프레임(임의 지정) 배치로 읽는다. state/action/index도 저장하고 학습은 읽기 전용 mmap에서 현재 미니배치만 복사한다. 캐시는 프레임 수·dtype·shape와 파일당 최대 33개(임의 지정) 균등 샘플의 SHA-256을 확인한다. 새 캐시는 검증 전 노출하지 않는다.
+- 절대 EE·오른팔·P-gate, GT 투영 마스크, fp32, AMD Radeon RX 7600, ROCm HIP 7.16.26385. 전체 학습 설정: SmolVLA batch 1 / chunk 50 / 1200 step, 비전 인코더 동결 및 expert만 학습; ACT batch 4 / chunk 20 / 3500 step. `m2a-f4-train.service`, `MemoryMax=6G`, ROCm GPU 이중 락, 시스템 available 3 GiB 미만 대기. 프로세스 RSS 4 GiB는 목표(임의 지정)이며 cgroup 상한과 다른 지표다.
+- 4에피소드 / 324프레임 캐시: 최대 RSS 230,404 KiB, wall 2.24초. 원자료 `~/m2a_data/logs/f4_pilot_cache.{log,time}`.
+- 4에피소드 스모크(각 8 step, 임의 지정; 이 손실은 전체 훈련이나 검증 손실이 아님):
+
+| 정책 | 첫 → 마지막 loss | step 중앙값(계산) | wall | VRAM peak allocated / reserved (B) | max RSS (KiB) | 원자료 (`~/m2a_data/logs/`, `.log` / `.time`) |
+|---|---:|---:|---:|---:|---:|---|
+| SmolVLA | 0.18838 → 0.54302 | 0.34966 s | 47.54 s | 3,530,640,896 / 3,693,084,672 | 4,456,360 | `f4_pilot_smolvla_20261128T005603_0` |
+| ACT | 109.34498 → 24.87158 | 0.14583 s | 20.78 s | 1,066,383,360 / 1,151,336,448 | 2,537,208 | `f4_pilot_act_20261128T005650_0` |
+
+- SmolVLA 스모크는 6 GiB 유닛에서 완료했으나 4 GiB RSS 목표를 약 0.25 GiB 초과했다. base 저장 단계에서 라이브러리의 CPU 텐서 사본이 점유할 수 있으나 기여량은 미계측이다. WSL 유휴 종료 및 일시적 서비스 오류 후 복구해 재개했다. 드라이버 `~/m2a_data/f3/absolute/resume_pipeline4.sh`, 통합 로그 `~/m2a_data/logs/f4_pipeline.log`, 유지 클라이언트 로그 `~/m2a_data/logs/f4_wsl_client.log`.
+- CPU 회귀: `pytest tests/m2a -q` 154 passed, 2 skipped (`robot_percept`, `~/m2a_data/logs/f4_tests.log`). 캐시 왕복·손상 감지·스트리밍 검사 2 passed (`m2a_lerobot`, `~/m2a_data/logs/f4_tests_cache.log`); 후자는 PyArrow가 없는 `robot_percept`에서 스킵된다.
+- 전체 캐시·훈련 및 dev 평가 진행 상태는 아래에 기록한다. IK/ACT/SmolVLA 쌍체 Wilson 95%, 차이의 쌍체 부트스트랩 95%, 언어↔마스크 충돌 첫 파지 표와 추론 지연은 전체 dev 원자료가 생성되기 전에는 미실측이다. 예정 경로: `~/m2a_data/f3/absolute/f4_dev/dev.summary.json`.
+- SmolVLA 체크포인트 재개 스모크: `resume_step=8`, 새 최적화 step 없이 재개·재저장 완료. 최대 RSS 5,659,888 KiB (약 5.40 GiB), wall 39.45초. 원자료 `~/m2a_data/logs/f4_pilot_smolvla_20261128T005812_0.{log,time}`. 최초 기동과 재개 RSS를 별도로 비교해야 한다.
