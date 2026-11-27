@@ -30,7 +30,12 @@ class SkillRunner:
         self._data = None
         self.events = {}
 
-    def run(self, skill, arm, oid=None, target=None, *, obj_pose_T=None):
+    def run(self, skill, arm, oid=None, target=None, *, obj_pose_T=None, approach=None):
+        """An optional absolute table-frame yaw (rad) constrains picking, not object pose.
+
+        A predicted grasp replans from its latest pose; pass the yaw to that call too.
+        An observed/GT grasp without it consumes the matching cached pregrasp as before.
+        """
         if skill not in SKILLS or arm not in ARMS:
             raise ValueError((skill, arm))
         if self._data is not self.env.data:
@@ -40,6 +45,8 @@ class SkillRunner:
             self.env.set_gate_mode(self.mode)
         predicted = obj_pose_T is not None
         picking = skill in ('reach_pregrasp', 'grasp_lift')
+        if approach is not None and (not picking or not math.isfinite(approach)):
+            raise ValueError('approach must be a finite yaw in radians for picking')
         if predicted and not picking:
             raise ValueError('obj_pose_T is only used for picking')
         if predicted and self.mode == 'P-oracle':
@@ -49,8 +56,10 @@ class SkillRunner:
         if not predicted and oid not in self.env.object_parts and (picking or oid is not None):
             raise KeyError(oid)
         t0 = time.perf_counter()
-        reason = (getattr(self, '_' + skill)(arm, oid, target, obj_pose_T=obj_pose_T) if predicted else
-                  getattr(self, '_' + skill)(arm, oid, target))
+        kwargs = {} if not predicted else {'obj_pose_T': obj_pose_T}
+        if approach is not None:
+            kwargs['approach'] = float(approach)
+        reason = getattr(self, '_' + skill)(arm, oid, target, **kwargs)
         result = dict(ok=reason is None, reason_code=reason, internal_done=reason is None,
                       t_ms=int((time.perf_counter() - t0) * 1000))
         if predicted:
@@ -93,7 +102,7 @@ class SkillRunner:
         self.env.release(arm)
         self.env.data.ctrl[self.env.hand_act[arm]] = np.asarray(profile['open']) * (1 if arm == 'left' else -1)
 
-    def _reach_pregrasp(self, arm, oid, target, *, obj_pose_T=None):
+    def _reach_pregrasp(self, arm, oid, target, *, obj_pose_T=None, approach=None):
         e = self.env
         if arm in self.held:
             if self.is_attached(arm, self.held[arm][0]):
@@ -129,6 +138,8 @@ class SkillRunner:
             headings += [base + turn for turn in (math.pi/2, -math.pi/2, math.pi/4, -math.pi/4, 3*math.pi/4, -3*math.pi/4)]
         if source_tray:
             headings = [0., math.pi] + headings  # Along the long axis of the current trays.
+        if approach is not None:
+            headings = [approach]
         headings = list({round(yaw % (2*math.pi), 5): yaw for yaw in headings}.values())
         nominal = xyz + [0, 0, .003 + profile.get('grasp_dz', 0.)]
         self.events.update(profile=profile['name'], stage='pregrasp', source_tray=source_tray)
@@ -230,11 +241,14 @@ class SkillRunner:
                     return False
         return True
 
-    def _grasp_lift(self, arm, oid, target, *, obj_pose_T=None):
+    def _grasp_lift(self, arm, oid, target, *, obj_pose_T=None, approach=None):
         e = self.env
         predicted = obj_pose_T is not None
-        if predicted or arm not in self.pre or self.pre[arm][0] != oid:
-            result = self._reach_pregrasp(arm, oid, target, obj_pose_T=obj_pose_T)
+        cached = self.pre.get(arm)
+        same_heading = (cached is not None and (approach is None or abs(math.remainder(
+            approach - math.atan2(cached[3][1, 0], cached[3][0, 0]), 2*math.pi)) < 1e-6))
+        if predicted or not same_heading or cached[0] != oid:
+            result = self._reach_pregrasp(arm, oid, target, obj_pose_T=obj_pose_T, approach=approach)
             if result:
                 return result
         _, above, at, R, down, lift, profile = self.pre.pop(arm)
