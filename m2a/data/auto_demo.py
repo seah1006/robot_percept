@@ -139,16 +139,17 @@ def expert(env, arm, oid, rng, record=False):
     return finish('LIFT_SHORT')
 
 
-def run_attempt(seed, split='train', record=False, case=None):
+def run_attempt(seed, split='train', record=False, case=None, grasp_mode='P-gate'):
     from m2a.sim.g1_manip_env import G1ManipEnv
     spec,oid,arm,digest = case if case is not None else l0_case(seed,split)
     env = G1ManipEnv()
+    env.set_gate_mode(grasp_mode)
     try:
         rng = prepare(env,spec,arm)
         env.set_grasp_target(arm,oid)
         start = perf_counter()
         rows,result = expert(env,arm,oid,rng,record)
-        return rows,dict(result,seed=seed,arm=arm,oid=oid,scene_digest=digest,
+        return rows,dict(result,seed=seed,arm=arm,oid=oid,scene_digest=digest,grasp_mode=grasp_mode,action_encoding='ee_delta_table_v1',
                          part=env.object_parts[oid],task='pick up the '+env.parts[env.object_parts[oid]]['name_en'],
                          seconds=perf_counter()-start)
     finally:
@@ -162,6 +163,7 @@ def main():
     p.add_argument('--end',type=int,default=4999)
     p.add_argument('--stride',type=int,default=1)
     p.add_argument('--target',type=int,default=200)
+    p.add_argument('--grasp-mode',choices=('P-gate','P-gate-strict'),required=True)
     p.add_argument('--part',help='Select only L0 scenes whose generated target is this part')
     p.add_argument('--probe',action='store_true',help='Do not render or save; diagnose expert only')
     a = p.parse_args()
@@ -176,12 +178,12 @@ def main():
             case = l0_case(seed,'train')
             if a.part and next(o['part_id'] for o in case[0]['objects'] if o['oid']==case[1])!=a.part:
                 continue
-            _,r = run_attempt(seed,case=case)
+            _,r = run_attempt(seed,case=case,grasp_mode=a.grasp_mode)
             if r['ok'] and not a.probe:
-                rows,r = run_attempt(seed,record=True,case=case)
+                rows,r = run_attempt(seed,record=True,case=case,grasp_mode=a.grasp_mode)
                 if r['ok']:
                     write_npz(a.output/f'{seed:05}.npz',rows,seed=seed,part=r['part'],
-                              mode='P-gate',arm=r['arm'],task=r['task'])
+                              mode=a.grasp_mode,arm=r['arm'],task=r['task'],provenance={'action_encoding':'ee_delta_table_v1'})
             total += r['ok']
             print(json.dumps(r),file=log)
             print(json.dumps(r),flush=True)

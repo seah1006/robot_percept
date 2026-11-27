@@ -29,11 +29,12 @@ def _read(stream,n):
 
 class PolicyBridge:
     """Fixed-shape binary bridge between the sim environment and m2a_lerobot."""
-    def __init__(self, python, policy, device):
-        self.proc = subprocess.Popen([python,'-m','m2a.data.act_executor','worker',str(policy),'--device',device],
+    def __init__(self, python, policy, device, kind="act"):
+        self.proc = subprocess.Popen([python,'-m','m2a.data.act_executor','worker',str(policy),'--device',device,'--kind',kind],
                                      stdin=subprocess.PIPE,stdout=subprocess.PIPE,
                                      env={**os.environ,'PYTHONUNBUFFERED':'1'})
         self.chunk = None
+        self.kind = kind
 
     def __enter__(self):
         return self
@@ -50,6 +51,10 @@ class PolicyBridge:
 
     def __call__(self,obs):
         self.proc.stdin.write(obs[WRIST].tobytes()+obs[MASK].tobytes()+obs[STATE].astype('<f4').tobytes())
+        if self.kind == 'smolvla':
+            text = obs['task'].encode('utf-8')
+            if not 0 < len(text) <= 4096: raise ValueError('invalid task length')
+            self.proc.stdin.write(len(text).to_bytes(2,'little')+text)
         self.proc.stdin.flush()
         if self.chunk is None:
             self.chunk = int.from_bytes(_read(self.proc.stdout,4),'little')
@@ -58,7 +63,7 @@ class PolicyBridge:
         return np.frombuffer(_read(self.proc.stdout,28*self.chunk),dtype='<f4').reshape(self.chunk,7)
 
 
-def worker(policy_path,device):
+def worker(policy_path,device,kind="act"):
     import contextlib
     wire = sys.stdout.buffer
     with contextlib.redirect_stdout(sys.stderr):
@@ -66,9 +71,9 @@ def worker(policy_path,device):
         from m2a.learn.rocm_compat import torchvision_import
         with torchvision_import():
             from lerobot.configs.policies import PreTrainedConfig
-        from .train_act import act_api,tensors
+        from .train_act import act_api,smol_api,tensors
         torch.set_num_threads(2)
-        _,_,_,Policy,processors = act_api()
+        _,_,_,Policy,processors = smol_api() if kind == 'smolvla' else act_api()
         cfg = PreTrainedConfig.from_pretrained(policy_path)
         cfg.device = device
         model = Policy.from_pretrained(policy_path,config=cfg,strict=True).eval()
@@ -86,9 +91,12 @@ def worker(policy_path,device):
             mask = np.frombuffer(data,np.uint8,count=_MASK_SIZE,offset=_RGB_SIZE).reshape(256,256,1).copy()
             state = np.frombuffer(data,'<f4',offset=_RGB_SIZE+_MASK_SIZE).copy()
             ob=tensors(torch.from_numpy(rgb).permute(2,0,1)/255.,torch.from_numpy(mask),torch.from_numpy(state))
+            if kind == 'smolvla':
+                size = int.from_bytes(_read(entry,2),'little')
+                ob['task'] = _read(entry,size).decode('utf-8')
             with torch.inference_mode():
                 action = post(model.predict_action_chunk(pre(ob)))[0]
-            wire.write(action.numpy().astype('<f4').tobytes()); wire.flush()
+            wire.write(action.cpu().numpy().astype('<f4').tobytes()); wire.flush()
 
 
 def run_grasp_lift(env,arm,oid,policy,*,execute_steps=5,max_ticks=MAX_TICKS):
@@ -167,6 +175,7 @@ def evaluate(a):
                 if len(results['IK']) >= a.count:
                     break
                 rng=prepare(env,spec,arm)
+                env.set_gate_mode(a.grasp_mode)
                 env.set_grasp_target(arm,oid)
                 for mode in ('IK','ACT'):
                     if mode=='IK':
@@ -175,7 +184,7 @@ def evaluate(a):
                         prepare(env,spec,arm)
                         r=run_grasp_lift(env,arm,oid,policy,execute_steps=a.execute_steps)
                     row=dict(r,method=mode,seed=seed,arm=arm,oid=oid,scene_digest=digest,
-                             part=env.object_parts[oid])
+                             part=env.object_parts[oid], grasp_mode=a.grasp_mode, action_encoding='ee_delta_table_v1')
                     results[mode].append(row)
                     print(json.dumps(row),file=log)
     finally:
@@ -194,13 +203,15 @@ def main():
     for parser in (w,e):
         parser.add_argument('policy',type=Path)
         parser.add_argument('--device',choices=['cpu','cuda'],default='cpu')
+    w.add_argument('--kind',choices=['act','smolvla'],default='act')
     e.add_argument('output',type=Path)
+    e.add_argument('--grasp-mode',choices=('P-gate','P-gate-strict'),required=True)
     e.add_argument('--python',required=True)
     e.add_argument('--start',type=int,default=10000); e.add_argument('--end',type=int,default=10029)
     e.add_argument('--part'); e.add_argument('--count',type=int,default=30)
     e.add_argument('--execute-steps',type=int,default=5)
     a=p.parse_args()
-    worker(a.policy,a.device) if a.mode=='worker' else evaluate(a)
+    worker(a.policy,a.device,a.kind) if a.mode=='worker' else evaluate(a)
 
 
 if __name__=='__main__':

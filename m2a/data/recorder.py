@@ -13,12 +13,16 @@ DT = 1 / FPS
 REFLECT = np.array([1,-1,1])
 JOINT_MIRROR = np.array([1,-1,-1,1,-1,1,-1])
 PART_IDS = {f'P{i:02}':i for i in range(1,7)}
-MODE_IDS = {'P-phys':0, 'P-gate':1, 'P-oracle':2}
+MODE_IDS = {'P-phys':0, 'P-gate':1, 'P-oracle':2, 'P-gate-strict':3}
 
 
-def features():
+def features(action_encoding=None):
     f = gate_features()
     f[STATE]['names'][3:7] = ['qw','qx','qy','qz']
+    if action_encoding == 'ee_target_table_rotvec_v1':
+        from .ee_target import ACTION_NAMES
+        f['action']['names'] = ACTION_NAMES
+        f['grasp_mode'] = dict(dtype='string',shape=(1,),names=None)
     return f
 
 
@@ -58,7 +62,7 @@ def policy_observation(obs, arm):
             MASK:np.ascontiguousarray(obs[MASK][:, ::-1]), STATE:state}
 
 
-def write_npz(path, rows, *, seed, part, mode, arm, task):
+def write_npz(path, rows, *, seed, part, mode, arm, task, provenance=None):
     if not rows:
         raise ValueError('Empty episode')
     path = Path(path)
@@ -67,7 +71,7 @@ def write_npz(path, rows, *, seed, part, mode, arm, task):
         np.savez_compressed(f, **{k:np.stack([row[k] for row in rows]) for k in (WRIST,MASK,STATE,'action')},
                             metadata=json.dumps(dict(arm=arm,task=task,scene_seed=seed, skill_id=1,
                                                      target_part=PART_IDS[part], source=0, sigma_cm=0.,
-                                                     grasp_mode=MODE_IDS[mode])))
+                                                     grasp_mode=mode, **{k:v for k,v in (provenance or {}).items() if k != 'grasp_mode'})))
     path.with_suffix('.tmp').replace(path)
 
 
@@ -83,24 +87,34 @@ def convert(spool, root, limit=None):
     attempts = sorted(Path(spool).glob('*.npz'))[:limit]
     if not attempts:
         raise ValueError('No successful NPZ episodes')
+    with np.load(attempts[0],allow_pickle=False) as first:
+        encoding = json.loads(first['metadata'].item()).get('action_encoding')
+    schema = features(encoding)
     ds = ds_type.create(repo_id=REPO_ID,root=Path(root),fps=FPS,robot_type='unitree_g1_sim',
-                        features=features(),use_videos=True,vcodec='h264',encoder_threads=2)
+                        features=schema,use_videos=True,vcodec='h264',encoder_threads=2)
     episode_arms = []
     try:
         for path in attempts:
             with np.load(path,allow_pickle=False) as ep:
                 meta = json.loads(ep['metadata'].item())
+                if meta.get('action_encoding') != encoding: raise ValueError('mixed action semantics')
                 cols = {k:ep[k] for k in (WRIST,MASK,STATE,'action')}
                 for k, values in cols.items():
-                    f = features()[k]
+                    f = schema[k]
                     dtype = 'uint8' if f['dtype']=='video' else f['dtype']
                     if values.dtype != np.dtype(dtype) or values.shape != (len(cols[STATE]),*f['shape']):
                         raise ValueError(f'{path}: invalid {k}')
-                scalar = {k:np.array([meta[k]],dtype=d) for k,d in META.items()}
+                scalar = {k:np.array([meta[k]],dtype=d) for k,d in META.items() if k!='grasp_mode'}
+                mode = meta.get('grasp_mode_name',meta['grasp_mode'])
+                if 'string' == schema['grasp_mode']['dtype']:
+                    if mode not in MODE_IDS: raise ValueError(f'{path}: invalid grasp mode')
+                    scalar['grasp_mode'] = mode
+                else:
+                    scalar['grasp_mode'] = np.array([MODE_IDS[mode] if isinstance(mode,str) else mode],dtype='int64')
                 for values in zip(*cols.values(),strict=True):
                     ds.add_frame(dict(zip(cols,values,strict=True),**scalar,task=meta['task']))
                 ds.save_episode()
-                episode_arms.append(dict(arm=meta['arm'],seed=meta['scene_seed'],source_npz=path.name))
+                episode_arms.append(dict(arm=meta['arm'],seed=meta['scene_seed'],source_npz=path.name, **{k: meta[k] for k in ('commit','scene_digest','distractors','grasp_mode_name','grasp_mode','action_encoding','expert_variant','source_servo') if k in meta}))
     finally:
         ds.finalize()
     sidecar = json.dumps(episode_arms,sort_keys=True,indent=2)
