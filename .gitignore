@@ -29,3 +29,6 @@ bench/verify_s/r3raw/
 
 # r5 cell runtime DB
 cell_runtime.sqlite3*
+
+# m2a 실행 로그
+runs/
