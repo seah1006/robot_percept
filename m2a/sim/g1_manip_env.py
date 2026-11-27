@@ -66,8 +66,11 @@ def build_manip_xml(spec, layout, parts):
                       size='.003', rgba='0 0 0 0')
         ET.SubElement(hand, 'camera', name=f'wrist_{arm[0]}', pos=_vec((.066, .018*sign, 0)),
                       xyaxes=_vec((0, 0, sign, .74, .67 * sign, 0)), fovy='78')
-    ET.SubElement(bodies['torso_link'], 'camera', name='head', pos='.095 0 .37',
-                  xyaxes='0 -1 0 .72 0 .69', fovy='83')
+    # Round 4 (imposed, differs from the real G1 head camera): torso-fixed camera raised
+    # .37 -> .55 m and pitched 46 -> 75 deg down so every zone/tray corner (also 6 cm above
+    # the side zones) projects >= 26 px inside the 640x480 image; fovy unchanged.
+    ET.SubElement(bodies['torso_link'], 'camera', name='head', pos='.095 0 .55',
+                  xyaxes='0 -1 0 .9659 0 .2588', fovy='83')
     world.find("camera[@name='front']").attrib.update(pos='1.36 -1.05 1.46', xyaxes='.75 .66 0 -.29 .32 .90', fovy='48')
     T = np.asarray(layout['table']['T_world_table'], float)
     if T.shape != (4, 4) or not np.isclose(T[2, 3], layout['table']['top_z_world']):

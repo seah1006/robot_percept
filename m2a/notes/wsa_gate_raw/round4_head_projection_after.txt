@@ -1,0 +1,30 @@
+before cam world pos [0.091 0.    1.387] fovy 83.0
+  left_zone0             u=  184.7 v=  283.7 z=0.483 OK
+  left_zone1             u=   61.2 v=  283.7 z=0.483 OK
+  left_zone2             u=  194.8 v=  205.1 z=0.522 OK
+  left_zone3             u=   80.4 v=  205.1 z=0.522 OK
+  right_zone0            u=  577.8 v=  283.7 z=0.483 OK
+  right_zone1            u=  454.3 v=  283.7 z=0.483 OK
+  right_zone2            u=  558.6 v=  205.1 z=0.522 OK
+  right_zone3            u=  444.2 v=  205.1 z=0.522 OK
+  T10                    u=  267.8 v=  244.2 z=0.467 OK
+  T11                    u=  185.3 v=  244.2 z=0.467 OK
+  T12                    u=  274.1 v=  119.5 z=0.532 OK
+  T13                    u=  201.7 v=  119.5 z=0.532 OK
+  T20                    u=  360.8 v=  244.2 z=0.467 OK
+  T21                    u=  278.2 v=  244.2 z=0.467 OK
+  T22                    u=  355.7 v=  119.5 z=0.532 OK
+  T23                    u=  283.3 v=  119.5 z=0.532 OK
+  T30                    u=  453.7 v=  244.2 z=0.467 OK
+  T31                    u=  371.2 v=  244.2 z=0.467 OK
+  T32                    u=  437.3 v=  119.5 z=0.532 OK
+  T33                    u=  364.9 v=  119.5 z=0.532 OK
+  left_zone0_top6cm      u=  166.4 v=  279.8 z=0.425 OK
+  left_zone1_top6cm      u=   26.0 v=  279.8 z=0.425 OK
+  left_zone2_top6cm      u=  179.2 v=  191.7 z=0.464 OK
+  left_zone3_top6cm      u=   50.5 v=  191.7 z=0.464 OK
+  right_zone0_top6cm     u=  613.0 v=  279.8 z=0.425 OK
+  right_zone1_top6cm     u=  472.6 v=  279.8 z=0.425 OK
+  right_zone2_top6cm     u=  588.5 v=  191.7 z=0.464 OK
+  right_zone3_top6cm     u=  459.8 v=  191.7 z=0.464 OK
+before out-of-image (excluding table corners): 0

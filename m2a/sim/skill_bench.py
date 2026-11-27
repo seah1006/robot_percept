@@ -36,24 +36,30 @@ def _fixture(objects, seed):
                 render=dict(table_rgb=[.55, .45, .35], light_seed=7))
 
 
-def _sample(rng, part_id, part, rect, occupied, layout, in_tray):
+def _sample(rng, part_id, part, rect, occupied, layout, in_tray, edge=False):
     """Generator-like pose sampling (plates near the long axis, others free yaw)."""
     hx, hy = np.asarray(layout['table']['size_xy']) / 2
     trays = [tray_box(t) for t in layout['trays'].values()]
     size = size_xyz(part); x, X, y, Y = rect
     if in_tray:
-        x, X, y, Y = inset(rect, layout['judge']['tray_margin'])
+        # Kitted (edge) parts may sit flush with the wall; the tray holds 2 x P01 (.12 of .13 m).
+        x, X, y, Y = inset(rect, .001 if edge else layout['judge']['tray_margin'])
     for trial in range(400):
         plate = part_id in PLATES
         limit = (math.pi/12 if plate else math.pi) * (1 if trial < 200 else .25)
+        if edge and plate:
+            limit = math.pi/60  # an already-kitted plate lies straight along the wall (imposed)
         heading = math.pi/2 if plate and (Y-y) > (X-x) else 0.
         yaw = heading + float(rng.uniform(-limit, limit))
         vs = corners(obb((0., 0.), size, yaw))
         rx, ry = max(abs(a) for a, _ in vs), max(abs(b) for _, b in vs)
-        x0, x1, y0, y1 = x+rx+GAP/2, X-rx-GAP/2, y+ry+GAP/2, Y-ry-GAP/2
+        pad = 0. if edge and in_tray else GAP/2
+        x0, x1, y0, y1 = x+rx+pad, X-rx-pad, y+ry+pad, Y-ry-pad
         if x0 > x1 or y0 > y1:
             continue
         xy = (float(rng.uniform(x0, x1)), float(rng.uniform(y0, y1)))
+        if edge:  # previously kitted part: against a long (y) wall / zone end (imposed)
+            xy = (xy[0], y1 if rng.integers(2) else y0)
         box = obb(xy, size, yaw)
         if any(not (-hx <= cx <= hx and -hy <= cy <= hy) for cx, cy in corners(box)):
             continue
@@ -106,7 +112,7 @@ def make_trial(part_id, source, dest, clutter, rep, layout=None, parts=None):
             tray = name if name in layout['trays'] else None
             r = tray_rect(layout['trays'][name]) if tray else layout['regions'][name]
             pid = str(rng.choice(NEIGHBOURS))
-            g = _sample(rng, pid, parts[pid], r, occupied, layout, tray)
+            g = _sample(rng, pid, parts[pid], r, occupied, layout, tray, edge=(i == 1))
             if g is None:
                 continue
             fz = layout['trays'][tray]['floor_z'] if tray else 0.
@@ -135,8 +141,13 @@ def judge_place(env, oid, dest):
                 settled=gt['lin_speed'] < cfg['settle_speed'])
 
 
-def run_trial(trial, mode='P-gate'):
+def run_trial(trial, mode='P-gate', legacy=False):
+    """legacy=True reproduces the round-3 skills (fixed-wrist place, no approach waypoint,
+    no P05 profile) for baseline comparison."""
     from .skills import SkillRunner
+    if legacy:
+        from . import grasp_profiles
+        grasp_profiles.PROFILES['parts'].pop('P05', None)
     row = {k: v for k, v in trial.items() if k != 'spec'}
     row['spec'] = trial['spec']
     if trial['arm'] is None:
@@ -144,6 +155,7 @@ def run_trial(trial, mode='P-gate'):
     env = G1ManipEnv()
     try:
         env.reset(trial['spec']); sk = SkillRunner(env, mode); arm = trial['arm']
+        sk.legacy_place = legacy
         initial = env.get_gt_objects(); t0 = time.perf_counter(); skills = {}
         dest = trial['dest']
         steps = [('reach_pregrasp', 'reach_pregrasp', None), ('grasp_lift', 'grasp_lift', None),
@@ -215,6 +227,7 @@ def main():
     ap.add_argument('--sources', default=','.join(SOURCES))
     ap.add_argument('--dests', default=','.join(DESTS))
     ap.add_argument('--clutter', default='0,3')
+    ap.add_argument('--legacy', action='store_true', help='round-3 skills baseline')
     a = ap.parse_args()
     trials = all_trials(a.reps, a.parts.split(','), a.sources.split(','), a.dests.split(','),
                         [int(c) for c in a.clutter.split(',')])
@@ -222,7 +235,7 @@ def main():
     path = out/f'bench_{a.tag}.jsonl'
     rows = []
     with Pool(min(6, a.workers)) as pool, path.open('w', encoding='utf-8') as f:
-        for row in pool.imap_unordered(_worker, [(t, a.mode) for t in trials]):
+        for row in pool.imap_unordered(_worker, [(t, a.mode, a.legacy) for t in trials]):
             rows.append(row); f.write(json.dumps(row, ensure_ascii=False, default=float) + '\n'); f.flush()
     summary = summarize(rows)
     (out/f'bench_{a.tag}_summary.json').write_text(json.dumps(summary, ensure_ascii=False, indent=1), encoding='utf-8')
