@@ -10,6 +10,7 @@ class Observation:
     state: dict
     held: dict = field(default_factory=dict)  # arm -> oid
     poses: dict = field(default_factory=dict)  # predicted oid -> {xyz, yaw, size}
+    meta: dict = field(default_factory=dict)  # evaluation-only data (never read by planner/skills)
 
 
 class Perception(Protocol):
@@ -18,13 +19,18 @@ class Perception(Protocol):
     pose_only: bool  # True for predictive adapters; O0 keeps the §7 call
 
 
+def held_from_env(env, gt):
+    """Gripper-state sensing stand-in (GT 보조): arm -> GT oid that is welded or gripped in the palm."""
+    return {arm: oid for arm in ('left', 'right') for oid in gt
+            if env.data.eq_active[env.model.equality(f'm2a_weld_{arm}_{oid}').id]
+            or (env.closed[arm] and env.in_palm(arm, oid) and env.contact_fingers(arm, oid))}
+
+
 class OraclePerception:
     pose_only = False
     def observe(self, env, layout, parts):
         gt = env.get_gt_objects()
-        held = {arm: oid for arm in ('left', 'right') for oid in gt
-                if env.data.eq_active[env.model.equality(f'm2a_weld_{arm}_{oid}').id]
-                or (env.closed[arm] and env.in_palm(arm, oid) and env.contact_fingers(arm, oid))}
+        held = held_from_env(env, gt)
         return Observation(symbolic_from_gt(gt, layout, parts), held)
 
     def refine_target(self, call, observation):

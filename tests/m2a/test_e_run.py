@@ -204,7 +204,9 @@ def test_o3_predicted_oid_never_sent_to_skill():
     env = PoseEnv()
     ep = run_episode(10000, 'dev', 'L0', 'standard', 'B1c', env=env,
                      perception=Predict(), runner_factory=PoseRunner)
-    assert env.keyframes == 2
+    # initial + one pre-pick re-read (B1c) + one keyframe read per post-skill observation (round 3)
+    posed = [r for r in ep['logs']['scene_graph'] if r['posed']]
+    assert env.keyframes == len(posed) >= 2 and posed[0]['stage'] == 'initial'
     assert ep['judge']['success'] and ep['judge']['strict_success']
     assert ep['events'][0]['oid'] in env.gt
     grasp = ep['logs']['episodes'][1]

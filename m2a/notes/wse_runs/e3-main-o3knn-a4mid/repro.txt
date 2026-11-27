@@ -1,0 +1,2 @@
+commit=182469dd81f21225273a56e9f964e8ecd1ed7526 dirty_files=8 skill_label=A4 중간판
+cmd=nice -n 10 python -m m2a.run.batch --workers 4 --skill-label A4 중간판 --start 10000 --end 10059 --configs B1 B1c B4 --perception O3-knn --run-id e3-main-o3knn-a4mid
