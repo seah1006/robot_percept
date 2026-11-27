@@ -128,7 +128,8 @@ def run_batch(env, part_id, mode, start, end, job='gate'):
             ok = result['ok'] and final['xyz'][2] >= .07 and attached
             reason = None if ok else result['reason_code'] or 'GRASP_SLIP'
             row.update(attached=attached)
-        yield dict(**row, final=final, ok=ok, reason=reason, sim_time=float(env.data.time))
+        yield dict(**row, final=final, ok=ok, reason=reason, sim_time=float(env.data.time),
+                   slip_events=env.slip_events.copy())
 
 
 def capture(env, directory):
@@ -166,7 +167,7 @@ def main():
             end = args.end if args.end is not None else limit
             if not args.part or not args.mode or not 0 <= args.start < end <= limit:
                 p.error(f'{args.job} requires --part and --mode and 0 <= start < end <= {limit}')
-            name = f'{args.job}_profiles_v1_{args.part}_{args.mode}_{args.start:02d}-{end:02d}'
+            name = f'{args.job}_round2_{args.part}_{args.mode}_{args.start:02d}-{end:02d}'
             rows = run_batch(env, args.part, args.mode, args.start, end, args.job)
         with (out/f'{name}.jsonl').open('w', encoding='utf-8') as f:
             for row in rows:

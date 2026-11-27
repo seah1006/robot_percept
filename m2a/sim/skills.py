@@ -1,29 +1,13 @@
 """Scripted Dex3 skills; GT-assisted pose targets (not policy observations)."""
 from __future__ import annotations
-import json
 import math
-from pathlib import Path
 import time
 import numpy as np
 from .g1_manip_env import ARMS, TRAY_FLOOR, half_height
+from .grasp_profiles import PROFILES, grasp_profile, hand_command
 
 MODES = ('P-phys', 'P-gate', 'P-oracle')
 SKILLS = ('reach_pregrasp', 'grasp_lift', 'transport_place', 'put_aside')
-PROFILES = json.loads(Path(__file__).with_name('grasp_profiles.json').read_text(encoding='utf-8'))
-
-
-def grasp_profile(part_id):
-    return PROFILES['parts'].get(part_id, PROFILES['default'])
-
-
-def hand_command(profile, progress, sign):
-    # Nominal Dex3 targets in HAND order: thumb, index, middle.
-    cmd = progress * np.array(profile['close'], dtype=float)
-    if profile['close_from_open']:
-        delay = profile['thumb_delay']
-        thumb = np.clip((progress-delay)/(1-delay), 0, 1)
-        cmd[:3] = (1-thumb)*np.array(profile['open'][:3]) + thumb*np.array(profile['close'][:3])
-    return sign * cmd
 
 
 class SkillRunner:
@@ -87,7 +71,9 @@ class SkillRunner:
     def _reach_pregrasp(self, arm, oid, target):
         e = self.env
         if arm in self.held:
-            return 'COLLISION'
+            if self.is_attached(arm, self.held[arm][0]):
+                return 'COLLISION'
+            self.held.pop(arm)
         profile = grasp_profile(e.object_parts[oid])
         self._open(arm, profile)
         gt = e.get_gt_objects()[oid]
@@ -143,6 +129,7 @@ class SkillRunner:
         profile = grasp_profile(e.object_parts[oid])
         h = e.hand_act[arm]; steps = math.ceil(.4/e.model.opt.timestep)
         attached = False; peak = []; selected = None
+        slips = e.grasp_slips[arm]
         for i in range(1, steps+1, 4):
             end = min(i+3, steps); f = min(1., end / (steps*.7))
             e.data.ctrl[h] = hand_command(profile, f, sign)
@@ -159,8 +146,13 @@ class SkillRunner:
                            palm_relative=e.palm_relative(arm, oid).tolist())
         if self.mode != 'P-phys' and not attached:
             return 'GRASP_SLIP'
+        if e.grasp_slips[arm] != slips:
+            return 'GRASP_SLIP'
         for q in lift:
             result = self._move(arm, q, .24)
+            if e.grasp_slips[arm] != slips:
+                self.events['stage'] = 'lift'
+                return 'GRASP_SLIP'
             if result:
                 self.events['stage'] = 'lift'
                 return result
@@ -173,8 +165,9 @@ class SkillRunner:
     def is_attached(self, arm, oid):
         e = self.env
         eq = e.model.equality(f'm2a_weld_{arm}_{oid}').id
-        return bool(e.data.eq_active[eq] and e.in_palm(arm, oid) or
-                    (e.closed[arm] and e.in_palm(arm, oid) and bool(e.contact_fingers(arm, oid))))
+        if self.mode != 'P-phys':
+            return bool(e.data.eq_active[eq] and e.in_palm(arm, oid))
+        return e.closed[arm] and e.in_palm(arm, oid) and bool(e.contact_fingers(arm, oid))
 
     def _transport_place(self, arm, oid, target):
         return self._place(arm, oid, target, tray=True)
@@ -184,7 +177,10 @@ class SkillRunner:
 
     def _place(self, arm, oid, target, tray):
         e = self.env
-        if arm not in self.held or self.held[arm][0] != oid or not self.is_attached(arm, oid):
+        if arm not in self.held or self.held[arm][0] != oid:
+            return 'GRASP_SLIP'
+        if not self.is_attached(arm, oid):
+            self.held.pop(arm)
             return 'GRASP_SLIP'
         _, R = self.held[arm]
         wall = floor = 0.
@@ -204,11 +200,11 @@ class SkillRunner:
             return 'IK_FAIL'
         for waypoint, sec in [(q, .95), *((p, .18) for p in down)]:
             reason = self._move(arm, waypoint, sec)
-            if reason:
-                return reason
             if not self.is_attached(arm, oid):
                 self.held.pop(arm, None)
                 return 'GRASP_SLIP'
+            if reason:
+                return reason
         self._open(arm, grasp_profile(e.object_parts[oid]))
         self.held.pop(arm)
         e.step(math.ceil(.25/e.model.opt.timestep))
