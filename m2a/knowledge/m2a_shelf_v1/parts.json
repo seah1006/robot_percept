@@ -1,0 +1,15 @@
+{
+ "schema": "m2a.parts.v1",
+ "product": "m2a_shelf_v1",
+ "note": "IKEA 3D 모델 대신 원시형 축척 모형(임의 지정 치수). 판재 두께 공통 0.025m, 유사쌍 P01/P02.",
+ "parts": {
+  "P01": {"name_ko": "긴 판재",   "name_en": "long board",   "shape": "box",      "size": [0.20, 0.06, 0.025], "mass": 0.12, "rgb": [0.80, 0.62, 0.40], "bom": true},
+  "P02": {"name_ko": "중간 판재", "name_en": "medium board", "shape": "box",      "size": [0.16, 0.06, 0.025], "mass": 0.10, "rgb": [0.78, 0.60, 0.38], "bom": true},
+  "P03": {"name_ko": "짧은 판재", "name_en": "short board",  "shape": "box",      "size": [0.10, 0.06, 0.025], "mass": 0.07, "rgb": [0.74, 0.56, 0.36], "bom": true},
+  "P04": {"name_ko": "다월",      "name_en": "dowel",        "shape": "cylinder", "size": [0.012, 0.06],       "mass": 0.02, "rgb": [0.90, 0.80, 0.60], "bom": true},
+  "P05": {"name_ko": "캠락",      "name_en": "cam lock",     "shape": "cylinder", "size": [0.02, 0.02],        "mass": 0.03, "rgb": [0.70, 0.70, 0.72], "bom": true},
+  "P06": {"name_ko": "브래킷",    "name_en": "bracket",      "shape": "box",      "size": [0.06, 0.04, 0.03],  "mass": 0.05, "rgb": [0.55, 0.55, 0.58], "bom": true},
+  "D01": {"name_ko": "방해 블록", "name_en": "distractor block", "shape": "box",  "size": [0.05, 0.05, 0.05],  "mass": 0.06, "rgb": [0.30, 0.45, 0.75], "bom": false}
+ },
+ "shape_note": "box size = [x 길이, y 폭, z 두께] 전체 길이; cylinder size = [반지름, 전체 높이], 세워 놓음(축 +z)"
+}

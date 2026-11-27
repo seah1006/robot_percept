@@ -1,0 +1,21 @@
+{
+ "schema": "m2a.layout.v1",
+ "note": "테이블 좌표계 T, 단위 m. 값은 모두 임의 지정 초기값이며 A가 G1 IK 실측으로 조정한다.",
+ "table": {"size_xy": [0.50, 1.00], "top_z_world": null, "T_world_table": null},
+ "regions": {
+  "left_zone":   [-0.20, 0.20,  0.26,  0.48],
+  "right_zone":  [-0.20, 0.20, -0.48, -0.26],
+  "center_zone": [-0.22, -0.04, -0.24, 0.24]
+ },
+ "regions_note": "[xmin, xmax, ymin, ymax]; center_zone은 치우기·테이블 경유 재파지용 공용 빈 영역",
+ "trays": {
+  "T1": {"center": [0.10,  0.16], "inner": [0.24, 0.13], "wall_h": 0.03},
+  "T2": {"center": [0.10,  0.00], "inner": [0.24, 0.13], "wall_h": 0.03},
+  "T3": {"center": [0.10, -0.16], "inner": [0.24, 0.13], "wall_h": 0.03}
+ },
+ "reach": {
+  "left":  ["left_zone", "center_zone", "T1", "T2", "T3"],
+  "right": ["right_zone", "center_zone", "T1", "T2", "T3"]
+ },
+ "judge": {"tray_margin": 0.01, "tray_z_max_above_floor": 0.08, "settle_speed": 0.02}
+}

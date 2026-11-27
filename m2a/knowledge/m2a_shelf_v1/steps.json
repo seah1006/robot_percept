@@ -1,0 +1,10 @@
+{
+ "schema": "m2a.steps.v1",
+ "product": "m2a_shelf_v1",
+ "steps": [
+  {"step": 1, "tray": "T1", "parts": {"P01": 2, "P04": 2}, "requires": []},
+  {"step": 2, "tray": "T2", "parts": {"P02": 2, "P05": 2}, "requires": [1]},
+  {"step": 3, "tray": "T3", "parts": {"P03": 1, "P06": 1}, "requires": [2]}
+ ],
+ "note": "설명서 단계 = 단계 트레이(임의 지정). requires는 엄격 성공 순서."
+}
