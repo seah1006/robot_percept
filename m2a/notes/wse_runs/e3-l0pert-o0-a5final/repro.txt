@@ -1,0 +1,2 @@
+commit=c1163a76252ba0cbf4bf677075cc76143c9a236b dirty_files=1 skill_label=A5 최종판
+cmd=nice -n 10 python -m m2a.run.batch --workers 4 --skill-label A5 최종판 --start 10000 --end 10019 --level L0 --situations standard --configs B1 B4 --perception O0 --perturb alternate --run-id e3-l0pert-o0-a5final
