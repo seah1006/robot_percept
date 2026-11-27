@@ -1,6 +1,6 @@
 """Prediction-only O3 adapter (V1 segmentation -> V2 identity -> V3 pose -> V4 symbolic state).
 
-Input: live env (render/camera_K/T_table_cam) or a mapping {rgb, depth, K, T_table_cam}.
+Input: live env (render/camera_K/T_table_cam) or a mapping {rgb, depth, K, T_table_cam[, robot_mask]}.
 Never reads GT. Live EGL inputs use CPU depth by default; the optional models run in the ROCm worker.
 """
 from collections.abc import Mapping
@@ -11,6 +11,7 @@ import numpy as np
 from m2a.common import load_layout, load_parts
 from m2a.scene.symbolic import symbolic_from_gt
 from .geometry import backproject, edge_angle, fit_pose, norm_yaw
+from .robot_mask import live_robot_mask
 from .v1 import (box_iou, box_of, depth_proposals, dilate4, plateau_proposals,
                  rescue_proposals, support_surface)
 
@@ -60,7 +61,8 @@ def describe(top, cut, cloud, ztop=None):
                 cut_fraction=float(cut.sum()/max(top.sum(), 1)))
 
 
-def classify(obs, height, rgb, parts, embeddings=None, gallery=None, prior=None):
+def classify(obs, height, rgb, parts, embeddings=None, gallery=None, prior=None, *,
+             dim_weight=1., knn_weight=W_KNN):
     """Return ranked [(loss, pid, long_axis)]. Cut axes only penalise spans longer than the part."""
     span, cut_axis = obs['span'], obs['cut_ends'].any(1)
     ranked = []
@@ -76,7 +78,7 @@ def classify(obs, height, rgb, parts, embeddings=None, gallery=None, prior=None)
                 e += (max(0., over)/tol[a])**2 if cut_axis[a] else (over/tol[a])**2
             if best is None or e < best[0]:
                 best = (e, long_axis)
-        loss = best[0] + W_COLOR*np.sum((chroma(rgb)-chroma(np.asarray(part['rgb'])))**2)
+        loss = dim_weight*best[0] + W_COLOR*np.sum((chroma(rgb)-chroma(np.asarray(part['rgb'])))**2)
         thick = part['size'][-1]
         residual = min(abs(height-thick-base)/.007 + (.65 if base else 0) for base in (0, .025, .030, .050))
         loss += min(residual**2, 20)
@@ -85,7 +87,7 @@ def classify(obs, height, rgb, parts, embeddings=None, gallery=None, prior=None)
             if len(vectors):
                 sim = vectors @ embeddings
                 k = min(3, len(sim))
-                loss += W_KNN*(1-float(np.partition(sim, -k)[-k:].mean()))
+                loss += knn_weight*(1-float(np.partition(sim, -k)[-k:].mean()))
         if prior is not None and cut_axis.any():  # truncated spans cannot separate boards
             loss += -W_PRIOR*np.log(prior.get(pid, 1e-3))
         ranked.append((float(loss), pid, best[1]))
@@ -107,14 +109,27 @@ def place(obs, part, long_axis):
     return xy, yaw
 
 
+def identification_confidence(ranked, cut, top_pixels):
+    """Heuristic confidence, not a calibrated probability or evidence of absence."""
+    delta = np.asarray([entry[0] - ranked[0][0] for entry in ranked])
+    weight = np.exp(-.5*delta)
+    margin = float(delta[1]) if len(delta) > 1 else None
+    # 임의 지정: <80 top pixels or top-two loss gap <2 triggers re-observation.
+    reasons = [s for s, flag in (('cut', cut), ('small_top', top_pixels < 80),
+                                ('small_margin', margin is not None and margin < 2.)) if flag]
+    scale = (.6 if cut else 1.) * min(1., top_pixels/80.)
+    return weight/weight.sum()*scale, margin, reasons
+
+
 class O3:
     def __init__(self, layout=None, parts=None, detector=None, embedder=None, gallery=None, require_box=False,
-                 seg='plateau', rescue=False):
+                 seg='plateau', rescue=False, dim_weight=1., knn_weight=W_KNN, mask_robot=True):
         self.layout = load_layout() if layout is None else layout
         self.parts = (load_parts() if parts is None else parts)
         self.parts = self.parts.get('parts', self.parts)
         self.detector, self.embedder, self.gallery = detector, embedder, gallery
         self.require_box, self.seg, self.rescue = require_box, seg, rescue
+        self.dim_weight, self.knn_weight, self.mask_robot = dim_weight, knn_weight, mask_robot
         if gallery is not None:
             ids, counts = np.unique(gallery[0], return_counts=True)
             self.prior = dict(zip(ids.tolist(), (counts/counts.sum()).tolist()))
@@ -123,14 +138,14 @@ class O3:
         if require_box and detector is None:
             raise ValueError('require_box needs a detector')
 
-    def _proposals(self, depth, cloud):
+    def _proposals(self, depth, cloud, robot_mask=None):
         if self.seg != 'legacy':
-            return plateau_proposals(depth, cloud, self.layout)
+            return plateau_proposals(depth, cloud, self.layout, exclude=robot_mask)
         out = []
         z = cloud[..., 2]
         edge = np.zeros(depth.shape, bool)
         edge[0] = edge[-1] = True; edge[:, 0] = edge[:, -1] = True
-        for mask, _ in depth_proposals(depth, cloud, self.layout):
+        for mask, _ in depth_proposals(depth, cloud, self.layout, exclude=robot_mask):
             zhi = float(np.quantile(z[mask], .95))
             top = mask & (abs(z-zhi) <= .003)
             top = top if top.sum() >= 8 else mask
@@ -145,13 +160,21 @@ class O3:
             env = env_or_frame
             rgb, depth = env.render('head')
             frame = dict(rgb=rgb, depth=depth, K=env.camera_K('head'), T_table_cam=env.T_table_cam('head'))
+            if self.mask_robot:
+                frame['robot_mask'] = live_robot_mask(env, 'head')
         rendered = perf_counter()
         rgb, depth = np.asarray(frame['rgb']), np.asarray(frame['depth'])
+        robot_mask = frame.get('robot_mask') if self.mask_robot else None
+        if robot_mask is not None:
+            robot_mask = np.asarray(robot_mask, dtype=bool)
+            if robot_mask.shape != depth.shape:
+                raise ValueError('robot_mask must match depth shape')
         cloud = backproject(depth, np.asarray(frame['K']), np.asarray(frame['T_table_cam']))
         boxes = self.detector(rgb, PROMPTS) if self.detector else []
-        pieces = [p for p in self._proposals(depth, cloud) if p['top'].sum() >= 8]
+        raw = self._proposals(depth, cloud) if robot_mask is None else self._proposals(depth, cloud, robot_mask)
+        pieces = [p for p in raw if p['top'].sum() >= 8]
         if self.rescue and boxes:
-            pieces += rescue_proposals(depth, cloud, self.layout, [p['mask'] for p in pieces], boxes)
+            pieces += rescue_proposals(depth, cloud, self.layout, [p['mask'] for p in pieces], boxes, exclude=robot_mask)
         for p in pieces:
             p['box'] = box_of(p['mask'])
         candidates = sorted(((box_iou(p['box'], b), score, i, j)
@@ -175,11 +198,12 @@ class O3:
             center = obs['rot'] @ ((obs['lo']+obs['hi'])/2)
             height = obs['ztop'] - float(support_surface(*center, self.layout))
             color = np.median(rgb[p['top']].astype(float), axis=0)
-            ranked = classify(obs, height, color, self.parts, embedding, self.gallery, self.prior)
-            weight = np.exp(-.5*(np.asarray([r[0] for r in ranked])-ranked[0][0]))
+            ranked = classify(obs, height, color, self.parts, embedding, self.gallery, self.prior,
+                              dim_weight=self.dim_weight, knn_weight=self.knn_weight)
             cut = bool(obs['cut_ends'].any())
-            scale = .6 if cut else 1.
-            top3 = [dict(part_id=pid, confidence=float(w/weight.sum()*scale))
+            top_pixels = int(p['top'].sum())
+            weight, margin, reasons = identification_confidence(ranked, cut, top_pixels)
+            top3 = [dict(part_id=pid, confidence=float(w))
                     for w, (_, pid, _) in zip(weight, ranked)][:3]
             pid, long_axis = ranked[0][1], ranked[0][2]
             part = self.parts[pid]
@@ -192,7 +216,9 @@ class O3:
             observations[oid] = dict(**planner_objects[oid], box_xyxy=det_box, mask_box_xyxy=p['box'],
                                      detection_score=det_score, source=source, top3=top3, dimensions=dims,
                                      dimensions_xyz_catalog_z=[*obs['span'].tolist(), thickness],
-                                     cut=cut, cut_fraction=obs['cut_fraction'],
+                                     cut=cut, cut_fraction=obs['cut_fraction'], top_pixels=top_pixels,
+                                     conf=float(weight[0]), uncertain=bool(reasons),
+                                     uncertainty_reasons=reasons, id_margin=margin,
                                      # 임의 지정: a cut top face with <400 px is too small for a trustworthy pose
                                      pose_reliable=bool(not cut or p['top'].sum() >= 400),
                                      consistent_parts=[q for loss, q, _ in ranked if loss <= ranked[0][0]+4],

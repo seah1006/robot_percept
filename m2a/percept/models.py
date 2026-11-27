@@ -51,10 +51,13 @@ class GroundingTiny:
 
 
 class DinoSmall:
-    def __init__(self, device='cuda'):
+    def __init__(self, device='cuda', crop_size=224):
         import torch
         from transformers import AutoImageProcessor, AutoModel
         p = snapshot(DINO_ID, DINO_REV)
+        if crop_size < 14 or crop_size % 14:
+            raise ValueError('crop_size must be a multiple of DINOv2 patch width (14)')
+        self.crop_size = crop_size
         self.device = device
         self.torch = torch
         self.processor = AutoImageProcessor.from_pretrained(p, local_files_only=True)
@@ -62,7 +65,7 @@ class DinoSmall:
 
     def __call__(self, images):
         x = self.processor(images=images, return_tensors='pt', do_center_crop=False,
-                           size={'height': 224, 'width': 224}).to(self.device)
+                           size={'height': self.crop_size, 'width': self.crop_size}).to(self.device)
         with self.torch.inference_mode():
             z = self.model(**x).last_hidden_state[:, 0]
             return self.torch.nn.functional.normalize(z).cpu().numpy()
