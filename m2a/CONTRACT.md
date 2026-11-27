@@ -97,3 +97,33 @@ train 0~4999 / dev 10000~10199 / test 90000~90099. test seed는 `--final-test` �
 - `pkill -f` 금지. 포트가 필요하면 구현 5091/5093/5095, 검증 5092/5094.
 - 사실·실측은 원자료 경로와 함께, 추정은 "추정", 내가 정한 값은 "임의 지정". GT 보조 결과는 GT 보조라고 표기.
 - 답변·보고서는 한국어.
+---
+
+# v0.2 보충 (2026-11-27 1주차 병합 후, 앞 절과 충돌 시 이 절 우선)
+
+## 11. 1주차 결과 요약 (검증 판정)
+- A (G1 조작·G-A): 파지 주력 모드 **P-gate = 접촉 확인 후 weld 부착 근사**(실물 마찰 파지 아님). 공식 게이트 P01 20/20, P04(pinch) 17/20, P06 20/20; P-phys는 P06만 20/20. 결과를 인용할 때는 반드시 "P-gate(GT 보조 weld 파지 근사)"로 표기. V-A NEEDS WORK(P1: weld가 접촉 소실 후 유지, P01 엄지 미대향, 중앙 영역 P01 IK_FAIL) → 수정 중.
+- B (계획): V-B 조건부 PASS. C (장면·판정): V-C 조건부 PASS. D (LeRobot G-B): V-D 조건부 PASS(합성 데이터 한정).
+- B+C 연동: dev 200장면 symbolic→plan→verify 200/200 (메인 확인).
+
+## 12. 계약 변경
+- §3 장면: `expected: {goal, missing}` 필드 추가(C). 원본 goal은 missing 반영 전.
+- §4 목표: 선택 `priority_parts: [part_id,...]` = 같은 step_order 그룹 안 트레이 투입 순서 우선. 빈 goal은 파서·계획기 모두 `empty_goal`로 거절.
+- §5 기호 상태: `in_tray != null → region = null`. 어느 영역에도 속하지 않으면 `region = null`이며 그 물체를 집어야 하면 계획 실패 `unlocated:<oid>`.
+- §6 계획: 액션 추가 `["pick-from-tray", arm, oid, tray]`. 기존 pick-from-top 인자 `[arm, top_oid, below_oid, region]`.
+- §7 스킬: 기호 `reach`는 영역 수준 집계일 뿐이다. 개별 자세에서 스킬이 `IK_FAIL`을 돌려줄 수 있고, 이것은 재계획 트리거(§13)다.
+- §8 판정: `violations`(성공 조건 위반)와 `strict_violations`(순서 위반) 분리. **디스패처 요구사항**: 트레이 투입 성공마다 events에 `{oid, tray, t_ms}`를 빠짐없이 기록(없는 물체는 초기 pretray로 간주됨).
+- layout: `table.T_world_table`은 4×4 동차행렬, 트레이에 `floor_z`, `wall_thickness`.
+- 렌더(A): `env.render(cam) -> (rgb uint8 HxWx3, depth float32 HxW, 광축 z 미터)`; head/front 480×640, wrist_l/r 256×256. `env.camera_K(cam)` 3×3, `env.T_world_cam(cam)`/`env.T_table_cam(cam)` 4×4 (카메라축 오른쪽 +x, 아래 +y, 앞 +z). 역투영 `p_T = T_table_cam · [d·K⁻¹(u,v,1); 1]`.
+
+## 13. 2주차 소유권 (12/4~12/10, 실제 착수는 11/27)
+```
+m2a/sim/      A  (파지 P1 수정, 중앙 영역, pick-from-tray/pick-from-top 실행, EE 서보 API)
+m2a/run/      E  (디스패처 A1, 에피소드 러너, B0/B1/B4 + O0, 재계획, 교란, 로그, 배치 실행)
+m2a/data/     F  (LeRobot v3 레코더 D0, 자동 시연 D1, ACT 학습, ACT grasp_lift 실행기)
+m2a/percept/  G  (인식 V1~V4 → 장면 그래프 → 기호 상태, O3 어댑터, 인식 지표)
+tests/m2a/test_<e|f|g>_*.py, m2a/notes/ws<e|f|g>_*
+```
+- 재계획 트리거: (1) 스킬 실패(IK_FAIL/GRASP_SLIP/TIMEOUT), (2) 스킬 후 관측 기호 상태 ≠ 기대 effect, (3) 물체 출현·소실, (4) goal 불가. 상한 R=3(설정값), 같은 실패 코드 같은 물체 2회 연속이면 사람 호출로 종료.
+- 로그 스키마는 기획서 d_arch2 3.8(`runs/<run_id>/{config.yaml→config.json, episodes.jsonl, plan.jsonl, scene_graph.jsonl, timing.jsonl, result.json}`)을 따른다. fail_code ∈ {PERCEPT_MISS, MISID, PLAN_VIOLATION, IK_FAIL, GRASP_SLIP, FALSE_COMPLETION, LANG_MISPARSE, TIMEOUT}.
+- 2주차 EE 서보 API(A가 제공, F가 사용): `env.ee_pose(arm) -> (xyz_T, quat_wxyz)`, `env.apply_ee_delta(arm, dpos_T, daxisangle, grip01, dt)` (IK 서보로 관절 목표 갱신).
