@@ -13,6 +13,7 @@ from .grasp_profiles import PROFILES, grasp_profile, hand_command
 # release after 200 ms with <=1 contact. P-phys: friction only. P-oracle: debug only.
 MODES = ('P-phys', 'P-gate', 'P-gate-strict', 'P-oracle')
 SKILLS = ('reach_pregrasp', 'grasp_lift', 'transport_place', 'put_aside')
+PLATES = ('P01', 'P02', 'P03')
 
 
 class SkillRunner:
@@ -149,20 +150,32 @@ class SkillRunner:
             if source_tray and not self._fixture_free(arm, [q, *down, *lift]):
                 continue
             score = np.linalg.norm(q-e.data.qpos[e.ik[arm].qadr]) + height * 50.
+            if center and pid in PLATES:
+                # Centre-zone plates: across-width first, then diagonal; along-axis slips in lift
+                # (round3_center_diag_P01.jsonl). Tier weight is an imposed value.
+                dev = abs(((yaw - base + math.pi/2) % math.pi) - math.pi/2)
+                score += 100. * (0 if dev < 1e-3 else 1 if dev < math.pi/3 else 2)
             if best is None or score < best[0]:
                 best = (score, above, at, R, q, down, lift)
         if best is None:
             return 'COLLISION' if viable_ik else 'IK_FAIL'
         _, above, at, R, q, down, lift = best
-        self.events.update(approach_xyz=above.tolist(), grasp_xyz=at.tolist())
+        self.events.update(approach_xyz=above.tolist(), grasp_xyz=at.tolist(),
+                           approach_yaw=float(math.atan2(R[1, 0], R[0, 0])))
         reason = self._move(arm, q, 1.0)
         if reason is None:
             self.pre[arm] = (oid, above, at, R, down, lift, profile)
         return reason
 
     def _fixture_free(self, arm, path):
-        """Reject tray descent paths intersecting a fixture with the open hand."""
+        """Reject tray descent paths intersecting a tray wall with the open hand.
+
+        Floor/table penetration of the kinematic open-hand preview (thumb ~25 mm, see
+        round3_tray_diag) is the same as in table picks and is resolved by contact physics,
+        so only wall geoms block (round 3 change)."""
         e = self.env; m = e.model
+        walls = {m.geom(f'{tray}_{axis}{sign}').id for tray in e.layout['trays']
+                 for axis in 'xy' for sign in (-1, 1)}
         preview = mj.MjData(m)
         preview.qpos[:] = e.data.qpos
         joints = m.jnt_qposadr[m.actuator_trnid[e.hand_act[arm], 0]]
@@ -171,8 +184,8 @@ class SkillRunner:
             preview.qpos[e.ik[arm].qadr] = q
             mj.mj_forward(m, preview)
             for con in preview.contact:
-                if con.dist < -.002 and ((con.geom1 in e.arm_geom[arm] and m.geom_contype[con.geom2] == FIXTURE_BIT)
-                                         or (con.geom2 in e.arm_geom[arm] and m.geom_contype[con.geom1] == FIXTURE_BIT)):
+                if con.dist < -.002 and ((con.geom1 in e.arm_geom[arm] and con.geom2 in walls)
+                                         or (con.geom2 in e.arm_geom[arm] and con.geom1 in walls)):
                     return False
         return True
 

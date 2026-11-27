@@ -5,9 +5,9 @@
  "regions": {
   "left_zone":   [-0.20, -0.05,  0.24,  0.46],
   "right_zone":  [-0.20, -0.05, -0.46, -0.24],
-  "center_zone": [-0.22, -0.14, -0.12, 0.12]
+  "center_zone": [-0.235, -0.155, -0.12, 0.12]
  },
- "regions_note": "[xmin, xmax, ymin, ymax]; center_zone은 치우기·테이블 경유 재파지용 공용 빈 영역",
+ "regions_note": "[xmin, xmax, ymin, ymax]; center_zone은 치우기·테이블 경유 재파지용 공용 빈 영역. round3에서 x를 -0.015 이동(로봇 쪽, 임의 지정): 원래 위치에서 P04 중앙 집기 14/20·15/20, 이동 후 P01/P04/P06 양팔 모두 ≥16/20 (m2a/notes/wsa_gate_raw/round3c_center_*). 트레이 외벽 x=-0.136과 0.019 m 간격.",
  "trays": {
   "T1": {"center": [-0.01,  0.16], "inner": [0.24, 0.13], "wall_h": 0.03, "floor_z": 0.004, "wall_thickness": 0.006},
   "T2": {"center": [-0.01,  0.00], "inner": [0.24, 0.13], "wall_h": 0.03, "floor_z": 0.004, "wall_thickness": 0.006},
