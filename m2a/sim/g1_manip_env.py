@@ -370,6 +370,29 @@ class G1ManipEnv:
         for oid in self.object_parts:
             self.data.eq_active[self.model.equality(f'm2a_weld_{arm}_{oid}').id] = False
 
+    def perception_pose(self, secs=0.6):
+        """Move empty arms out of head view; return token for restoring arm targets."""
+        if any(self.closed.values()) or any(self._held_oid(arm) for arm in ARMS):
+            raise RuntimeError('perception pose requires open, empty hands')
+        previous = {arm: self.data.ctrl[self.arm_act[arm]].copy() for arm in ARMS}
+        targets = {arm: np.array([.32, .18*sign, 0., .22, 0., 0., 0.])
+                   for arm, sign in zip(ARMS, (1, -1))}
+        self.restore_perception_pose(targets, secs)
+        return previous
+
+    def restore_perception_pose(self, token, secs=0.6):
+        """Interpolate to arm control targets from perception_pose; advances physics."""
+        if not np.isfinite(secs) or secs <= 0:
+            raise ValueError('secs must be positive')
+        initial = {arm: self.data.ctrl[self.arm_act[arm]].copy() for arm in ARMS}
+        steps = max(1, round(secs / self.model.opt.timestep))
+        for i in range(0, steps, 4):
+            end = min(i+4, steps)
+            f = end / steps
+            for arm in ARMS:
+                self.data.ctrl[self.arm_act[arm]] = initial[arm] + f*f*(3-2*f)*(token[arm]-initial[arm])
+            self.step(end-i)
+
     def camera_K(self, cam='head'):
         """Pinhole intrinsics in pixels (integer-indexed pixel centres)."""
         width, height = CAMERAS[cam]
