@@ -6,8 +6,12 @@ from time import perf_counter
 from .pddl_gen import ARMS, CENTER, atom, compile_task, domain_pddl
 
 
-def plan(symbolic_state, goal, layout, *, strict=True, diagnostics_dir=None):
-    """Plan a kitting job; when strict, honor step_order before priority_parts."""
+def plan(symbolic_state, goal, layout, *, strict=True, diagnostics_dir=None, allow_handover=True):
+    """Plan a kitting job; when strict, honor step_order before priority_parts.
+
+    allow_handover=False removes the handover action (dispatcher fallback when
+    physical handover is unsupported); the planner then fails with goal_unsat.
+    """
     start = perf_counter()
     result = dict(schema='m2a.plan.v1', planner='pddl_pyperplan', ok=False,
                   actions=[], missing={}, plan_ms=0.0, reason=None)
@@ -45,7 +49,7 @@ def plan(symbolic_state, goal, layout, *, strict=True, diagnostics_dir=None):
                         targets.add(atom('at', job.names[oid], job.names[CENTER]))
                 movers = job.movers(facts, targets)
                 targets |= empty_hands
-                for handover in (False, True):
+                for handover in ((False, True) if allow_handover else (False,)):
                     mode = 'handover' if handover else 'no-handover'
                     domain_text = domain_pddl(handover=handover)
                     problem_text = job.problem(facts, enabled, targets, movers)
