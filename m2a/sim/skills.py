@@ -4,7 +4,7 @@ import math
 import time
 import mujoco as mj
 import numpy as np
-from m2a.scene._geometry import contains, corners, geometric_tray, obb, overlaps, size_xyz, tray_box
+from m2a.scene._geometry import contains, corners, geometric_tray, inset, obb, overlaps, size_xyz, tray_box, tray_rect
 from .g1_manip_env import ARMS, FIXTURE_BIT, GATE_RULES, TRAY_FLOOR, half_height
 from .grasp_profiles import PROFILES, grasp_profile, hand_command
 
@@ -14,6 +14,10 @@ from .grasp_profiles import PROFILES, grasp_profile, hand_command
 MODES = ('P-phys', 'P-gate', 'P-gate-strict', 'P-oracle')
 SKILLS = ('reach_pregrasp', 'grasp_lift', 'transport_place', 'put_aside')
 PLATES = ('P01', 'P02', 'P03')
+PREGRASP_RISE = .08           # imposed extra height of the approach waypoint
+PLACE_CLEAR = .004            # imposed footprint clearance to tray inner walls
+CARRY_BOTTOM = .10            # imposed object-bottom height above support while carrying
+RELEASE_BOTTOMS = (.006, .016, None)  # imposed release heights above support; None = over wall top
 
 
 class SkillRunner:
@@ -124,7 +128,7 @@ class SkillRunner:
         if source_tray:
             headings = [0., math.pi] + headings  # Along the long axis of the current trays.
         headings = list({round(yaw % (2*math.pi), 5): yaw for yaw in headings}.values())
-        nominal = xyz + [0, 0, .003]
+        nominal = xyz + [0, 0, .003 + profile.get('grasp_dz', 0.)]
         self.events.update(profile=profile['name'], stage='pregrasp', source_tray=source_tray)
         best = None
         viable_ik = False
@@ -162,19 +166,25 @@ class SkillRunner:
         _, above, at, R, q, down, lift = best
         self.events.update(approach_xyz=above.tolist(), grasp_xyz=at.tolist(),
                            approach_yaw=float(math.atan2(R[1, 0], R[0, 0])))
-        reason = self._move(arm, q, 1.0)
+        # Round 4: approach via a point PREGRASP_RISE above the pregrasp pose so the joint-space
+        # sweep from rest does not drag the hand through tray walls / neighbours (TIMEOUT cases).
+        qh, dh = e.solve_ik(arm, above + [0, 0, PREGRASP_RISE], R, q0=q, restarts=0)
+        if dh['ok'] and not getattr(self, 'legacy_place', False):
+            reason = self._move(arm, qh, .6) or self._move(arm, q, .45)
+        else:
+            reason = self._move(arm, q, 1.0)
         if reason is None:
             self.pre[arm] = (oid, above, at, R, down, lift, profile)
         return reason
 
-    def _fixture_free(self, arm, path):
+    def _fixture_free(self, arm, path, geoms=None):
         """Reject tray descent paths intersecting a tray wall with the open hand.
 
         Floor/table penetration of the kinematic open-hand preview (thumb ~25 mm, see
         round3_tray_diag) is the same as in table picks and is resolved by contact physics,
-        so only wall geoms block (round 3 change)."""
+        so only wall geoms block (round 3 change). Placing passes all fixture geoms."""
         e = self.env; m = e.model
-        walls = {m.geom(f'{tray}_{axis}{sign}').id for tray in e.layout['trays']
+        walls = geoms if geoms is not None else {m.geom(f'{tray}_{axis}{sign}').id for tray in e.layout['trays']
                  for axis in 'xy' for sign in (-1, 1)}
         preview = mj.MjData(m)
         preview.qpos[:] = e.data.qpos
@@ -266,25 +276,162 @@ class SkillRunner:
     def _put_aside(self, arm, oid, target):
         return self._place(arm, oid, 'center_zone' if target is None else target, tray=False)
 
-    def _empty_slot(self, oid, region):
+    def _empty_slot(self, oid, region, yaw=None, limit=1, tray=None):
+        """Free footprint centres (non-overlapping other objects and tray boxes/walls).
+
+        Default call keeps the round-1 behaviour (first slot for the current yaw or None).
+        With tray=<id> the footprint must sit inside the tray inner rectangle minus
+        PLACE_CLEAR and the centre inside the judge inset."""
         e = self.env
         gt = e.get_gt_objects()
-        x, X, y, Y = rect = e.layout['regions'][region]
         part = e.parts[e.object_parts[oid]]
         size = size_xyz(part)
-        yaw = gt[oid]['yaw'] if part['shape'] == 'box' else 0.
+        if yaw is None:
+            yaw = gt[oid]['yaw'] if part['shape'] == 'box' else 0.
         occupied = [obb(o['xyz'], size_xyz(e.parts[o['part_id']]), o['yaw'])
-                    for other, o in gt.items() if other != oid]
-        occupied.extend(tray_box(tr) for tr in e.layout['trays'].values())
+                    for other, o in gt.items() if other != oid and not any(
+                        self.is_attached(a, other) for a in ARMS)]
+        if tray is None:
+            x, X, y, Y = rect = e.layout['regions'][region]
+            inner = rect; centre = rect
+            occupied.extend(tray_box(tr) for tr in e.layout['trays'].values())
+        else:
+            x, X, y, Y = rect = tray_rect(e.layout['trays'][tray])
+            inner = inset(rect, PLACE_CLEAR); centre = inset(rect, e.layout['judge']['tray_margin'])
         middle = np.array([(x+X)/2, (y+Y)/2])
         grid = [(a, b) for a in np.linspace(x, X, 13) for b in np.linspace(y, Y, 13)]
+        found = []
         for pos in sorted(grid, key=lambda xy: np.linalg.norm(xy - middle)):
             box = obb(pos, size, yaw)
-            if all(contains(rect, v) for v in corners(box)) and not any(overlaps(box, ob, .003) for ob in occupied):
-                return pos
+            if (contains(centre, pos) and all(contains(inner, v) for v in corners(box))
+                    and not any(overlaps(box, ob, .003) for ob in occupied)):
+                if limit == 1 and tray is None:
+                    return pos
+                found.append(np.asarray(pos, float))
+                if len(found) >= limit:
+                    break
+        if limit == 1 and tray is None:
+            return None
+        return found
+
+    def _place_yaws(self, pid, part, yaw0, tray):
+        """Candidate final object yaws ordered by |hand rotation|."""
+        if pid in PLATES:
+            axis = 0. if tray else math.pi/2   # tray long axis = x; centre zone long axis = y
+            # Footprint test in _empty_slot filters the yaws that do not fit (imposed offsets).
+            finals = [axis + k*math.pi + s for k in (0, 1) for s in (0., .12, -.12, .25, -.25, .4, -.4)]
+            deltas = [(f - yaw0 + math.pi) % (2*math.pi) - math.pi for f in finals]
+        else:
+            deltas = [0.] + [s*k*math.pi/6 for k in range(1, 7) for s in (1, -1)][:-1]
+        return sorted(deltas, key=abs)
+
+    def _plan_place(self, arm, oid, target, tray):
+        """Search hand yaw x slot x release height; return the best IK-feasible placement."""
+        e = self.env; m = e.model
+        pid = e.object_parts[oid]; part = e.parts[pid]; h = half_height(part)
+        gt = e.get_gt_objects()[oid]
+        grip_xyz, _ = e.ee_pose(arm)
+        d = np.asarray(gt['xyz']) - grip_xyz
+        _, R0 = self.held[arm]
+        h0 = math.atan2(R0[1, 0], R0[0, 0])
+        if tray:
+            loc = e.layout['trays'][target]
+            support = loc.get('floor_z', TRAY_FLOOR); wall_top = support + loc['wall_h']
+        else:
+            support = 0.; wall_top = 0.
+        fixtures = {g for g in range(m.ngeom) if m.geom_contype[g] == FIXTURE_BIT}
+        best = None; tried = 0
+        for delta in self._place_yaws(pid, part, gt['yaw'], tray):
+            final = gt['yaw'] + delta if part['shape'] == 'box' else 0.
+            slots = self._empty_slot(oid, target, yaw=final, limit=3, tray=target if tray else None)
+            c, s = math.cos(delta), math.sin(delta)
+            dr = np.array([c*d[0]-s*d[1], s*d[0]+c*d[1], d[2]])
+            R = e.topdown(arm, h0 + delta)
+            for xy in slots:
+                above_item = np.array([*xy, support + CARRY_BOTTOM + h])
+                above = above_item - dr
+                q, diag = e.solve_ik(arm, above, R, restarts=2)
+                tried += 1
+                if not diag['ok']:
+                    continue
+                for bottom in RELEASE_BOTTOMS:
+                    z = (wall_top + .018 if bottom is None else support + bottom) + h
+                    at = np.array([*xy, z]) - dr
+                    down = self._segment(arm, above, at, R, q, count=4)
+                    if down is None:
+                        continue
+                    if bottom is not None and not self._fixture_free(arm, down, fixtures):
+                        continue
+                    score = .3*abs(delta) + np.linalg.norm(q - e.data.qpos[e.ik[arm].qadr]) + 5.*(bottom or .05)
+                    if best is None or score < best[0]:
+                        best = (score, dict(delta=delta, R=R, above=above, at=at, q=q, down=down,
+                                            slot=[float(v) for v in xy], release_bottom=bottom))
+                    break
+                if best is not None and best[1]['delta'] == delta:
+                    break
+            if best is not None and tried >= 6:
+                break
+        self.events.update(place_candidates_tried=tried)
+        return None if best is None else best[1]
+
+    def _carry_waypoint(self, arm, start_xyz, above, h0, delta):
+        """Pull toward the body between lift and target (imposed .03 m pull, +.02 m height)."""
+        e = self.env
+        mid = (np.asarray(start_xyz) + above) / 2
+        for pull in (.03, 0.):
+            w = np.array([max(min(start_xyz[0], above[0]) - pull, -.24), mid[1],
+                          max(start_xyz[2], above[2]) + .02])
+            q, diag = e.solve_ik(arm, w, e.topdown(arm, h0 + delta/2), restarts=1)
+            if diag['ok']:
+                return q
         return None
 
     def _place(self, arm, oid, target, tray):
+        if not getattr(self, 'legacy_place', False):
+            return self._place_v2(arm, oid, target, tray)
+        return self._place_v1(arm, oid, target, tray)
+
+    def _place_v2(self, arm, oid, target, tray):
+        e = self.env
+        if arm not in self.held or self.held[arm][0] != oid:
+            return 'GRASP_SLIP'
+        if not self.is_attached(arm, oid):
+            self.held.pop(arm)
+            return 'GRASP_SLIP'
+        reach = e.layout.get('reach', {}).get(arm)
+        if reach is not None and target not in reach:
+            self.events.update(place_reject='reach_table')
+            return 'IK_FAIL'
+        plan = self._plan_place(arm, oid, target, tray)
+        if plan is None:
+            if not tray and not self._empty_slot(oid, target, limit=1, tray=None):
+                return 'COLLISION'
+            return 'IK_FAIL'
+        self.events.update(place_slot=plan['slot'], place_delta_yaw=float(plan['delta']),
+                           release_bottom=plan['release_bottom'])
+        _, R0 = self.held[arm]
+        h0 = math.atan2(R0[1, 0], R0[0, 0])
+        start, _ = e.ee_pose(arm)
+        way = self._carry_waypoint(arm, start, plan['above'], h0, plan['delta'])
+        path = ([(way, .55)] if way is not None else []) + [(plan['q'], .7 if way is not None else .95)]
+        path += [(p, .16) for p in plan['down']]
+        for waypoint, sec in path:
+            reason = self._move(arm, waypoint, sec)
+            if not self.is_attached(arm, oid):
+                self.held.pop(arm, None)
+                return 'GRASP_SLIP'
+            if reason:
+                return reason
+        self._open(arm, grasp_profile(e.object_parts[oid]))
+        self.held.pop(arm)
+        e.step(math.ceil(.25/e.model.opt.timestep))
+        retreat = self._move(arm, plan['q'], .4)
+        if retreat:
+            self.events.update(retreat_reason=retreat)
+        e.step(math.ceil(.35/e.model.opt.timestep))
+        return None
+
+    def _place_v1(self, arm, oid, target, tray):
         e = self.env
         if arm not in self.held or self.held[arm][0] != oid:
             return 'GRASP_SLIP'
