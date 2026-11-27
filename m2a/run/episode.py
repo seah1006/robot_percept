@@ -133,7 +133,11 @@ def _run(seed, split, level, situation, config, instr, arm_mode, grasp_mode, R,
             try:
                 observation = deepcopy(perception.observe(env, layout, parts))
             finally:
-                env.restore_perception_pose(token, **kw)
+                try:
+                    env.restore_perception_pose(token, **kw)
+                except RuntimeError as exc:  # no collision-free return path: arm stays parked; next skill moves it
+                    log('timing', stage=f'perception_restore_failed:{stage}', skill_no=skill_no,
+                        elapsed_ms=elapsed()-began, error=str(exc)[:120])
         else:
             observation = deepcopy(perception.observe(env, layout, parts))
         log('scene_graph', stage=stage, skill_no=skill_no, state=observation.state, held=observation.held,
