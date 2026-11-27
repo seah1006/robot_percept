@@ -113,6 +113,7 @@ class SkillRunner:
             pid = gt.get('part_id')
             part = dict(shape=gt.get('shape', e.parts.get(pid, {}).get('shape', 'cylinder' if len(size)==2 else 'box')))
         profile = grasp_profile(pid)
+        legacy = getattr(self, 'legacy_place', False)
         self._open(arm, profile)
         source_tray = geometric_tray(gt['xyz'], e.layout)
         center = contains(e.layout['regions']['center_zone'], gt['xyz']) and source_tray is None
@@ -133,14 +134,34 @@ class SkillRunner:
         self.events.update(profile=profile['name'], stage='pregrasp', source_tray=source_tray)
         best = None
         viable_ik = False
-        options = [(yaw, 0.) for yaw in headings]
+        wall_shift = np.zeros(3)
+        if source_tray and pid in PLATES and not legacy:
+            lo_x, hi_x, lo_y, hi_y = tray_rect(e.layout['trays'][source_tray])
+            wall_dist = [xyz[0]-lo_x, hi_x-xyz[0], xyz[1]-lo_y, hi_y-xyz[1]]
+            normal = np.asarray(([1,0],[-1,0],[0,1],[0,-1])[int(np.argmin(wall_dist))])
+            axis = np.asarray([math.cos(gt['yaw']), math.sin(gt['yaw'])])
+            along = np.dot(normal, axis)
+            wall_shift[:2] = .012 * (math.copysign(1., along)*axis if abs(along) >= .4 else normal)
+        # O0 only: use nearby footprints to keep the thumb side away from neighbours.
+        # O3 picks never query GT neighbour poses; only source pose and fixture geometry.
+        neighbors = []
+        if obj_pose_T is None and not legacy:
+            for key, other in e.get_gt_objects().items():
+                delta = np.subtract(other['xyz'], xyz)
+                if key != oid and abs(delta[2]) < .06 and np.linalg.norm(delta[:2]) < .125:
+                    neighbors.append(delta[:2])
+        tiers = [(0., False)]
         if source_tray:
-            options += [(yaw, height) for height in (.012, .024) for yaw in headings]
-        for yaw, height in options:
+            tiers += ([(0., True), (.006, True), (.012, True), (.024, True)]
+                      if np.any(wall_shift) else [(h, False) for h in (.012, .024)])
+        options = [(yaw, height, shifted) for height, shifted in tiers for yaw in headings]
+        for yaw, height, shifted in options:
             if height and best is not None:
                 break
             R = e.topdown(arm, yaw)
             at = nominal + R @ profile['offset_hand_m'] + [0, 0, height]
+            if shifted:
+                at += wall_shift
             above = at + [0, 0, .072]
             q, diag = e.solve_ik(arm, above, R, restarts=2)
             if not diag['ok']:
@@ -155,6 +176,15 @@ class SkillRunner:
             if source_tray and not self._fixture_free(arm, [q, *down, *lift]):
                 continue
             score = np.linalg.norm(q-e.data.qpos[e.ik[arm].qadr]) + height * 50.
+            if neighbors:
+                # Tool +x extends toward the distal fingertips; penalize pointing at clutter.
+                axis = R[:2, 0]
+                score += sum(2.8 * max(0., 1-np.linalg.norm(d)/.125) *
+                             max(0., np.dot(d, axis)/max(.001, np.linalg.norm(d)))
+                             for d in neighbors)
+            if source_tray and pid in PLATES and not legacy:
+                dev = abs(((yaw - base + math.pi/2) % math.pi) - math.pi/2)
+                score += 1.3 * dev - (.28 if shifted else 0.)
             if center and pid in PLATES:
                 # Centre-zone plates: across-width first, then diagonal; along-axis slips in lift
                 # (round3_center_diag_P01.jsonl). Tier weight is an imposed value.
@@ -230,7 +260,9 @@ class SkillRunner:
             contacts = sorted(e.contact_fingers(arm, candidate)) if candidate is not None else []
             if len(contacts) > len(peak):
                 peak = contacts
-            if e.closed[arm] and not attached and candidate is not None and self.mode != 'P-phys':
+            early = getattr(self, 'legacy_place', False) or self.mode == 'P-oracle'
+            # Let the commanded closure reach its final shape before requesting the same gate.
+            if e.closed[arm] and (early or f >= 1.) and not attached and candidate is not None and self.mode != 'P-phys':
                 attached = e.attach(arm, candidate, oracle=self.mode == 'P-oracle')
                 if attached:
                     selected = contacts
@@ -356,6 +388,24 @@ class SkillRunner:
             c, s = math.cos(delta), math.sin(delta)
             dr = np.array([c*d[0]-s*d[1], s*d[0]+c*d[1], d[2]])
             R = e.topdown(arm, h0 + delta)
+            if pid == 'P04' and not tray:
+                # Upright dowel: align its measured cylinder axis with gravity before release.
+                actual_R = (e.T_world_table[:3, :3].T @
+                            e.data.xmat[e.object_bodies[oid]].reshape(3, 3))
+                u = actual_R[:, 2].copy()
+                if u[2] < 0:
+                    u *= -1
+                u = np.array([c*u[0]-s*u[1], s*u[0]+c*u[1], u[2]])
+                axis = np.cross(u, [0., 0., 1.])
+                n = np.linalg.norm(axis)
+                if n > 1e-6:
+                    axis /= n
+                    a = min(math.atan2(n, u[2]), .52)
+                    x, y, z = axis
+                    K = np.array([[0,-z,y],[z,0,-x],[-y,x,0]])
+                    correction = np.eye(3) + math.sin(a)*K + (1-math.cos(a))*(K@K)
+                    R = correction @ R
+                    dr = correction @ dr
             for xy in slots:
                 above_item = np.array([*xy, support + CARRY_BOTTOM + h])
                 above = above_item - dr
@@ -451,9 +501,23 @@ class SkillRunner:
                 touched = True
                 break
         self.events.update(place_touched=touched)
-        self._open(arm, grasp_profile(e.object_parts[oid]))
+        pid = e.object_parts[oid]
+        profile = grasp_profile(pid)
+        if pid == 'P06':
+            # Dwell at fixed arm control before releasing the smooth block.
+            e.step(math.ceil(.24/e.model.opt.timestep))
+            if not self.is_attached(arm, oid):
+                self.held.pop(arm, None)
+                return 'GRASP_SLIP'
+        self.events['release_speed'] = e.get_gt_objects()[oid]['lin_speed']
+        self._open(arm, profile)
         self.held.pop(arm)
-        e.step(math.ceil(.25/e.model.opt.timestep))
+        e.step(math.ceil((.12 if pid == 'P04' and not tray else .25)/e.model.opt.timestep))
+        if pid == 'P04' and not tray:
+            xyz, _ = e.ee_pose(arm)
+            up, diag = e.solve_ik(arm, xyz + [0,0,.035], plan['R'], restarts=0)
+            if diag['ok']:
+                self._move(arm, up, .23)
         retreat = self._move(arm, plan['q'], .4)
         if retreat:
             self.events.update(retreat_reason=retreat)

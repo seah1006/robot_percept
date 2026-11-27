@@ -1,0 +1,699 @@
+{
+ "P01|0": {
+  "n": 32,
+  "ok": 20,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 5,
+   "place/IK_FAIL": 4,
+   "place/GRASP_SLIP": 3
+  }
+ },
+ "ALL|0": {
+  "n": 192,
+  "ok": 120,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 31,
+   "place/IK_FAIL": 12,
+   "place/GRASP_SLIP": 10,
+   "judge/upright": 6,
+   "judge/footprint_inside": 4,
+   "reach_pregrasp/COLLISION": 3,
+   "place/TIMEOUT": 2,
+   "place/COLLISION": 2,
+   "judge/footprint_inside+upright": 1,
+   "judge/inside_xy+footprint_inside+upright+settled": 1
+  }
+ },
+ "P01|src:left_zone": {
+  "n": 16,
+  "ok": 6,
+  "fails": {
+   "place/IK_FAIL": 3,
+   "grasp_lift/GRASP_SLIP": 3,
+   "place/GRASP_SLIP": 2,
+   "place/COLLISION": 2
+  }
+ },
+ "P01|dst:T1": {
+  "n": 16,
+  "ok": 8,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 3,
+   "place/GRASP_SLIP": 2,
+   "place/COLLISION": 2,
+   "place/IK_FAIL": 1
+  }
+ },
+ "ALL|src:left_zone": {
+  "n": 96,
+  "ok": 46,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 17,
+   "place/IK_FAIL": 12,
+   "place/COLLISION": 7,
+   "place/GRASP_SLIP": 5,
+   "judge/upright": 4,
+   "place/TIMEOUT": 2,
+   "judge/footprint_inside": 2,
+   "judge/inside_xy": 1
+  }
+ },
+ "ALL|dst:T1": {
+  "n": 96,
+  "ok": 58,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 22,
+   "place/COLLISION": 5,
+   "reach_pregrasp/COLLISION": 4,
+   "place/GRASP_SLIP": 3,
+   "place/IK_FAIL": 3,
+   "place/TIMEOUT": 1
+  }
+ },
+ "P01|dst:T2": {
+  "n": 16,
+  "ok": 12,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 3,
+   "place/GRASP_SLIP": 1
+  }
+ },
+ "ALL|dst:T2": {
+  "n": 96,
+  "ok": 74,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 14,
+   "place/GRASP_SLIP": 4,
+   "place/COLLISION": 3,
+   "place/TIMEOUT": 1
+  }
+ },
+ "P01|dst:T3": {
+  "n": 16,
+  "ok": 11,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 4,
+   "place/GRASP_SLIP": 1
+  }
+ },
+ "ALL|dst:T3": {
+  "n": 96,
+  "ok": 59,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 20,
+   "place/GRASP_SLIP": 6,
+   "reach_pregrasp/COLLISION": 3,
+   "place/COLLISION": 3,
+   "place/IK_FAIL": 2,
+   "judge/inside_xy": 1,
+   "judge/settled": 1,
+   "reach_pregrasp/TIMEOUT": 1
+  }
+ },
+ "P01|dst:put_aside": {
+  "n": 16,
+  "ok": 4,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 5,
+   "place/IK_FAIL": 4,
+   "place/COLLISION": 3
+  }
+ },
+ "ALL|dst:put_aside": {
+  "n": 96,
+  "ok": 27,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 17,
+   "place/IK_FAIL": 15,
+   "place/COLLISION": 13,
+   "judge/upright": 11,
+   "judge/footprint_inside": 6,
+   "reach_pregrasp/COLLISION": 2,
+   "place/GRASP_SLIP": 1,
+   "judge/footprint_inside+upright": 1,
+   "judge/inside_xy+footprint_inside+upright": 1,
+   "place/TIMEOUT": 1,
+   "judge/inside_xy+footprint_inside+upright+settled": 1
+  }
+ },
+ "P01|src:right_zone": {
+  "n": 16,
+  "ok": 8,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 4,
+   "place/IK_FAIL": 2,
+   "place/COLLISION": 2
+  }
+ },
+ "ALL|src:right_zone": {
+  "n": 96,
+  "ok": 57,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 16,
+   "place/COLLISION": 10,
+   "place/IK_FAIL": 6,
+   "judge/upright": 4,
+   "place/GRASP_SLIP": 1,
+   "place/TIMEOUT": 1,
+   "judge/footprint_inside": 1
+  }
+ },
+ "P01|src:center_zone": {
+  "n": 16,
+  "ok": 16,
+  "fails": {}
+ },
+ "ALL|src:center_zone": {
+  "n": 96,
+  "ok": 72,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 14,
+   "place/GRASP_SLIP": 3,
+   "judge/footprint_inside": 2,
+   "judge/upright": 2,
+   "place/COLLISION": 1,
+   "judge/inside_xy+footprint_inside+upright+settled": 1,
+   "reach_pregrasp/TIMEOUT": 1
+  }
+ },
+ "P01|src:tray": {
+  "n": 16,
+  "ok": 5,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 8,
+   "place/GRASP_SLIP": 2,
+   "place/COLLISION": 1
+  }
+ },
+ "ALL|src:tray": {
+  "n": 96,
+  "ok": 43,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 26,
+   "reach_pregrasp/COLLISION": 9,
+   "place/COLLISION": 6,
+   "place/GRASP_SLIP": 5,
+   "place/IK_FAIL": 2,
+   "judge/footprint_inside+upright": 1,
+   "judge/settled": 1,
+   "judge/inside_xy+footprint_inside+upright": 1,
+   "judge/upright": 1,
+   "judge/footprint_inside": 1
+  }
+ },
+ "P01|3": {
+  "n": 32,
+  "ok": 15,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 10,
+   "place/COLLISION": 5,
+   "place/IK_FAIL": 1,
+   "place/GRASP_SLIP": 1
+  }
+ },
+ "ALL|3": {
+  "n": 192,
+  "ok": 98,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 42,
+   "place/COLLISION": 22,
+   "place/IK_FAIL": 8,
+   "reach_pregrasp/COLLISION": 6,
+   "judge/upright": 5,
+   "place/GRASP_SLIP": 4,
+   "judge/footprint_inside": 2,
+   "judge/inside_xy": 1,
+   "place/TIMEOUT": 1,
+   "judge/settled": 1,
+   "judge/inside_xy+footprint_inside+upright": 1,
+   "reach_pregrasp/TIMEOUT": 1
+  }
+ },
+ "P02|0": {
+  "n": 32,
+  "ok": 16,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 9,
+   "place/IK_FAIL": 4,
+   "place/GRASP_SLIP": 3
+  }
+ },
+ "P02|src:left_zone": {
+  "n": 16,
+  "ok": 6,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 4,
+   "place/IK_FAIL": 3,
+   "place/GRASP_SLIP": 1,
+   "judge/inside_xy": 1,
+   "place/COLLISION": 1
+  }
+ },
+ "P02|dst:T1": {
+  "n": 16,
+  "ok": 9,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 5,
+   "place/COLLISION": 2
+  }
+ },
+ "P02|dst:T2": {
+  "n": 16,
+  "ok": 11,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 5
+  }
+ },
+ "P02|dst:T3": {
+  "n": 16,
+  "ok": 8,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 4,
+   "place/GRASP_SLIP": 2,
+   "judge/inside_xy": 1,
+   "place/IK_FAIL": 1
+  }
+ },
+ "P02|dst:put_aside": {
+  "n": 16,
+  "ok": 3,
+  "fails": {
+   "place/IK_FAIL": 5,
+   "place/COLLISION": 4,
+   "grasp_lift/GRASP_SLIP": 2,
+   "place/GRASP_SLIP": 1,
+   "judge/footprint_inside": 1
+  }
+ },
+ "P02|src:right_zone": {
+  "n": 16,
+  "ok": 7,
+  "fails": {
+   "place/COLLISION": 4,
+   "place/IK_FAIL": 3,
+   "grasp_lift/GRASP_SLIP": 2
+  }
+ },
+ "P02|src:center_zone": {
+  "n": 16,
+  "ok": 13,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 2,
+   "judge/footprint_inside": 1
+  }
+ },
+ "P02|src:tray": {
+  "n": 16,
+  "ok": 5,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 8,
+   "place/GRASP_SLIP": 2,
+   "place/COLLISION": 1
+  }
+ },
+ "P02|3": {
+  "n": 32,
+  "ok": 15,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 7,
+   "place/COLLISION": 6,
+   "place/IK_FAIL": 2,
+   "judge/inside_xy": 1,
+   "judge/footprint_inside": 1
+  }
+ },
+ "P03|0": {
+  "n": 32,
+  "ok": 20,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 5,
+   "place/GRASP_SLIP": 4,
+   "place/IK_FAIL": 3
+  }
+ },
+ "P03|src:left_zone": {
+  "n": 16,
+  "ok": 6,
+  "fails": {
+   "place/IK_FAIL": 5,
+   "grasp_lift/GRASP_SLIP": 2,
+   "place/GRASP_SLIP": 2,
+   "place/COLLISION": 1
+  }
+ },
+ "P03|dst:T1": {
+  "n": 16,
+  "ok": 9,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 4,
+   "place/IK_FAIL": 2,
+   "place/GRASP_SLIP": 1
+  }
+ },
+ "P03|dst:T2": {
+  "n": 16,
+  "ok": 10,
+  "fails": {
+   "place/GRASP_SLIP": 3,
+   "place/COLLISION": 2,
+   "grasp_lift/GRASP_SLIP": 1
+  }
+ },
+ "P03|dst:T3": {
+  "n": 16,
+  "ok": 11,
+  "fails": {
+   "place/GRASP_SLIP": 3,
+   "grasp_lift/GRASP_SLIP": 1,
+   "place/IK_FAIL": 1
+  }
+ },
+ "P03|dst:put_aside": {
+  "n": 16,
+  "ok": 4,
+  "fails": {
+   "place/IK_FAIL": 5,
+   "grasp_lift/GRASP_SLIP": 4,
+   "place/COLLISION": 3
+  }
+ },
+ "P03|src:right_zone": {
+  "n": 16,
+  "ok": 9,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 4,
+   "place/GRASP_SLIP": 1,
+   "place/IK_FAIL": 1,
+   "place/COLLISION": 1
+  }
+ },
+ "P03|src:center_zone": {
+  "n": 16,
+  "ok": 11,
+  "fails": {
+   "place/GRASP_SLIP": 3,
+   "place/COLLISION": 1,
+   "grasp_lift/GRASP_SLIP": 1
+  }
+ },
+ "P03|src:tray": {
+  "n": 16,
+  "ok": 8,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 3,
+   "place/COLLISION": 2,
+   "place/IK_FAIL": 2,
+   "place/GRASP_SLIP": 1
+  }
+ },
+ "P03|3": {
+  "n": 32,
+  "ok": 14,
+  "fails": {
+   "place/IK_FAIL": 5,
+   "grasp_lift/GRASP_SLIP": 5,
+   "place/COLLISION": 5,
+   "place/GRASP_SLIP": 3
+  }
+ },
+ "P04|0": {
+  "n": 32,
+  "ok": 21,
+  "fails": {
+   "judge/upright": 5,
+   "grasp_lift/GRASP_SLIP": 4,
+   "reach_pregrasp/COLLISION": 1,
+   "judge/footprint_inside+upright": 1
+  }
+ },
+ "P04|src:left_zone": {
+  "n": 16,
+  "ok": 9,
+  "fails": {
+   "judge/upright": 4,
+   "grasp_lift/GRASP_SLIP": 3
+  }
+ },
+ "P04|dst:T1": {
+  "n": 16,
+  "ok": 11,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 3,
+   "place/TIMEOUT": 1,
+   "reach_pregrasp/COLLISION": 1
+  }
+ },
+ "P04|dst:T2": {
+  "n": 16,
+  "ok": 15,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 1
+  }
+ },
+ "P04|dst:T3": {
+  "n": 16,
+  "ok": 10,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 4,
+   "reach_pregrasp/COLLISION": 1,
+   "judge/settled": 1
+  }
+ },
+ "P04|dst:put_aside": {
+  "n": 16,
+  "ok": 2,
+  "fails": {
+   "judge/upright": 10,
+   "reach_pregrasp/COLLISION": 2,
+   "judge/footprint_inside+upright": 1,
+   "judge/inside_xy+footprint_inside+upright": 1
+  }
+ },
+ "P04|src:right_zone": {
+  "n": 16,
+  "ok": 9,
+  "fails": {
+   "judge/upright": 4,
+   "grasp_lift/GRASP_SLIP": 2,
+   "place/TIMEOUT": 1
+  }
+ },
+ "P04|src:center_zone": {
+  "n": 16,
+  "ok": 13,
+  "fails": {
+   "judge/upright": 2,
+   "grasp_lift/GRASP_SLIP": 1
+  }
+ },
+ "P04|src:tray": {
+  "n": 16,
+  "ok": 7,
+  "fails": {
+   "reach_pregrasp/COLLISION": 4,
+   "grasp_lift/GRASP_SLIP": 2,
+   "judge/footprint_inside+upright": 1,
+   "judge/settled": 1,
+   "judge/inside_xy+footprint_inside+upright": 1
+  }
+ },
+ "P04|3": {
+  "n": 32,
+  "ok": 17,
+  "fails": {
+   "judge/upright": 5,
+   "grasp_lift/GRASP_SLIP": 4,
+   "reach_pregrasp/COLLISION": 3,
+   "place/TIMEOUT": 1,
+   "judge/settled": 1,
+   "judge/inside_xy+footprint_inside+upright": 1
+  }
+ },
+ "P05|0": {
+  "n": 32,
+  "ok": 19,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 7,
+   "reach_pregrasp/COLLISION": 2,
+   "place/TIMEOUT": 1,
+   "place/COLLISION": 1,
+   "place/IK_FAIL": 1,
+   "judge/upright": 1
+  }
+ },
+ "P05|src:left_zone": {
+  "n": 16,
+  "ok": 8,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 4,
+   "place/COLLISION": 2,
+   "place/TIMEOUT": 1,
+   "place/IK_FAIL": 1
+  }
+ },
+ "P05|dst:T1": {
+  "n": 16,
+  "ok": 8,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 6,
+   "reach_pregrasp/COLLISION": 2
+  }
+ },
+ "P05|dst:T2": {
+  "n": 16,
+  "ok": 11,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 3,
+   "place/TIMEOUT": 1,
+   "place/COLLISION": 1
+  }
+ },
+ "P05|dst:T3": {
+  "n": 16,
+  "ok": 7,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 5,
+   "place/COLLISION": 2,
+   "reach_pregrasp/COLLISION": 2
+  }
+ },
+ "P05|dst:put_aside": {
+  "n": 16,
+  "ok": 7,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 6,
+   "place/IK_FAIL": 1,
+   "judge/upright": 1,
+   "place/COLLISION": 1
+  }
+ },
+ "P05|src:right_zone": {
+  "n": 16,
+  "ok": 13,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 2,
+   "place/COLLISION": 1
+  }
+ },
+ "P05|src:center_zone": {
+  "n": 16,
+  "ok": 6,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 10
+  }
+ },
+ "P05|src:tray": {
+  "n": 16,
+  "ok": 6,
+  "fails": {
+   "reach_pregrasp/COLLISION": 4,
+   "grasp_lift/GRASP_SLIP": 4,
+   "judge/upright": 1,
+   "place/COLLISION": 1
+  }
+ },
+ "P05|3": {
+  "n": 32,
+  "ok": 14,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 13,
+   "place/COLLISION": 3,
+   "reach_pregrasp/COLLISION": 2
+  }
+ },
+ "P06|0": {
+  "n": 32,
+  "ok": 24,
+  "fails": {
+   "judge/footprint_inside": 4,
+   "place/TIMEOUT": 1,
+   "place/COLLISION": 1,
+   "grasp_lift/GRASP_SLIP": 1,
+   "judge/inside_xy+footprint_inside+upright+settled": 1
+  }
+ },
+ "P06|src:left_zone": {
+  "n": 16,
+  "ok": 11,
+  "fails": {
+   "judge/footprint_inside": 2,
+   "place/TIMEOUT": 1,
+   "grasp_lift/GRASP_SLIP": 1,
+   "place/COLLISION": 1
+  }
+ },
+ "P06|dst:T1": {
+  "n": 16,
+  "ok": 13,
+  "fails": {
+   "place/COLLISION": 1,
+   "grasp_lift/GRASP_SLIP": 1,
+   "reach_pregrasp/COLLISION": 1
+  }
+ },
+ "P06|dst:T2": {
+  "n": 16,
+  "ok": 15,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 1
+  }
+ },
+ "P06|dst:T3": {
+  "n": 16,
+  "ok": 12,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 2,
+   "place/COLLISION": 1,
+   "reach_pregrasp/TIMEOUT": 1
+  }
+ },
+ "P06|dst:put_aside": {
+  "n": 16,
+  "ok": 7,
+  "fails": {
+   "judge/footprint_inside": 5,
+   "place/COLLISION": 2,
+   "place/TIMEOUT": 1,
+   "judge/inside_xy+footprint_inside+upright+settled": 1
+  }
+ },
+ "P06|src:right_zone": {
+  "n": 16,
+  "ok": 11,
+  "fails": {
+   "place/COLLISION": 2,
+   "grasp_lift/GRASP_SLIP": 2,
+   "judge/footprint_inside": 1
+  }
+ },
+ "P06|src:center_zone": {
+  "n": 16,
+  "ok": 13,
+  "fails": {
+   "judge/footprint_inside": 1,
+   "judge/inside_xy+footprint_inside+upright+settled": 1,
+   "reach_pregrasp/TIMEOUT": 1
+  }
+ },
+ "P06|src:tray": {
+  "n": 16,
+  "ok": 12,
+  "fails": {
+   "judge/footprint_inside": 1,
+   "reach_pregrasp/COLLISION": 1,
+   "grasp_lift/GRASP_SLIP": 1,
+   "place/COLLISION": 1
+  }
+ },
+ "P06|3": {
+  "n": 32,
+  "ok": 23,
+  "fails": {
+   "grasp_lift/GRASP_SLIP": 3,
+   "place/COLLISION": 3,
+   "judge/footprint_inside": 1,
+   "reach_pregrasp/TIMEOUT": 1,
+   "reach_pregrasp/COLLISION": 1
+  }
+ }
+}
